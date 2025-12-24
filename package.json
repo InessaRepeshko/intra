@@ -11,7 +11,6 @@
     "docker:stop": "docker-compose stop",
     "docker:down": "docker-compose down -v",
 
-    "setup:db": "ts-node src/setupdb.ts",
     "migrate": "dotenv -e .env.development.local -- npx prisma migrate deploy",
     "migrate:create": "dotenv -e .env.development.local -- npx prisma migrate dev",
     "migrate:generate": "dotenv -e .env.development.local -- npx prisma generate",

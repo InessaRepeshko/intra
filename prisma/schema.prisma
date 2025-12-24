@@ -1,17 +1,373 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-//  provider = "prisma-client"
-//  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model clusters_users_relations {
+  id                   Int                  @id @default(autoincrement())
+  cycle_id             Int?
+  cluster_id           Int
+  user_id              Int
+  score                Float
+  created_at           DateTime             @db.DateTime(0)
+  updated_at           DateTime?            @db.DateTime(0)
+  feedback360_cycles   feedback360_cycles?  @relation(fields: [cycle_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clusters_users_relations_ibfk_1")
+  competences_clusters competences_clusters @relation(fields: [cluster_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clusters_users_relations_ibfk_2")
+  users                users                @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clusters_users_relations_ibfk_3")
+
+  @@unique([cluster_id, user_id], map: "unique_cluster_member")
+  @@index([cycle_id], map: "cycle_id")
+  @@index([cluster_id], map: "idx_cluster")
+  @@index([user_id], map: "idx_user")
+}
+
+model competences {
+  id                   Int                    @id @default(autoincrement())
+  title                String                 @unique(map: "unique_competence_title") @db.VarChar(255)
+  description          String?                @db.Text
+  created_at           DateTime               @db.DateTime(0)
+  updated_at           DateTime?              @db.DateTime(0)
+  competences_clusters competences_clusters[]
+  questions            questions[]
+}
+
+model competences_clusters {
+  id                       Int                        @id @default(autoincrement())
+  cycle_id                 Int?
+  competence_id            Int
+  lower_bound              Float
+  upper_bound              Float
+  min_score                Float
+  max_score                Float
+  average_score            Float
+  employees_count          Int
+  created_at               DateTime                   @db.DateTime(0)
+  updated_at               DateTime?                  @db.DateTime(0)
+  clusters_users_relations clusters_users_relations[]
+  feedback360_cycles       feedback360_cycles?        @relation(fields: [cycle_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "competences_clusters_ibfk_1")
+  competences              competences                @relation(fields: [competence_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "competences_clusters_ibfk_2")
+
+  @@unique([cycle_id, competence_id, lower_bound, upper_bound], map: "unique_competence_cluster")
+  @@index([competence_id], map: "idx_competence")
+  @@index([cycle_id], map: "idx_cycle")
+}
+
+model feedback360 {
+  id                                                                  Int                                 @id @default(autoincrement())
+  ratee_id                                                            Int
+  ratee_note                                                          String?                             @db.Text
+  position_id                                                         Int
+  hr_id                                                               Int
+  hr_note                                                             String?                             @db.Text
+  cycle_id                                                            Int?
+  stage                                                               feedback360_stage                   @default(verification_by_hr)
+  report_id                                                           Int?
+  created_at                                                          DateTime                            @db.DateTime(0)
+  updated_at                                                          DateTime?                           @db.DateTime(0)
+  feedback360_reports_feedback360_report_idTofeedback360_reports      feedback360_reports?                @relation("feedback360_report_idTofeedback360_reports", fields: [report_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_ibfk_1")
+  feedback360_cycles                                                  feedback360_cycles?                 @relation(fields: [cycle_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_ibfk_2")
+  users_feedback360_ratee_idTousers                                   users                               @relation("feedback360_ratee_idTousers", fields: [ratee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_ibfk_3")
+  users_feedback360_hr_idTousers                                      users                               @relation("feedback360_hr_idTousers", fields: [hr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_ibfk_4")
+  positions                                                           positions                           @relation(fields: [position_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_ibfk_5")
+  feedback360_answers                                                 feedback360_answers[]
+  feedback360_questions_relations                                     feedback360_questions_relations[]
+  feedback360_reports_feedback360_reports_feedback360_idTofeedback360 feedback360_reports?                @relation("feedback360_reports_feedback360_idTofeedback360")
+  feedback360_respondents_relations                                   feedback360_respondents_relations[]
+  feedback360_reviewers_relations                                     feedback360_reviewers_relations[]
+
+  @@index([cycle_id], map: "idx_cycle")
+  @@index([hr_id], map: "idx_hr")
+  @@index([position_id], map: "idx_position")
+  @@index([ratee_id], map: "idx_ratee")
+  @@index([report_id], map: "idx_report_id")
+  @@index([stage], map: "idx_stage")
+}
+
+model feedback360_answers {
+  id                  Int                                     @id @default(autoincrement())
+  feedback360_id      Int
+  question_id         Int
+  respondent_category respondent_category
+  answer_type         questions_answer_type         @default(numerical_scale)
+  numerical_value     Int?                                    @db.TinyInt
+  text_value          String?                                 @db.Text
+  created_at          DateTime                                @db.DateTime(0)
+  questions           questions                               @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_answers_ibfk_1")
+  feedback360         feedback360                             @relation(fields: [feedback360_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_answers_ibfk_2")
+
+  @@index([feedback360_id], map: "idx_feedback360")
+  @@index([question_id], map: "idx_question")
+}
+
+model feedback360_cycles {
+  id                       Int                        @id @default(autoincrement())
+  title                    String                     @db.VarChar(255)
+  description              String?                    @db.Text
+  hr_id                    Int
+  stage                    feedback360_cycles_stage   @default(new)
+  is_active                Boolean?                   @default(true)
+  start_date               DateTime                   @db.DateTime(0)
+  review_deadline          DateTime?                  @db.DateTime(0)
+  approval_deadline        DateTime?                  @db.DateTime(0)
+  survey_deadline          DateTime?                  @db.DateTime(0)
+  end_date                 DateTime                   @db.DateTime(0)
+  created_at               DateTime                   @db.DateTime(0)
+  updated_at               DateTime?                  @db.DateTime(0)
+  clusters_users_relations clusters_users_relations[]
+  competences_clusters     competences_clusters[]
+  feedback360              feedback360[]
+  users                    users                      @relation(fields: [hr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_cycles_ibfk_1")
+  feedback360_reports      feedback360_reports[]
+
+  @@index([hr_id], map: "idx_hr")
+  @@index([stage], map: "idx_stage")
+}
+
+model feedback360_questions_relations {
+  id                    Int                                         @id @default(autoincrement())
+  feedback360_id        Int
+  question_id           Int
+  question_title        String                                      @db.VarChar(1024)
+  answer_type           questions_answer_type
+  competence_id         Int
+  is_for_selfassessment Boolean?                                    @default(false)
+  created_at            DateTime                                    @db.DateTime(0)
+  feedback360           feedback360                                 @relation(fields: [feedback360_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_questions_relations_ibfk_1")
+  questions             questions                                   @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_questions_relations_ibfk_2")
+
+  @@unique([feedback360_id, question_id], map: "unique_feedback_template")
+  @@index([feedback360_id], map: "idx_feedback360")
+  @@index([question_id], map: "idx_question_id")
+}
+
+model feedback360_reports {
+  id                                                          Int                 @id @default(autoincrement())
+  feedback360_id                                              Int                 @unique(map: "unique_feedback360")
+  cycle_id                                                    Int?
+  turnout_of_team                                             Float?
+  turnout_of_other                                            Float?
+  total_average_by_self_assessment                            Float?
+  total_average_by_team                                       Float?
+  total_average_by_others                                     Float?
+  total_delta_by_self_assessment                              Float?
+  total_delta_by_team                                         Float?
+  total_delta_by_others                                       Float?
+  created_at                                                  DateTime            @db.DateTime(0)
+  feedback360_feedback360_report_idTofeedback360_reports      feedback360[]       @relation("feedback360_report_idTofeedback360_reports")
+  feedback360_feedback360_reports_feedback360_idTofeedback360 feedback360         @relation("feedback360_reports_feedback360_idTofeedback360", fields: [feedback360_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_reports_ibfk_1")
+  feedback360_cycles                                          feedback360_cycles? @relation(fields: [cycle_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_reports_ibfk_2")
+  reports_analytics                                           reports_analytics[]
+  reports_comments                                            reports_comments[]
+
+  @@index([cycle_id], map: "idx_cycle")
+}
+
+model feedback360_respondents_relations {
+  id                  Int                                                   @id @default(autoincrement())
+  feedback360_id      Int
+  respondent_id       Int
+  respondent_category respondent_category
+  feedback360_status  feedback360_respondents_relations_feedback360_status  @default(pending)
+  respondent_note     String?                                               @db.Text
+  created_at          DateTime                                              @db.DateTime(0)
+  updated_at          DateTime?                                             @db.DateTime(0)
+  feedback360         feedback360                                           @relation(fields: [feedback360_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_respondents_relations_ibfk_1")
+  users               users                                                 @relation(fields: [respondent_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_respondents_relations_ibfk_2")
+
+  @@unique([respondent_id, feedback360_id], map: "unique_respondent_feedback")
+  @@index([feedback360_id], map: "idx_feedback360")
+  @@index([feedback360_status], map: "idx_feedback360_status")
+  @@index([respondent_id], map: "idx_respondent")
+  @@index([respondent_id, feedback360_status], map: "idx_respondent_feedback360_status")
+}
+
+model feedback360_reviewers_relations {
+  id             Int         @id @default(autoincrement())
+  feedback360_id Int
+  user_id        Int
+  created_at     DateTime    @db.DateTime(0)
+  feedback360    feedback360 @relation(fields: [feedback360_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_reviewers_relations_ibfk_1")
+  users          users       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_reviewers_relations_ibfk_2")
+
+  @@unique([feedback360_id, user_id], map: "unique_feedback_reviewer")
+  @@index([feedback360_id], map: "idx_feedback360")
+  @@index([user_id], map: "idx_user")
+}
+
+model positions {
+  id                            Int                             @id @default(autoincrement())
+  title                         String                          @db.VarChar(255)
+  description                   String?                         @db.Text
+  created_at                    DateTime                        @db.DateTime(0)
+  updated_at                    DateTime?                       @db.DateTime(0)
+  feedback360                   feedback360[]
+  questions_positions_relations questions_positions_relations[]
+  users                         users[]
+}
+
+model questions {
+  id                              Int                               @id @default(autoincrement())
+  title                           String                            @db.VarChar(1024)
+  answer_type                     questions_answer_type
+  competence_id                   Int
+  is_for_selfassessment           Boolean?                          @default(false)
+  question_status                 questions_question_status         @default(active)
+  created_at                      DateTime                          @db.DateTime(0)
+  updated_at                      DateTime?                         @db.DateTime(0)
+  feedback360_answers             feedback360_answers[]
+  feedback360_questions_relations feedback360_questions_relations[]
+  competences                     competences                       @relation(fields: [competence_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "questions_ibfk_1")
+  questions_positions_relations   questions_positions_relations[]
+
+  @@index([competence_id], map: "idx_competence")
+}
+
+model questions_positions_relations {
+  id          Int       @id @default(autoincrement())
+  question_id Int
+  position_id Int
+  created_at  DateTime  @db.DateTime(0)
+  questions   questions @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "questions_positions_relations_ibfk_1")
+  positions   positions @relation(fields: [position_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "questions_positions_relations_ibfk_2")
+
+  @@unique([question_id, position_id], map: "unique_relation")
+  @@index([position_id], map: "position_id")
+}
+
+model reports_analytics {
+  id                         Int                           @id @default(autoincrement())
+  report_id                  Int
+  entity_type                reports_analytics_entity_type
+  entity_id                  Int?
+  entity_title               String                        @db.VarChar(1024)
+  average_by_self_assessment Float?
+  average_by_team            Float?
+  average_by_other           Float?
+  delta_by_self_assessment   Float?
+  delta_by_team              Float?
+  delta_by_other             Float?
+  created_at                 DateTime                      @db.DateTime(0)
+  feedback360_reports        feedback360_reports           @relation(fields: [report_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reports_analytics_ibfk_1")
+
+  @@unique([report_id, entity_type, entity_id], map: "unique_report_entity")
+  @@index([report_id], map: "idx_report")
+}
+
+model reports_comments {
+  id                  Int                                  @id @default(autoincrement())
+  report_id           Int
+  comment             String?                              @db.Text
+  comment_sentiment   reports_comments_comment_sentiment   @default(positive)
+  number_of_mentions  Int?
+  respondent_category respondent_category
+  feedback360_reports feedback360_reports                  @relation(fields: [report_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reports_comments_ibfk_1")
+
+  @@index([report_id], map: "idx_report")
+}
+
+model teams {
+  id                         Int       @id @default(autoincrement())
+  title                      String    @db.VarChar(255)
+  description                String?   @db.Text
+  head_id                    Int
+  created_at                 DateTime  @db.DateTime(0)
+  updated_at                 DateTime? @db.DateTime(0)
+  users_teams_head_idTousers users     @relation("teams_head_idTousers", fields: [head_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "teams_ibfk_1")
+  users_users_team_idToteams users[]   @relation("users_team_idToteams")
+
+  @@index([head_id], map: "idx_head")
+}
+
+model users {
+  id                                      Int                                 @id @default(autoincrement())
+  first_name                              String                              @db.VarChar(128)
+  second_name                             String?                             @db.VarChar(128)
+  last_name                               String                              @db.VarChar(128)
+  full_name                               String?                             @db.VarChar(255)
+  email                                   String                              @unique(map: "email") @db.VarChar(64)
+  password_hash                           String                              @db.VarChar(300)
+  status                                  users_status                        @default(active)
+  position_id                             Int
+  team_id                                 Int
+  head_id                                 Int
+  created_at                              DateTime                            @db.DateTime(0)
+  updated_at                              DateTime?                           @db.DateTime(0)
+  clusters_users_relations                clusters_users_relations[]
+  feedback360_feedback360_ratee_idTousers feedback360[]                       @relation("feedback360_ratee_idTousers")
+  feedback360_feedback360_hr_idTousers    feedback360[]                       @relation("feedback360_hr_idTousers")
+  feedback360_cycles                      feedback360_cycles[]
+  feedback360_respondents_relations       feedback360_respondents_relations[]
+  feedback360_reviewers_relations         feedback360_reviewers_relations[]
+  teams_teams_head_idTousers              teams[]                             @relation("teams_head_idTousers")
+  users                                   users                               @relation("usersTousers", fields: [head_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_1")
+  other_users                             users[]                             @relation("usersTousers")
+  teams_users_team_idToteams              teams                               @relation("users_team_idToteams", fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_2")
+  positions                               positions                           @relation(fields: [position_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_3")
+
+  @@index([head_id], map: "idx_head")
+  @@index([position_id], map: "idx_position")
+  @@index([team_id], map: "idx_team")
+  @@index([full_name], map: "idx_title")
+}
+
+enum questions_answer_type {
+  numerical_scale
+  text_field
+}
+
+enum reports_analytics_entity_type {
+  question
+  competence
+}
+
+enum respondent_category {
+  self_assessment
+  team
+  other
+}
+
+enum reports_comments_comment_sentiment {
+  negative
+  positive
+}
+
+enum feedback360_cycles_stage {
+  canceled
+  new
+  active
+  finished
+  archive
+}
+
+enum feedback360_respondents_relations_feedback360_status {
+  pending
+  inprogress
+  completed
+  canceled
+}
+
+enum questions_question_status {
+  archive
+  active
+}
+
+enum feedback360_stage {
+  canceled
+  verification_by_hr
+  verification_by_user
+  rejected
+  self_assessment
+  waiting_to_start
+  in_progress
+  research
+  finished
+}
+
+enum users_status {
+  inactive
+  active
 }
