@@ -5,10 +5,10 @@ services:
     image: mysql:8.0
     container_name: intra
     environment:
-      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD:root}
-      MYSQL_DATABASE: ${DATABASE_NAME:intra}
+      MYSQL_ROOT_PASSWORD: "${DATABASE_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${DATABASE_NAME}"
     ports:
-      - "${DATABASE_PORT:3307}:3306"
+      - "${DATABASE_PORT}:3306"
     networks:
       - mynetwork
 
