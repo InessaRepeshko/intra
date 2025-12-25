@@ -6,7 +6,7 @@ export class TeamDomain {
   constructor(
     public readonly title: string,
     public readonly description: string | null,
-    public readonly headId: number,
+    public readonly headId: number | null,
   ) {}
 }
 

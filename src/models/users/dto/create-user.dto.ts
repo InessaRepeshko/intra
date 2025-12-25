@@ -2,7 +2,7 @@ import { IsEnglishName } from '../../../common/validators/name.validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail } from '../../../common/validators/email.validator';
 import { UserConstants } from 'src/common/validators/constants';
-import { IsNotEmpty, IsPositive, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsPositive, IsString, Length } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -21,13 +21,13 @@ export class CreateUserDto {
     required: false,
     description: 'The second name of the user',
     example: 'Joel',
-    nullable: false,
+    nullable: true,
     type: 'string',
     minLength: UserConstants.NAME_MIN_LENGTH,
     maxLength: UserConstants.NAME_MAX_LENGTH,
   })
   @IsEnglishName(true, true)
-  secondName: string;
+  secondName?: string | null;
 
   @ApiProperty({
     required: true,
@@ -102,12 +102,13 @@ export class CreateUserDto {
   teamId: number;
 
   @ApiProperty({
-    required: true,
+    required: false,
     description: 'The manager ID of the user',
     example: 1,
-    nullable: false,
+    nullable: true,
     type: 'number',
   })
+  @IsOptional()
   @IsPositive()
-  managerId: number;
+  managerId?: number | null;
 }

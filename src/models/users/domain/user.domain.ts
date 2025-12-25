@@ -11,7 +11,7 @@ export class UserDomain {
     public readonly passwordHash: string,
     public readonly positionId: number,
     public readonly teamId: number,
-    public readonly managerId: number,
+    public readonly managerId: number | null,
   ) {}
 }
 

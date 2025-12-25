@@ -20,9 +20,9 @@ export class Team implements PrismaTeam {
   @ExposeBasic()
   description: string | null;
 
-  @ApiProperty({ description: 'The head user ID of the team', example: 1 })
+  @ApiProperty({ description: 'The head user ID of the team', example: 1, required: false, nullable: true })
   @ExposeBasic()
-  headId: number;
+  headId: number | null;
 
   @ApiProperty({ description: 'The created at date of the team', example: '2021-01-01' })
   @ExposeSystemic()

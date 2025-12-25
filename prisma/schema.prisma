@@ -308,11 +308,11 @@ model Team {
   id          Int      @id @default(autoincrement())
   title       String   @db.VarChar(255)
   description String?  @db.Text
-  headId      Int      @map("head_id")
+  headId      Int?     @map("head_id")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  head    User   @relation("teams_head_idTousers", fields: [headId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "teams_ibfk_1")
+  head    User?  @relation("teams_head_idTousers", fields: [headId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "teams_ibfk_1")
   members User[] @relation("users_team_idToteams")
 
   @@index([headId], map: "idx_head")
@@ -330,7 +330,7 @@ model User {
   status       users_status @default(ACTIVE)
   positionId   Int          @map("position_id")
   teamId       Int          @map("team_id")
-  managerId    Int          @map("head_id")
+  managerId    Int?         @map("head_id")
   createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
@@ -341,7 +341,7 @@ model User {
   feedback360RespondentRelations Feedback360RespondentRelation[]
   feedback360ReviewerRelations   Feedback360ReviewerRelation[]
   teamsLed                       Team[]                          @relation("teams_head_idTousers")
-  manager                        User                            @relation("usersTousers", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_1")
+  manager                        User?                           @relation("usersTousers", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_1")
   subordinates                   User[]                          @relation("usersTousers")
   team                           Team                            @relation("users_team_idToteams", fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_2")
   position                       Position                        @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_3")

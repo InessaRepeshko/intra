@@ -17,7 +17,7 @@ export class UserMapper {
       passwordHash,
       dto.positionId,
       dto.teamId,
-      dto.managerId,
+      dto.managerId ?? null,
     );
   }
 
@@ -28,7 +28,7 @@ export class UserMapper {
       lastName: dto.lastName,
       positionId: dto.positionId,
       teamId: dto.teamId,
-      managerId: dto.managerId,
+      managerId: dto.managerId ?? undefined,
     };
   }
 

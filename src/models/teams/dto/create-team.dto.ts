@@ -28,12 +28,13 @@ export class CreateTeamDto {
   description?: string | null;
 
   @ApiProperty({
-    required: true,
+    required: false,
     description: 'The head user ID of the team',
     example: 1,
-    nullable: false,
+    nullable: true,
     type: 'number',
   })
+  @IsOptional()
   @IsPositive()
-  headId: number;
+  headId?: number | null;
 }

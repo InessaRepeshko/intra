@@ -5,14 +5,14 @@ import { TeamDomain } from './team.domain';
 
 export class TeamMapper {
   static fromCreateDto(dto: CreateTeamDto): TeamDomain {
-    return new TeamDomain(dto.title, dto.description ?? null, dto.headId);
+    return new TeamDomain(dto.title, dto.description ?? null, dto.headId ?? null);
   }
 
   static fromUpdateDto(dto: UpdateTeamDto): Partial<TeamDomain> {
     return {
       title: dto.title,
       description: dto.description ?? undefined,
-      headId: dto.headId,
+      headId: dto.headId ?? undefined,
     };
   }
 

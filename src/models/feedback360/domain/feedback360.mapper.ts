@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { feedback360_stage, Prisma } from '@prisma/client';
 import { CreateFeedback360Dto } from '../dto/create-feedback360.dto';
 import { UpdateFeedback360Dto } from '../dto/update-feedback360.dto';
 import { Feedback360Domain } from './feedback360.domain';
@@ -12,7 +12,7 @@ export class Feedback360Mapper {
       dto.hrId,
       dto.hrNote ?? null,
       dto.cycleId ?? null,
-      dto.stage,
+      dto.stage ?? feedback360_stage.VERIFICATION_BY_HR,
       dto.reportId ?? null,
     );
   }

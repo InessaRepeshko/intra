@@ -78,9 +78,11 @@ export class User implements PrismaUser {
     @ApiProperty({
         description: 'The manager ID of the user',
         example: 1,
+        required: false,
+        nullable: true,
     })
     @ExposeBasic()
-    managerId: number;
+    managerId: number | null;
     
     @ApiProperty({
         description: 'The created at date of the user',
