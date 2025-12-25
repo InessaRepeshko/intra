@@ -1,49 +1,49 @@
 import {
   Controller,
-  UseInterceptors,
-  UploadedFile,
-  BadRequestException,
   Post,
   Body,
   Param,
   Patch,
-  UseGuards,
   Get,
-  Query,
-  HttpStatus, NotFoundException,
-  Delete,
-} from '@nestjs/common';import { UsersService } from './users.service';
+  SerializeOptions,
+  HttpStatus,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+} from '@nestjs/common';
+import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
   ApiBody,
-  ApiConsumes,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
   OmitType,
-  ApiQuery,
-  getSchemaPath,
   ApiNotFoundResponse,
-  ApiBadRequestResponse,
   ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
   ApiForbiddenResponse,
-  ApiInternalServerErrorResponse,
-  ApiConflictResponse,
-  ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
+import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 
 @Controller('users')
 @ApiTags('Users')
+@UseInterceptors(ClassSerializerInterceptor)
+@SerializeOptions({ type: User, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @SerializeOptions({ type: User, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
   @ApiOperation({ summary: 'Create a new user' })
   @ApiBody({ type: CreateUserDto })
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'The user has been successfully created.', type: User })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'The user has been successfully created.',
+    type: () => OmitType(User, ['passwordHash']),
+  })
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -74,6 +74,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @SerializeOptions({ type: User, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
   @ApiOperation({ summary: 'Update a user by ID' })
   @ApiParam({ required: true, name: 'id', type: 'number', description: 'The ID of the user', example: 1 })
   @ApiBody({ required: true, type: UpdateUserDto, description: 'The user data to update' })

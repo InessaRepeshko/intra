@@ -31,5 +31,3 @@ export class UsersRepository {
     return this.db.user.delete({ where: { id } });
   }
 }
-
-

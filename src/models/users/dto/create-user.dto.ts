@@ -1,12 +1,9 @@
-import { Prisma, users_status } from '@prisma/client';
 import { IsEnglishName } from '../../../common/validators/name.validator';
-import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail } from '../../../common/validators/email.validator';
 import { UserNameConstants } from 'src/common/validators/constants';
-import { IsNumber } from 'class-validator';
+import { IsPositive } from 'class-validator';
 
-// Мінімальний DTO під Prisma-модель User.
-// Важливо: тут "Unchecked" варіант, щоб можна було передавати `positionId/teamId/managerId` як числа.
 export class CreateUserDto {
   @ApiProperty({
     required: true,
@@ -73,7 +70,7 @@ export class CreateUserDto {
     nullable: false,
     type: 'number',
   })
-  @IsNumber()
+  @IsPositive()
   positionId: number;
 
   @ApiProperty({
@@ -83,7 +80,7 @@ export class CreateUserDto {
     nullable: false,
     type: 'number',
   })
-  @IsNumber()
+  @IsPositive()
   teamId: number;
 
   @ApiProperty({
@@ -93,6 +90,6 @@ export class CreateUserDto {
     nullable: false,
     type: 'number',
   })
-  @IsNumber()
+  @IsPositive()
   managerId: number;
 }

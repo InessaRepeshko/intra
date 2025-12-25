@@ -1,102 +1,98 @@
 import { User as PrismaUser, users_status } from "@prisma/client";
-import { Expose } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
-
-export const SERIALIZATION_GROUPS = {
-    BASIC: ['basic'],
-    CONFIDENTIAL: ['basic', 'confidential'],
-    PRIVATE: ['basic', 'confidential', 'private'],
-};
+import { Exclude } from 'class-transformer';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { ExposeBasic, ExposeSystemic } from 'src/common/serialisation/public.serialisation.decorator';
 
 export class User implements PrismaUser {
     @ApiProperty({
         description: 'The ID of the user',
         example: 1,
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.BASIC })
+    @ExposeBasic()
     id: number;
 
     @ApiProperty({
         description: 'The first name of the user',
         example: 'John',
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.BASIC })
+    @ExposeBasic()
     firstName: string;
     
     @ApiProperty({
         description: 'The second name of the user',
         example: 'Doe',
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.BASIC })
+    @ExposeBasic()
     secondName: string | null;
     
     @ApiProperty({
         description: 'The last name of the user',
         example: 'Smith',
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.BASIC })
+    @ExposeBasic()
     lastName: string;
     
     @ApiProperty({
         description: 'The full name of the user',
         example: 'John Doe Smith',
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.BASIC })
+    @ExposeBasic()
     fullName: string | null;
     
     @ApiProperty({
         description: 'The email of the user',
         example: 'john.doe@example.com',
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.BASIC })
+    @ExposeBasic()
     email: string;
     
     @ApiProperty({
         description: 'The password hash of the user',
         example: '1234567890',
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.CONFIDENTIAL })
+    @ApiHideProperty()
+    @Exclude()
     passwordHash: string;
     
     @ApiProperty({
         description: 'The status of the user',
         example: 'active',
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.CONFIDENTIAL })
+    @ExposeSystemic()
     status: users_status;
     
     @ApiProperty({
         description: 'The position ID of the user',
         example: 1,
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.CONFIDENTIAL })
+    @ExposeBasic()
     positionId: number;
     
     @ApiProperty({
         description: 'The team ID of the user',
         example: 1,
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.BASIC })
+    @ExposeBasic()
     teamId: number;
     
     @ApiProperty({
         description: 'The manager ID of the user',
         example: 1,
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.CONFIDENTIAL })
+    @ExposeBasic()
     managerId: number;
     
     @ApiProperty({
         description: 'The created at date of the user',
         example: '2021-01-01',
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.CONFIDENTIAL })
+    @ExposeSystemic()
     createdAt: Date;
     
     @ApiProperty({
         description: 'The updated at date of the user',
         example: '2021-01-01',
     })
-    @Expose({ groups: SERIALIZATION_GROUPS.CONFIDENTIAL })
+    @ExposeSystemic()
     updatedAt: Date;
-}   
+}
