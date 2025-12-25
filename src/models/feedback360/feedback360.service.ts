@@ -14,7 +14,9 @@ export class Feedback360Service {
   }
 
   async findAll(): Promise<Feedback360[]> {
-    return this.repo.findAll();
+    const feedback360 = await this.repo.findAll();
+    if (!feedback360 || feedback360.length === 0) throw new NotFoundException('Feedback360 not found');
+    return feedback360;
   }
 
   async findOne(id: number): Promise<Feedback360> {

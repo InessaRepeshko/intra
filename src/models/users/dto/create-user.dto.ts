@@ -1,8 +1,8 @@
 import { IsEnglishName } from '../../../common/validators/name.validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail } from '../../../common/validators/email.validator';
-import { UserNameConstants } from 'src/common/validators/constants';
-import { IsPositive } from 'class-validator';
+import { UserConstants } from 'src/common/validators/constants';
+import { IsNotEmpty, IsPositive, IsString, Length } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -11,8 +11,8 @@ export class CreateUserDto {
     example: 'John',
     nullable: false,
     type: 'string',
-    minLength: UserNameConstants.MIDDLE_LENGTH,
-    maxLength: UserNameConstants.MAX_LENGTH,
+    minLength: UserConstants.NAME_MIN_LENGTH,
+    maxLength: UserConstants.NAME_MAX_LENGTH,
   })
   @IsEnglishName(false, false)
   firstName: string;
@@ -23,8 +23,8 @@ export class CreateUserDto {
     example: 'Joel',
     nullable: false,
     type: 'string',
-    minLength: UserNameConstants.MIDDLE_LENGTH,
-    maxLength: UserNameConstants.MAX_LENGTH,
+    minLength: UserConstants.NAME_MIN_LENGTH,
+    maxLength: UserConstants.NAME_MAX_LENGTH,
   })
   @IsEnglishName(true, true)
   secondName: string;
@@ -35,8 +35,8 @@ export class CreateUserDto {
     example: 'Smith',
     nullable: false,
     type: 'string',
-    minLength: UserNameConstants.MIDDLE_LENGTH,
-    maxLength: UserNameConstants.MAX_LENGTH,
+    minLength: UserConstants.NAME_MIN_LENGTH,
+    maxLength: UserConstants.NAME_MAX_LENGTH,
   })
   @IsEnglishName(false, false)
   lastName: string;
@@ -47,8 +47,8 @@ export class CreateUserDto {
   //   example: 'John Joel Smith',
   //   nullable: true,
   //   type: 'string',
-  //   minLength: UserNameConstants.MIDDLE_LENGTH * 3 + 2, // 3 names * 3 letters + 2 spaces
-  //   maxLength: UserNameConstants.MAX_LENGTH,
+  //   minLength: UserConstants.FULL_NAME_MIN_LENGTH,
+  //   maxLength: UserConstants.FULL_NAME_MAX_LENGTH,
   // })
   // @IsEnglishName(true, true)
   // fullName?: string;
@@ -59,7 +59,11 @@ export class CreateUserDto {
     example: 'john.doe@example.com',
     nullable: false,
     type: 'string',
+    maxLength: UserConstants.EMAIL_MAX_LENGTH,
   })
+  @IsString()
+  @Length(UserConstants.EMAIL_MIN_LENGTH, UserConstants.EMAIL_MAX_LENGTH)
+  @IsNotEmpty()
   @IsEmail(false)
   email: string;
   

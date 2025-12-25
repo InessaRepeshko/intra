@@ -1,12 +1,12 @@
 import { applyDecorators } from '@nestjs/common';
-import { IsOptional, IsString, Length, Matches, ValidateIf } from 'class-validator';
-import { UserNameConstants } from './constants';
+import { IsNotEmpty, IsOptional, IsString, Length, Matches, ValidateIf } from 'class-validator';
+import { UserConstants } from './constants';
 
 export function IsName(
     isOptional: boolean,
     allowNull: boolean = false,
-    minLength: number = UserNameConstants.MIN_LENGTH,
-    maxLength: number = UserNameConstants.MAX_LENGTH,
+    minLength: number = UserConstants.NAME_MIN_LENGTH,
+    maxLength: number = UserConstants.NAME_MAX_LENGTH,
 ) {
     const baseDecorators = [
         IsString(),
@@ -27,7 +27,7 @@ export function IsName(
 }
 
 export function IsEnglishName(isOptional: boolean, allowNull: boolean = false) {
-    const baseDecorators = [Matches(UserNameConstants.PATTERN), Length(UserNameConstants.MIDDLE_LENGTH, UserNameConstants.MAX_LENGTH)];
+    const baseDecorators = [Matches(UserConstants.PATTERN), Length(UserConstants.NAME_MIN_LENGTH, UserConstants.NAME_MAX_LENGTH), IsNotEmpty(), IsString()];
 
     if (allowNull) {
         return applyDecorators(
@@ -45,11 +45,11 @@ export function IsEnglishName(isOptional: boolean, allowNull: boolean = false) {
 export function IsEnglishNameWithNumbers(
     isOptional: boolean,
     allowNull: boolean = false,
-    minLength: number = UserNameConstants.MIDDLE_LENGTH,
-    maxLength: number = UserNameConstants.MAX_LENGTH
+    minLength: number = UserConstants.NAME_MIN_LENGTH,
+    maxLength: number = UserConstants.NAME_MAX_LENGTH,
 ) {
     const baseDecorators = [
-        Matches(UserNameConstants.PATTERN_WITH_NUMBERS, {
+        Matches(UserConstants.PATTERN_WITH_NUMBERS, {
             message: 'Value can only contain English letters, numbers, and hyphens',
         }),
         Length(minLength, maxLength)
