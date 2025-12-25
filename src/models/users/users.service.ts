@@ -33,12 +33,17 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    await this.findOne(id);
+    const existing = await this.findOne(id);
     const patch = UserMapper.fromUpdateDto(updateUserDto);
-    const nextFullName =
-      (patch.firstName ?? patch.secondName ?? patch.lastName) !== undefined
-        ? [patch.firstName, patch.secondName, patch.lastName].filter(Boolean).join(' ') || null
-        : undefined;
+    const shouldRecomputeFullName =
+      patch.firstName !== undefined || patch.secondName !== undefined || patch.lastName !== undefined;
+
+    const nextFirstName = patch.firstName !== undefined ? patch.firstName : existing.firstName;
+    const nextSecondName = patch.secondName !== undefined ? patch.secondName : existing.secondName;
+    const nextLastName = patch.lastName !== undefined ? patch.lastName : existing.lastName;
+    const nextFullName = shouldRecomputeFullName
+      ? [nextFirstName, nextSecondName, nextLastName].filter(Boolean).join(' ') || null
+      : undefined;
 
     return await this.usersRepo.updateById(
       id,

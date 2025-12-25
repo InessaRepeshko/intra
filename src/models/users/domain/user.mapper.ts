@@ -24,11 +24,11 @@ export class UserMapper {
   static fromUpdateDto(dto: UpdateUserDto): Partial<UserDomain> {
     return {
       firstName: dto.firstName,
-      secondName: dto.secondName ?? undefined,
+      secondName: dto.secondName,
       lastName: dto.lastName,
       positionId: dto.positionId,
       teamId: dto.teamId,
-      managerId: dto.managerId ?? undefined,
+      managerId: dto.managerId,
     };
   }
 
@@ -43,7 +43,6 @@ export class UserMapper {
       positionId: domain.positionId,
       teamId: domain.teamId,
       managerId: domain.managerId,
-      // status/createdAt/updatedAt — з дефолтів Prisma
     };
   }
 

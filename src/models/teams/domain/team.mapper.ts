@@ -11,8 +11,8 @@ export class TeamMapper {
   static fromUpdateDto(dto: UpdateTeamDto): Partial<TeamDomain> {
     return {
       title: dto.title,
-      description: dto.description ?? undefined,
-      headId: dto.headId ?? undefined,
+      description: dto.description,
+      headId: dto.headId,
     };
   }
 

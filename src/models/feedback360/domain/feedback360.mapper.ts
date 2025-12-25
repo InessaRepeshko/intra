@@ -19,8 +19,8 @@ export class Feedback360Mapper {
 
   static fromUpdateDto(dto: UpdateFeedback360Dto): Partial<Feedback360Domain> {
     return {
-      rateeNote: dto.rateeNote ?? undefined,
-      hrNote: dto.hrNote ?? undefined,
+      rateeNote: dto.rateeNote,
+      hrNote: dto.hrNote,
       stage: dto.stage,
     };
   }

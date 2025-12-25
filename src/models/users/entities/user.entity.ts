@@ -56,7 +56,8 @@ export class User implements PrismaUser {
     
     @ApiProperty({
         description: 'The status of the user',
-        example: 'active',
+        example: users_status.ACTIVE,
+        enum: users_status,
     })
     @ExposeSystemic()
     status: users_status;

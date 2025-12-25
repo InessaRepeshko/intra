@@ -58,7 +58,8 @@ export class Feedback360 implements PrismaFeedback360 {
 
     @ApiProperty({
         description: 'The stage of the feedback360',
-        example: 'verification_by_hr',
+        example: feedback360_stage.VERIFICATION_BY_HR,
+        enum: feedback360_stage,
     })
     @ExposeConfidential()
     stage: feedback360_stage;
