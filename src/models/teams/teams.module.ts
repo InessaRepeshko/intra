@@ -4,11 +4,10 @@ import { TeamsController } from './teams.controller';
 import { DatabaseModule } from '../../database/database.module';
 import { TeamsRepository } from './teams.repository';
 import { UsersModule } from '../users/users.module';
-import { UsersService } from '../users/users.service';
 
 @Module({
   imports: [DatabaseModule, UsersModule],
   controllers: [TeamsController],
-  providers: [TeamsService, TeamsRepository, UsersService],
+  providers: [TeamsService, TeamsRepository],
 })
 export class TeamsModule {}

@@ -5,6 +5,7 @@ import {
   Param,
   Patch,
   Get,
+  Query,
   SerializeOptions,
   HttpStatus,
   UseInterceptors,
@@ -19,6 +20,7 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   OmitType,
@@ -28,6 +30,7 @@ import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.ser
 import {
   ApiCreateAndUpdateErrorResponses,
   ApiDeletionErrorResponses,
+  ApiListReadErrorResponses,
   ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
 
@@ -60,9 +63,28 @@ export class UsersController {
     isArray: true, 
     description: 'The users have been successfully retrieved.' 
   })
-  @ApiReadErrorResponses()
+  @ApiListReadErrorResponses()
   async findAll(): Promise<User[]> {
     return await this.usersService.findAll();
+  }
+
+  @Get('by-email')
+  @ApiOperation({ summary: 'Get a user by email' })
+  @ApiQuery({
+    required: true,
+    name: 'email',
+    type: 'string',
+    description: 'The email of the user',
+    example: 'john.doe@example.com',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The user has been successfully retrieved.',
+    type: () => OmitType(User, ['passwordHash', 'createdAt', 'updatedAt']),
+  })
+  @ApiReadErrorResponses()
+  async findByEmail(@Query('email') email: string): Promise<User> {
+    return await this.usersService.findByEmail(email);
   }
 
   @Get(':id')

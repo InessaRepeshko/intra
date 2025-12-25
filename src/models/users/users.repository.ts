@@ -7,8 +7,8 @@ import { Prisma } from '@prisma/client';
 export class UsersRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  async create(data: Partial<User>): Promise<User> {
-    return this.db.user.create({ data: data as Prisma.UserUncheckedCreateInput });
+  async create(data: Prisma.UserUncheckedCreateInput): Promise<User> {
+    return this.db.user.create({ data });
   }
 
   async findAll(): Promise<User[]> {
@@ -23,8 +23,8 @@ export class UsersRepository {
     return this.db.user.findUnique({ where: { email } });
   }
 
-  async updateById(id: number, data: Partial<User>): Promise<User> {
-    return this.db.user.update({ where: { id }, data: data as Prisma.UserUncheckedUpdateInput });
+  async updateById(id: number, data: Prisma.UserUncheckedUpdateInput): Promise<User> {
+    return this.db.user.update({ where: { id }, data });
   }
 
   async deleteById(id: number): Promise<User> {

@@ -66,6 +66,20 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail(false)
   email: string;
+
+  @ApiProperty({
+    required: true,
+    description: 'The password of the user (will be hashed and not returned)',
+    example: 'Str0ngP@ssw0rd!',
+    nullable: false,
+    type: 'string',
+    minLength: 8,
+    maxLength: 128,
+  })
+  @IsString()
+  @Length(8, 128)
+  @IsNotEmpty()
+  password: string;
   
   @ApiProperty({
     required: true,

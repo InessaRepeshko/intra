@@ -7,8 +7,8 @@ import { Team } from './entities/team.entity';
 export class TeamsRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  async create(data: Partial<Team>): Promise<Team> {
-    return this.db.team.create({ data: data as Prisma.TeamCreateInput });
+  async create(data: Prisma.TeamUncheckedCreateInput): Promise<Team> {
+    return this.db.team.create({ data });
   }
 
   async findAll(): Promise<Team[]> {
@@ -27,8 +27,8 @@ export class TeamsRepository {
     return this.db.team.findMany({ where: { members: { some: { id: memberId } } } });
   }
 
-  async updateById(id: number, data: Partial<Team>): Promise<Team> {
-    return this.db.team.update({ where: { id }, data: data as Prisma.TeamUpdateInput });
+  async updateById(id: number, data: Prisma.TeamUncheckedUpdateInput): Promise<Team> {
+    return this.db.team.update({ where: { id }, data });
   }
 
   async deleteById(id: number): Promise<Team> {

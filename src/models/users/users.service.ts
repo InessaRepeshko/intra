@@ -3,19 +3,21 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 import { User } from './entities/user.entity';
+import { PasswordHasher } from './domain/password-hasher';
+import { UserMapper } from './domain/user.mapper';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepo: UsersRepository) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    return await this.usersRepo.create(createUserDto);
+    const passwordHash = PasswordHasher.hash(createUserDto.password);
+    const user = UserMapper.fromCreateDto(createUserDto, passwordHash);
+    return await this.usersRepo.create(UserMapper.toPrismaCreate(user));
   }
 
   async findAll(): Promise<User[]> {
-    const users = await this.usersRepo.findAll();
-    if (!users || users.length === 0) throw new NotFoundException('Users not found');
-    return users;
+    return await this.usersRepo.findAll();
   }
 
   async findOne(id: number): Promise<User> {
@@ -32,9 +34,15 @@ export class UsersService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     await this.findOne(id);
+    const patch = UserMapper.fromUpdateDto(updateUserDto);
+    const nextFullName =
+      (patch.firstName ?? patch.secondName ?? patch.lastName) !== undefined
+        ? [patch.firstName, patch.secondName, patch.lastName].filter(Boolean).join(' ') || null
+        : undefined;
+
     return await this.usersRepo.updateById(
       id,
-      updateUserDto,
+      UserMapper.toPrismaUpdate({ ...patch, ...(nextFullName !== undefined ? { fullName: nextFullName } : {}) }),
     );
   }
 

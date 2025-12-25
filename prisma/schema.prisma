@@ -147,7 +147,7 @@ model Feedback360QuestionRelation {
   id                  Int                   @id @default(autoincrement())
   feedback360Id       Int                   @map("feedback360_id")
   questionId          Int                   @map("question_id")
-  questionTitle       String                @map("question_title") @db.VarChar(1024)
+  questionTitle       String                @map("question_title") @db.Text
   answerType          questions_answer_type @map("answer_type")
   competenceId        Int                   @map("competence_id")
   isForSelfassessment Boolean?              @default(false) @map("is_for_selfassessment")
@@ -238,7 +238,7 @@ model Position {
 
 model Question {
   id                  Int                       @id @default(autoincrement())
-  title               String                    @db.VarChar(1024)
+  title               String                    @db.Text
   answerType          questions_answer_type     @map("answer_type")
   competenceId        Int                       @map("competence_id")
   isForSelfassessment Boolean?                  @default(false) @map("is_for_selfassessment")
@@ -274,7 +274,7 @@ model ReportAnalytics {
   reportId                Int                           @map("report_id")
   entityType              entity_type                   @map("entity_type")
   entityId                Int?                          @map("entity_id")
-  entityTitle             String                        @map("entity_title") @db.VarChar(1024)
+  entityTitle             String                        @map("entity_title") @db.Text
   averageBySelfAssessment Float?                        @map("average_by_self_assessment")
   averageByTeam           Float?                        @map("average_by_team")
   averageByOther          Float?                        @map("average_by_other")

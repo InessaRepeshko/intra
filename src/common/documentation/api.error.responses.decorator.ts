@@ -27,6 +27,12 @@ export function ApiReadErrorResponses() {
   );
 }
 
+export function ApiListReadErrorResponses() {
+  return applyDecorators(
+    ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+  );
+}
+
 export function ApiDeletionErrorResponses() {
   return applyDecorators(
     ApiBadRequestResponse({ description: 'Invalid data' }),

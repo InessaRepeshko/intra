@@ -3,13 +3,15 @@ import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { TeamsRepository } from './teams.repository';
 import { Team } from './entities/team.entity';
+import { TeamMapper } from './domain/team.mapper';
 
 @Injectable()
 export class TeamsService {
   constructor(private readonly teamsRepo: TeamsRepository) {}
 
   async create(dto: CreateTeamDto): Promise<Team> {
-    return await this.teamsRepo.create(dto);
+    const team = TeamMapper.fromCreateDto(dto);
+    return await this.teamsRepo.create(TeamMapper.toPrismaCreate(team));
   }
 
   async findAll(): Promise<Team[]> {
@@ -21,21 +23,19 @@ export class TeamsService {
     if (!team) throw new NotFoundException('Team not found');
     return team;
   }
+  
   async findByHeadId(headId: number): Promise<Team[]> {
-    const teams = await this.teamsRepo.findByHeadId(headId);
-    if (!teams || teams.length === 0) throw new NotFoundException('Teams not found');
-    return teams;
+    return await this.teamsRepo.findByHeadId(headId);
   }
 
   async findByMemberId(memberId: number): Promise<Team[]> {
-    const teams = await this.teamsRepo.findByMemberId(memberId);
-    if (!teams || teams.length === 0) throw new NotFoundException('Teams not found');
-    return teams;
+    return await this.teamsRepo.findByMemberId(memberId);
   }
 
   async update(id: number, dto: UpdateTeamDto): Promise<Team> {
     await this.findOne(id);
-    return await this.teamsRepo.updateById(id, dto);
+    const patch = TeamMapper.fromUpdateDto(dto);
+    return await this.teamsRepo.updateById(id, TeamMapper.toPrismaUpdate(patch));
   }
 
   async remove(id: number): Promise<void> {

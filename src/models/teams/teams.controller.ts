@@ -21,6 +21,7 @@ import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.ser
 import {
   ApiCreateAndUpdateErrorResponses,
   ApiDeletionErrorResponses,
+  ApiListReadErrorResponses,
   ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
 
@@ -53,9 +54,49 @@ export class TeamsController {
     type: () => [OmitType(Team, ['createdAt', 'updatedAt'])],
     isArray: true,
   })
-  @ApiReadErrorResponses()
+  @ApiListReadErrorResponses()
   async findAll(): Promise<Team[]> {
     return await this.teamsService.findAll();
+  }
+
+  @Get('by-head/:headId')
+  @ApiOperation({ summary: 'Get teams by head user ID' })
+  @ApiParam({
+    required: true,
+    name: 'headId',
+    type: 'number',
+    description: 'The head user ID of the team',
+    example: 1,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The teams have been successfully retrieved.',
+    type: () => [OmitType(Team, ['createdAt', 'updatedAt'])],
+    isArray: true,
+  })
+  @ApiListReadErrorResponses()
+  async findByHeadId(@Param('headId') headId: string): Promise<Team[]> {
+    return await this.teamsService.findByHeadId(+headId);
+  }
+
+  @Get('by-member/:memberId')
+  @ApiOperation({ summary: 'Get teams by member user ID' })
+  @ApiParam({
+    required: true,
+    name: 'memberId',
+    type: 'number',
+    description: 'The member user ID',
+    example: 1,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The teams have been successfully retrieved.',
+    type: () => [OmitType(Team, ['createdAt', 'updatedAt'])],
+    isArray: true,
+  })
+  @ApiListReadErrorResponses()
+  async findByMemberId(@Param('memberId') memberId: string): Promise<Team[]> {
+    return await this.teamsService.findByMemberId(+memberId);
   }
 
   @Get(':id')

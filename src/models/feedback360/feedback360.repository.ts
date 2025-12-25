@@ -7,8 +7,8 @@ import { feedback360_stage, Prisma } from '@prisma/client';
 export class Feedback360Repository {
   constructor(private readonly db: DatabaseService) {}
 
-  async create(data: Partial<Feedback360>): Promise<Feedback360> {
-    return this.db.feedback360.create({ data: data as Prisma.Feedback360UncheckedCreateInput });
+  async create(data: Prisma.Feedback360UncheckedCreateInput): Promise<Feedback360> {
+    return this.db.feedback360.create({ data });
   }
 
   async findAll(): Promise<Feedback360[]> {
@@ -43,8 +43,8 @@ export class Feedback360Repository {
     return this.db.feedback360.findMany({ where: { stage } });
   }
 
-  async updateById(id: number, data: Partial<Feedback360>): Promise<Feedback360> {
-    return this.db.feedback360.update({ where: { id }, data: data as Prisma.Feedback360UncheckedUpdateInput });
+  async updateById(id: number, data: Prisma.Feedback360UncheckedUpdateInput): Promise<Feedback360> {
+    return this.db.feedback360.update({ where: { id }, data });
   }
 
   async deleteById(id: number): Promise<Feedback360> {

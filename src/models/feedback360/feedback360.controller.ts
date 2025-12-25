@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Post,
+  ParseEnumPipe,
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
@@ -28,8 +29,10 @@ import {
 import {
   ApiCreateAndUpdateErrorResponses,
   ApiDeletionErrorResponses,
+  ApiListReadErrorResponses,
   ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
+import { feedback360_stage } from '@prisma/client';
 
 @Controller('feedback360')
 @ApiTags('Feedback360')
@@ -60,9 +63,131 @@ export class Feedback360Controller {
     type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
     isArray: true,
   })
-  @ApiReadErrorResponses()
+  @ApiListReadErrorResponses()
   async findAll(): Promise<Feedback360[]> {
     return await this.feedback360Service.findAll();
+  }
+
+  @Get('by-ratee/:rateeId')
+  @ApiOperation({ summary: 'Get feedback360 by ratee ID' })
+  @ApiParam({
+    required: true,
+    name: 'rateeId',
+    type: 'number',
+    description: 'The ID of the ratee',
+    example: 1,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The feedback360 have been successfully retrieved.',
+    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
+    isArray: true,
+  })
+  @ApiListReadErrorResponses()
+  async findByRateeId(@Param('rateeId') rateeId: string): Promise<Feedback360[]> {
+    return await this.feedback360Service.findByRateeId(+rateeId);
+  }
+
+  @Get('by-hr/:hrId')
+  @ApiOperation({ summary: 'Get feedback360 by HR ID' })
+  @ApiParam({
+    required: true,
+    name: 'hrId',
+    type: 'number',
+    description: 'The ID of the HR',
+    example: 1,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The feedback360 have been successfully retrieved.',
+    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
+    isArray: true,
+  })
+  @ApiListReadErrorResponses()
+  async findByHrId(@Param('hrId') hrId: string): Promise<Feedback360[]> {
+    return await this.feedback360Service.findByHrId(+hrId);
+  }
+
+  @Get('by-position/:positionId')
+  @ApiOperation({ summary: 'Get feedback360 by position ID' })
+  @ApiParam({
+    required: true,
+    name: 'positionId',
+    type: 'number',
+    description: 'The ID of the position',
+    example: 1,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The feedback360 have been successfully retrieved.',
+    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
+    isArray: true,
+  })
+  @ApiListReadErrorResponses()
+  async findByPositionId(@Param('positionId') positionId: string): Promise<Feedback360[]> {
+    return await this.feedback360Service.findByPositionId(+positionId);
+  }
+
+  @Get('by-cycle/:cycleId')
+  @ApiOperation({ summary: 'Get feedback360 by cycle ID' })
+  @ApiParam({
+    required: true,
+    name: 'cycleId',
+    type: 'number',
+    description: 'The ID of the cycle',
+    example: 1,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The feedback360 have been successfully retrieved.',
+    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
+    isArray: true,
+  })
+  @ApiListReadErrorResponses()
+  async findByCycleId(@Param('cycleId') cycleId: string): Promise<Feedback360[]> {
+    return await this.feedback360Service.findByCycleId(+cycleId);
+  }
+
+  @Get('by-report/:reportId')
+  @ApiOperation({ summary: 'Get feedback360 by report ID' })
+  @ApiParam({
+    required: true,
+    name: 'reportId',
+    type: 'number',
+    description: 'The ID of the report',
+    example: 1,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The feedback360 have been successfully retrieved.',
+    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
+    isArray: true,
+  })
+  @ApiListReadErrorResponses()
+  async findByReportId(@Param('reportId') reportId: string): Promise<Feedback360[]> {
+    return await this.feedback360Service.findByReportId(+reportId);
+  }
+
+  @Get('by-stage/:stage')
+  @ApiOperation({ summary: 'Get feedback360 by stage' })
+  @ApiParam({
+    required: true,
+    name: 'stage',
+    enum: feedback360_stage,
+    description: 'The stage of the feedback360',
+    example: feedback360_stage.VERIFICATION_BY_HR,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The feedback360 have been successfully retrieved.',
+    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
+    isArray: true,
+  })
+  @ApiListReadErrorResponses()
+  async findByStage(
+    @Param('stage', new ParseEnumPipe(feedback360_stage)) stage: feedback360_stage,
+  ): Promise<Feedback360[]> {
+    return await this.feedback360Service.findByStage(stage);
   }
 
   @Get(':id')
