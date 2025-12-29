@@ -1,10 +1,10 @@
-import { IsEnglishName } from '../../../common/validators/name.validator';
+import { IsEnglishName } from 'src/common/validators/name.validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail } from '../../../common/validators/email.validator';
+import { IsEmail } from 'src/common/validators/email.validator';
 import { UserConstants } from 'src/common/validators/constants';
 import { IsNotEmpty, IsOptional, IsPositive, IsString, Length } from 'class-validator';
 
-export class CreateUserDto {
+export class CreateUserHttpDto {
   @ApiProperty({
     required: true,
     description: 'The first name of the user',
@@ -41,18 +41,6 @@ export class CreateUserDto {
   @IsEnglishName(false, false)
   lastName: string;
 
-  // @ApiProperty({
-  //   required: false,
-  //   description: 'The full name of the user',
-  //   example: 'John Joel Smith',
-  //   nullable: true,
-  //   type: 'string',
-  //   minLength: UserConstants.FULL_NAME_MIN_LENGTH,
-  //   maxLength: UserConstants.FULL_NAME_MAX_LENGTH,
-  // })
-  // @IsEnglishName(true, true)
-  // fullName?: string;
-
   @ApiProperty({
     required: true,
     description: 'The email of the user',
@@ -80,7 +68,7 @@ export class CreateUserDto {
   @Length(8, 128)
   @IsNotEmpty()
   password: string;
-  
+
   @ApiProperty({
     required: true,
     description: 'The position ID of the user',
@@ -112,3 +100,5 @@ export class CreateUserDto {
   @IsPositive()
   managerId?: number | null;
 }
+
+

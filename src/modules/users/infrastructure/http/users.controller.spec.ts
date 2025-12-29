@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './infrastructure/http/users.controller';
-import { UsersService } from './application/users.service';
-import { UsersRepository } from './infrastructure/persistence/prisma/users.repository';
+import { UsersController } from './users.controller';
+import { UsersApplicationService } from '../../application/users.application-service';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -10,16 +9,15 @@ describe('UsersController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
       providers: [
-        UsersService,
         {
-          provide: UsersRepository,
+          provide: UsersApplicationService,
           useValue: {
             create: jest.fn(),
             findAll: jest.fn(),
-            findById: jest.fn(),
+            findOne: jest.fn(),
             findByEmail: jest.fn(),
-            updateById: jest.fn(),
-            deleteById: jest.fn(),
+            update: jest.fn(),
+            remove: jest.fn(),
           },
         },
       ],
@@ -32,3 +30,5 @@ describe('UsersController', () => {
     expect(controller).toBeDefined();
   });
 });
+
+
