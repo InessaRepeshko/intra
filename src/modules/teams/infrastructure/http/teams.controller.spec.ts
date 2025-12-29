@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TeamsController } from './teams.controller';
-import { TeamsService } from './teams.service';
-import { TeamsRepository } from './teams.repository';
+import { TeamsApplicationService } from '../../application/teams.application-service';
 
 describe('TeamsController', () => {
   let controller: TeamsController;
@@ -10,15 +9,16 @@ describe('TeamsController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TeamsController],
       providers: [
-        TeamsService,
         {
-          provide: TeamsRepository,
+          provide: TeamsApplicationService,
           useValue: {
             create: jest.fn(),
             findAll: jest.fn(),
-            findById: jest.fn(),
-            updateById: jest.fn(),
-            deleteById: jest.fn(),
+            findOne: jest.fn(),
+            findByHeadId: jest.fn(),
+            findByMemberId: jest.fn(),
+            update: jest.fn(),
+            remove: jest.fn(),
           },
         },
       ],
@@ -31,3 +31,5 @@ describe('TeamsController', () => {
     expect(controller).toBeDefined();
   });
 });
+
+

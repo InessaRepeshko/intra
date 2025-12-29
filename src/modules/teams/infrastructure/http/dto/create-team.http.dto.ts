@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsPositive, IsString, Length } from 'class-validator';
 import { TeamConstants } from 'src/common/validators/constants';
 
-export class CreateTeamDto {
+export class CreateTeamHttpDto {
   @ApiProperty({
     required: true,
     description: 'The title of the team',
@@ -38,3 +38,5 @@ export class CreateTeamDto {
   @IsPositive()
   headId?: number | null;
 }
+
+
