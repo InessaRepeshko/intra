@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { UserDomain } from './user.domain';
+import { UserDomain } from './model/user.domain';
 
 export class UserMapper {
   static fromCreateDto(dto: CreateUserDto, passwordHash: string): UserDomain {

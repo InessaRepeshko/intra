@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersRepository } from './users.repository';
-import { User } from './entities/user.entity';
-import { PasswordHasher } from './domain/password-hasher';
+import { UsersRepository } from './infrastructure/persistence/prisma/users.repository';
+import { User } from './infrastructure/http/presenters/user.entity';
+import { PasswordHasher } from './domain/services/password-hasher';
 import { UserMapper } from './domain/user.mapper';
 
 @Injectable()

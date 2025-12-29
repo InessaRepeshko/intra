@@ -1,12 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
-import { UsersRepository } from './users.repository';
+import { UsersController } from './infrastructure/http/users.controller';
+import { UsersService } from './application/users.service';
+import { UsersRepository } from './infrastructure/persistence/prisma/users.repository';
 
-describe('UsersService', () => {
-  let service: UsersService;
+describe('UsersController', () => {
+  let controller: UsersController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      controllers: [UsersController],
       providers: [
         UsersService,
         {
@@ -23,10 +25,10 @@ describe('UsersService', () => {
       ],
     }).compile();
 
-    service = module.get<UsersService>(UsersService);
+    controller = module.get<UsersController>(UsersController);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(controller).toBeDefined();
   });
 });

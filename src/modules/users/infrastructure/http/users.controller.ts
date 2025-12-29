@@ -13,9 +13,9 @@ import {
   Delete,
   HttpCode,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from '../../application/users.service';
+import { CreateUserDto } from '../../application/use-cases/create-user.dto';
+import { UpdateUserDto } from '../../application/use-cases/update-user.dto';
 import {
   ApiBody,
   ApiOperation,
@@ -25,7 +25,7 @@ import {
   ApiTags,
   OmitType,
 } from '@nestjs/swagger';
-import { User } from './entities/user.entity';
+import { User } from './presenters/user.entity';
 import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 import {
   ApiCreateAndUpdateErrorResponses,
