@@ -2,7 +2,7 @@ import { IsEnum, IsOptional, IsPositive, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { feedback360_stage } from '@prisma/client';
 
-export class CreateFeedback360Dto {
+export class CreateFeedback360HttpDto {
   @ApiProperty({
     description: 'The ID of the ratee',
     example: 1,
@@ -75,3 +75,5 @@ export class CreateFeedback360Dto {
   @IsPositive()
   reportId?: number | null;
 }
+
+
