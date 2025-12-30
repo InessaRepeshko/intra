@@ -1,12 +1,12 @@
-import { Feedback360 as PrismaFeedback360, feedback360_stage } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import {
     ExposeBasic,
     ExposeConfidential,
     ExposeSystemic,
 } from '../../../../../common/serialisation/public.serialisation.decorator';
+import { Feedback360Stage } from '../../../domain/enums/feedback360-stage.enum';
 
-export class Feedback360 implements PrismaFeedback360 {
+export class Feedback360 {
     @ApiProperty({
         description: 'The ID of the feedback360',
         example: 1,
@@ -58,11 +58,11 @@ export class Feedback360 implements PrismaFeedback360 {
 
     @ApiProperty({
         description: 'The stage of the feedback360',
-        example: feedback360_stage.VERIFICATION_BY_HR,
-        enum: feedback360_stage,
+        example: Feedback360Stage.VERIFICATION_BY_HR,
+        enum: Feedback360Stage,
     })
     @ExposeConfidential()
-    stage: feedback360_stage;
+    stage: Feedback360Stage;
 
     @ApiProperty({
         description: 'The ID of the report',

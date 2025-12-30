@@ -1,9 +1,9 @@
-import { User as PrismaUser, users_status } from "@prisma/client";
 import { Exclude } from 'class-transformer';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { ExposeBasic, ExposeSystemic } from '../../../../../common/serialisation/public.serialisation.decorator';
+import { UsersStatus } from '../../../domain/user/users-status.enum';
 
-export class User implements PrismaUser {
+export class User {
     @ApiProperty({
         description: 'The ID of the user',
         example: 1,
@@ -56,11 +56,11 @@ export class User implements PrismaUser {
     
     @ApiProperty({
         description: 'The status of the user',
-        example: users_status.ACTIVE,
-        enum: users_status,
+        example: UsersStatus.ACTIVE,
+        enum: UsersStatus,
     })
     @ExposeSystemic()
-    status: users_status;
+    status: UsersStatus;
     
     @ApiProperty({
         description: 'The position ID of the user',

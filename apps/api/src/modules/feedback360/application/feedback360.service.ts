@@ -1,62 +1,105 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateFeedback360Dto } from '../presentation/http/dto/create-feedback360.dto';
-import { UpdateFeedback360Dto } from '../presentation/http/dto/update-feedback360.dto';
-import { Feedback360Repository } from '../infrastructure/prisma-repositories/feedback360.repository';
-import { Feedback360 } from '../presentation/http/models/feedback360.entity';
-import { feedback360_stage } from '@prisma/client';
-import { Feedback360Mapper } from '../domain/feedback/feedback360.mapper';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { FEEDBACK360_REPOSITORY } from './repository-ports/feedback360.repository.port';
+import type { Feedback360RepositoryPort } from './repository-ports/feedback360.repository.port';
+import { IDENTITY_READ } from './external-ports/identity-read.port';
+import type { IdentityReadPort } from './external-ports/identity-read.port';
+import { Feedback360Domain } from '../domain/feedback/feedback360.domain';
+import { Feedback360Stage } from '../domain/enums/feedback360-stage.enum';
+
+export type CreateFeedback360Input = {
+  rateeId: number;
+  rateeNote?: string | null;
+  positionId: number;
+  hrId: number;
+  hrNote?: string | null;
+  cycleId?: number | null;
+  stage?: Feedback360Stage;
+  reportId?: number | null;
+};
+
+export type UpdateFeedback360Input = {
+  rateeNote?: string | null;
+  hrNote?: string | null;
+  stage?: Feedback360Stage;
+};
 
 @Injectable()
 export class Feedback360Service {
-  constructor(private readonly repo: Feedback360Repository) { }
+  constructor(
+    @Inject(FEEDBACK360_REPOSITORY) private readonly repo: Feedback360RepositoryPort,
+    @Inject(IDENTITY_READ) private readonly identity: IdentityReadPort,
+  ) { }
 
-  async create(dto: CreateFeedback360Dto): Promise<Feedback360> {
-    const feedback = Feedback360Mapper.fromCreateDto(dto);
-    return await this.repo.create(Feedback360Mapper.toPrismaCreate(feedback));
+  async create(input: CreateFeedback360Input): Promise<Feedback360Domain> {
+    await this.ensureUserExists(input.rateeId);
+    await this.ensureUserExists(input.hrId);
+    await this.ensurePositionExists(input.positionId);
+
+    const feedback = new Feedback360Domain({
+      rateeId: input.rateeId,
+      rateeNote: input.rateeNote ?? null,
+      positionId: input.positionId,
+      hrId: input.hrId,
+      hrNote: input.hrNote ?? null,
+      cycleId: input.cycleId ?? null,
+      stage: input.stage ?? Feedback360Stage.VERIFICATION_BY_HR,
+      reportId: input.reportId ?? null,
+    });
+
+    return this.repo.create(feedback);
   }
 
-  async findAll(): Promise<Feedback360[]> {
-    return await this.repo.findAll();
+  async findAll(): Promise<Feedback360Domain[]> {
+    return this.repo.findAll();
   }
 
-  async findOne(id: number): Promise<Feedback360> {
+  async findOne(id: number): Promise<Feedback360Domain> {
     const found = await this.repo.findById(id);
     if (!found) throw new NotFoundException('Feedback360 not found');
     return found;
   }
 
-  async findByRateeId(rateeId: number): Promise<Feedback360[]> {
-    return await this.repo.findByRateeId(rateeId);
+  async findByRateeId(rateeId: number): Promise<Feedback360Domain[]> {
+    return this.repo.findByRateeId(rateeId);
   }
 
-  async findByHrId(hrId: number): Promise<Feedback360[]> {
-    return await this.repo.findByHrId(hrId);
+  async findByHrId(hrId: number): Promise<Feedback360Domain[]> {
+    return this.repo.findByHrId(hrId);
   }
 
-  async findByPositionId(positionId: number): Promise<Feedback360[]> {
-    return await this.repo.findByPositionId(positionId);
+  async findByPositionId(positionId: number): Promise<Feedback360Domain[]> {
+    return this.repo.findByPositionId(positionId);
   }
 
-  async findByCycleId(cycleId: number): Promise<Feedback360[]> {
-    return await this.repo.findByCycleId(cycleId);
+  async findByCycleId(cycleId: number): Promise<Feedback360Domain[]> {
+    return this.repo.findByCycleId(cycleId);
   }
 
-  async findByReportId(reportId: number): Promise<Feedback360[]> {
-    return await this.repo.findByReportId(reportId);
+  async findByReportId(reportId: number): Promise<Feedback360Domain[]> {
+    return this.repo.findByReportId(reportId);
   }
 
-  async findByStage(stage: feedback360_stage): Promise<Feedback360[]> {
-    return await this.repo.findByStage(stage);
+  async findByStage(stage: Feedback360Stage): Promise<Feedback360Domain[]> {
+    return this.repo.findByStage(stage);
   }
 
-  async update(id: number, dto: UpdateFeedback360Dto): Promise<Feedback360> {
+  async update(id: number, patch: UpdateFeedback360Input): Promise<Feedback360Domain> {
     await this.findOne(id);
-    const patch = Feedback360Mapper.fromUpdateDto(dto);
-    return await this.repo.updateById(id, Feedback360Mapper.toPrismaUpdate(patch));
+    return this.repo.updateById(id, patch);
   }
 
   async remove(id: number): Promise<void> {
     await this.findOne(id);
     await this.repo.deleteById(id);
+  }
+
+  private async ensureUserExists(userId: number): Promise<void> {
+    const ok = await this.identity.userExists(userId);
+    if (!ok) throw new NotFoundException('User not found');
+  }
+
+  private async ensurePositionExists(positionId: number): Promise<void> {
+    const ok = await this.identity.positionExists(positionId);
+    if (!ok) throw new NotFoundException('Position not found');
   }
 }

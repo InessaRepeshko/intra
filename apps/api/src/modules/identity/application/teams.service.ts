@@ -1,45 +1,74 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateTeamDto } from '../presentation/http/dto/create-team.dto';
-import { UpdateTeamDto } from '../presentation/http/dto/update-team.dto';
-import { TeamsRepository } from '../infrastructure/prisma-repositories/teams.repository';
-import { Team } from '../presentation/http/models/team.entity';
-import { TeamMapper } from '../domain/team/team.mapper';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { TEAM_REPOSITORY } from './repository-ports/team.repository.port';
+import type { TeamRepositoryPort } from './repository-ports/team.repository.port';
+import { USER_REPOSITORY } from './repository-ports/user.repository.port';
+import type { UserRepositoryPort } from './repository-ports/user.repository.port';
+import { TeamDomain } from '../domain/team/team.domain';
+
+export type CreateTeamInput = {
+  title: string;
+  description?: string | null;
+  headId?: number | null;
+};
+
+export type UpdateTeamInput = {
+  title?: string;
+  description?: string | null;
+  headId?: number | null;
+};
 
 @Injectable()
 export class TeamsService {
-  constructor(private readonly teamsRepo: TeamsRepository) {}
+  constructor(
+    @Inject(TEAM_REPOSITORY) private readonly teamsRepo: TeamRepositoryPort,
+    @Inject(USER_REPOSITORY) private readonly usersRepo: UserRepositoryPort,
+  ) {}
 
-  async create(dto: CreateTeamDto): Promise<Team> {
-    const team = TeamMapper.fromCreateDto(dto);
-    return await this.teamsRepo.create(TeamMapper.toPrismaCreate(team));
+  async create(input: CreateTeamInput): Promise<TeamDomain> {
+    const headId = input.headId ?? null;
+    if (headId !== null) await this.ensureUserExists(headId);
+
+    const team = new TeamDomain({
+      title: input.title,
+      description: input.description ?? null,
+      headId,
+    });
+
+    return this.teamsRepo.create(team);
   }
 
-  async findAll(): Promise<Team[]> {
-    return await this.teamsRepo.findAll();
+  async findAll(): Promise<TeamDomain[]> {
+    return this.teamsRepo.findAll();
   }
 
-  async findOne(id: number): Promise<Team> {
+  async findOne(id: number): Promise<TeamDomain> {
     const team = await this.teamsRepo.findById(id);
     if (!team) throw new NotFoundException('Team not found');
     return team;
   }
   
-  async findByHeadId(headId: number): Promise<Team[]> {
-    return await this.teamsRepo.findByHeadId(headId);
+  async findByHeadId(headId: number): Promise<TeamDomain[]> {
+    return this.teamsRepo.findByHeadId(headId);
   }
 
-  async findByMemberId(memberId: number): Promise<Team[]> {
-    return await this.teamsRepo.findByMemberId(memberId);
+  async findByMemberId(memberId: number): Promise<TeamDomain[]> {
+    return this.teamsRepo.findByMemberId(memberId);
   }
 
-  async update(id: number, dto: UpdateTeamDto): Promise<Team> {
+  async update(id: number, patch: UpdateTeamInput): Promise<TeamDomain> {
     await this.findOne(id);
-    const patch = TeamMapper.fromUpdateDto(dto);
-    return await this.teamsRepo.updateById(id, TeamMapper.toPrismaUpdate(patch));
+    if (patch.headId !== undefined && patch.headId !== null) await this.ensureUserExists(patch.headId);
+
+    return this.teamsRepo.updateById(id, patch);
   }
 
   async remove(id: number): Promise<void> {
     await this.findOne(id);
     await this.teamsRepo.deleteById(id);
+  }
+
+  private async ensureUserExists(userId: number): Promise<void> {
+    const user = await this.usersRepo.findById(userId);
+    if (!user) throw new NotFoundException(`User not found`);
   }
 }

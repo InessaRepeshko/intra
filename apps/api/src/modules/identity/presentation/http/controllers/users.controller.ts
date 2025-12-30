@@ -13,7 +13,7 @@ import {
   Delete,
   HttpCode,
 } from '@nestjs/common';
-import { UsersService } from '../../../application/users.service';
+import { CreateUserInput, UpdateUserInput, UsersService } from '../../../application/users.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import {
@@ -26,6 +26,7 @@ import {
   OmitType,
 } from '@nestjs/swagger';
 import { User } from '../models/user.entity';
+import { UserHttpMapper } from '../mappers/user.http.mapper';
 import { PUBLIC_SERIALISATION_GROUPS } from '../../../../../common/serialisation/public.serialisation.preset';
 import {
   ApiCreateAndUpdateErrorResponses,
@@ -51,8 +52,19 @@ export class UsersController {
     type: () => OmitType(User, ['passwordHash', 'createdAt', 'updatedAt']),
   })
   @ApiCreateAndUpdateErrorResponses()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() dto: CreateUserDto): Promise<User> {
+    const input: CreateUserInput = {
+      firstName: dto.firstName,
+      secondName: dto.secondName ?? null,
+      lastName: dto.lastName,
+      email: dto.email,
+      password: dto.password,
+      positionId: dto.positionId,
+      teamId: dto.teamId,
+      managerId: dto.managerId ?? null,
+    };
+    const created = await this.usersService.create(input);
+    return UserHttpMapper.fromDomain(created);
   }
 
   @Get()
@@ -65,7 +77,8 @@ export class UsersController {
   })
   @ApiListReadErrorResponses()
   async findAll(): Promise<User[]> {
-    return await this.usersService.findAll();
+    const users = await this.usersService.findAll();
+    return users.map((u) => UserHttpMapper.fromDomain(u));
   }
 
   @Get('by-email')
@@ -84,7 +97,8 @@ export class UsersController {
   })
   @ApiReadErrorResponses()
   async findByEmail(@Query('email') email: string): Promise<User> {
-    return await this.usersService.findByEmail(email);
+    const user = await this.usersService.findByEmail(email);
+    return UserHttpMapper.fromDomain(user);
   }
 
   @Get(':id')
@@ -103,7 +117,8 @@ export class UsersController {
   })
   @ApiReadErrorResponses()
   async findOne(@Param('id') id: string): Promise<User> {
-    return await this.usersService.findOne(+id);
+    const user = await this.usersService.findOne(+id);
+    return UserHttpMapper.fromDomain(user);
   }
 
   @Patch(':id')
@@ -128,7 +143,16 @@ export class UsersController {
   })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateUserDto): Promise<User> {
-    return await this.usersService.update(+id, dto);
+    const input: UpdateUserInput = {
+      firstName: dto.firstName,
+      secondName: dto.secondName,
+      lastName: dto.lastName,
+      positionId: dto.positionId,
+      teamId: dto.teamId,
+      managerId: dto.managerId,
+    };
+    const updated = await this.usersService.update(+id, input);
+    return UserHttpMapper.fromDomain(updated);
   }
 
   @Delete(':id')

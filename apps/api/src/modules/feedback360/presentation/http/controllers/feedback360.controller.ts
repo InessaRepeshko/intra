@@ -13,10 +13,11 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { Feedback360Service } from '../../../application/feedback360.service';
+import { CreateFeedback360Input, Feedback360Service, UpdateFeedback360Input } from '../../../application/feedback360.service';
 import { CreateFeedback360Dto } from '../dto/create-feedback360.dto';
 import { UpdateFeedback360Dto } from '../dto/update-feedback360.dto';
 import { Feedback360 } from '../models/feedback360.entity';
+import { Feedback360HttpMapper } from '../mappers/feedback360.http.mapper';
 import { PUBLIC_SERIALISATION_GROUPS } from '../../../../../common/serialisation/public.serialisation.preset';
 import {
   ApiBody,
@@ -32,7 +33,7 @@ import {
   ApiListReadErrorResponses,
   ApiReadErrorResponses,
 } from '../../../../../common/documentation/api.error.responses.decorator';
-import { feedback360_stage } from '@prisma/client';
+import { Feedback360Stage } from '../../../domain/enums/feedback360-stage.enum';
 
 @Controller('feedback360')
 @ApiTags('Feedback360')
@@ -52,7 +53,18 @@ export class Feedback360Controller {
   })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateFeedback360Dto): Promise<Feedback360> {
-    return await this.feedback360Service.create(dto);
+    const input: CreateFeedback360Input = {
+      rateeId: dto.rateeId,
+      rateeNote: dto.rateeNote ?? null,
+      positionId: dto.positionId,
+      hrId: dto.hrId,
+      hrNote: dto.hrNote ?? null,
+      cycleId: dto.cycleId ?? null,
+      stage: dto.stage,
+      reportId: dto.reportId ?? null,
+    };
+    const created = await this.feedback360Service.create(input);
+    return Feedback360HttpMapper.fromDomain(created);
   }
 
   @Get()
@@ -65,7 +77,8 @@ export class Feedback360Controller {
   })
   @ApiListReadErrorResponses()
   async findAll(): Promise<Feedback360[]> {
-    return await this.feedback360Service.findAll();
+    const rows = await this.feedback360Service.findAll();
+    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
   }
 
   @Get('by-ratee/:rateeId')
@@ -85,7 +98,8 @@ export class Feedback360Controller {
   })
   @ApiListReadErrorResponses()
   async findByRateeId(@Param('rateeId') rateeId: string): Promise<Feedback360[]> {
-    return await this.feedback360Service.findByRateeId(+rateeId);
+    const rows = await this.feedback360Service.findByRateeId(+rateeId);
+    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
   }
 
   @Get('by-hr/:hrId')
@@ -105,7 +119,8 @@ export class Feedback360Controller {
   })
   @ApiListReadErrorResponses()
   async findByHrId(@Param('hrId') hrId: string): Promise<Feedback360[]> {
-    return await this.feedback360Service.findByHrId(+hrId);
+    const rows = await this.feedback360Service.findByHrId(+hrId);
+    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
   }
 
   @Get('by-position/:positionId')
@@ -125,7 +140,8 @@ export class Feedback360Controller {
   })
   @ApiListReadErrorResponses()
   async findByPositionId(@Param('positionId') positionId: string): Promise<Feedback360[]> {
-    return await this.feedback360Service.findByPositionId(+positionId);
+    const rows = await this.feedback360Service.findByPositionId(+positionId);
+    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
   }
 
   @Get('by-cycle/:cycleId')
@@ -145,7 +161,8 @@ export class Feedback360Controller {
   })
   @ApiListReadErrorResponses()
   async findByCycleId(@Param('cycleId') cycleId: string): Promise<Feedback360[]> {
-    return await this.feedback360Service.findByCycleId(+cycleId);
+    const rows = await this.feedback360Service.findByCycleId(+cycleId);
+    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
   }
 
   @Get('by-report/:reportId')
@@ -165,7 +182,8 @@ export class Feedback360Controller {
   })
   @ApiListReadErrorResponses()
   async findByReportId(@Param('reportId') reportId: string): Promise<Feedback360[]> {
-    return await this.feedback360Service.findByReportId(+reportId);
+    const rows = await this.feedback360Service.findByReportId(+reportId);
+    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
   }
 
   @Get('by-stage/:stage')
@@ -173,9 +191,9 @@ export class Feedback360Controller {
   @ApiParam({
     required: true,
     name: 'stage',
-    enum: feedback360_stage,
+    enum: Feedback360Stage,
     description: 'The stage of the feedback360',
-    example: feedback360_stage.VERIFICATION_BY_HR,
+    example: Feedback360Stage.VERIFICATION_BY_HR,
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -185,9 +203,10 @@ export class Feedback360Controller {
   })
   @ApiListReadErrorResponses()
   async findByStage(
-    @Param('stage', new ParseEnumPipe(feedback360_stage)) stage: feedback360_stage,
+    @Param('stage', new ParseEnumPipe(Feedback360Stage)) stage: Feedback360Stage,
   ): Promise<Feedback360[]> {
-    return await this.feedback360Service.findByStage(stage);
+    const rows = await this.feedback360Service.findByStage(stage);
+    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
   }
 
   @Get(':id')
@@ -204,7 +223,8 @@ export class Feedback360Controller {
   })
   @ApiReadErrorResponses()
   async findOne(@Param('id') id: string): Promise<Feedback360> {
-    return await this.feedback360Service.findOne(+id);
+    const row = await this.feedback360Service.findOne(+id);
+    return Feedback360HttpMapper.fromDomain(row);
   }
 
   @Patch(':id')
@@ -229,7 +249,13 @@ export class Feedback360Controller {
   })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateFeedback360Dto): Promise<Feedback360> {
-    return await this.feedback360Service.update(+id, dto);
+    const input: UpdateFeedback360Input = {
+      rateeNote: dto.rateeNote,
+      hrNote: dto.hrNote,
+      stage: dto.stage,
+    };
+    const updated = await this.feedback360Service.update(+id, input);
+    return Feedback360HttpMapper.fromDomain(updated);
   }
 
   @Delete(':id')

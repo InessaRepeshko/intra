@@ -1,58 +1,95 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from '../presentation/http/dto/create-user.dto';
-import { UpdateUserDto } from '../presentation/http/dto/update-user.dto';
-import { UsersRepository } from '../infrastructure/prisma-repositories/users.repository';
-import { User } from '../presentation/http/models/user.entity';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { USER_REPOSITORY } from './repository-ports/user.repository.port';
+import type { UserRepositoryPort } from './repository-ports/user.repository.port';
 import { PasswordHasher } from './security-ports/password-hasher';
-import { UserMapper } from '../domain/user/user.mapper';
+import { UserDomain } from '../domain/user/user.domain';
+import { UsersStatus } from '../domain/user/users-status.enum';
+
+export type CreateUserInput = {
+  firstName: string;
+  secondName?: string | null;
+  lastName: string;
+  email: string;
+  password: string;
+  positionId: number;
+  teamId: number;
+  managerId?: number | null;
+};
+
+export type UpdateUserInput = {
+  firstName?: string;
+  secondName?: string | null;
+  lastName?: string;
+  positionId?: number;
+  teamId?: number;
+  managerId?: number | null;
+};
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepo: UsersRepository) {}
+  constructor(
+    @Inject(USER_REPOSITORY) private readonly usersRepo: UserRepositoryPort,
+  ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const passwordHash = PasswordHasher.hash(createUserDto.password);
-    const user = UserMapper.fromCreateDto(createUserDto, passwordHash);
-    return await this.usersRepo.create(UserMapper.toPrismaCreate(user));
+  async create(input: CreateUserInput): Promise<UserDomain> {
+    const passwordHash = PasswordHasher.hash(input.password);
+    const secondName = input.secondName ?? null;
+    const fullName = this.computeFullName(input.firstName, secondName, input.lastName);
+
+    const user = new UserDomain({
+      firstName: input.firstName,
+      secondName,
+      lastName: input.lastName,
+      fullName,
+      email: input.email,
+      passwordHash,
+      status: UsersStatus.ACTIVE,
+      positionId: input.positionId,
+      teamId: input.teamId,
+      managerId: input.managerId ?? null,
+    });
+
+    return await this.usersRepo.create(user);
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.usersRepo.findAll();
+  async findAll(): Promise<UserDomain[]> {
+    return this.usersRepo.findAll();
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: number): Promise<UserDomain> {
     const user = await this.usersRepo.findById(id);
     if (!user) throw new NotFoundException(`User not found`);
     return user;
   }
 
-  async findByEmail(email: string): Promise<User> {
+  async findByEmail(email: string): Promise<UserDomain> {
     const user = await this.usersRepo.findByEmail(email);
     if (!user) throw new NotFoundException(`User not found`);
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: number, patch: UpdateUserInput): Promise<UserDomain> {
     const existing = await this.findOne(id);
-    const patch = UserMapper.fromUpdateDto(updateUserDto);
     const shouldRecomputeFullName =
       patch.firstName !== undefined || patch.secondName !== undefined || patch.lastName !== undefined;
 
     const nextFirstName = patch.firstName !== undefined ? patch.firstName : existing.firstName;
     const nextSecondName = patch.secondName !== undefined ? patch.secondName : existing.secondName;
     const nextLastName = patch.lastName !== undefined ? patch.lastName : existing.lastName;
-    const nextFullName = shouldRecomputeFullName
-      ? [nextFirstName, nextSecondName, nextLastName].filter(Boolean).join(' ') || null
-      : undefined;
+    const nextFullName = shouldRecomputeFullName ? this.computeFullName(nextFirstName, nextSecondName, nextLastName) : undefined;
 
-    return await this.usersRepo.updateById(
+    return this.usersRepo.updateById(
       id,
-      UserMapper.toPrismaUpdate({ ...patch, ...(nextFullName !== undefined ? { fullName: nextFullName } : {}) }),
+      { ...patch, ...(nextFullName !== undefined ? { fullName: nextFullName } : {}) },
     );
   }
 
   async remove(id: number): Promise<void> {
     await this.findOne(id);
     await this.usersRepo.deleteById(id);
+  }
+
+  private computeFullName(firstName: string, secondName: string | null, lastName: string): string | null {
+    return [firstName, secondName, lastName].filter(Boolean).join(' ') || null;
   }
 }

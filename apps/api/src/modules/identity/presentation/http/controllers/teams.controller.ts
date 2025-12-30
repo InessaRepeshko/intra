@@ -12,11 +12,12 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { TeamsService } from '../../../application/teams.service';
+import { CreateTeamInput, TeamsService, UpdateTeamInput } from '../../../application/teams.service';
 import { CreateTeamDto } from '../dto/create-team.dto';
 import { UpdateTeamDto } from '../dto/update-team.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags, OmitType } from '@nestjs/swagger';
 import { Team } from '../models/team.entity';
+import { TeamHttpMapper } from '../mappers/team.http.mapper';
 import { PUBLIC_SERIALISATION_GROUPS } from '../../../../../common/serialisation/public.serialisation.preset';
 import {
   ApiCreateAndUpdateErrorResponses,
@@ -43,7 +44,13 @@ export class TeamsController {
   })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateTeamDto): Promise<Team> {
-    return await this.teamsService.create(dto);
+    const input: CreateTeamInput = {
+      title: dto.title,
+      description: dto.description ?? null,
+      headId: dto.headId ?? null,
+    };
+    const created = await this.teamsService.create(input);
+    return TeamHttpMapper.fromDomain(created);
   }
 
   @Get()
@@ -56,7 +63,8 @@ export class TeamsController {
   })
   @ApiListReadErrorResponses()
   async findAll(): Promise<Team[]> {
-    return await this.teamsService.findAll();
+    const teams = await this.teamsService.findAll();
+    return teams.map((t) => TeamHttpMapper.fromDomain(t));
   }
 
   @Get('by-head/:headId')
@@ -76,7 +84,8 @@ export class TeamsController {
   })
   @ApiListReadErrorResponses()
   async findByHeadId(@Param('headId') headId: string): Promise<Team[]> {
-    return await this.teamsService.findByHeadId(+headId);
+    const teams = await this.teamsService.findByHeadId(+headId);
+    return teams.map((t) => TeamHttpMapper.fromDomain(t));
   }
 
   @Get('by-member/:memberId')
@@ -96,7 +105,8 @@ export class TeamsController {
   })
   @ApiListReadErrorResponses()
   async findByMemberId(@Param('memberId') memberId: string): Promise<Team[]> {
-    return await this.teamsService.findByMemberId(+memberId);
+    const teams = await this.teamsService.findByMemberId(+memberId);
+    return teams.map((t) => TeamHttpMapper.fromDomain(t));
   }
 
   @Get(':id')
@@ -115,7 +125,8 @@ export class TeamsController {
   })
   @ApiReadErrorResponses()
   async findOne(@Param('id') id: string): Promise<Team> {
-    return await this.teamsService.findOne(+id);
+    const team = await this.teamsService.findOne(+id);
+    return TeamHttpMapper.fromDomain(team);
   }
 
   @Patch(':id')
@@ -139,7 +150,13 @@ export class TeamsController {
   })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateTeamDto): Promise<Team> {
-    return await this.teamsService.update(+id, dto);
+    const input: UpdateTeamInput = {
+      title: dto.title,
+      description: dto.description,
+      headId: dto.headId,
+    };
+    const updated = await this.teamsService.update(+id, input);
+    return TeamHttpMapper.fromDomain(updated);
   }
 
   @Delete(':id')

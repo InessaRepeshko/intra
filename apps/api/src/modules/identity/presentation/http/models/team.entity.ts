@@ -1,8 +1,7 @@
-import { Team as PrismaTeam } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { ExposeBasic, ExposeSystemic } from '../../../../../common/serialisation/public.serialisation.decorator';
 
-export class Team implements PrismaTeam {
+export class Team {
   @ApiProperty({ description: 'The ID of the team', example: 1 })
   @ExposeBasic()
   id: number;

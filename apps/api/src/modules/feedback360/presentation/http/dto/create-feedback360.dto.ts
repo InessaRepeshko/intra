@@ -1,6 +1,6 @@
 import { IsEnum, IsOptional, IsPositive, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { feedback360_stage } from '@prisma/client';
+import { Feedback360Stage } from '../../../domain/enums/feedback360-stage.enum';
 
 export class CreateFeedback360Dto {
   @ApiProperty({
@@ -56,14 +56,14 @@ export class CreateFeedback360Dto {
 
   @ApiProperty({
     description: 'The stage of the feedback360',
-    example: feedback360_stage.VERIFICATION_BY_HR,
-    enum: feedback360_stage,
-    default: feedback360_stage.VERIFICATION_BY_HR,
+    example: Feedback360Stage.VERIFICATION_BY_HR,
+    enum: Feedback360Stage,
+    default: Feedback360Stage.VERIFICATION_BY_HR,
     required: false,
   })
   @IsOptional()
-  @IsEnum(feedback360_stage)
-  stage?: feedback360_stage;
+  @IsEnum(Feedback360Stage)
+  stage?: Feedback360Stage;
 
   @ApiProperty({
     description: 'The ID of the report',
