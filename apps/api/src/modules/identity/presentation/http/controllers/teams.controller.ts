@@ -13,18 +13,18 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { CreateTeamInput, TeamsService, UpdateTeamInput } from '../../../application/teams.service';
-import { CreateTeamDto } from '../dto/create-team.dto';
-import { UpdateTeamDto } from '../dto/update-team.dto';
+import { CreateTeamDto } from '../dto/team/create-team.dto';
+import { UpdateTeamDto } from '../dto/team/update-team.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags, OmitType } from '@nestjs/swagger';
 import { Team } from '../models/team.entity';
 import { TeamHttpMapper } from '../mappers/team.http.mapper';
-import { PUBLIC_SERIALISATION_GROUPS } from '../../../../../common/serialisation/public.serialisation.preset';
+import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 import {
   ApiCreateAndUpdateErrorResponses,
   ApiDeletionErrorResponses,
   ApiListReadErrorResponses,
   ApiReadErrorResponses,
-} from '../../../../../common/documentation/api.error.responses.decorator';
+} from 'src/common/documentation/api.error.responses.decorator';
 
 @Controller('teams')
 @ApiTags('Teams')

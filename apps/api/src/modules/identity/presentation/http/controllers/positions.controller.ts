@@ -13,16 +13,16 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags, OmitType } from '@nestjs/swagger';
-import { PUBLIC_SERIALISATION_GROUPS } from '../../../../../common/serialisation/public.serialisation.preset';
+import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 import {
   ApiCreateAndUpdateErrorResponses,
   ApiDeletionErrorResponses,
   ApiListReadErrorResponses,
   ApiReadErrorResponses,
-} from '../../../../../common/documentation/api.error.responses.decorator';
+} from 'src/common/documentation/api.error.responses.decorator';
 import { CreatePositionInput, PositionsService, UpdatePositionInput } from '../../../application/positions.service';
-import { CreatePositionDto } from '../dto/create-position.dto';
-import { UpdatePositionDto } from '../dto/update-position.dto';
+import { CreatePositionDto } from '../dto/position/create-position.dto';
+import { UpdatePositionDto } from '../dto/position/update-position.dto';
 import { Position } from '../models/position.entity';
 import { PositionHttpMapper } from '../mappers/position.http.mapper';
 

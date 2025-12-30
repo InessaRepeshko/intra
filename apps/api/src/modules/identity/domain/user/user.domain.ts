@@ -1,11 +1,5 @@
 import { UsersStatus } from './users-status.enum';
 
-/**
- * Domain-модель користувача (не Prisma і не HTTP-entity).
- *
- * Примітка: `id/status/createdAt/updatedAt` можуть бути відсутні при створенні,
- * але мають бути присутні при читанні з репозиторію.
- */
 export class UserDomain {
   readonly id?: number;
   readonly firstName: string;

@@ -14,8 +14,8 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { CreateUserInput, UpdateUserInput, UsersService } from '../../../application/users.service';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
+import { CreateUserDto } from '../dto/user/create-user.dto';
+import { UpdateUserDto } from '../dto/user/update-user.dto';
 import {
   ApiBody,
   ApiOperation,
@@ -27,13 +27,13 @@ import {
 } from '@nestjs/swagger';
 import { User } from '../models/user.entity';
 import { UserHttpMapper } from '../mappers/user.http.mapper';
-import { PUBLIC_SERIALISATION_GROUPS } from '../../../../../common/serialisation/public.serialisation.preset';
+import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 import {
   ApiCreateAndUpdateErrorResponses,
   ApiDeletionErrorResponses,
   ApiListReadErrorResponses,
   ApiReadErrorResponses,
-} from '../../../../../common/documentation/api.error.responses.decorator';
+} from 'src/common/documentation/api.error.responses.decorator';
 
 @Controller('users')
 @ApiTags('Users')

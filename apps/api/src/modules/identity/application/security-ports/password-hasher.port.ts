@@ -1,9 +1,5 @@
 import { pbkdf2Sync, randomBytes } from 'crypto';
 
-/**
- * Мінімальний (але коректний) хешер паролів без зовнішніх залежностей.
- * Формат: pbkdf2_sha256$<iterations>$<salt>$<hash>
- */
 export class PasswordHasher {
   private static readonly iterations = 120_000;
   private static readonly keylen = 32;

@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { ExposeBasic, ExposeSystemic } from '../../../../../common/serialisation/public.serialisation.decorator';
+import { ExposeBasic, ExposeSystemic } from 'src/common/serialisation/public.serialisation.decorator';
 import { UsersStatus } from '../../../domain/user/users-status.enum';
 
 export class User {

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsPositive, IsString, Length } from 'class-validator';
-import { TeamConstants } from '../../../../../common/validators/constants';
+import { TeamConstants } from 'src/common/validators/constants';
 
 export class CreateTeamDto {
   @ApiProperty({

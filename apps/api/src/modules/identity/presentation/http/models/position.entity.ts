@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ExposeBasic, ExposeSystemic } from '../../../../../common/serialisation/public.serialisation.decorator';
+import { ExposeBasic, ExposeSystemic } from 'src/common/serialisation/public.serialisation.decorator';
 
 export class Position {
   @ApiProperty({ description: 'The ID of the position', example: 1 })

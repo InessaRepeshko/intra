@@ -1,6 +1,3 @@
-/**
- * Domain-модель команди (не Prisma і не API-Entity).
- */
 export class TeamDomain {
   readonly id?: number;
   readonly title: string;

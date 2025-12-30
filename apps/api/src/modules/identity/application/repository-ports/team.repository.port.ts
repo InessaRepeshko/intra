@@ -1,10 +1,5 @@
 import { TeamDomain } from '../../domain/team/team.domain';
 
-/**
- * Порт репозиторію команд (application -> infrastructure).
- *
- * Без Prisma/NestJS типів.
- */
 export const TEAM_REPOSITORY = Symbol('IDENTITY.TEAM_REPOSITORY');
 
 export interface TeamRepositoryPort {

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
-import { PositionConstants } from '../../../../../common/validators/constants';
+import { PositionConstants } from 'src/common/validators/constants';
 
 export class CreatePositionDto {
   @ApiProperty({

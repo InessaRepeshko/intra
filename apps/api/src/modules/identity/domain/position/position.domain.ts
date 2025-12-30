@@ -1,6 +1,3 @@
-/**
- * Domain-модель посади (Position) (не Prisma і не HTTP-entity).
- */
 export class PositionDomain {
   readonly id?: number;
   readonly title: string;

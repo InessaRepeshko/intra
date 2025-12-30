@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Position as PrismaPosition, Prisma } from '@prisma/client';
-import { PrismaService } from '../../../../prisma/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import type { PositionRepositoryPort } from '../../application/repository-ports/position.repository.port';
 import { PositionDomain } from '../../domain/position/position.domain';
 

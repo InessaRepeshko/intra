@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Team as PrismaTeam } from '@prisma/client';
-import { PrismaService } from '../../../../prisma/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { TeamRepositoryPort } from '../../application/repository-ports/team.repository.port';
 import { TeamDomain } from '../../domain/team/team.domain';
 

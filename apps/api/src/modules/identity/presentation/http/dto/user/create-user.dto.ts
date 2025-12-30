@@ -1,7 +1,7 @@
-import { IsEnglishName } from '../../../../../common/validators/name.validator';
+import { IsEnglishName } from 'src/common/validators/name.validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail } from '../../../../../common/validators/email.validator';
-import { UserConstants } from '../../../../../common/validators/constants';
+import { IsEmail } from 'src/common/validators/email.validator';
+import { UserConstants } from 'src/common/validators/constants';
 import { IsNotEmpty, IsOptional, IsPositive, IsString, Length } from 'class-validator';
 
 export class CreateUserDto {
