@@ -1,0 +1,9 @@
+{
+  "name": "@intra/database",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Shared Prisma schema + migrations for Intra monorepo",
+  "license": "MIT"
+}
+
+

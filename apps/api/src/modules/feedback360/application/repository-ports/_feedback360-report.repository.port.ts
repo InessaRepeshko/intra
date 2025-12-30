@@ -1,0 +1,5 @@
+/**
+ * Призначення: Feedback360 / application — modules/feedback360/application/repository-ports/feedback360-report.repository.port.ts.
+ * З чим пов’язаний: порт (інтерфейс) репозиторію для application layer.
+ * Що має бути: контракт доступу до даних для сутності Feedback360Report (без Prisma/NestJS).
+ */
