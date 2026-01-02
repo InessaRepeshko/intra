@@ -1,0 +1,4 @@
+export const PAGINATION_DEFAULT_TAKE = 20;
+export const PAGINATION_MAX_TAKE = 100;
+
+

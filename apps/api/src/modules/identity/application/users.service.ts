@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { USER_REPOSITORY } from './repository-ports/user.repository.port';
-import type { UserRepositoryPort } from './repository-ports/user.repository.port';
+import type { UserRepositoryPort, UserSearchQuery, UserSearchResult } from './repository-ports/user.repository.port';
 import { PasswordHasher } from './security-ports/password-hasher.port';
 import { UserDomain } from '../domain/user/user.domain';
 import { UsersStatus } from '../domain/user/users-status.enum';
@@ -54,6 +54,10 @@ export class UsersService {
 
   async findAll(): Promise<UserDomain[]> {
     return this.usersRepo.findAll();
+  }
+
+  async search(query?: UserSearchQuery): Promise<UserSearchResult> {
+    return this.usersRepo.search(query);
   }
 
   async findOne(id: number): Promise<UserDomain> {

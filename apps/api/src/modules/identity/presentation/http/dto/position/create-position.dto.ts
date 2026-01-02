@@ -23,10 +23,11 @@ export class CreatePositionDto {
     example: 'Builds and maintains backend services',
     nullable: true,
     type: 'string',
+    minLength: PositionConstants.DESCRIPTION_MIN_LENGTH,
+    maxLength: PositionConstants.DESCRIPTION_MAX_LENGTH,
   })
   @IsOptional()
   @IsString()
+  @Length(PositionConstants.DESCRIPTION_MIN_LENGTH, PositionConstants.DESCRIPTION_MAX_LENGTH)
   description?: string | null;
 }
-
-

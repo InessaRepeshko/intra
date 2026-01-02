@@ -34,6 +34,8 @@ import {
   ApiListReadErrorResponses,
   ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
+import { GetUsersDto } from '../dto/user/get-users.dto';
+import { UsersPageDto } from '../dto/user/users-page.dto';
 
 @Controller('users')
 @ApiTags('Users')
@@ -68,17 +70,25 @@ export class UsersController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ 
-    status: HttpStatus.OK, 
-    type: () => [OmitType(User, ['passwordHash', 'createdAt', 'updatedAt'])], 
-    isArray: true, 
-    description: 'The users have been successfully retrieved.' 
+  @ApiOperation({ summary: 'Get all users with filters and pagination' })
+  @ApiQuery({
+    name: 'query',
+    type: GetUsersDto,
+    required: false,
+    description: 'Query parameters for filtering and pagination for users',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully retrieved users',
+    type: UsersPageDto,
   })
   @ApiListReadErrorResponses()
-  async findAll(): Promise<User[]> {
-    const users = await this.usersService.findAll();
-    return users.map((u) => UserHttpMapper.fromDomain(u));
+  async findAll(
+    @Query() query?: GetUsersDto,
+  ): Promise<UsersPageDto> {
+    const result = await this.usersService.search(query);
+    const items = result.items.map((u) => UserHttpMapper.fromDomain(u));
+    return { items, count: result.count, total: result.total };
   }
 
   @Get('by-email')
