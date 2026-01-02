@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Team as PrismaTeam } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TeamRepositoryPort } from '../../application/repository-ports/team.repository.port';
+import { PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE } from 'src/common/constants/pagination.constants';
+import { TeamRepositoryPort, TeamSearchQuery, TeamSearchResult } from '../../application/repository-ports/team.repository.port';
 import { TeamDomain } from '../../domain/team/team.domain';
 
 @Injectable()
@@ -16,6 +17,39 @@ export class TeamPrismaRepository implements TeamRepositoryPort {
   async findAll(): Promise<TeamDomain[]> {
     const rows = await this.db.team.findMany();
     return rows.map((t) => this.fromPrisma(t));
+  }
+
+  async search(query: TeamSearchQuery = {}): Promise<TeamSearchResult> {
+    const take = Math.min(query.take ?? PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE);
+    const skip = query.skip ?? 0;
+
+    const where: Prisma.TeamWhereInput = {
+      ...(query.headId !== undefined ? { headId: query.headId } : {}),
+      ...(query.title ? { title: { contains: query.title } } : {}),
+      ...(query.description ? { description: { contains: query.description } } : {}),
+      ...(query.memberId !== undefined ? { members: { some: { id: query.memberId } } } : {}),
+      ...(query.search
+        ? {
+            OR: [
+              { title: { contains: query.search } },
+              { description: { contains: query.search } },
+            ],
+          }
+        : {}),
+    };
+
+    const [total, rows] = await Promise.all([
+      this.db.team.count({ where }),
+      this.db.team.findMany({
+        where,
+        skip,
+        take,
+        orderBy: [{ title: 'asc' }, { id: 'asc' }],
+      }),
+    ]);
+
+    const items = rows.map((t) => this.fromPrisma(t));
+    return { items, count: items.length, total };
   }
 
   async findById(id: number): Promise<TeamDomain | null> {

@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
@@ -25,6 +26,9 @@ import {
   ApiListReadErrorResponses,
   ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
+import { ApiQuery } from '@nestjs/swagger';
+import { GetTeamsDto } from '../dto/team/get-teams.dto';
+import { TeamsPageDto } from '../dto/team/teams-page.dto';
 
 @Controller('teams')
 @ApiTags('Teams')
@@ -54,17 +58,23 @@ export class TeamsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all teams' })
+  @ApiOperation({ summary: 'Get all teams with filters and pagination' })
+  @ApiQuery({
+    name: 'query',
+    type: GetTeamsDto,
+    required: false,
+    description: 'Query parameters for filtering and pagination for teams',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The teams have been successfully retrieved.',
-    type: () => [OmitType(Team, ['createdAt', 'updatedAt'])],
-    isArray: true,
+    description: 'Successfully retrieved teams',
+    type: TeamsPageDto,
   })
   @ApiListReadErrorResponses()
-  async findAll(): Promise<Team[]> {
-    const teams = await this.teamsService.findAll();
-    return teams.map((t) => TeamHttpMapper.fromDomain(t));
+  async findAll(@Query() query?: GetTeamsDto): Promise<TeamsPageDto> {
+    const result = await this.teamsService.search(query);
+    const items = result.items.map((t) => TeamHttpMapper.fromDomain(t));
+    return { items, count: result.count, total: result.total };
   }
 
   @Get('by-head/:headId')

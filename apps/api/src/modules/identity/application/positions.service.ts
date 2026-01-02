@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { POSITION_REPOSITORY } from './repository-ports/position.repository.port';
-import type { PositionRepositoryPort } from './repository-ports/position.repository.port';
+import type { PositionRepositoryPort, PositionSearchQuery, PositionSearchResult } from './repository-ports/position.repository.port';
 import { PositionDomain } from '../domain/position/position.domain';
 
 export type CreatePositionInput = {
@@ -29,6 +29,10 @@ export class PositionsService {
 
   async findAll(): Promise<PositionDomain[]> {
     return this.positionsRepo.findAll();
+  }
+
+  async search(query?: PositionSearchQuery): Promise<PositionSearchResult> {
+    return this.positionsRepo.search(query);
   }
 
   async findOne(id: number): Promise<PositionDomain> {

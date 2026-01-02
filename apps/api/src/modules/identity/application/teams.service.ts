@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { TEAM_REPOSITORY } from './repository-ports/team.repository.port';
-import type { TeamRepositoryPort } from './repository-ports/team.repository.port';
+import type { TeamRepositoryPort, TeamSearchQuery, TeamSearchResult } from './repository-ports/team.repository.port';
 import { USER_REPOSITORY } from './repository-ports/user.repository.port';
 import type { UserRepositoryPort } from './repository-ports/user.repository.port';
 import { TeamDomain } from '../domain/team/team.domain';
@@ -39,6 +39,10 @@ export class TeamsService {
 
   async findAll(): Promise<TeamDomain[]> {
     return this.teamsRepo.findAll();
+  }
+
+  async search(query?: TeamSearchQuery): Promise<TeamSearchResult> {
+    return this.teamsRepo.search(query);
   }
 
   async findOne(id: number): Promise<TeamDomain> {

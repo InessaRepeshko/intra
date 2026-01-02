@@ -9,10 +9,11 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags, OmitType } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags, OmitType } from '@nestjs/swagger';
 import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 import {
   ApiCreateAndUpdateErrorResponses,
@@ -22,6 +23,8 @@ import {
 } from 'src/common/documentation/api.error.responses.decorator';
 import { CreatePositionInput, PositionsService, UpdatePositionInput } from '../../../application/positions.service';
 import { CreatePositionDto } from '../dto/position/create-position.dto';
+import { GetPositionsDto } from '../dto/position/get-positions.dto';
+import { PositionsPageDto } from '../dto/position/positions-page.dto';
 import { UpdatePositionDto } from '../dto/position/update-position.dto';
 import { Position } from '../models/position.entity';
 import { PositionHttpMapper } from '../mappers/position.http.mapper';
@@ -53,17 +56,23 @@ export class PositionsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all positions' })
+  @ApiOperation({ summary: 'Get all positions with filters and pagination' })
+  @ApiQuery({
+    name: 'query',
+    type: GetPositionsDto,
+    required: false,
+    description: 'Query parameters for filtering and pagination for positions',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The positions have been successfully retrieved.',
-    type: () => [OmitType(Position, ['createdAt', 'updatedAt'])],
-    isArray: true,
+    description: 'Successfully retrieved positions',
+    type: PositionsPageDto,
   })
   @ApiListReadErrorResponses()
-  async findAll(): Promise<Position[]> {
-    const positions = await this.positionsService.findAll();
-    return positions.map((p) => PositionHttpMapper.fromDomain(p));
+  async findAll(@Query() query?: GetPositionsDto): Promise<PositionsPageDto> {
+    const result = await this.positionsService.search(query);
+    const items = result.items.map((p) => PositionHttpMapper.fromDomain(p));
+    return { items, count: result.count, total: result.total };
   }
 
   @Get(':id')

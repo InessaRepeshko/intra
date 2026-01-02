@@ -1,0 +1,37 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
+
+export class PositionFilterDto {
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    required: false,
+    description: 'Filter positions by title (contains)',
+    type: 'string',
+    example: 'Engineer',
+  })
+  title?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    required: false,
+    description: 'Filter positions by description (contains)',
+    type: 'string',
+    example: 'backend',
+    nullable: true,
+  })
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    required: false,
+    description: 'Search by title/description (contains)',
+    type: 'string',
+    example: 'software',
+  })
+  search?: string;
+}
+
+

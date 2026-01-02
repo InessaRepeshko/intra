@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Position as PrismaPosition, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import type { PositionRepositoryPort } from '../../application/repository-ports/position.repository.port';
+import { PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE } from 'src/common/constants/pagination.constants';
+import type { PositionRepositoryPort, PositionSearchQuery, PositionSearchResult } from '../../application/repository-ports/position.repository.port';
 import { PositionDomain } from '../../domain/position/position.domain';
 
 @Injectable()
@@ -16,6 +17,37 @@ export class PositionPrismaRepository implements PositionRepositoryPort {
   async findAll(): Promise<PositionDomain[]> {
     const rows = await this.db.position.findMany();
     return rows.map((p) => this.fromPrisma(p));
+  }
+
+  async search(query: PositionSearchQuery = {}): Promise<PositionSearchResult> {
+    const take = Math.min(query.take ?? PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE);
+    const skip = query.skip ?? 0;
+
+    const where: Prisma.PositionWhereInput = {
+      ...(query.title ? { title: { contains: query.title } } : {}),
+      ...(query.description ? { description: { contains: query.description } } : {}),
+      ...(query.search
+        ? {
+            OR: [
+              { title: { contains: query.search } },
+              { description: { contains: query.search } },
+            ],
+          }
+        : {}),
+    };
+
+    const [total, rows] = await Promise.all([
+      this.db.position.count({ where }),
+      this.db.position.findMany({
+        where,
+        skip,
+        take,
+        orderBy: [{ title: 'asc' }, { id: 'asc' }],
+      }),
+    ]);
+
+    const items = rows.map((p) => this.fromPrisma(p));
+    return { items, count: items.length, total };
   }
 
   async findById(id: number): Promise<PositionDomain | null> {
