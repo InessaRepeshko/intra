@@ -7,6 +7,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -91,8 +92,8 @@ export class Feedback360RespondentRelationsController {
     type: () => OmitType(Feedback360RespondentRelation, ['createdAt', 'updatedAt']),
   })
   @ApiReadErrorResponses()
-  async findOne(@Param('id') id: string): Promise<Feedback360RespondentRelation> {
-    const found = await this.service.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Feedback360RespondentRelation> {
+    const found = await this.service.findOne(id);
     return Feedback360RespondentRelationHttpMapper.fromDomain(found);
   }
 
@@ -108,7 +109,7 @@ export class Feedback360RespondentRelationsController {
   })
   @ApiCreateAndUpdateErrorResponses()
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateFeedback360RespondentRelationDto,
   ): Promise<Feedback360RespondentRelation> {
     const patch: UpdateFeedback360RespondentRelationInput = {
@@ -116,7 +117,7 @@ export class Feedback360RespondentRelationsController {
       feedback360Status: dto.feedback360Status,
       respondentNote: dto.respondentNote,
     };
-    const updated = await this.service.update(+id, patch);
+    const updated = await this.service.update(id, patch);
     return Feedback360RespondentRelationHttpMapper.fromDomain(updated);
   }
 
@@ -126,8 +127,8 @@ export class Feedback360RespondentRelationsController {
   @ApiParam({ required: true, name: 'id', type: 'number', description: 'Relation id', example: 1 })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'The relation has been successfully deleted.' })
   @ApiDeletionErrorResponses()
-  async remove(@Param('id') id: string): Promise<void> {
-    return this.service.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.service.remove(id);
   }
 }
 

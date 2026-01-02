@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IDENTITY_READ } from './external-ports/identity-read.port';
 import type { IdentityReadPort } from './external-ports/identity-read.port';
 import { FEEDBACK360_REPOSITORY } from './repository-ports/feedback360.repository.port';
@@ -50,7 +50,13 @@ export class Feedback360RespondentRelationsService {
       respondentNote: input.respondentNote ?? null,
     });
 
-    return this.relRepo.create(rel);
+    try {
+      return await this.relRepo.create(rel);
+    } catch (e: any) {
+      // Prisma unique constraint: @@unique([feedback360Id, respondentId])
+      if (e?.code === 'P2002') throw new ConflictException('Respondent relation already exists');
+      throw e;
+    }
   }
 
   async search(query?: Feedback360RespondentRelationSearchQuery): Promise<Feedback360RespondentRelationSearchResult> {

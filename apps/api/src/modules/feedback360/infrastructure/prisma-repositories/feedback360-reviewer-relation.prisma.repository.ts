@@ -46,6 +46,14 @@ export class Feedback360ReviewerRelationPrismaRepository implements Feedback360R
     return row ? this.fromPrisma(row) : null;
   }
 
+  async updateById(
+    id: number,
+    patch: Partial<Feedback360ReviewerRelationDomain>,
+  ): Promise<Feedback360ReviewerRelationDomain> {
+    const updated = await this.db.feedback360ReviewerRelation.update({ where: { id }, data: this.toPrismaUpdate(patch) });
+    return this.fromPrisma(updated);
+  }
+
   async deleteById(id: number): Promise<void> {
     await this.db.feedback360ReviewerRelation.delete({ where: { id } });
   }
@@ -63,6 +71,13 @@ export class Feedback360ReviewerRelationPrismaRepository implements Feedback360R
     return {
       feedback360Id: domain.feedback360Id,
       userId: domain.userId,
+    };
+  }
+
+  private toPrismaUpdate(domain: Partial<Feedback360ReviewerRelationDomain>): Prisma.Feedback360ReviewerRelationUncheckedUpdateInput {
+    return {
+      ...(domain.feedback360Id !== undefined ? { feedback360Id: domain.feedback360Id } : {}),
+      ...(domain.userId !== undefined ? { userId: domain.userId } : {}),
     };
   }
 }

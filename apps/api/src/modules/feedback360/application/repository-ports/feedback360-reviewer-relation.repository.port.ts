@@ -21,6 +21,7 @@ export interface Feedback360ReviewerRelationRepositoryPort {
   create(entity: Feedback360ReviewerRelationDomain): Promise<Feedback360ReviewerRelationDomain>;
   search(query?: Feedback360ReviewerRelationSearchQuery): Promise<Feedback360ReviewerRelationSearchResult>;
   findById(id: number): Promise<Feedback360ReviewerRelationDomain | null>;
+  updateById(id: number, patch: Partial<Feedback360ReviewerRelationDomain>): Promise<Feedback360ReviewerRelationDomain>;
   deleteById(id: number): Promise<void>;
 }
 
