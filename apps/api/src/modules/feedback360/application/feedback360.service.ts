@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { FEEDBACK360_REPOSITORY } from './repository-ports/feedback360.repository.port';
-import type { Feedback360RepositoryPort } from './repository-ports/feedback360.repository.port';
+import type { Feedback360RepositoryPort, Feedback360SearchQuery, Feedback360SearchResult } from './repository-ports/feedback360.repository.port';
 import { IDENTITY_READ } from './external-ports/identity-read.port';
 import type { IdentityReadPort } from './external-ports/identity-read.port';
 import { Feedback360Domain } from '../domain/feedback/feedback360.domain';
@@ -51,6 +51,10 @@ export class Feedback360Service {
 
   async findAll(): Promise<Feedback360Domain[]> {
     return this.repo.findAll();
+  }
+
+  async search(query?: Feedback360SearchQuery): Promise<Feedback360SearchResult> {
+    return this.repo.search(query);
   }
 
   async findOne(id: number): Promise<Feedback360Domain> {

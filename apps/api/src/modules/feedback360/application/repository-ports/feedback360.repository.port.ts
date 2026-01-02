@@ -3,9 +3,28 @@ import { Feedback360Stage } from '../../domain/enums/feedback360-stage.enum';
 
 export const FEEDBACK360_REPOSITORY = Symbol('FEEDBACK360.FEEDBACK360_REPOSITORY');
 
+export type Feedback360SearchQuery = {
+  skip?: number;
+  take?: number;
+  rateeId?: number;
+  hrId?: number;
+  positionId?: number;
+  cycleId?: number;
+  reportId?: number;
+  stage?: Feedback360Stage;
+  search?: string;
+};
+
+export type Feedback360SearchResult = {
+  items: Feedback360Domain[];
+  count: number;
+  total: number;
+};
+
 export interface Feedback360RepositoryPort {
   create(entity: Feedback360Domain): Promise<Feedback360Domain>;
   findAll(): Promise<Feedback360Domain[]>;
+  search(query?: Feedback360SearchQuery): Promise<Feedback360SearchResult>;
   findById(id: number): Promise<Feedback360Domain | null>;
   findByRateeId(rateeId: number): Promise<Feedback360Domain[]>;
   findByHrId(hrId: number): Promise<Feedback360Domain[]>;

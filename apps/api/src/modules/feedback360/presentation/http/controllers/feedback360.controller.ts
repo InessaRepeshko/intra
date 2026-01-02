@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   ParseEnumPipe,
+  Query,
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
@@ -23,6 +24,7 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   OmitType,
@@ -34,6 +36,8 @@ import {
   ApiReadErrorResponses,
 } from '../../../../../common/documentation/api.error.responses.decorator';
 import { Feedback360Stage } from '../../../domain/enums/feedback360-stage.enum';
+import { GetFeedback360Dto } from '../dto/get-feedback360.dto';
+import { Feedback360PageDto } from '../dto/feedback360-page.dto';
 
 @Controller('feedback360')
 @ApiTags('Feedback360')
@@ -68,17 +72,23 @@ export class Feedback360Controller {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all feedback360' })
+  @ApiOperation({ summary: 'Get all feedback360 with filters and pagination' })
+  @ApiQuery({
+    name: 'query',
+    type: GetFeedback360Dto,
+    required: false,
+    description: 'Query parameters for filtering and pagination for feedback360',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The feedback360 have been successfully retrieved.',
-    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
-    isArray: true,
+    description: 'Successfully retrieved feedback360',
+    type: Feedback360PageDto,
   })
   @ApiListReadErrorResponses()
-  async findAll(): Promise<Feedback360[]> {
-    const rows = await this.feedback360Service.findAll();
-    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
+  async findAll(@Query() query?: GetFeedback360Dto): Promise<Feedback360PageDto> {
+    const result = await this.feedback360Service.search(query);
+    const items = result.items.map((r) => Feedback360HttpMapper.fromDomain(r));
+    return { items, count: result.count, total: result.total };
   }
 
   @Get('by-ratee/:rateeId')
@@ -92,14 +102,17 @@ export class Feedback360Controller {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The feedback360 have been successfully retrieved.',
-    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
-    isArray: true,
+    description: 'Successfully retrieved feedback360',
+    type: Feedback360PageDto,
   })
   @ApiListReadErrorResponses()
-  async findByRateeId(@Param('rateeId') rateeId: string): Promise<Feedback360[]> {
-    const rows = await this.feedback360Service.findByRateeId(+rateeId);
-    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
+  async findByRateeId(
+    @Param('rateeId') rateeId: string,
+    @Query() query?: GetFeedback360Dto,
+  ): Promise<Feedback360PageDto> {
+    const result = await this.feedback360Service.search({ ...query, rateeId: +rateeId });
+    const items = result.items.map((r) => Feedback360HttpMapper.fromDomain(r));
+    return { items, count: result.count, total: result.total };
   }
 
   @Get('by-hr/:hrId')
@@ -113,14 +126,17 @@ export class Feedback360Controller {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The feedback360 have been successfully retrieved.',
-    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
-    isArray: true,
+    description: 'Successfully retrieved feedback360',
+    type: Feedback360PageDto,
   })
   @ApiListReadErrorResponses()
-  async findByHrId(@Param('hrId') hrId: string): Promise<Feedback360[]> {
-    const rows = await this.feedback360Service.findByHrId(+hrId);
-    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
+  async findByHrId(
+    @Param('hrId') hrId: string,
+    @Query() query?: GetFeedback360Dto,
+  ): Promise<Feedback360PageDto> {
+    const result = await this.feedback360Service.search({ ...query, hrId: +hrId });
+    const items = result.items.map((r) => Feedback360HttpMapper.fromDomain(r));
+    return { items, count: result.count, total: result.total };
   }
 
   @Get('by-position/:positionId')
@@ -134,14 +150,17 @@ export class Feedback360Controller {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The feedback360 have been successfully retrieved.',
-    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
-    isArray: true,
+    description: 'Successfully retrieved feedback360',
+    type: Feedback360PageDto,
   })
   @ApiListReadErrorResponses()
-  async findByPositionId(@Param('positionId') positionId: string): Promise<Feedback360[]> {
-    const rows = await this.feedback360Service.findByPositionId(+positionId);
-    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
+  async findByPositionId(
+    @Param('positionId') positionId: string,
+    @Query() query?: GetFeedback360Dto,
+  ): Promise<Feedback360PageDto> {
+    const result = await this.feedback360Service.search({ ...query, positionId: +positionId });
+    const items = result.items.map((r) => Feedback360HttpMapper.fromDomain(r));
+    return { items, count: result.count, total: result.total };
   }
 
   @Get('by-cycle/:cycleId')
@@ -155,14 +174,17 @@ export class Feedback360Controller {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The feedback360 have been successfully retrieved.',
-    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
-    isArray: true,
+    description: 'Successfully retrieved feedback360',
+    type: Feedback360PageDto,
   })
   @ApiListReadErrorResponses()
-  async findByCycleId(@Param('cycleId') cycleId: string): Promise<Feedback360[]> {
-    const rows = await this.feedback360Service.findByCycleId(+cycleId);
-    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
+  async findByCycleId(
+    @Param('cycleId') cycleId: string,
+    @Query() query?: GetFeedback360Dto,
+  ): Promise<Feedback360PageDto> {
+    const result = await this.feedback360Service.search({ ...query, cycleId: +cycleId });
+    const items = result.items.map((r) => Feedback360HttpMapper.fromDomain(r));
+    return { items, count: result.count, total: result.total };
   }
 
   @Get('by-report/:reportId')
@@ -176,14 +198,17 @@ export class Feedback360Controller {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The feedback360 have been successfully retrieved.',
-    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
-    isArray: true,
+    description: 'Successfully retrieved feedback360',
+    type: Feedback360PageDto,
   })
   @ApiListReadErrorResponses()
-  async findByReportId(@Param('reportId') reportId: string): Promise<Feedback360[]> {
-    const rows = await this.feedback360Service.findByReportId(+reportId);
-    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
+  async findByReportId(
+    @Param('reportId') reportId: string,
+    @Query() query?: GetFeedback360Dto,
+  ): Promise<Feedback360PageDto> {
+    const result = await this.feedback360Service.search({ ...query, reportId: +reportId });
+    const items = result.items.map((r) => Feedback360HttpMapper.fromDomain(r));
+    return { items, count: result.count, total: result.total };
   }
 
   @Get('by-stage/:stage')
@@ -197,16 +222,17 @@ export class Feedback360Controller {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The feedback360 have been successfully retrieved.',
-    type: () => [OmitType(Feedback360, ['createdAt', 'updatedAt'])],
-    isArray: true,
+    description: 'Successfully retrieved feedback360',
+    type: Feedback360PageDto,
   })
   @ApiListReadErrorResponses()
   async findByStage(
     @Param('stage', new ParseEnumPipe(Feedback360Stage)) stage: Feedback360Stage,
-  ): Promise<Feedback360[]> {
-    const rows = await this.feedback360Service.findByStage(stage);
-    return rows.map((r) => Feedback360HttpMapper.fromDomain(r));
+    @Query() query?: GetFeedback360Dto,
+  ): Promise<Feedback360PageDto> {
+    const result = await this.feedback360Service.search({ ...query, stage });
+    const items = result.items.map((r) => Feedback360HttpMapper.fromDomain(r));
+    return { items, count: result.count, total: result.total };
   }
 
   @Get(':id')

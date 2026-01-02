@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, Length, IsInt, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Length, Min } from 'class-validator';
 import { UsersStatus } from '../../../../domain/user/users-status.enum';
 import { UserConstants } from 'src/common/validators/constants';
+import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 
 export class UserFilterDto {
+  @ToOptionalTrimmedString()
   @IsOptional()
   @IsString()
   @Length(UserConstants.EMAIL_MIN_LENGTH, UserConstants.EMAIL_MAX_LENGTH)
@@ -17,6 +18,7 @@ export class UserFilterDto {
   })
   email?: string;
 
+  @ToOptionalTrimmedString()
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -28,6 +30,7 @@ export class UserFilterDto {
   })
   search?: string;
 
+  @ToOptionalEnum(UsersStatus)
   @IsOptional()
   @IsEnum(UsersStatus)
   @ApiProperty({
@@ -38,8 +41,8 @@ export class UserFilterDto {
   })
   status?: UsersStatus;
 
+  @ToOptionalInt({ min: 1 })
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   @Min(1)
   @ApiProperty({
@@ -50,8 +53,8 @@ export class UserFilterDto {
   })
   teamId?: number;
 
+  @ToOptionalInt({ min: 1 })
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   @Min(1)
   @ApiProperty({
@@ -62,8 +65,8 @@ export class UserFilterDto {
   })
   positionId?: number;
 
+  @ToOptionalInt({ min: 1 })
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   @Min(1)
   @ApiProperty({

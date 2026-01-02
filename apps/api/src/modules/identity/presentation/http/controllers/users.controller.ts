@@ -77,8 +77,8 @@ export class UsersController {
     required: false,
     description: 'Query parameters for filtering and pagination for users',
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
+  @ApiResponse({ 
+    status: HttpStatus.OK, 
     description: 'Successfully retrieved users',
     type: UsersPageDto,
   })

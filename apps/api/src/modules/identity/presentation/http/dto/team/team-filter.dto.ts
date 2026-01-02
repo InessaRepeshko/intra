@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 
 export class TeamFilterDto {
+  @ToOptionalTrimmedString()
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -13,6 +14,7 @@ export class TeamFilterDto {
   })
   title?: string;
 
+  @ToOptionalTrimmedString()
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -24,6 +26,7 @@ export class TeamFilterDto {
   })
   description?: string;
 
+  @ToOptionalTrimmedString()
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -34,8 +37,8 @@ export class TeamFilterDto {
   })
   search?: string;
 
+  @ToOptionalInt({ min: 1 })
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   @Min(1)
   @ApiProperty({
@@ -47,8 +50,8 @@ export class TeamFilterDto {
   })
   headId?: number;
 
+  @ToOptionalInt({ min: 1 })
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   @Min(1)
   @ApiProperty({

@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
+import { ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 
 export class PositionFilterDto {
+  @ToOptionalTrimmedString()
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -12,6 +14,7 @@ export class PositionFilterDto {
   })
   title?: string;
 
+  @ToOptionalTrimmedString()
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -23,6 +26,7 @@ export class PositionFilterDto {
   })
   description?: string;
 
+  @ToOptionalTrimmedString()
   @IsOptional()
   @IsString()
   @ApiProperty({

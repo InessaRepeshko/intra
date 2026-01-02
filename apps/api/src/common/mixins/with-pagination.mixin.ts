@@ -1,13 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import { IsInt, IsOptional, Max, Min } from 'class-validator';
 import { PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE } from '../constants/pagination.constants';
+import { ToOptionalInt } from '../transforms/query-sanitize.transform';
 
 export type Constructor<T = any> = new (...args: any[]) => T;
 
-/**
- * Міксин для додавання skip/take у query DTO (аналогічно твоєму прикладу).
- */
 export function WithPagination<TBase extends Constructor>(Base: TBase) {
   class PaginationMixin extends Base {
     @ApiProperty({
@@ -16,8 +13,8 @@ export function WithPagination<TBase extends Constructor>(Base: TBase) {
       type: 'number',
       minimum: 0,
     })
+    @ToOptionalInt({ min: 0 })
     @IsOptional()
-    @Type(() => Number)
     @IsInt()
     @Min(0)
     skip?: number;
@@ -30,8 +27,8 @@ export function WithPagination<TBase extends Constructor>(Base: TBase) {
       maximum: PAGINATION_MAX_TAKE,
       default: PAGINATION_DEFAULT_TAKE,
     })
+    @ToOptionalInt({ min: 1, max: PAGINATION_MAX_TAKE })
     @IsOptional()
-    @Type(() => Number)
     @IsInt()
     @Min(1)
     @Max(PAGINATION_MAX_TAKE)

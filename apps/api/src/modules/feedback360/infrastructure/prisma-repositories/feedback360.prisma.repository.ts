@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Feedback360 as PrismaFeedback360, feedback360_stage, Prisma } from '@prisma/client';
 import { PrismaService } from '../../../../prisma/prisma.service';
-import type { Feedback360RepositoryPort } from '../../application/repository-ports/feedback360.repository.port';
+import { PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE } from 'src/common/constants/pagination.constants';
+import type {
+  Feedback360RepositoryPort,
+  Feedback360SearchQuery,
+  Feedback360SearchResult,
+} from '../../application/repository-ports/feedback360.repository.port';
 import { Feedback360Domain } from '../../domain/feedback/feedback360.domain';
 import { Feedback360Stage } from '../../domain/enums/feedback360-stage.enum';
 
@@ -17,6 +22,41 @@ export class Feedback360PrismaRepository implements Feedback360RepositoryPort {
   async findAll(): Promise<Feedback360Domain[]> {
     const rows = await this.db.feedback360.findMany();
     return rows.map((r) => this.fromPrisma(r));
+  }
+
+  async search(query: Feedback360SearchQuery = {}): Promise<Feedback360SearchResult> {
+    const take = Math.min(query.take ?? PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE);
+    const skip = query.skip ?? 0;
+
+    const where: Prisma.Feedback360WhereInput = {
+      ...(query.rateeId !== undefined ? { rateeId: query.rateeId } : {}),
+      ...(query.hrId !== undefined ? { hrId: query.hrId } : {}),
+      ...(query.positionId !== undefined ? { positionId: query.positionId } : {}),
+      ...(query.cycleId !== undefined ? { cycleId: query.cycleId } : {}),
+      ...(query.reportId !== undefined ? { reportId: query.reportId } : {}),
+      ...(query.stage !== undefined ? { stage: query.stage as unknown as feedback360_stage } : {}),
+      ...(query.search
+        ? {
+            OR: [
+              { rateeNote: { contains: query.search } },
+              { hrNote: { contains: query.search } },
+            ],
+          }
+        : {}),
+    };
+
+    const [total, rows] = await Promise.all([
+      this.db.feedback360.count({ where }),
+      this.db.feedback360.findMany({
+        where,
+        skip,
+        take,
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      }),
+    ]);
+
+    const items = rows.map((r) => this.fromPrisma(r));
+    return { items, count: items.length, total };
   }
 
   async findById(id: number): Promise<Feedback360Domain | null> {
