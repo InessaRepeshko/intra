@@ -27,7 +27,12 @@ export function IsName(
 }
 
 export function IsEnglishName(isOptional: boolean, allowNull: boolean = false) {
-    const baseDecorators = [Matches(UserConstants.PATTERN), Length(UserConstants.NAME_MIN_LENGTH, UserConstants.NAME_MAX_LENGTH), IsNotEmpty(), IsString()];
+    const baseDecorators = [
+        IsString(),
+        allowNull ? IsOptional() : IsNotEmpty(), 
+        Length(UserConstants.NAME_MIN_LENGTH, UserConstants.NAME_MAX_LENGTH), 
+        Matches(UserConstants.PATTERN),
+    ];
 
     if (allowNull) {
         return applyDecorators(

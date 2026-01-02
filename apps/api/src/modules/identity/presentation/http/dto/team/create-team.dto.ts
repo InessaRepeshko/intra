@@ -9,6 +9,7 @@ export class CreateTeamDto {
     example: 'Engineering',
     nullable: false,
     type: 'string',
+    minLength: TeamConstants.TITLE_MIN_LENGTH,
     maxLength: TeamConstants.TITLE_MAX_LENGTH,
   })
   @IsString()

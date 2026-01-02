@@ -14,7 +14,7 @@ export class CreateUserDto {
     minLength: UserConstants.NAME_MIN_LENGTH,
     maxLength: UserConstants.NAME_MAX_LENGTH,
   })
-  @IsEnglishName(false, false)
+  @IsEnglishName(false)
   firstName: string;
 
   @ApiProperty({
@@ -38,32 +38,17 @@ export class CreateUserDto {
     minLength: UserConstants.NAME_MIN_LENGTH,
     maxLength: UserConstants.NAME_MAX_LENGTH,
   })
-  @IsEnglishName(false, false)
+  @IsEnglishName(false)
   lastName: string;
-
-  // @ApiProperty({
-  //   required: false,
-  //   description: 'The full name of the user',
-  //   example: 'John Joel Smith',
-  //   nullable: true,
-  //   type: 'string',
-  //   minLength: UserConstants.FULL_NAME_MIN_LENGTH,
-  //   maxLength: UserConstants.FULL_NAME_MAX_LENGTH,
-  // })
-  // @IsEnglishName(true, true)
-  // fullName?: string;
 
   @ApiProperty({
     required: true,
     description: 'The email of the user',
-    example: 'john.doe@example.com',
+    example: 'john.smith@example.com',
     nullable: false,
     type: 'string',
     maxLength: UserConstants.EMAIL_MAX_LENGTH,
   })
-  @IsString()
-  @Length(UserConstants.EMAIL_MIN_LENGTH, UserConstants.EMAIL_MAX_LENGTH)
-  @IsNotEmpty()
   @IsEmail(false)
   email: string;
 
@@ -77,8 +62,8 @@ export class CreateUserDto {
     maxLength: 128,
   })
   @IsString()
-  @Length(8, 128)
   @IsNotEmpty()
+  @Length(8, 128)
   password: string;
   
   @ApiProperty({
