@@ -56,7 +56,7 @@ export class PositionsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all positions with filters and pagination' })
+  @ApiOperation({ summary: 'Get all positions with filters, sorting and pagination' })
   @ApiQuery({
     name: 'query',
     type: GetPositionsDto,
@@ -69,7 +69,9 @@ export class PositionsController {
     type: PositionsPageDto,
   })
   @ApiListReadErrorResponses()
-  async findAll(@Query() query?: GetPositionsDto): Promise<PositionsPageDto> {
+  async findAll(
+    @Query() query?: GetPositionsDto
+  ): Promise<PositionsPageDto> {
     const result = await this.positionsService.search(query);
     const items = result.items.map((p) => PositionHttpMapper.fromDomain(p));
     return { items, count: result.count, total: result.total };

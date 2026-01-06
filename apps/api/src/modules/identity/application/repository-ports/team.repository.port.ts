@@ -1,3 +1,5 @@
+import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { TeamSortField } from '../../domain/team/team-sort-field.enum';
 import { TeamDomain } from '../../domain/team/team.domain';
 
 export const TEAM_REPOSITORY = Symbol('IDENTITY.TEAM_REPOSITORY');
@@ -10,6 +12,8 @@ export type TeamSearchQuery = {
   search?: string;
   headId?: number;
   memberId?: number;
+  sortBy?: TeamSortField;
+  sortDirection?: SortDirection;
 };
 
 export type TeamSearchResult = {
@@ -23,8 +27,6 @@ export interface TeamRepositoryPort {
   findAll(): Promise<TeamDomain[]>;
   search(query?: TeamSearchQuery): Promise<TeamSearchResult>;
   findById(id: number): Promise<TeamDomain | null>;
-  findByHeadId(headId: number): Promise<TeamDomain[]>;
-  findByMemberId(memberId: number): Promise<TeamDomain[]>;
   updateById(id: number, patch: Partial<TeamDomain>): Promise<TeamDomain>;
   deleteById(id: number): Promise<void>;
 }

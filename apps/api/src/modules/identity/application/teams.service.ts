@@ -50,14 +50,6 @@ export class TeamsService {
     if (!team) throw new NotFoundException('Team not found');
     return team;
   }
-  
-  async findByHeadId(headId: number): Promise<TeamDomain[]> {
-    return this.teamsRepo.findByHeadId(headId);
-  }
-
-  async findByMemberId(memberId: number): Promise<TeamDomain[]> {
-    return this.teamsRepo.findByMemberId(memberId);
-  }
 
   async update(id: number, patch: UpdateTeamInput): Promise<TeamDomain> {
     await this.findOne(id);

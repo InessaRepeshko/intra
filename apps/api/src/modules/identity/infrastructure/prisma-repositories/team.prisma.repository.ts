@@ -4,6 +4,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE } from 'src/common/constants/pagination.constants';
 import { TeamRepositoryPort, TeamSearchQuery, TeamSearchResult } from '../../application/repository-ports/team.repository.port';
 import { TeamDomain } from '../../domain/team/team.domain';
+import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { TeamSortField } from '../../domain/team/team-sort-field.enum';
 
 @Injectable()
 export class TeamPrismaRepository implements TeamRepositoryPort {
@@ -37,6 +39,8 @@ export class TeamPrismaRepository implements TeamRepositoryPort {
           }
         : {}),
     };
+    const sortDirection = query.sortDirection ?? SortDirection.ASC;
+    const orderBy = this.buildOrderBy(query.sortBy, sortDirection);
 
     const [total, rows] = await Promise.all([
       this.db.team.count({ where }),
@@ -44,7 +48,7 @@ export class TeamPrismaRepository implements TeamRepositoryPort {
         where,
         skip,
         take,
-        orderBy: [{ title: 'asc' }, { id: 'asc' }],
+        orderBy,
       }),
     ]);
 
@@ -52,19 +56,31 @@ export class TeamPrismaRepository implements TeamRepositoryPort {
     return { items, count: items.length, total };
   }
 
+  private buildOrderBy(
+    sortBy?: TeamSortField,
+    sortDirection: SortDirection = SortDirection.ASC,
+  ): Prisma.TeamOrderByWithRelationInput[] {
+    if (!sortBy) {
+      return [{ id: 'asc' }];
+    }
+
+    const direction = sortDirection === SortDirection.DESC ? 'desc' : 'asc';
+
+    const orderByMap: Record<TeamSortField, Prisma.TeamOrderByWithRelationInput> = {
+      [TeamSortField.ID]: { id: direction },
+      [TeamSortField.TITLE]: { title: direction },
+      [TeamSortField.DESCRIPTION]: { description: direction },
+      [TeamSortField.HEAD_ID]: { headId: direction },
+      [TeamSortField.CREATED_AT]: { createdAt: direction },
+      [TeamSortField.UPDATED_AT]: { updatedAt: direction },
+    };
+
+    return [orderByMap[sortBy], { id: 'asc' }];
+  }
+
   async findById(id: number): Promise<TeamDomain | null> {
     const row = await this.db.team.findUnique({ where: { id } });
     return row ? this.fromPrisma(row) : null;
-  }
-
-  async findByHeadId(headId: number): Promise<TeamDomain[]> {
-    const rows = await this.db.team.findMany({ where: { headId } });
-    return rows.map((t) => this.fromPrisma(t));
-  }
-
-  async findByMemberId(memberId: number): Promise<TeamDomain[]> {
-    const rows = await this.db.team.findMany({ where: { members: { some: { id: memberId } } } });
-    return rows.map((t) => this.fromPrisma(t));
   }
 
   async updateById(id: number, patch: Partial<TeamDomain>): Promise<TeamDomain> {

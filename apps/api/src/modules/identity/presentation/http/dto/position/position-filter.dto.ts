@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
-import { ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { ToOptionalEnum, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
+import { PositionSortField } from 'src/modules/identity/domain/position/position-sort-field.enum';
 
 export class PositionFilterDto {
   @ToOptionalTrimmedString()
@@ -36,6 +38,29 @@ export class PositionFilterDto {
     example: 'software',
   })
   search?: string;
+
+  @ToOptionalEnum(PositionSortField)
+  @IsOptional()
+  @IsEnum(PositionSortField)
+  @ApiProperty({
+    required: false,
+    description: 'Field to sort by',
+    enum: PositionSortField,
+    example: PositionSortField.TITLE,
+  })
+  sortBy?: PositionSortField;
+
+  @ToOptionalEnum(SortDirection)
+  @IsOptional()
+  @IsEnum(SortDirection)
+  @ApiProperty({
+    required: false,
+    description: 'Sort direction',
+    enum: SortDirection,
+    example: SortDirection.ASC,
+    default: SortDirection.DESC,
+  })
+  sortDirection?: SortDirection;
 }
 
 

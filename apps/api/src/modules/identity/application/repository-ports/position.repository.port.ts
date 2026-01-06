@@ -1,4 +1,6 @@
+import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import { PositionDomain } from '../../domain/position/position.domain';
+import { PositionSortField } from '../../domain/position/position-sort-field.enum';
 
 export const POSITION_REPOSITORY = Symbol('IDENTITY.POSITION_REPOSITORY');
 
@@ -8,6 +10,8 @@ export type PositionSearchQuery = {
   title?: string;
   description?: string;
   search?: string;
+  sortBy?: PositionSortField;
+  sortDirection?: SortDirection;
 };
 
 export type PositionSearchResult = {

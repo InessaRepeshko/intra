@@ -1,7 +1,7 @@
 import { UserDomain } from '../../domain/user/user.domain';
 import { UsersStatus } from '../../domain/user/users-status.enum';
 import { UserSortField } from '../../domain/user/user-sort-field.enum';
-import { SortDirection } from '../../domain/user/sort-direction.enum';
+import { SortDirection } from '../../../../common/enums/sort-direction.enum';
 
 export const USER_REPOSITORY = Symbol('IDENTITY.USER_REPOSITORY');
 

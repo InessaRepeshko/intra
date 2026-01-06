@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
 import { PAGINATION_DEFAULT_SKIP, PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE, PAGINATION_MIN_SKIP, PAGINATION_MIN_TAKE } from '../constants/pagination.constants';
 import { ToOptionalEnum, ToOptionalInt } from '../transforms/query-sanitize.transform';
-import { SortDirection } from 'src/modules/identity/domain/user/sort-direction.enum';
+import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import { UserSortField } from 'src/modules/identity/domain/user/user-sort-field.enum';
 
 export type Constructor<T = any> = new (...args: any[]) => T;

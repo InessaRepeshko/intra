@@ -5,7 +5,7 @@ import { UserRepositoryPort, UserSearchQuery, UserSearchResult } from '../../app
 import { UserDomain } from '../../domain/user/user.domain';
 import { UsersStatus } from '../../domain/user/users-status.enum';
 import { UserSortField } from '../../domain/user/user-sort-field.enum';
-import { SortDirection } from '../../domain/user/sort-direction.enum';
+import { SortDirection } from '../../../../common/enums/sort-direction.enum';
 import { PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE } from 'src/common/constants/pagination.constants';
 
 @Injectable()
@@ -67,8 +67,8 @@ export class UserPrismaRepository implements UserRepositoryPort {
     sortDirection: SortDirection = SortDirection.ASC,
   ): Prisma.UserOrderByWithRelationInput[] {
     if (!sortBy) {
-      // Default sorting
-      return [{ lastName: 'asc' }, { firstName: 'asc' }, { id: 'asc' }];
+
+      return [{ id: 'asc' }];
     }
 
     const direction = sortDirection === SortDirection.DESC ? 'desc' : 'asc';
@@ -88,7 +88,6 @@ export class UserPrismaRepository implements UserRepositoryPort {
       [UserSortField.UPDATED_AT]: { updatedAt: direction },
     };
 
-    // Always add id as secondary sort for consistent ordering
     return [orderByMap[sortBy], { id: 'asc' }];
   }
 

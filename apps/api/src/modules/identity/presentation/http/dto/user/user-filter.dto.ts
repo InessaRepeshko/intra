@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, Length, Min } from 'class-validator';
 import { UsersStatus } from '../../../../domain/user/users-status.enum';
 import { UserSortField } from '../../../../domain/user/user-sort-field.enum';
-import { SortDirection } from '../../../../domain/user/sort-direction.enum';
+import { SortDirection } from '../../../../../../common/enums/sort-direction.enum';
 import { UserConstants } from 'src/common/validators/constants';
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 
@@ -99,7 +99,7 @@ export class UserFilterDto {
     description: 'Sort direction',
     enum: SortDirection,
     example: SortDirection.ASC,
-    default: SortDirection.ASC,
+    default: SortDirection.DESC,
   })
   sortDirection?: SortDirection;
 }

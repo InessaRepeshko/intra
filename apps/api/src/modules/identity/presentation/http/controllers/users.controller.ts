@@ -70,12 +70,12 @@ export class UsersController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all users with filters and pagination' })
+  @ApiOperation({ summary: 'Get all users with filters, sorting and pagination' })
   @ApiQuery({
     name: 'query',
     type: GetUsersDto,
     required: false,
-    description: 'Query parameters for filtering and pagination for users',
+    description: 'Query parameters for filtering, sorting and pagination for users',
   })
   @ApiResponse({ 
     status: HttpStatus.OK, 

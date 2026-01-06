@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsOptional, IsString, Min } from 'class-validator';
-import { ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
+import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
+import { TeamSortField } from 'src/modules/identity/domain/team/team-sort-field.enum';
+import { SortDirection } from 'src/common/enums/sort-direction.enum';
 
 export class TeamFilterDto {
   @ToOptionalTrimmedString()
@@ -61,6 +63,29 @@ export class TeamFilterDto {
     example: 1,
   })
   memberId?: number;
+
+  @ToOptionalEnum(TeamSortField)
+  @IsOptional()
+  @IsEnum(TeamSortField)
+  @ApiProperty({
+    required: false,
+    description: 'Field to sort by',
+    enum: TeamSortField,
+    example: TeamSortField.TITLE,
+  })
+  sortBy?: TeamSortField;
+
+  @ToOptionalEnum(SortDirection)
+  @IsOptional()
+  @IsEnum(SortDirection)
+  @ApiProperty({
+    required: false,
+    description: 'Sort direction',
+    enum: SortDirection,
+    example: SortDirection.ASC,
+    default: SortDirection.DESC,
+  })
+  sortDirection?: SortDirection;
 }
 
 

@@ -58,12 +58,12 @@ export class TeamsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all teams with filters and pagination' })
+  @ApiOperation({ summary: 'Get all teams with filters, sorting and pagination' })
   @ApiQuery({
     name: 'query',
     type: GetTeamsDto,
     required: false,
-    description: 'Query parameters for filtering and pagination for teams',
+    description: 'Query parameters for filtering, sorting and pagination for teams',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -71,52 +71,12 @@ export class TeamsController {
     type: TeamsPageDto,
   })
   @ApiListReadErrorResponses()
-  async findAll(@Query() query?: GetTeamsDto): Promise<TeamsPageDto> {
+  async findAll(
+    @Query() query?: GetTeamsDto
+  ): Promise<TeamsPageDto> {
     const result = await this.teamsService.search(query);
     const items = result.items.map((t) => TeamHttpMapper.fromDomain(t));
     return { items, count: result.count, total: result.total };
-  }
-
-  @Get('by-head/:headId')
-  @ApiOperation({ summary: 'Get teams by head user ID' })
-  @ApiParam({
-    required: true,
-    name: 'headId',
-    type: 'number',
-    description: 'The head user ID of the team',
-    example: 1,
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'The teams have been successfully retrieved.',
-    type: [Team],
-    isArray: true,
-  })
-  @ApiListReadErrorResponses()
-  async findByHeadId(@Param('headId') headId: string): Promise<Team[]> {
-    const teams = await this.teamsService.findByHeadId(+headId);
-    return teams.map((t) => TeamHttpMapper.fromDomain(t));
-  }
-
-  @Get('by-member/:memberId')
-  @ApiOperation({ summary: 'Get teams by member user ID' })
-  @ApiParam({
-    required: true,
-    name: 'memberId',
-    type: 'number',
-    description: 'The member user ID',
-    example: 1,
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'The teams have been successfully retrieved.',
-    type: [Team],
-    isArray: true,
-  })
-  @ApiListReadErrorResponses()
-  async findByMemberId(@Param('memberId') memberId: string): Promise<Team[]> {
-    const teams = await this.teamsService.findByMemberId(+memberId);
-    return teams.map((t) => TeamHttpMapper.fromDomain(t));
   }
 
   @Get(':id')

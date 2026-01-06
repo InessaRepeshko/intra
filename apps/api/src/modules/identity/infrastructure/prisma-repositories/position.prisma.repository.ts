@@ -4,6 +4,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE } from 'src/common/constants/pagination.constants';
 import type { PositionRepositoryPort, PositionSearchQuery, PositionSearchResult } from '../../application/repository-ports/position.repository.port';
 import { PositionDomain } from '../../domain/position/position.domain';
+import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { PositionSortField } from '../../domain/position/position-sort-field.enum';
 
 @Injectable()
 export class PositionPrismaRepository implements PositionRepositoryPort {
@@ -36,18 +38,42 @@ export class PositionPrismaRepository implements PositionRepositoryPort {
         : {}),
     };
 
+    const sortDirection = query.sortDirection ?? SortDirection.ASC;
+    const orderBy = this.buildOrderBy(query.sortBy, sortDirection);
+
     const [total, rows] = await Promise.all([
       this.db.position.count({ where }),
       this.db.position.findMany({
         where,
         skip,
         take,
-        orderBy: [{ title: 'asc' }, { id: 'asc' }],
+        orderBy,
       }),
     ]);
 
     const items = rows.map((p) => this.fromPrisma(p));
     return { items, count: items.length, total };
+  }
+
+  private buildOrderBy(
+    sortBy?: PositionSortField,
+    sortDirection: SortDirection = SortDirection.ASC,
+  ): Prisma.PositionOrderByWithRelationInput[] {
+    if (!sortBy) {
+      return [{ id: 'asc' }];
+    }
+
+    const direction = sortDirection === SortDirection.DESC ? 'desc' : 'asc';
+
+    const orderByMap: Record<PositionSortField, Prisma.PositionOrderByWithRelationInput> = {
+      [PositionSortField.ID]: { id: direction },
+      [PositionSortField.TITLE]: { title: direction },
+      [PositionSortField.DESCRIPTION]: { description: direction },
+      [PositionSortField.CREATED_AT]: { createdAt: direction },
+      [PositionSortField.UPDATED_AT]: { updatedAt: direction },
+    };
+
+    return [orderByMap[sortBy], { id: 'asc' }];
   }
 
   async findById(id: number): Promise<PositionDomain | null> {
