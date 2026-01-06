@@ -23,7 +23,6 @@ import {
   ApiQuery,
   ApiResponse,
   ApiTags,
-  OmitType,
 } from '@nestjs/swagger';
 import { User } from '../models/user.entity';
 import { UserHttpMapper } from '../mappers/user.http.mapper';
@@ -36,6 +35,7 @@ import {
 } from 'src/common/documentation/api.error.responses.decorator';
 import { GetUsersDto } from '../dto/user/get-users.dto';
 import { UsersPageDto } from '../dto/user/users-page.dto';
+import { UserResponseDto } from '../dto/user/user-response.dto';
 
 @Controller('users')
 @ApiTags('Users')
@@ -51,7 +51,7 @@ export class UsersController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'The user has been successfully created.',
-    type: () => OmitType(User, ['passwordHash', 'createdAt', 'updatedAt']),
+    type: UserResponseDto,
   })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateUserDto): Promise<User> {
@@ -91,26 +91,6 @@ export class UsersController {
     return { items, count: result.count, total: result.total };
   }
 
-  @Get('by-email')
-  @ApiOperation({ summary: 'Get a user by email' })
-  @ApiQuery({
-    required: true,
-    name: 'email',
-    type: 'string',
-    description: 'The email of the user',
-    example: 'john.doe@example.com',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'The user has been successfully retrieved.',
-    type: () => OmitType(User, ['passwordHash', 'createdAt', 'updatedAt']),
-  })
-  @ApiReadErrorResponses()
-  async findByEmail(@Query('email') email: string): Promise<User> {
-    const user = await this.usersService.findByEmail(email);
-    return UserHttpMapper.fromDomain(user);
-  }
-
   @Get(':id')
   @ApiOperation({ summary: 'Get a user by ID' })
   @ApiParam({ 
@@ -122,7 +102,7 @@ export class UsersController {
   })
   @ApiResponse({ 
     status: HttpStatus.OK, 
-    type: () => OmitType(User, ['passwordHash', 'createdAt', 'updatedAt']), 
+    type: UserResponseDto,
     description: 'The user has been successfully retrieved.' 
   })
   @ApiReadErrorResponses()
@@ -148,7 +128,7 @@ export class UsersController {
   })
   @ApiResponse({ 
     status: HttpStatus.OK, 
-    type: () => OmitType(User, ['passwordHash', 'createdAt', 'updatedAt']), 
+    type: UserResponseDto,
     description: 'The user has been successfully updated.' 
   })
   @ApiCreateAndUpdateErrorResponses()
@@ -160,6 +140,7 @@ export class UsersController {
       positionId: dto.positionId,
       teamId: dto.teamId,
       managerId: dto.managerId,
+      status: dto.status,
     };
     const updated = await this.usersService.update(+id, input);
     return UserHttpMapper.fromDomain(updated);

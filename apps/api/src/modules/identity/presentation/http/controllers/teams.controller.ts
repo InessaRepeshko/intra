@@ -16,7 +16,7 @@ import {
 import { CreateTeamInput, TeamsService, UpdateTeamInput } from '../../../application/teams.service';
 import { CreateTeamDto } from '../dto/team/create-team.dto';
 import { UpdateTeamDto } from '../dto/team/update-team.dto';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags, OmitType } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Team } from '../models/team.entity';
 import { TeamHttpMapper } from '../mappers/team.http.mapper';
 import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
@@ -44,7 +44,7 @@ export class TeamsController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'The team has been successfully created.',
-    type: () => OmitType(Team, ['createdAt', 'updatedAt']),
+    type: Team,
   })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateTeamDto): Promise<Team> {
@@ -89,7 +89,7 @@ export class TeamsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The teams have been successfully retrieved.',
-    type: () => [OmitType(Team, ['createdAt', 'updatedAt'])],
+    type: [Team],
     isArray: true,
   })
   @ApiListReadErrorResponses()
@@ -110,7 +110,7 @@ export class TeamsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The teams have been successfully retrieved.',
-    type: () => [OmitType(Team, ['createdAt', 'updatedAt'])],
+    type: [Team],
     isArray: true,
   })
   @ApiListReadErrorResponses()
@@ -131,7 +131,7 @@ export class TeamsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The team has been successfully retrieved.',
-    type: () => OmitType(Team, ['createdAt', 'updatedAt']),
+    type: Team,
   })
   @ApiReadErrorResponses()
   async findOne(@Param('id') id: string): Promise<Team> {
@@ -156,7 +156,7 @@ export class TeamsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The team has been successfully updated.',
-    type: () => OmitType(Team, ['createdAt', 'updatedAt']),
+    type: Team,
   })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateTeamDto): Promise<Team> {

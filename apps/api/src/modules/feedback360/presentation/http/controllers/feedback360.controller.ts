@@ -27,7 +27,6 @@ import {
   ApiQuery,
   ApiResponse,
   ApiTags,
-  OmitType,
 } from '@nestjs/swagger';
 import {
   ApiCreateAndUpdateErrorResponses,
@@ -38,6 +37,7 @@ import {
 import { Feedback360Stage } from '../../../domain/enums/feedback360-stage.enum';
 import { GetFeedback360Dto } from '../dto/get-feedback360.dto';
 import { Feedback360PageDto } from '../dto/feedback360-page.dto';
+import { Feedback360ResponseDto } from '../dto/feedback360-response.dto';
 
 @Controller('feedback360')
 @ApiTags('Feedback360')
@@ -53,7 +53,7 @@ export class Feedback360Controller {
   @ApiResponse({ 
     status: HttpStatus.CREATED,
     description: 'The feedback360 has been successfully created.',
-    type: () => OmitType(Feedback360, ['createdAt', 'updatedAt']),
+    type: Feedback360ResponseDto,
   })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateFeedback360Dto): Promise<Feedback360> {
@@ -245,7 +245,7 @@ export class Feedback360Controller {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The feedback360 has been successfully retrieved.',
-    type: () => OmitType(Feedback360, ['createdAt', 'updatedAt']),
+    type: Feedback360ResponseDto,
   })
   @ApiReadErrorResponses()
   async findOne(@Param('id') id: string): Promise<Feedback360> {
@@ -271,7 +271,7 @@ export class Feedback360Controller {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The feedback360 has been successfully updated.',
-    type: () => OmitType(Feedback360, ['createdAt', 'updatedAt']),
+    type: Feedback360ResponseDto,
   })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateFeedback360Dto): Promise<Feedback360> {

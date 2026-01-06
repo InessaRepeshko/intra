@@ -10,27 +10,23 @@
     "docker:view": "docker ps -a",
     "docker:stop": "docker-compose stop",
     "docker:down": "docker-compose down -v",
-
     "migrate": "dotenv -e .env.development.local -- npx prisma migrate deploy --schema packages/database/prisma/schema.prisma",
     "migrate:create": "dotenv -e .env.development.local -- npx prisma migrate dev --schema packages/database/prisma/schema.prisma",
     "migrate:generate": "dotenv -e .env.development.local -- npx prisma generate --schema packages/database/prisma/schema.prisma",
     "migrate:seed": "dotenv -e .env.development.local -- npx prisma db seed --schema packages/database/prisma/schema.prisma",
     "migrate:reset": "npm run migrate && npm run migrate:generate && npm run build && dotenv -e .env.development.local -- npx prisma migrate reset --force --schema packages/database/prisma/schema.prisma",
     "migrate:refresh": "npm run migrate:reset && npm run migrate:generate",
-    
     "start": "dotenv -e .env.development.local -v NODE_ENV=development -- nest start",
     "start:dev": "dotenv -e .env.development.local -v NODE_ENV=development -- nest start --watch",
     "start:debug": "dotenv -e .env.development.local -v NODE_ENV=development -- nest start --debug --watch",
     "start:prod": "dotenv -e .env.production -v NODE_ENV=production -- node dist/apps/api/src/main",
     "refresh": "npm run migrate:refresh; npm run start:dev",
-    
     "test": "npx jest --clearCache && npx jest",
     "test:unit": "npx jest --watch --config jest-unit.config.ts",
     "test:e2e": "npx jest --watch --config jest-e2e.config.ts",
     "test:watch": "npx jest --watch",
     "test:cov": "npx jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    
     "build": "nest build",
     "format": "prettier --write \"apps/api/src/**/*.ts\" \"apps/api/test/**/*.ts\"",
     "lint": "eslint \"{apps/api/src,apps/api/test}/**/*.ts\" --fix"
@@ -42,7 +38,8 @@
     "@prisma/client": "^6.19.1",
     "prisma": "^6.19.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "swagger-ui-themes": "^3.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

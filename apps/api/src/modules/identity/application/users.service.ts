@@ -23,6 +23,7 @@ export type UpdateUserInput = {
   positionId?: number;
   teamId?: number;
   managerId?: number | null;
+  status?: UsersStatus;
 };
 
 @Injectable()
@@ -62,12 +63,6 @@ export class UsersService {
 
   async findOne(id: number): Promise<UserDomain> {
     const user = await this.usersRepo.findById(id);
-    if (!user) throw new NotFoundException(`User not found`);
-    return user;
-  }
-
-  async findByEmail(email: string): Promise<UserDomain> {
-    const user = await this.usersRepo.findByEmail(email);
     if (!user) throw new NotFoundException(`User not found`);
     return user;
   }

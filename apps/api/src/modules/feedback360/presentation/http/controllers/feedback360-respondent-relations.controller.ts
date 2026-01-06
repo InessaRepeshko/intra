@@ -14,7 +14,7 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags, OmitType } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 import {
   ApiCreateAndUpdateErrorResponses,
@@ -35,7 +35,7 @@ import { GetFeedback360RespondentRelationsDto } from '../dto/respondent-relation
 import { Feedback360RespondentRelationsPageDto } from '../dto/respondent-relation/feedback360-respondent-relations-page.dto';
 
 @Controller('feedback360/respondent-relations')
-@ApiTags('Feedback360RespondentRelations')
+@ApiTags('Feedback360 Respondent Relations')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: Feedback360RespondentRelation, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
 export class Feedback360RespondentRelationsController {
@@ -48,7 +48,7 @@ export class Feedback360RespondentRelationsController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'The relation has been successfully created.',
-    type: () => OmitType(Feedback360RespondentRelation, ['createdAt', 'updatedAt']),
+    type: Feedback360RespondentRelation,
   })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateFeedback360RespondentRelationDto): Promise<Feedback360RespondentRelation> {
@@ -89,7 +89,7 @@ export class Feedback360RespondentRelationsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The relation has been successfully retrieved.',
-    type: () => OmitType(Feedback360RespondentRelation, ['createdAt', 'updatedAt']),
+    type: Feedback360RespondentRelation,
   })
   @ApiReadErrorResponses()
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Feedback360RespondentRelation> {
@@ -105,7 +105,7 @@ export class Feedback360RespondentRelationsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The relation has been successfully updated.',
-    type: () => OmitType(Feedback360RespondentRelation, ['createdAt', 'updatedAt']),
+    type: Feedback360RespondentRelation,
   })
   @ApiCreateAndUpdateErrorResponses()
   async update(

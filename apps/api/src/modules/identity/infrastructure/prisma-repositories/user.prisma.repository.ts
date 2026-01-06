@@ -4,6 +4,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserRepositoryPort, UserSearchQuery, UserSearchResult } from '../../application/repository-ports/user.repository.port';
 import { UserDomain } from '../../domain/user/user.domain';
 import { UsersStatus } from '../../domain/user/users-status.enum';
+import { UserSortField } from '../../domain/user/user-sort-field.enum';
+import { SortDirection } from '../../domain/user/sort-direction.enum';
 import { PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE } from 'src/common/constants/pagination.constants';
 
 @Injectable()
@@ -36,11 +38,15 @@ export class UserPrismaRepository implements UserRepositoryPort {
               { email: { contains: query.search } },
               { fullName: { contains: query.search } },
               { firstName: { contains: query.search } },
+              { secondName: { contains: query.search } },
               { lastName: { contains: query.search } },
             ],
           }
         : {}),
     };
+
+    const sortDirection = query.sortDirection ?? SortDirection.ASC;
+    const orderBy = this.buildOrderBy(query.sortBy, sortDirection);
 
     const [total, rows] = await Promise.all([
       this.db.user.count({ where }),
@@ -48,7 +54,7 @@ export class UserPrismaRepository implements UserRepositoryPort {
         where,
         skip,
         take,
-        orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }, { id: 'asc' }],
+        orderBy,
       }),
     ]);
 
@@ -56,13 +62,38 @@ export class UserPrismaRepository implements UserRepositoryPort {
     return { total, count: items.length, items };
   }
 
-  async findById(id: number): Promise<UserDomain | null> {
-    const row = await this.db.user.findUnique({ where: { id } });
-    return row ? this.fromPrisma(row) : null;
+  private buildOrderBy(
+    sortBy?: UserSortField,
+    sortDirection: SortDirection = SortDirection.ASC,
+  ): Prisma.UserOrderByWithRelationInput[] {
+    if (!sortBy) {
+      // Default sorting
+      return [{ lastName: 'asc' }, { firstName: 'asc' }, { id: 'asc' }];
+    }
+
+    const direction = sortDirection === SortDirection.DESC ? 'desc' : 'asc';
+
+    const orderByMap: Record<UserSortField, Prisma.UserOrderByWithRelationInput> = {
+      [UserSortField.ID]: { id: direction },
+      [UserSortField.FIRST_NAME]: { firstName: direction },
+      [UserSortField.SECOND_NAME]: { secondName: direction },
+      [UserSortField.LAST_NAME]: { lastName: direction },
+      [UserSortField.FULL_NAME]: { fullName: direction },
+      [UserSortField.EMAIL]: { email: direction },
+      [UserSortField.STATUS]: { status: direction },
+      [UserSortField.POSITION_ID]: { positionId: direction },
+      [UserSortField.TEAM_ID]: { teamId: direction },
+      [UserSortField.MANAGER_ID]: { managerId: direction },
+      [UserSortField.CREATED_AT]: { createdAt: direction },
+      [UserSortField.UPDATED_AT]: { updatedAt: direction },
+    };
+
+    // Always add id as secondary sort for consistent ordering
+    return [orderByMap[sortBy], { id: 'asc' }];
   }
 
-  async findByEmail(email: string): Promise<UserDomain | null> {
-    const row = await this.db.user.findUnique({ where: { email } });
+  async findById(id: number): Promise<UserDomain | null> {
+    const row = await this.db.user.findUnique({ where: { id } });
     return row ? this.fromPrisma(row) : null;
   }
 

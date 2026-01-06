@@ -13,7 +13,7 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags, OmitType } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 import {
   ApiCreateAndUpdateErrorResponses,
@@ -34,7 +34,7 @@ import { GetFeedback360CyclesDto } from '../dto/cycle/get-feedback360-cycles.dto
 import { Feedback360CyclesPageDto } from '../dto/cycle/feedback360-cycles-page.dto';
 
 @Controller('feedback360/cycles')
-@ApiTags('Feedback360Cycles')
+@ApiTags('Feedback360 Cycles')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: Feedback360Cycle, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
 export class Feedback360CyclesController {
@@ -47,7 +47,7 @@ export class Feedback360CyclesController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'The cycle has been successfully created.',
-    type: () => OmitType(Feedback360Cycle, ['createdAt', 'updatedAt']),
+    type: Feedback360Cycle,
   })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateFeedback360CycleDto): Promise<Feedback360Cycle> {
@@ -93,7 +93,7 @@ export class Feedback360CyclesController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The cycle has been successfully retrieved.',
-    type: () => OmitType(Feedback360Cycle, ['createdAt', 'updatedAt']),
+    type: Feedback360Cycle,
   })
   @ApiReadErrorResponses()
   async findOne(@Param('id') id: string): Promise<Feedback360Cycle> {
@@ -109,7 +109,7 @@ export class Feedback360CyclesController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The cycle has been successfully updated.',
-    type: () => OmitType(Feedback360Cycle, ['createdAt', 'updatedAt']),
+    type: Feedback360Cycle,
   })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateFeedback360CycleDto): Promise<Feedback360Cycle> {

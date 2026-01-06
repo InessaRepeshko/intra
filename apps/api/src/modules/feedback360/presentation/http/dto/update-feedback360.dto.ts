@@ -1,4 +1,4 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { OmitType, PartialType } from '@nestjs/swagger';
 import { CreateFeedback360Dto } from './create-feedback360.dto';
 
 export class UpdateFeedback360Dto extends PartialType(

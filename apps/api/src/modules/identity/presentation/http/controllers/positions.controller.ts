@@ -13,7 +13,7 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags, OmitType } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 import {
   ApiCreateAndUpdateErrorResponses,
@@ -43,7 +43,7 @@ export class PositionsController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'The position has been successfully created.',
-    type: () => OmitType(Position, ['createdAt', 'updatedAt']),
+    type: Position,
   })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreatePositionDto): Promise<Position> {
@@ -87,7 +87,7 @@ export class PositionsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The position has been successfully retrieved.',
-    type: () => OmitType(Position, ['createdAt', 'updatedAt']),
+    type: Position,
   })
   @ApiReadErrorResponses()
   async findOne(@Param('id') id: string): Promise<Position> {
@@ -113,7 +113,7 @@ export class PositionsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The position has been successfully updated.',
-    type: () => OmitType(Position, ['createdAt', 'updatedAt']),
+    type: Position,
   })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdatePositionDto): Promise<Position> {

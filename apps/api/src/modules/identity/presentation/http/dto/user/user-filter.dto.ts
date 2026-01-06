@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, Length, Min } from 'class-validator';
 import { UsersStatus } from '../../../../domain/user/users-status.enum';
+import { UserSortField } from '../../../../domain/user/user-sort-field.enum';
+import { SortDirection } from '../../../../domain/user/sort-direction.enum';
 import { UserConstants } from 'src/common/validators/constants';
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 
@@ -23,7 +25,7 @@ export class UserFilterDto {
   @IsString()
   @ApiProperty({
     required: false,
-    description: 'Search by first name or last name or email (contains, case-insensitive)',
+    description: 'Search by full name or email (contains, case-insensitive)',
     type: 'string',
     nullable: false,
     example: 'smith',
@@ -77,6 +79,29 @@ export class UserFilterDto {
     nullable: true,
   })
   managerId?: number;
+
+  @ToOptionalEnum(UserSortField)
+  @IsOptional()
+  @IsEnum(UserSortField)
+  @ApiProperty({
+    required: false,
+    description: 'Field to sort by',
+    enum: UserSortField,
+    example: UserSortField.LAST_NAME,
+  })
+  sortBy?: UserSortField;
+
+  @ToOptionalEnum(SortDirection)
+  @IsOptional()
+  @IsEnum(SortDirection)
+  @ApiProperty({
+    required: false,
+    description: 'Sort direction',
+    enum: SortDirection,
+    example: SortDirection.ASC,
+    default: SortDirection.ASC,
+  })
+  sortDirection?: SortDirection;
 }
 
 

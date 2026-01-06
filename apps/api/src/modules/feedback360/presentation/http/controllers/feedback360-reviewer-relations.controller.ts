@@ -14,7 +14,7 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags, OmitType } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 import {
   ApiCreateAndUpdateErrorResponses,
@@ -35,7 +35,7 @@ import { GetFeedback360ReviewerRelationsDto } from '../dto/reviewer-relation/get
 import { Feedback360ReviewerRelationsPageDto } from '../dto/reviewer-relation/feedback360-reviewer-relations-page.dto';
 
 @Controller('feedback360/reviewer-relations')
-@ApiTags('Feedback360ReviewerRelations')
+@ApiTags('Feedback360 Reviewer Relations')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: Feedback360ReviewerRelation, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
 export class Feedback360ReviewerRelationsController {
@@ -48,7 +48,7 @@ export class Feedback360ReviewerRelationsController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'The relation has been successfully created.',
-    type: () => OmitType(Feedback360ReviewerRelation, ['createdAt']),
+    type: Feedback360ReviewerRelation,
   })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateFeedback360ReviewerRelationDto): Promise<Feedback360ReviewerRelation> {
@@ -88,7 +88,7 @@ export class Feedback360ReviewerRelationsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The relation has been successfully retrieved.',
-    type: () => OmitType(Feedback360ReviewerRelation, ['createdAt']),
+    type: Feedback360ReviewerRelation,
   })
   @ApiReadErrorResponses()
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Feedback360ReviewerRelation> {
@@ -104,7 +104,7 @@ export class Feedback360ReviewerRelationsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The relation has been successfully updated.',
-    type: () => OmitType(Feedback360ReviewerRelation, ['createdAt']),
+    type: Feedback360ReviewerRelation,
   })
   @ApiCreateAndUpdateErrorResponses()
   async update(
