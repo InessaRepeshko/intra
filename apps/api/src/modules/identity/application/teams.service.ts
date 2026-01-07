@@ -22,7 +22,7 @@ export class TeamsService {
   constructor(
     @Inject(TEAM_REPOSITORY) private readonly teamsRepo: TeamRepositoryPort,
     @Inject(USER_REPOSITORY) private readonly usersRepo: UserRepositoryPort,
-  ) {}
+  ) { }
 
   async create(input: CreateTeamInput): Promise<TeamDomain> {
     const headId = input.headId ?? null;
@@ -47,6 +47,12 @@ export class TeamsService {
 
   async findOne(id: number): Promise<TeamDomain> {
     const team = await this.teamsRepo.findById(id);
+    if (!team) throw new NotFoundException('Team not found');
+    return team;
+  }
+
+  async findOneWithRelations(id: number): Promise<TeamDomain> {
+    const team = await this.teamsRepo.findByIdWithRelations(id);
     if (!team) throw new NotFoundException('Team not found');
     return team;
   }

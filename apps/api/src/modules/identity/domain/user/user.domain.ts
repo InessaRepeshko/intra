@@ -1,4 +1,6 @@
 import { UsersStatus } from './users-status.enum';
+import { PositionDomain } from '../position/position.domain';
+import { TeamDomain } from '../team/team.domain';
 
 export class UserDomain {
   readonly id?: number;
@@ -14,6 +16,11 @@ export class UserDomain {
   readonly managerId: number | null;
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
+  readonly position?: PositionDomain;
+  readonly team?: TeamDomain;
+  readonly manager?: UserDomain;
+  readonly subordinates?: UserDomain[];
+  readonly teamsLed?: TeamDomain[];
 
   constructor(props: {
     id?: number;
@@ -29,6 +36,11 @@ export class UserDomain {
     managerId: number | null;
     createdAt?: Date;
     updatedAt?: Date;
+    position?: PositionDomain;
+    team?: TeamDomain;
+    manager?: UserDomain;
+    subordinates?: UserDomain[];
+    teamsLed?: TeamDomain[];
   }) {
     this.id = props.id;
     this.firstName = props.firstName;
@@ -43,6 +55,11 @@ export class UserDomain {
     this.managerId = props.managerId;
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
+    this.position = props.position;
+    this.team = props.team;
+    this.manager = props.manager;
+    this.subordinates = props.subordinates;
+    this.teamsLed = props.teamsLed;
   }
 }
 

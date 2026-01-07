@@ -27,6 +27,7 @@ export interface TeamRepositoryPort {
   findAll(): Promise<TeamDomain[]>;
   search(query?: TeamSearchQuery): Promise<TeamSearchResult>;
   findById(id: number): Promise<TeamDomain | null>;
+  findByIdWithRelations(id: number): Promise<TeamDomain | null>;
   updateById(id: number, patch: Partial<TeamDomain>): Promise<TeamDomain>;
   deleteById(id: number): Promise<void>;
 }

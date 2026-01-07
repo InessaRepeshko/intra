@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Team as PrismaTeam } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma, Team as PrismaTeam, User as PrismaUser } from '@prisma/client';
 import { PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE } from 'src/common/constants/pagination.constants';
-import { TeamRepositoryPort, TeamSearchQuery, TeamSearchResult } from '../../application/repository-ports/team.repository.port';
-import { TeamDomain } from '../../domain/team/team.domain';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { TeamRepositoryPort, TeamSearchQuery, TeamSearchResult } from '../../application/repository-ports/team.repository.port';
 import { TeamSortField } from '../../domain/team/team-sort-field.enum';
+import { TeamDomain } from '../../domain/team/team.domain';
+import { UserDomain } from '../../domain/user/user.domain';
+import { UsersStatus } from '../../domain/user/users-status.enum';
 
 @Injectable()
 export class TeamPrismaRepository implements TeamRepositoryPort {
-  constructor(private readonly db: PrismaService) {}
+  constructor(private readonly db: PrismaService) { }
 
   async create(team: TeamDomain): Promise<TeamDomain> {
     const created = await this.db.team.create({ data: this.toPrismaCreate(team) });
@@ -32,11 +34,11 @@ export class TeamPrismaRepository implements TeamRepositoryPort {
       ...(query.memberId !== undefined ? { members: { some: { id: query.memberId } } } : {}),
       ...(query.search
         ? {
-            OR: [
-              { title: { contains: query.search } },
-              { description: { contains: query.search } },
-            ],
-          }
+          OR: [
+            { title: { contains: query.search } },
+            { description: { contains: query.search } },
+          ],
+        }
         : {}),
     };
     const sortDirection = query.sortDirection ?? SortDirection.ASC;
@@ -83,6 +85,17 @@ export class TeamPrismaRepository implements TeamRepositoryPort {
     return row ? this.fromPrisma(row) : null;
   }
 
+  async findByIdWithRelations(id: number): Promise<TeamDomain | null> {
+    const row = await this.db.team.findUnique({
+      where: { id },
+      include: {
+        head: true,
+        members: true,
+      },
+    });
+    return row ? this.fromPrismaWithRelations(row) : null;
+  }
+
   async updateById(id: number, patch: Partial<TeamDomain>): Promise<TeamDomain> {
     const updated = await this.db.team.update({ where: { id }, data: this.toPrismaUpdate(patch) });
     return this.fromPrisma(updated);
@@ -100,6 +113,57 @@ export class TeamPrismaRepository implements TeamRepositoryPort {
       headId: row.headId,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
+    });
+  }
+
+  private fromPrismaWithRelations(
+    row: PrismaTeam & {
+      head?: PrismaUser | null;
+      members?: PrismaUser[];
+    },
+  ): TeamDomain {
+    return new TeamDomain({
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      headId: row.headId,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      head: row.head
+        ? new UserDomain({
+          id: row.head.id,
+          firstName: row.head.firstName,
+          secondName: row.head.secondName,
+          lastName: row.head.lastName,
+          fullName: row.head.fullName,
+          email: row.head.email,
+          passwordHash: row.head.passwordHash,
+          status: row.head.status as UsersStatus,
+          positionId: row.head.positionId,
+          teamId: row.head.teamId,
+          managerId: row.head.managerId,
+          createdAt: row.head.createdAt,
+          updatedAt: row.head.updatedAt,
+        })
+        : undefined,
+      members: row.members?.map(
+        (m) =>
+          new UserDomain({
+            id: m.id,
+            firstName: m.firstName,
+            secondName: m.secondName,
+            lastName: m.lastName,
+            fullName: m.fullName,
+            email: m.email,
+            passwordHash: m.passwordHash,
+            status: m.status as UsersStatus,
+            positionId: m.positionId,
+            teamId: m.teamId,
+            managerId: m.managerId,
+            createdAt: m.createdAt,
+            updatedAt: m.updatedAt,
+          }),
+      ),
     });
   }
 

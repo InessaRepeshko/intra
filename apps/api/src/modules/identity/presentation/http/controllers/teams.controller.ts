@@ -18,6 +18,7 @@ import { CreateTeamDto } from '../dto/team/create-team.dto';
 import { UpdateTeamDto } from '../dto/team/update-team.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Team } from '../models/team.entity';
+import { TeamWithRelations } from '../models/team-with-relations.entity';
 import { TeamHttpMapper } from '../mappers/team.http.mapper';
 import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 import {
@@ -35,7 +36,7 @@ import { TeamsPageDto } from '../dto/team/teams-page.dto';
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: Team, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
 export class TeamsController {
-  constructor(private readonly teamsService: TeamsService) {}
+  constructor(private readonly teamsService: TeamsService) { }
 
   @Post()
   @SerializeOptions({ type: Team, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
@@ -81,12 +82,12 @@ export class TeamsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a team by ID' })
-  @ApiParam({ 
-    required: true, 
-    name: 'id', 
-    type: 'number', 
-    description: 'The ID of the team', 
-    example: 1 
+  @ApiParam({
+    required: true,
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the team',
+    example: 1
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -99,19 +100,40 @@ export class TeamsController {
     return TeamHttpMapper.fromDomain(team);
   }
 
+  @Get(':id/relations')
+  @SerializeOptions({ type: TeamWithRelations, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
+  @ApiOperation({ summary: 'Get a team by ID with all relationships' })
+  @ApiParam({
+    required: true,
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the team',
+    example: 1,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The team with relationships has been successfully retrieved.',
+    type: TeamWithRelations,
+  })
+  @ApiReadErrorResponses()
+  async findOneWithRelations(@Param('id') id: string): Promise<TeamWithRelations> {
+    const team = await this.teamsService.findOneWithRelations(+id);
+    return TeamHttpMapper.fromDomainWithRelations(team);
+  }
+
   @Patch(':id')
   @SerializeOptions({ type: Team, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
   @ApiOperation({ summary: 'Update a team by ID' })
-  @ApiParam({ 
-    required: true, 
-    name: 'id', 
-    type: 'number', 
-    description: 'The ID of the team', example: 1 
+  @ApiParam({
+    required: true,
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the team', example: 1
   })
-  @ApiBody({ 
-    required: true, 
-    type: UpdateTeamDto, 
-    description: 'The team data to update' 
+  @ApiBody({
+    required: true,
+    type: UpdateTeamDto,
+    description: 'The team data to update'
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -132,16 +154,16 @@ export class TeamsController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a team by ID' })
-  @ApiParam({ 
-    required: true, 
-    name: 'id', 
-    type: 'number', 
-    description: 'The ID of the team', 
-    example: 1 
+  @ApiParam({
+    required: true,
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the team',
+    example: 1
   })
-  @ApiResponse({ 
-    status: HttpStatus.NO_CONTENT, 
-    description: 'The team has been successfully deleted.' 
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'The team has been successfully deleted.'
   })
   @ApiDeletionErrorResponses()
   async remove(@Param('id') id: string): Promise<void> {

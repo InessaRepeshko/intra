@@ -30,7 +30,7 @@ export type UpdateUserInput = {
 export class UsersService {
   constructor(
     @Inject(USER_REPOSITORY) private readonly usersRepo: UserRepositoryPort,
-  ) {}
+  ) { }
 
   async create(input: CreateUserInput): Promise<UserDomain> {
     const passwordHash = PasswordHasher.hash(input.password);
@@ -63,6 +63,12 @@ export class UsersService {
 
   async findOne(id: number): Promise<UserDomain> {
     const user = await this.usersRepo.findById(id);
+    if (!user) throw new NotFoundException(`User not found`);
+    return user;
+  }
+
+  async findOneWithRelations(id: number): Promise<UserDomain> {
+    const user = await this.usersRepo.findByIdWithRelations(id);
     if (!user) throw new NotFoundException(`User not found`);
     return user;
   }

@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { Position as PrismaPosition, Prisma } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Position as PrismaPosition, Prisma, User as PrismaUser } from '@prisma/client';
 import { PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE } from 'src/common/constants/pagination.constants';
-import type { PositionRepositoryPort, PositionSearchQuery, PositionSearchResult } from '../../application/repository-ports/position.repository.port';
-import { PositionDomain } from '../../domain/position/position.domain';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { PositionRepositoryPort, PositionSearchQuery, PositionSearchResult } from '../../application/repository-ports/position.repository.port';
 import { PositionSortField } from '../../domain/position/position-sort-field.enum';
+import { PositionDomain } from '../../domain/position/position.domain';
+import { UserDomain } from '../../domain/user/user.domain';
+import { UsersStatus } from '../../domain/user/users-status.enum';
 
 @Injectable()
 export class PositionPrismaRepository implements PositionRepositoryPort {
-  constructor(private readonly db: PrismaService) {}
+  constructor(private readonly db: PrismaService) { }
 
   async create(position: PositionDomain): Promise<PositionDomain> {
     const created = await this.db.position.create({ data: this.toPrismaCreate(position) });
@@ -30,11 +32,11 @@ export class PositionPrismaRepository implements PositionRepositoryPort {
       ...(query.description ? { description: { contains: query.description } } : {}),
       ...(query.search
         ? {
-            OR: [
-              { title: { contains: query.search } },
-              { description: { contains: query.search } },
-            ],
-          }
+          OR: [
+            { title: { contains: query.search } },
+            { description: { contains: query.search } },
+          ],
+        }
         : {}),
     };
 
@@ -81,6 +83,16 @@ export class PositionPrismaRepository implements PositionRepositoryPort {
     return row ? this.fromPrisma(row) : null;
   }
 
+  async findByIdWithRelations(id: number): Promise<PositionDomain | null> {
+    const row = await this.db.position.findUnique({
+      where: { id },
+      include: {
+        users: true,
+      },
+    });
+    return row ? this.fromPrismaWithRelations(row) : null;
+  }
+
   async updateById(id: number, patch: Partial<PositionDomain>): Promise<PositionDomain> {
     const updated = await this.db.position.update({ where: { id }, data: this.toPrismaUpdate(patch) });
     return this.fromPrisma(updated);
@@ -97,6 +109,38 @@ export class PositionPrismaRepository implements PositionRepositoryPort {
       description: row.description,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
+    });
+  }
+
+  private fromPrismaWithRelations(
+    row: PrismaPosition & {
+      users?: PrismaUser[];
+    },
+  ): PositionDomain {
+    return new PositionDomain({
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      users: row.users?.map(
+        (u) =>
+          new UserDomain({
+            id: u.id,
+            firstName: u.firstName,
+            secondName: u.secondName,
+            lastName: u.lastName,
+            fullName: u.fullName,
+            email: u.email,
+            passwordHash: u.passwordHash,
+            status: u.status as UsersStatus,
+            positionId: u.positionId,
+            teamId: u.teamId,
+            managerId: u.managerId,
+            createdAt: u.createdAt,
+            updatedAt: u.updatedAt,
+          }),
+      ),
     });
   }
 

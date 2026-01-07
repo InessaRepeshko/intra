@@ -1,16 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, User as PrismaUser, users_status } from '@prisma/client';
+import {
+  Position as PrismaPosition,
+  Prisma,
+  Team as PrismaTeam,
+  User as PrismaUser,
+  users_status,
+} from '@prisma/client';
+import { PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE } from 'src/common/constants/pagination.constants';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserRepositoryPort, UserSearchQuery, UserSearchResult } from '../../application/repository-ports/user.repository.port';
+import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import {
+  UserRepositoryPort,
+  UserSearchQuery,
+  UserSearchResult,
+} from '../../application/repository-ports/user.repository.port';
+import { PositionDomain } from '../../domain/position/position.domain';
+import { TeamDomain } from '../../domain/team/team.domain';
+import { UserSortField } from '../../domain/user/user-sort-field.enum';
 import { UserDomain } from '../../domain/user/user.domain';
 import { UsersStatus } from '../../domain/user/users-status.enum';
-import { UserSortField } from '../../domain/user/user-sort-field.enum';
-import { SortDirection } from '../../../../common/enums/sort-direction.enum';
-import { PAGINATION_DEFAULT_TAKE, PAGINATION_MAX_TAKE } from 'src/common/constants/pagination.constants';
 
 @Injectable()
 export class UserPrismaRepository implements UserRepositoryPort {
-  constructor(private readonly db: PrismaService) {}
+  constructor(private readonly db: PrismaService) { }
 
   async create(user: UserDomain): Promise<UserDomain> {
     const created = await this.db.user.create({ data: this.toPrismaCreate(user) });
@@ -34,14 +46,14 @@ export class UserPrismaRepository implements UserRepositoryPort {
       ...(query.email ? { email: { contains: query.email } } : {}),
       ...(query.search
         ? {
-            OR: [
-              { email: { contains: query.search } },
-              { fullName: { contains: query.search } },
-              { firstName: { contains: query.search } },
-              { secondName: { contains: query.search } },
-              { lastName: { contains: query.search } },
-            ],
-          }
+          OR: [
+            { email: { contains: query.search } },
+            { fullName: { contains: query.search } },
+            { firstName: { contains: query.search } },
+            { secondName: { contains: query.search } },
+            { lastName: { contains: query.search } },
+          ],
+        }
         : {}),
     };
 
@@ -67,7 +79,6 @@ export class UserPrismaRepository implements UserRepositoryPort {
     sortDirection: SortDirection = SortDirection.ASC,
   ): Prisma.UserOrderByWithRelationInput[] {
     if (!sortBy) {
-
       return [{ id: 'asc' }];
     }
 
@@ -96,6 +107,20 @@ export class UserPrismaRepository implements UserRepositoryPort {
     return row ? this.fromPrisma(row) : null;
   }
 
+  async findByIdWithRelations(id: number): Promise<UserDomain | null> {
+    const row = await this.db.user.findUnique({
+      where: { id },
+      include: {
+        position: true,
+        team: true,
+        manager: true,
+        subordinates: true,
+        teamsLed: true,
+      },
+    });
+    return row ? this.fromPrismaWithRelations(row) : null;
+  }
+
   async updateById(id: number, patch: Partial<UserDomain>): Promise<UserDomain> {
     const updated = await this.db.user.update({ where: { id }, data: this.toPrismaUpdate(patch) });
     return this.fromPrisma(updated);
@@ -114,12 +139,70 @@ export class UserPrismaRepository implements UserRepositoryPort {
       fullName: row.fullName,
       email: row.email,
       passwordHash: row.passwordHash,
-      status: row.status as unknown as UsersStatus,
+      status: row.status as UsersStatus,
       positionId: row.positionId,
       teamId: row.teamId,
       managerId: row.managerId,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
+    });
+  }
+
+  private fromPrismaWithRelations(
+    row: PrismaUser & {
+      position?: PrismaPosition;
+      team?: PrismaTeam;
+      manager?: PrismaUser | null;
+      subordinates?: PrismaUser[];
+      teamsLed?: PrismaTeam[];
+    },
+  ): UserDomain {
+    return new UserDomain({
+      id: row.id,
+      firstName: row.firstName,
+      secondName: row.secondName,
+      lastName: row.lastName,
+      fullName: row.fullName,
+      email: row.email,
+      passwordHash: row.passwordHash,
+      status: row.status as UsersStatus,
+      positionId: row.positionId,
+      teamId: row.teamId,
+      managerId: row.managerId,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      position: row.position
+        ? new PositionDomain({
+          id: row.position.id,
+          title: row.position.title,
+          description: row.position.description,
+          createdAt: row.position.createdAt,
+          updatedAt: row.position.updatedAt,
+        })
+        : undefined,
+      team: row.team
+        ? new TeamDomain({
+          id: row.team.id,
+          title: row.team.title,
+          description: row.team.description,
+          headId: row.team.headId,
+          createdAt: row.team.createdAt,
+          updatedAt: row.team.updatedAt,
+        })
+        : undefined,
+      manager: row.manager ? this.fromPrisma(row.manager) : undefined,
+      subordinates: row.subordinates?.map((s) => this.fromPrisma(s)),
+      teamsLed: row.teamsLed?.map(
+        (t) =>
+          new TeamDomain({
+            id: t.id,
+            title: t.title,
+            description: t.description,
+            headId: t.headId,
+            createdAt: t.createdAt,
+            updatedAt: t.updatedAt,
+          }),
+      ),
     });
   }
 
@@ -131,7 +214,7 @@ export class UserPrismaRepository implements UserRepositoryPort {
       fullName: domain.fullName,
       email: domain.email,
       passwordHash: domain.passwordHash,
-      ...(domain.status ? { status: domain.status as unknown as users_status } : {}),
+      ...(domain.status ? { status: domain.status as users_status } : {}),
       positionId: domain.positionId,
       teamId: domain.teamId,
       managerId: domain.managerId,
@@ -145,7 +228,7 @@ export class UserPrismaRepository implements UserRepositoryPort {
       ...(domain.lastName !== undefined ? { lastName: domain.lastName } : {}),
       ...(domain.fullName !== undefined ? { fullName: domain.fullName } : {}),
       ...(domain.passwordHash !== undefined ? { passwordHash: domain.passwordHash } : {}),
-      ...(domain.status !== undefined ? { status: domain.status as unknown as users_status } : {}),
+      ...(domain.status !== undefined ? { status: domain.status as users_status } : {}),
       ...(domain.positionId !== undefined ? { positionId: domain.positionId } : {}),
       ...(domain.teamId !== undefined ? { teamId: domain.teamId } : {}),
       ...(domain.managerId !== undefined ? { managerId: domain.managerId } : {}),

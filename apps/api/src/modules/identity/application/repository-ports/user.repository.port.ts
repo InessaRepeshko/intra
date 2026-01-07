@@ -1,7 +1,7 @@
 import { UserDomain } from '../../domain/user/user.domain';
 import { UsersStatus } from '../../domain/user/users-status.enum';
 import { UserSortField } from '../../domain/user/user-sort-field.enum';
-import { SortDirection } from '../../../../common/enums/sort-direction.enum';
+import { SortDirection } from 'src/common/enums/sort-direction.enum';
 
 export const USER_REPOSITORY = Symbol('IDENTITY.USER_REPOSITORY');
 
@@ -29,6 +29,7 @@ export interface UserRepositoryPort {
   findAll(): Promise<UserDomain[]>;
   search(query?: UserSearchQuery): Promise<UserSearchResult>;
   findById(id: number): Promise<UserDomain | null>;
+  findByIdWithRelations(id: number): Promise<UserDomain | null>;
   updateById(id: number, patch: Partial<UserDomain>): Promise<UserDomain>;
   deleteById(id: number): Promise<void>;
 }

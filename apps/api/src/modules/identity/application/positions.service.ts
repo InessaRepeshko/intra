@@ -17,7 +17,7 @@ export type UpdatePositionInput = {
 export class PositionsService {
   constructor(
     @Inject(POSITION_REPOSITORY) private readonly positionsRepo: PositionRepositoryPort,
-  ) {}
+  ) { }
 
   async create(input: CreatePositionInput): Promise<PositionDomain> {
     const position = new PositionDomain({
@@ -37,6 +37,12 @@ export class PositionsService {
 
   async findOne(id: number): Promise<PositionDomain> {
     const found = await this.positionsRepo.findById(id);
+    if (!found) throw new NotFoundException('Position not found');
+    return found;
+  }
+
+  async findOneWithRelations(id: number): Promise<PositionDomain> {
+    const found = await this.positionsRepo.findByIdWithRelations(id);
     if (!found) throw new NotFoundException('Position not found');
     return found;
   }

@@ -25,6 +25,7 @@ export interface PositionRepositoryPort {
   findAll(): Promise<PositionDomain[]>;
   search(query?: PositionSearchQuery): Promise<PositionSearchResult>;
   findById(id: number): Promise<PositionDomain | null>;
+  findByIdWithRelations(id: number): Promise<PositionDomain | null>;
   updateById(id: number, patch: Partial<PositionDomain>): Promise<PositionDomain>;
   deleteById(id: number): Promise<void>;
 }

@@ -25,6 +25,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from '../models/user.entity';
+import { UserWithRelations } from '../models/user-with-relations.entity';
 import { UserHttpMapper } from '../mappers/user.http.mapper';
 import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 import {
@@ -77,8 +78,8 @@ export class UsersController {
     required: false,
     description: 'Query parameters for filtering, sorting and pagination for users',
   })
-  @ApiResponse({ 
-    status: HttpStatus.OK, 
+  @ApiResponse({
+    status: HttpStatus.OK,
     description: 'Successfully retrieved users',
     type: UsersPageDto,
   })
@@ -93,17 +94,17 @@ export class UsersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a user by ID' })
-  @ApiParam({ 
-    required: true, 
-    name: 'id', 
-    type: 'number', 
-    description: 'The ID of the user', 
-    example: 1 
+  @ApiParam({
+    required: true,
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the user',
+    example: 1
   })
-  @ApiResponse({ 
-    status: HttpStatus.OK, 
+  @ApiResponse({
+    status: HttpStatus.OK,
     type: UserResponseDto,
-    description: 'The user has been successfully retrieved.' 
+    description: 'The user has been successfully retrieved.'
   })
   @ApiReadErrorResponses()
   async findOne(@Param('id') id: string): Promise<User> {
@@ -111,25 +112,46 @@ export class UsersController {
     return UserHttpMapper.fromDomain(user);
   }
 
+  @Get(':id/relations')
+  @SerializeOptions({ type: UserWithRelations, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
+  @ApiOperation({ summary: 'Get a user by ID with all relationships' })
+  @ApiParam({
+    required: true,
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the user',
+    example: 1
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: UserWithRelations,
+    description: 'The user with relationships has been successfully retrieved.'
+  })
+  @ApiReadErrorResponses()
+  async findOneWithRelations(@Param('id') id: string): Promise<UserWithRelations> {
+    const user = await this.usersService.findOneWithRelations(+id);
+    return UserHttpMapper.fromDomainWithRelations(user);
+  }
+
   @Patch(':id')
   @SerializeOptions({ type: User, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
   @ApiOperation({ summary: 'Update a user by ID' })
-  @ApiParam({ 
-    required: true, 
-    name: 'id', 
-    type: 'number', 
-    description: 'The ID of the user', 
-    example: 1 
+  @ApiParam({
+    required: true,
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the user',
+    example: 1
   })
-  @ApiBody({ 
-    required: true, 
-    type: UpdateUserDto, 
-    description: 'The user data to update' 
+  @ApiBody({
+    required: true,
+    type: UpdateUserDto,
+    description: 'The user data to update'
   })
-  @ApiResponse({ 
-    status: HttpStatus.OK, 
+  @ApiResponse({
+    status: HttpStatus.OK,
     type: UserResponseDto,
-    description: 'The user has been successfully updated.' 
+    description: 'The user has been successfully updated.'
   })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateUserDto): Promise<User> {
@@ -149,16 +171,16 @@ export class UsersController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a user by ID' })
-  @ApiParam({ 
-    required: true, 
-    name: 'id', 
-    type: 'number', 
-    description: 'The ID of the user', 
-    example: 1 
+  @ApiParam({
+    required: true,
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the user',
+    example: 1
   })
-  @ApiResponse({ 
-    status: HttpStatus.NO_CONTENT, 
-    description: 'The user has been successfully deleted.' 
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'The user has been successfully deleted.'
   })
   @ApiDeletionErrorResponses()
   async remove(@Param('id') id: string): Promise<void> {

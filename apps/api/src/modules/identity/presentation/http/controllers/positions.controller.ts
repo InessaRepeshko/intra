@@ -27,6 +27,7 @@ import { GetPositionsDto } from '../dto/position/get-positions.dto';
 import { PositionsPageDto } from '../dto/position/positions-page.dto';
 import { UpdatePositionDto } from '../dto/position/update-position.dto';
 import { Position } from '../models/position.entity';
+import { PositionWithRelations } from '../models/position-with-relations.entity';
 import { PositionHttpMapper } from '../mappers/position.http.mapper';
 
 @Controller('positions')
@@ -34,7 +35,7 @@ import { PositionHttpMapper } from '../mappers/position.http.mapper';
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: Position, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
 export class PositionsController {
-  constructor(private readonly positionsService: PositionsService) {}
+  constructor(private readonly positionsService: PositionsService) { }
 
   @Post()
   @SerializeOptions({ type: Position, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
@@ -95,6 +96,27 @@ export class PositionsController {
   async findOne(@Param('id') id: string): Promise<Position> {
     const position = await this.positionsService.findOne(+id);
     return PositionHttpMapper.fromDomain(position);
+  }
+
+  @Get(':id/relations')
+  @SerializeOptions({ type: PositionWithRelations, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
+  @ApiOperation({ summary: 'Get a position by ID with all relationships' })
+  @ApiParam({
+    required: true,
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the position',
+    example: 1,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The position with relationships has been successfully retrieved.',
+    type: PositionWithRelations,
+  })
+  @ApiReadErrorResponses()
+  async findOneWithRelations(@Param('id') id: string): Promise<PositionWithRelations> {
+    const position = await this.positionsService.findOneWithRelations(+id);
+    return PositionHttpMapper.fromDomainWithRelations(position);
   }
 
   @Patch(':id')
