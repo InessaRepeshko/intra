@@ -1,0 +1,5057 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Home page"
+          }
+        },
+        "summary": "Get home page",
+        "tags": [
+          "Home"
+        ]
+      }
+    },
+    "/users": {
+      "post": {
+        "operationId": "UsersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The user has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create a new user",
+        "tags": [
+          "Users"
+        ]
+      },
+      "get": {
+        "operationId": "UsersController_findAll",
+        "parameters": [
+          {
+            "name": "email",
+            "required": false,
+            "in": "query",
+            "description": "Filter users by email (contains, case-insensitive)",
+            "schema": {
+              "nullable": false,
+              "example": "john.smith",
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by full name or email (contains, case-insensitive)",
+            "schema": {
+              "nullable": false,
+              "example": "smith",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter users by status",
+            "schema": {
+              "example": "ACTIVE",
+              "type": "string",
+              "enum": [
+                "INACTIVE",
+                "ACTIVE"
+              ]
+            }
+          },
+          {
+            "name": "teamId",
+            "required": false,
+            "in": "query",
+            "description": "Filter users by teamId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": false,
+            "in": "query",
+            "description": "Filter users by positionId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "managerId",
+            "required": false,
+            "in": "query",
+            "description": "Filter users by managerId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "lastName",
+              "type": "string",
+              "enum": [
+                "id",
+                "firstName",
+                "secondName",
+                "lastName",
+                "fullName",
+                "email",
+                "status",
+                "positionId",
+                "teamId",
+                "managerId",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "default": "desc",
+              "example": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "query",
+            "required": false,
+            "in": "query",
+            "description": "Query parameters for filtering, sorting and pagination for users",
+            "schema": {
+              "$ref": "#/components/schemas/GetUsersDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsersPageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get all users with filters, sorting and pagination",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "UsersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the user",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user has been successfully retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get a user by ID",
+        "tags": [
+          "Users"
+        ]
+      },
+      "patch": {
+        "operationId": "UsersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the user",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The user data to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update a user by ID",
+        "tags": [
+          "Users"
+        ]
+      },
+      "delete": {
+        "operationId": "UsersController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the user",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The user has been successfully deleted."
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete a user by ID",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{id}/relations": {
+      "get": {
+        "operationId": "UsersController_findOneWithRelations",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the user",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user with relationships has been successfully retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserWithRelations"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get a user by ID with all relationships",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/feedback360": {
+      "post": {
+        "operationId": "Feedback360Controller_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFeedback360Dto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The feedback360 has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360ResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create a new feedback360",
+        "tags": [
+          "Feedback360"
+        ]
+      },
+      "get": {
+        "operationId": "Feedback360Controller_findAll",
+        "parameters": [
+          {
+            "name": "rateeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by rateeId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "hrId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by hrId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by positionId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by cycleId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "reportId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by reportId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "stage",
+            "required": false,
+            "in": "query",
+            "description": "Filter by stage",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CANCELED",
+                "VERIFICATION_BY_HR",
+                "VERIFICATION_BY_USER",
+                "REJECTED",
+                "SELF_ASSESSMENT",
+                "WAITING_TO_START",
+                "INPROGRESS",
+                "RESEARCH",
+                "FINISHED"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search in rateeNote/hrNote (contains)",
+            "schema": {
+              "example": "note",
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "query",
+            "required": false,
+            "in": "query",
+            "description": "Query parameters for filtering and pagination for feedback360",
+            "schema": {
+              "$ref": "#/components/schemas/GetFeedback360Dto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved feedback360",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360PageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get all feedback360 with filters and pagination",
+        "tags": [
+          "Feedback360"
+        ]
+      }
+    },
+    "/feedback360/by-ratee/{rateeId}": {
+      "get": {
+        "operationId": "Feedback360Controller_findByRateeId",
+        "parameters": [
+          {
+            "name": "rateeId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the ratee",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "hrId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by hrId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by positionId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by cycleId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "reportId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by reportId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "stage",
+            "required": false,
+            "in": "query",
+            "description": "Filter by stage",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CANCELED",
+                "VERIFICATION_BY_HR",
+                "VERIFICATION_BY_USER",
+                "REJECTED",
+                "SELF_ASSESSMENT",
+                "WAITING_TO_START",
+                "INPROGRESS",
+                "RESEARCH",
+                "FINISHED"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search in rateeNote/hrNote (contains)",
+            "schema": {
+              "example": "note",
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved feedback360",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360PageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get feedback360 by ratee ID",
+        "tags": [
+          "Feedback360"
+        ]
+      }
+    },
+    "/feedback360/by-hr/{hrId}": {
+      "get": {
+        "operationId": "Feedback360Controller_findByHrId",
+        "parameters": [
+          {
+            "name": "hrId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the HR",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "rateeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by rateeId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by positionId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by cycleId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "reportId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by reportId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "stage",
+            "required": false,
+            "in": "query",
+            "description": "Filter by stage",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CANCELED",
+                "VERIFICATION_BY_HR",
+                "VERIFICATION_BY_USER",
+                "REJECTED",
+                "SELF_ASSESSMENT",
+                "WAITING_TO_START",
+                "INPROGRESS",
+                "RESEARCH",
+                "FINISHED"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search in rateeNote/hrNote (contains)",
+            "schema": {
+              "example": "note",
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved feedback360",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360PageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get feedback360 by HR ID",
+        "tags": [
+          "Feedback360"
+        ]
+      }
+    },
+    "/feedback360/by-position/{positionId}": {
+      "get": {
+        "operationId": "Feedback360Controller_findByPositionId",
+        "parameters": [
+          {
+            "name": "positionId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the position",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "rateeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by rateeId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "hrId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by hrId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by cycleId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "reportId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by reportId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "stage",
+            "required": false,
+            "in": "query",
+            "description": "Filter by stage",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CANCELED",
+                "VERIFICATION_BY_HR",
+                "VERIFICATION_BY_USER",
+                "REJECTED",
+                "SELF_ASSESSMENT",
+                "WAITING_TO_START",
+                "INPROGRESS",
+                "RESEARCH",
+                "FINISHED"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search in rateeNote/hrNote (contains)",
+            "schema": {
+              "example": "note",
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved feedback360",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360PageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get feedback360 by position ID",
+        "tags": [
+          "Feedback360"
+        ]
+      }
+    },
+    "/feedback360/by-cycle/{cycleId}": {
+      "get": {
+        "operationId": "Feedback360Controller_findByCycleId",
+        "parameters": [
+          {
+            "name": "cycleId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the cycle",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "rateeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by rateeId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "hrId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by hrId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by positionId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "reportId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by reportId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "stage",
+            "required": false,
+            "in": "query",
+            "description": "Filter by stage",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CANCELED",
+                "VERIFICATION_BY_HR",
+                "VERIFICATION_BY_USER",
+                "REJECTED",
+                "SELF_ASSESSMENT",
+                "WAITING_TO_START",
+                "INPROGRESS",
+                "RESEARCH",
+                "FINISHED"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search in rateeNote/hrNote (contains)",
+            "schema": {
+              "example": "note",
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved feedback360",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360PageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get feedback360 by cycle ID",
+        "tags": [
+          "Feedback360"
+        ]
+      }
+    },
+    "/feedback360/by-report/{reportId}": {
+      "get": {
+        "operationId": "Feedback360Controller_findByReportId",
+        "parameters": [
+          {
+            "name": "reportId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the report",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "rateeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by rateeId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "hrId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by hrId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by positionId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by cycleId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "stage",
+            "required": false,
+            "in": "query",
+            "description": "Filter by stage",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CANCELED",
+                "VERIFICATION_BY_HR",
+                "VERIFICATION_BY_USER",
+                "REJECTED",
+                "SELF_ASSESSMENT",
+                "WAITING_TO_START",
+                "INPROGRESS",
+                "RESEARCH",
+                "FINISHED"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search in rateeNote/hrNote (contains)",
+            "schema": {
+              "example": "note",
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved feedback360",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360PageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get feedback360 by report ID",
+        "tags": [
+          "Feedback360"
+        ]
+      }
+    },
+    "/feedback360/by-stage/{stage}": {
+      "get": {
+        "operationId": "Feedback360Controller_findByStage",
+        "parameters": [
+          {
+            "name": "stage",
+            "required": true,
+            "in": "path",
+            "description": "The stage of the feedback360",
+            "schema": {
+              "enum": [
+                "CANCELED",
+                "VERIFICATION_BY_HR",
+                "VERIFICATION_BY_USER",
+                "REJECTED",
+                "SELF_ASSESSMENT",
+                "WAITING_TO_START",
+                "INPROGRESS",
+                "RESEARCH",
+                "FINISHED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "rateeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by rateeId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "hrId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by hrId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by positionId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by cycleId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "reportId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by reportId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search in rateeNote/hrNote (contains)",
+            "schema": {
+              "example": "note",
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved feedback360",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360PageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get feedback360 by stage",
+        "tags": [
+          "Feedback360"
+        ]
+      }
+    },
+    "/feedback360/{id}": {
+      "get": {
+        "operationId": "Feedback360Controller_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the feedback360",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The feedback360 has been successfully retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360ResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get a feedback360 by ID",
+        "tags": [
+          "Feedback360"
+        ]
+      },
+      "patch": {
+        "operationId": "Feedback360Controller_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the feedback360",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The feedback360 data to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFeedback360Dto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The feedback360 has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360ResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update a feedback360 by ID",
+        "tags": [
+          "Feedback360"
+        ]
+      },
+      "delete": {
+        "operationId": "Feedback360Controller_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the feedback360",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The feedback360 has been successfully deleted."
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete a feedback360 by ID",
+        "tags": [
+          "Feedback360"
+        ]
+      }
+    },
+    "/feedback360/cycles": {
+      "post": {
+        "operationId": "Feedback360CyclesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFeedback360CycleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The cycle has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360Cycle"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create a new feedback360 cycle",
+        "tags": [
+          "Feedback360 / Cycles"
+        ]
+      },
+      "get": {
+        "operationId": "Feedback360CyclesController_findAll",
+        "parameters": [
+          {
+            "name": "hrId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by hrId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "stage",
+            "required": false,
+            "in": "query",
+            "description": "Filter by stage",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CANCELED",
+                "NEW",
+                "ACTIVE",
+                "FINISHED",
+                "ARCHIVE"
+              ]
+            }
+          },
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "description": "Filter by isActive",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search in title/description (contains)",
+            "schema": {
+              "example": "Q1",
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDateFrom",
+            "required": false,
+            "in": "query",
+            "description": "Filter startDate >= startDateFrom",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDateTo",
+            "required": false,
+            "in": "query",
+            "description": "Filter startDate <= startDateTo",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "query",
+            "required": false,
+            "in": "query",
+            "description": "Query parameters for filtering and pagination for feedback360 cycles",
+            "schema": {
+              "$ref": "#/components/schemas/GetFeedback360CyclesDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved cycles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360CyclesPageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get feedback360 cycles (filters + pagination)",
+        "tags": [
+          "Feedback360 / Cycles"
+        ]
+      }
+    },
+    "/feedback360/cycles/{id}": {
+      "get": {
+        "operationId": "Feedback360CyclesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The cycle ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The cycle has been successfully retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360Cycle"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get a feedback360 cycle by ID",
+        "tags": [
+          "Feedback360 / Cycles"
+        ]
+      },
+      "patch": {
+        "operationId": "Feedback360CyclesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The cycle ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFeedback360CycleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The cycle has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360Cycle"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update a feedback360 cycle by ID",
+        "tags": [
+          "Feedback360 / Cycles"
+        ]
+      },
+      "delete": {
+        "operationId": "Feedback360CyclesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The cycle ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The cycle has been successfully deleted."
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete a feedback360 cycle by ID",
+        "tags": [
+          "Feedback360 / Cycles"
+        ]
+      }
+    },
+    "/feedback360/respondent-relations": {
+      "post": {
+        "operationId": "Feedback360RespondentRelationsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFeedback360RespondentRelationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The relation has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360RespondentRelation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create a feedback360 respondent relation",
+        "tags": [
+          "Feedback360 / Respondent Relations"
+        ]
+      },
+      "get": {
+        "operationId": "Feedback360RespondentRelationsController_findAll",
+        "parameters": [
+          {
+            "name": "feedback360Id",
+            "required": false,
+            "in": "query",
+            "description": "Filter by feedback360Id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "respondentId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by respondentId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "respondentCategory",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SELF_ASSESSMENT",
+                "TEAM",
+                "OTHER"
+              ]
+            }
+          },
+          {
+            "name": "feedback360Status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "INPROGRESS",
+                "COMPLETED",
+                "CANCELED"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search in respondentNote (contains)",
+            "schema": {
+              "example": "note",
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "query",
+            "required": false,
+            "in": "query",
+            "description": "Query parameters for filtering and pagination for respondent relations",
+            "schema": {
+              "$ref": "#/components/schemas/GetFeedback360RespondentRelationsDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved relations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360RespondentRelationsPageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get respondent relations (filters + pagination)",
+        "tags": [
+          "Feedback360 / Respondent Relations"
+        ]
+      }
+    },
+    "/feedback360/respondent-relations/{id}": {
+      "get": {
+        "operationId": "Feedback360RespondentRelationsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Relation id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The relation has been successfully retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360RespondentRelation"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get respondent relation by ID",
+        "tags": [
+          "Feedback360 / Respondent Relations"
+        ]
+      },
+      "patch": {
+        "operationId": "Feedback360RespondentRelationsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Relation id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFeedback360RespondentRelationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The relation has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360RespondentRelation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update respondent relation by ID",
+        "tags": [
+          "Feedback360 / Respondent Relations"
+        ]
+      },
+      "delete": {
+        "operationId": "Feedback360RespondentRelationsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Relation id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The relation has been successfully deleted."
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete respondent relation by ID",
+        "tags": [
+          "Feedback360 / Respondent Relations"
+        ]
+      }
+    },
+    "/feedback360/reviewer-relations": {
+      "post": {
+        "operationId": "Feedback360ReviewerRelationsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFeedback360ReviewerRelationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The relation has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360ReviewerRelation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create a feedback360 reviewer relation",
+        "tags": [
+          "Feedback360 / Reviewer Relations"
+        ]
+      },
+      "get": {
+        "operationId": "Feedback360ReviewerRelationsController_findAll",
+        "parameters": [
+          {
+            "name": "feedback360Id",
+            "required": false,
+            "in": "query",
+            "description": "Filter by feedback360Id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by userId",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "query",
+            "required": false,
+            "in": "query",
+            "description": "Query parameters for filtering and pagination for reviewer relations",
+            "schema": {
+              "$ref": "#/components/schemas/GetFeedback360ReviewerRelationsDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved relations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360ReviewerRelationsPageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get reviewer relations (filters + pagination)",
+        "tags": [
+          "Feedback360 / Reviewer Relations"
+        ]
+      }
+    },
+    "/feedback360/reviewer-relations/{id}": {
+      "get": {
+        "operationId": "Feedback360ReviewerRelationsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Relation id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The relation has been successfully retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360ReviewerRelation"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get reviewer relation by ID",
+        "tags": [
+          "Feedback360 / Reviewer Relations"
+        ]
+      },
+      "patch": {
+        "operationId": "Feedback360ReviewerRelationsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Relation id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFeedback360ReviewerRelationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The relation has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback360ReviewerRelation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update reviewer relation by ID",
+        "tags": [
+          "Feedback360 / Reviewer Relations"
+        ]
+      },
+      "delete": {
+        "operationId": "Feedback360ReviewerRelationsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Relation id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The relation has been successfully deleted."
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete reviewer relation by ID",
+        "tags": [
+          "Feedback360 / Reviewer Relations"
+        ]
+      }
+    },
+    "/teams": {
+      "post": {
+        "operationId": "TeamsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTeamDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The team has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create a new team",
+        "tags": [
+          "Teams"
+        ]
+      },
+      "get": {
+        "operationId": "TeamsController_findAll",
+        "parameters": [
+          {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "description": "Filter teams by title (contains)",
+            "schema": {
+              "example": "Eng",
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Filter teams by description (contains)",
+            "schema": {
+              "nullable": true,
+              "example": "Product",
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by title/description (contains)",
+            "schema": {
+              "example": "engineering",
+              "type": "string"
+            }
+          },
+          {
+            "name": "headId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by headId",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "memberId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by memberId (team contains this user)",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "title",
+              "type": "string",
+              "enum": [
+                "id",
+                "title",
+                "description",
+                "headId",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "default": "desc",
+              "example": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "query",
+            "required": false,
+            "in": "query",
+            "description": "Query parameters for filtering, sorting and pagination for teams",
+            "schema": {
+              "$ref": "#/components/schemas/GetTeamsDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved teams",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamsPageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get all teams with filters, sorting and pagination",
+        "tags": [
+          "Teams"
+        ]
+      }
+    },
+    "/teams/{id}": {
+      "get": {
+        "operationId": "TeamsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the team",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The team has been successfully retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get a team by ID",
+        "tags": [
+          "Teams"
+        ]
+      },
+      "patch": {
+        "operationId": "TeamsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the team",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The team data to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTeamDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The team has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update a team by ID",
+        "tags": [
+          "Teams"
+        ]
+      },
+      "delete": {
+        "operationId": "TeamsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the team",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The team has been successfully deleted."
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete a team by ID",
+        "tags": [
+          "Teams"
+        ]
+      }
+    },
+    "/teams/{id}/relations": {
+      "get": {
+        "operationId": "TeamsController_findOneWithRelations",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the team",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The team with relationships has been successfully retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamWithRelations"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get a team by ID with all relationships",
+        "tags": [
+          "Teams"
+        ]
+      }
+    },
+    "/positions": {
+      "post": {
+        "operationId": "PositionsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePositionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The position has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Position"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create a new position",
+        "tags": [
+          "Positions"
+        ]
+      },
+      "get": {
+        "operationId": "PositionsController_findAll",
+        "parameters": [
+          {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "description": "Filter positions by title (contains)",
+            "schema": {
+              "example": "Engineer",
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Filter positions by description (contains)",
+            "schema": {
+              "nullable": true,
+              "example": "backend",
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by title/description (contains)",
+            "schema": {
+              "example": "software",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "title",
+              "type": "string",
+              "enum": [
+                "id",
+                "title",
+                "description",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "default": "desc",
+              "example": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to take",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "query",
+            "required": false,
+            "in": "query",
+            "description": "Query parameters for filtering and pagination for positions",
+            "schema": {
+              "$ref": "#/components/schemas/GetPositionsDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved positions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PositionsPageDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get all positions with filters, sorting and pagination",
+        "tags": [
+          "Positions"
+        ]
+      }
+    },
+    "/positions/{id}": {
+      "get": {
+        "operationId": "PositionsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the position",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The position has been successfully retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Position"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get a position by ID",
+        "tags": [
+          "Positions"
+        ]
+      },
+      "patch": {
+        "operationId": "PositionsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the position",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The position data to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePositionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The position has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Position"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update a position by ID",
+        "tags": [
+          "Positions"
+        ]
+      },
+      "delete": {
+        "operationId": "PositionsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the position",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The position has been successfully deleted."
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete a position by ID",
+        "tags": [
+          "Positions"
+        ]
+      }
+    },
+    "/positions/{id}/relations": {
+      "get": {
+        "operationId": "PositionsController_findOneWithRelations",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the position",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The position with relationships has been successfully retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PositionWithRelations"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get a position by ID with all relationships",
+        "tags": [
+          "Positions"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Intra API",
+    "description": "API documentation for Intra",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the user",
+            "example": "John",
+            "nullable": false,
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "secondName": {
+            "type": "string",
+            "description": "The second name of the user",
+            "example": "Joel",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the user",
+            "example": "Smith",
+            "nullable": false,
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "description": "The email of the user",
+            "example": "john.smith@example.com",
+            "nullable": false,
+            "maxLength": 100
+          },
+          "password": {
+            "type": "string",
+            "description": "The password of the user (will be hashed and not returned)",
+            "example": "Str0ngP@ssw0rd!",
+            "nullable": false,
+            "minLength": 8,
+            "maxLength": 128
+          },
+          "positionId": {
+            "type": "number",
+            "description": "The position ID of the user",
+            "example": 1,
+            "nullable": false
+          },
+          "teamId": {
+            "type": "number",
+            "description": "The team ID of the user",
+            "example": 1,
+            "nullable": false
+          },
+          "managerId": {
+            "type": "number",
+            "description": "The manager ID of the user",
+            "example": 1,
+            "nullable": true
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "password",
+          "positionId",
+          "teamId"
+        ]
+      },
+      "UserResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the user",
+            "example": 1
+          },
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the user",
+            "example": "John"
+          },
+          "secondName": {
+            "type": "object",
+            "description": "The second name of the user",
+            "example": "Doe"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the user",
+            "example": "Smith"
+          },
+          "fullName": {
+            "type": "object",
+            "description": "The full name of the user",
+            "example": "John Doe Smith"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email of the user",
+            "example": "john.doe@example.com"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the user",
+            "example": "ACTIVE",
+            "enum": [
+              "INACTIVE",
+              "ACTIVE"
+            ]
+          },
+          "positionId": {
+            "type": "number",
+            "description": "The position ID of the user",
+            "example": 1
+          },
+          "teamId": {
+            "type": "number",
+            "description": "The team ID of the user",
+            "example": 1
+          },
+          "managerId": {
+            "type": "object",
+            "description": "The manager ID of the user",
+            "example": 1,
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The created at date of the user",
+            "example": "2021-01-01"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The updated at date of the user",
+            "example": "2021-01-01"
+          }
+        },
+        "required": [
+          "id",
+          "firstName",
+          "secondName",
+          "lastName",
+          "fullName",
+          "email",
+          "status",
+          "positionId",
+          "teamId",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "GetUsersDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Filter users by email (contains, case-insensitive)",
+            "nullable": false,
+            "example": "john.smith"
+          },
+          "search": {
+            "type": "string",
+            "description": "Search by full name or email (contains, case-insensitive)",
+            "nullable": false,
+            "example": "smith"
+          },
+          "status": {
+            "type": "string",
+            "description": "Filter users by status",
+            "enum": [
+              "INACTIVE",
+              "ACTIVE"
+            ],
+            "example": "ACTIVE"
+          },
+          "teamId": {
+            "type": "number",
+            "description": "Filter users by teamId",
+            "example": 1
+          },
+          "positionId": {
+            "type": "number",
+            "description": "Filter users by positionId",
+            "example": 1
+          },
+          "managerId": {
+            "type": "number",
+            "description": "Filter users by managerId",
+            "example": 1,
+            "nullable": true
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Field to sort by",
+            "enum": [
+              "id",
+              "firstName",
+              "secondName",
+              "lastName",
+              "fullName",
+              "email",
+              "status",
+              "positionId",
+              "teamId",
+              "managerId",
+              "createdAt",
+              "updatedAt"
+            ],
+            "example": "lastName"
+          },
+          "sortDirection": {
+            "type": "string",
+            "description": "Sort direction",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "example": "asc",
+            "default": "desc"
+          },
+          "skip": {
+            "type": "number",
+            "description": "Number of items to skip",
+            "example": 1,
+            "minimum": 0,
+            "default": 0
+          },
+          "take": {
+            "type": "number",
+            "description": "Number of items to take",
+            "example": 10,
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the user",
+            "example": 1
+          },
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the user",
+            "example": "John"
+          },
+          "secondName": {
+            "type": "object",
+            "description": "The second name of the user",
+            "example": "Doe"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the user",
+            "example": "Smith"
+          },
+          "fullName": {
+            "type": "object",
+            "description": "The full name of the user",
+            "example": "John Doe Smith"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email of the user",
+            "example": "john.doe@example.com"
+          },
+          "passwordHash": {
+            "type": "string",
+            "description": "The password hash of the user",
+            "example": "1234567890"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the user",
+            "example": "ACTIVE",
+            "enum": [
+              "INACTIVE",
+              "ACTIVE"
+            ]
+          },
+          "positionId": {
+            "type": "number",
+            "description": "The position ID of the user",
+            "example": 1
+          },
+          "teamId": {
+            "type": "number",
+            "description": "The team ID of the user",
+            "example": 1
+          },
+          "managerId": {
+            "type": "object",
+            "description": "The manager ID of the user",
+            "example": 1,
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The created at date of the user",
+            "example": "2021-01-01"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The updated at date of the user",
+            "example": "2021-01-01"
+          }
+        },
+        "required": [
+          "id",
+          "firstName",
+          "secondName",
+          "lastName",
+          "fullName",
+          "email",
+          "passwordHash",
+          "status",
+          "positionId",
+          "teamId",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UsersPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "count": {
+            "type": "number",
+            "description": "Number of users in current page",
+            "example": 1
+          },
+          "total": {
+            "type": "number",
+            "description": "Total number of users matching the filter",
+            "example": 10
+          }
+        },
+        "required": [
+          "items",
+          "count",
+          "total"
+        ]
+      },
+      "Position": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the position",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the position",
+            "example": "Software Engineer"
+          },
+          "description": {
+            "type": "object",
+            "description": "The description of the position",
+            "example": "Builds and maintains backend services",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The created at date of the position",
+            "example": "2021-01-01"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The updated at date of the position",
+            "example": "2021-01-01"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Team": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the team",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the team",
+            "example": "Engineering"
+          },
+          "description": {
+            "type": "object",
+            "description": "The description of the team",
+            "example": "Product engineering team",
+            "nullable": true
+          },
+          "headId": {
+            "type": "object",
+            "description": "The head user ID of the team",
+            "example": 1,
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The created at date of the team",
+            "example": "2021-01-01"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The updated at date of the team",
+            "example": "2021-01-01"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UserWithRelations": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the user",
+            "example": 1
+          },
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the user",
+            "example": "John"
+          },
+          "secondName": {
+            "type": "object",
+            "description": "The second name of the user",
+            "example": "Doe"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the user",
+            "example": "Smith"
+          },
+          "fullName": {
+            "type": "object",
+            "description": "The full name of the user",
+            "example": "John Doe Smith"
+          },
+          "email": {
+            "type": "string",
+            "description": "The email of the user",
+            "example": "john.doe@example.com"
+          },
+          "passwordHash": {
+            "type": "string",
+            "description": "The password hash of the user",
+            "example": "1234567890"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the user",
+            "example": "ACTIVE",
+            "enum": [
+              "INACTIVE",
+              "ACTIVE"
+            ]
+          },
+          "positionId": {
+            "type": "number",
+            "description": "The position ID of the user",
+            "example": 1
+          },
+          "teamId": {
+            "type": "number",
+            "description": "The team ID of the user",
+            "example": 1
+          },
+          "managerId": {
+            "type": "object",
+            "description": "The manager ID of the user",
+            "example": 1,
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The created at date of the user",
+            "example": "2021-01-01"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The updated at date of the user",
+            "example": "2021-01-01"
+          },
+          "position": {
+            "description": "The position of the user",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Position"
+              }
+            ]
+          },
+          "team": {
+            "description": "The team of the user",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Team"
+              }
+            ]
+          },
+          "manager": {
+            "description": "The manager of the user",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/User"
+              }
+            ]
+          },
+          "subordinates": {
+            "description": "The subordinates of the user",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "teamsLed": {
+            "description": "The teams led by the user",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Team"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "firstName",
+          "secondName",
+          "lastName",
+          "fullName",
+          "email",
+          "passwordHash",
+          "status",
+          "positionId",
+          "teamId",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the user",
+            "example": "John",
+            "nullable": false,
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "secondName": {
+            "type": "string",
+            "description": "The second name of the user",
+            "example": "Joel",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the user",
+            "example": "Smith",
+            "nullable": false,
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "password": {
+            "type": "string",
+            "description": "The password of the user (will be hashed and not returned)",
+            "example": "Str0ngP@ssw0rd!",
+            "nullable": false,
+            "minLength": 8,
+            "maxLength": 128
+          },
+          "positionId": {
+            "type": "number",
+            "description": "The position ID of the user",
+            "example": 1,
+            "nullable": false
+          },
+          "teamId": {
+            "type": "number",
+            "description": "The team ID of the user",
+            "example": 1,
+            "nullable": false
+          },
+          "managerId": {
+            "type": "number",
+            "description": "The manager ID of the user",
+            "example": 1,
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the user",
+            "enum": [
+              "INACTIVE",
+              "ACTIVE"
+            ],
+            "example": "ACTIVE"
+          }
+        }
+      },
+      "CreateFeedback360Dto": {
+        "type": "object",
+        "properties": {
+          "rateeId": {
+            "type": "number",
+            "description": "The ID of the ratee",
+            "example": 1
+          },
+          "rateeNote": {
+            "type": "object",
+            "description": "The note of the ratee",
+            "example": "The ratee note",
+            "nullable": true
+          },
+          "positionId": {
+            "type": "number",
+            "description": "The ID of the position",
+            "example": 1
+          },
+          "hrId": {
+            "type": "number",
+            "description": "The ID of the HR",
+            "example": 1
+          },
+          "hrNote": {
+            "type": "object",
+            "description": "The note of the HR",
+            "example": "The HR note",
+            "nullable": true
+          },
+          "cycleId": {
+            "type": "object",
+            "description": "The ID of the cycle",
+            "example": 1,
+            "nullable": true
+          },
+          "stage": {
+            "type": "string",
+            "description": "The stage of the feedback360",
+            "example": "VERIFICATION_BY_HR",
+            "enum": [
+              "CANCELED",
+              "VERIFICATION_BY_HR",
+              "VERIFICATION_BY_USER",
+              "REJECTED",
+              "SELF_ASSESSMENT",
+              "WAITING_TO_START",
+              "INPROGRESS",
+              "RESEARCH",
+              "FINISHED"
+            ],
+            "default": "VERIFICATION_BY_HR"
+          },
+          "reportId": {
+            "type": "object",
+            "description": "The ID of the report",
+            "example": 1,
+            "nullable": true
+          }
+        },
+        "required": [
+          "rateeId",
+          "positionId",
+          "hrId"
+        ]
+      },
+      "Feedback360ResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the feedback360",
+            "example": 1
+          },
+          "rateeId": {
+            "type": "number",
+            "description": "The ID of the ratee",
+            "example": 1
+          },
+          "rateeNote": {
+            "type": "object",
+            "description": "The note of the ratee",
+            "example": "The ratee note"
+          },
+          "positionId": {
+            "type": "number",
+            "description": "The ID of the position",
+            "example": 1
+          },
+          "hrId": {
+            "type": "number",
+            "description": "The ID of the HR",
+            "example": 1
+          },
+          "hrNote": {
+            "type": "object",
+            "description": "The note of the HR",
+            "example": "The HR note"
+          },
+          "cycleId": {
+            "type": "object",
+            "description": "The ID of the cycle",
+            "example": 1
+          },
+          "stage": {
+            "type": "string",
+            "description": "The stage of the feedback360",
+            "example": "VERIFICATION_BY_HR",
+            "enum": [
+              "CANCELED",
+              "VERIFICATION_BY_HR",
+              "VERIFICATION_BY_USER",
+              "REJECTED",
+              "SELF_ASSESSMENT",
+              "WAITING_TO_START",
+              "INPROGRESS",
+              "RESEARCH",
+              "FINISHED"
+            ]
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The created at date of the feedback360",
+            "example": "2021-01-01"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The updated at date of the feedback360",
+            "example": "2021-01-01"
+          }
+        },
+        "required": [
+          "id",
+          "rateeId",
+          "rateeNote",
+          "positionId",
+          "hrId",
+          "hrNote",
+          "cycleId",
+          "stage",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "GetFeedback360Dto": {
+        "type": "object",
+        "properties": {
+          "rateeId": {
+            "type": "number",
+            "description": "Filter by rateeId",
+            "example": 1
+          },
+          "hrId": {
+            "type": "number",
+            "description": "Filter by hrId",
+            "example": 1
+          },
+          "positionId": {
+            "type": "number",
+            "description": "Filter by positionId",
+            "example": 1
+          },
+          "cycleId": {
+            "type": "number",
+            "description": "Filter by cycleId",
+            "example": 1,
+            "nullable": true
+          },
+          "reportId": {
+            "type": "number",
+            "description": "Filter by reportId",
+            "example": 1,
+            "nullable": true
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "CANCELED",
+              "VERIFICATION_BY_HR",
+              "VERIFICATION_BY_USER",
+              "REJECTED",
+              "SELF_ASSESSMENT",
+              "WAITING_TO_START",
+              "INPROGRESS",
+              "RESEARCH",
+              "FINISHED"
+            ],
+            "description": "Filter by stage"
+          },
+          "search": {
+            "type": "string",
+            "description": "Search in rateeNote/hrNote (contains)",
+            "example": "note"
+          },
+          "skip": {
+            "type": "number",
+            "description": "Number of items to skip",
+            "example": 1,
+            "minimum": 0,
+            "default": 0
+          },
+          "take": {
+            "type": "number",
+            "description": "Number of items to take",
+            "example": 10,
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          }
+        }
+      },
+      "Feedback360": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the feedback360",
+            "example": 1
+          },
+          "rateeId": {
+            "type": "number",
+            "description": "The ID of the ratee",
+            "example": 1
+          },
+          "rateeNote": {
+            "type": "object",
+            "description": "The note of the ratee",
+            "example": "The ratee note"
+          },
+          "positionId": {
+            "type": "number",
+            "description": "The ID of the position",
+            "example": 1
+          },
+          "hrId": {
+            "type": "number",
+            "description": "The ID of the HR",
+            "example": 1
+          },
+          "hrNote": {
+            "type": "object",
+            "description": "The note of the HR",
+            "example": "The HR note"
+          },
+          "cycleId": {
+            "type": "object",
+            "description": "The ID of the cycle",
+            "example": 1
+          },
+          "stage": {
+            "type": "string",
+            "description": "The stage of the feedback360",
+            "example": "VERIFICATION_BY_HR",
+            "enum": [
+              "CANCELED",
+              "VERIFICATION_BY_HR",
+              "VERIFICATION_BY_USER",
+              "REJECTED",
+              "SELF_ASSESSMENT",
+              "WAITING_TO_START",
+              "INPROGRESS",
+              "RESEARCH",
+              "FINISHED"
+            ]
+          },
+          "reportId": {
+            "type": "object",
+            "description": "The ID of the report",
+            "example": 1
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The created at date of the feedback360",
+            "example": "2021-01-01"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The updated at date of the feedback360",
+            "example": "2021-01-01"
+          }
+        },
+        "required": [
+          "id",
+          "rateeId",
+          "rateeNote",
+          "positionId",
+          "hrId",
+          "hrNote",
+          "cycleId",
+          "stage",
+          "reportId",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Feedback360PageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Feedback360"
+            }
+          },
+          "count": {
+            "type": "number",
+            "description": "Number of feedback360 records in current page",
+            "example": 1
+          },
+          "total": {
+            "type": "number",
+            "description": "Total number of feedback360 records matching the filter",
+            "example": 10
+          }
+        },
+        "required": [
+          "items",
+          "count",
+          "total"
+        ]
+      },
+      "UpdateFeedback360Dto": {
+        "type": "object",
+        "properties": {
+          "rateeNote": {
+            "type": "object",
+            "description": "The note of the ratee",
+            "example": "The ratee note",
+            "nullable": true
+          },
+          "hrNote": {
+            "type": "object",
+            "description": "The note of the HR",
+            "example": "The HR note",
+            "nullable": true
+          },
+          "stage": {
+            "type": "string",
+            "description": "The stage of the feedback360",
+            "example": "VERIFICATION_BY_HR",
+            "enum": [
+              "CANCELED",
+              "VERIFICATION_BY_HR",
+              "VERIFICATION_BY_USER",
+              "REJECTED",
+              "SELF_ASSESSMENT",
+              "WAITING_TO_START",
+              "INPROGRESS",
+              "RESEARCH",
+              "FINISHED"
+            ],
+            "default": "VERIFICATION_BY_HR"
+          }
+        }
+      },
+      "CreateFeedback360CycleDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Cycle title",
+            "example": "Q1 2026"
+          },
+          "description": {
+            "type": "object",
+            "description": "Cycle description",
+            "example": "Quarterly review",
+            "nullable": true
+          },
+          "hrId": {
+            "type": "number",
+            "description": "HR user id",
+            "example": 1
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "CANCELED",
+              "NEW",
+              "ACTIVE",
+              "FINISHED",
+              "ARCHIVE"
+            ],
+            "default": "NEW"
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": true,
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Start date"
+          },
+          "reviewDeadline": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "approvalDeadline": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "surveyDeadline": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "End date"
+          }
+        },
+        "required": [
+          "title",
+          "hrId",
+          "startDate",
+          "endDate"
+        ]
+      },
+      "Feedback360Cycle": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Cycle id",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "Cycle title",
+            "example": "Q1 2026"
+          },
+          "description": {
+            "type": "object",
+            "description": "Cycle description",
+            "example": "Quarterly review",
+            "nullable": true
+          },
+          "hrId": {
+            "type": "number",
+            "description": "HR user id",
+            "example": 1
+          },
+          "stage": {
+            "type": "string",
+            "description": "Cycle stage",
+            "enum": [
+              "CANCELED",
+              "NEW",
+              "ACTIVE",
+              "FINISHED",
+              "ARCHIVE"
+            ],
+            "example": "NEW"
+          },
+          "isActive": {
+            "type": "object",
+            "description": "Is active",
+            "example": true,
+            "nullable": true
+          },
+          "startDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Start date",
+            "example": "2026-01-01T00:00:00.000Z"
+          },
+          "reviewDeadline": {
+            "type": "object",
+            "description": "Review deadline",
+            "nullable": true
+          },
+          "approvalDeadline": {
+            "type": "object",
+            "description": "Approval deadline",
+            "nullable": true
+          },
+          "surveyDeadline": {
+            "type": "object",
+            "description": "Survey deadline",
+            "nullable": true
+          },
+          "endDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "End date",
+            "example": "2026-03-31T00:00:00.000Z"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Created at",
+            "example": "2026-01-01T00:00:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Updated at",
+            "example": "2026-01-01T00:00:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "hrId",
+          "stage",
+          "startDate",
+          "endDate",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "GetFeedback360CyclesDto": {
+        "type": "object",
+        "properties": {
+          "hrId": {
+            "type": "number",
+            "description": "Filter by hrId",
+            "example": 1
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "CANCELED",
+              "NEW",
+              "ACTIVE",
+              "FINISHED",
+              "ARCHIVE"
+            ],
+            "description": "Filter by stage"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Filter by isActive",
+            "example": true
+          },
+          "search": {
+            "type": "string",
+            "description": "Search in title/description (contains)",
+            "example": "Q1"
+          },
+          "startDateFrom": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Filter startDate >= startDateFrom"
+          },
+          "startDateTo": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Filter startDate <= startDateTo"
+          },
+          "skip": {
+            "type": "number",
+            "description": "Number of items to skip",
+            "example": 1,
+            "minimum": 0,
+            "default": 0
+          },
+          "take": {
+            "type": "number",
+            "description": "Number of items to take",
+            "example": 10,
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          }
+        }
+      },
+      "Feedback360CyclesPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Feedback360Cycle"
+            }
+          },
+          "count": {
+            "type": "number",
+            "description": "Number of cycles in current page",
+            "example": 1
+          },
+          "total": {
+            "type": "number",
+            "description": "Total number of cycles matching the filter",
+            "example": 10
+          }
+        },
+        "required": [
+          "items",
+          "count",
+          "total"
+        ]
+      },
+      "UpdateFeedback360CycleDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Cycle title",
+            "example": "Q1 2026"
+          },
+          "description": {
+            "type": "object",
+            "description": "Cycle description",
+            "example": "Quarterly review",
+            "nullable": true
+          },
+          "hrId": {
+            "type": "number",
+            "description": "HR user id",
+            "example": 1
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "CANCELED",
+              "NEW",
+              "ACTIVE",
+              "FINISHED",
+              "ARCHIVE"
+            ],
+            "default": "NEW"
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": true,
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Start date"
+          },
+          "reviewDeadline": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "approvalDeadline": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "surveyDeadline": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "End date"
+          }
+        }
+      },
+      "CreateFeedback360RespondentRelationDto": {
+        "type": "object",
+        "properties": {
+          "feedback360Id": {
+            "type": "number",
+            "description": "Feedback360 id",
+            "example": 1
+          },
+          "respondentId": {
+            "type": "number",
+            "description": "Respondent user id",
+            "example": 1
+          },
+          "respondentCategory": {
+            "type": "string",
+            "enum": [
+              "SELF_ASSESSMENT",
+              "TEAM",
+              "OTHER"
+            ]
+          },
+          "feedback360Status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "INPROGRESS",
+              "COMPLETED",
+              "CANCELED"
+            ],
+            "default": "PENDING"
+          },
+          "respondentNote": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "feedback360Id",
+          "respondentId",
+          "respondentCategory"
+        ]
+      },
+      "Feedback360RespondentRelation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Relation id",
+            "example": 1
+          },
+          "feedback360Id": {
+            "type": "number",
+            "description": "Feedback360 id",
+            "example": 1
+          },
+          "respondentId": {
+            "type": "number",
+            "description": "Respondent user id",
+            "example": 1
+          },
+          "respondentCategory": {
+            "type": "string",
+            "description": "Respondent category",
+            "enum": [
+              "SELF_ASSESSMENT",
+              "TEAM",
+              "OTHER"
+            ],
+            "example": "TEAM"
+          },
+          "feedback360Status": {
+            "type": "string",
+            "description": "Status",
+            "enum": [
+              "PENDING",
+              "INPROGRESS",
+              "COMPLETED",
+              "CANCELED"
+            ],
+            "example": "PENDING"
+          },
+          "respondentNote": {
+            "type": "object",
+            "description": "Respondent note",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Created at",
+            "example": "2026-01-01T00:00:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Updated at",
+            "example": "2026-01-01T00:00:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "feedback360Id",
+          "respondentId",
+          "respondentCategory",
+          "feedback360Status",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "GetFeedback360RespondentRelationsDto": {
+        "type": "object",
+        "properties": {
+          "feedback360Id": {
+            "type": "number",
+            "description": "Filter by feedback360Id",
+            "example": 1
+          },
+          "respondentId": {
+            "type": "number",
+            "description": "Filter by respondentId",
+            "example": 1
+          },
+          "respondentCategory": {
+            "type": "string",
+            "enum": [
+              "SELF_ASSESSMENT",
+              "TEAM",
+              "OTHER"
+            ]
+          },
+          "feedback360Status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "INPROGRESS",
+              "COMPLETED",
+              "CANCELED"
+            ]
+          },
+          "search": {
+            "type": "string",
+            "description": "Search in respondentNote (contains)",
+            "example": "note"
+          },
+          "skip": {
+            "type": "number",
+            "description": "Number of items to skip",
+            "example": 1,
+            "minimum": 0,
+            "default": 0
+          },
+          "take": {
+            "type": "number",
+            "description": "Number of items to take",
+            "example": 10,
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          }
+        }
+      },
+      "Feedback360RespondentRelationsPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Feedback360RespondentRelation"
+            }
+          },
+          "count": {
+            "type": "number",
+            "description": "Number of relations in current page",
+            "example": 1
+          },
+          "total": {
+            "type": "number",
+            "description": "Total number of relations matching the filter",
+            "example": 10
+          }
+        },
+        "required": [
+          "items",
+          "count",
+          "total"
+        ]
+      },
+      "UpdateFeedback360RespondentRelationDto": {
+        "type": "object",
+        "properties": {
+          "respondentCategory": {
+            "type": "string",
+            "enum": [
+              "SELF_ASSESSMENT",
+              "TEAM",
+              "OTHER"
+            ]
+          },
+          "feedback360Status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "INPROGRESS",
+              "COMPLETED",
+              "CANCELED"
+            ],
+            "default": "PENDING"
+          },
+          "respondentNote": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateFeedback360ReviewerRelationDto": {
+        "type": "object",
+        "properties": {
+          "feedback360Id": {
+            "type": "number",
+            "description": "Feedback360 id",
+            "example": 1
+          },
+          "userId": {
+            "type": "number",
+            "description": "Reviewer user id",
+            "example": 1
+          }
+        },
+        "required": [
+          "feedback360Id",
+          "userId"
+        ]
+      },
+      "Feedback360ReviewerRelation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Relation id",
+            "example": 1
+          },
+          "feedback360Id": {
+            "type": "number",
+            "description": "Feedback360 id",
+            "example": 1
+          },
+          "userId": {
+            "type": "number",
+            "description": "Reviewer user id",
+            "example": 1
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Created at",
+            "example": "2026-01-01T00:00:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "feedback360Id",
+          "userId",
+          "createdAt"
+        ]
+      },
+      "GetFeedback360ReviewerRelationsDto": {
+        "type": "object",
+        "properties": {
+          "feedback360Id": {
+            "type": "number",
+            "description": "Filter by feedback360Id",
+            "example": 1
+          },
+          "userId": {
+            "type": "number",
+            "description": "Filter by userId",
+            "example": 1
+          },
+          "skip": {
+            "type": "number",
+            "description": "Number of items to skip",
+            "example": 1,
+            "minimum": 0,
+            "default": 0
+          },
+          "take": {
+            "type": "number",
+            "description": "Number of items to take",
+            "example": 10,
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          }
+        }
+      },
+      "Feedback360ReviewerRelationsPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Feedback360ReviewerRelation"
+            }
+          },
+          "count": {
+            "type": "number",
+            "description": "Number of relations in current page",
+            "example": 1
+          },
+          "total": {
+            "type": "number",
+            "description": "Total number of relations matching the filter",
+            "example": 10
+          }
+        },
+        "required": [
+          "items",
+          "count",
+          "total"
+        ]
+      },
+      "UpdateFeedback360ReviewerRelationDto": {
+        "type": "object",
+        "properties": {
+          "feedback360Id": {
+            "type": "number",
+            "description": "Feedback360 id",
+            "example": 1
+          },
+          "userId": {
+            "type": "number",
+            "description": "Reviewer user id",
+            "example": 1
+          }
+        }
+      },
+      "CreateTeamDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the team",
+            "example": "Engineering",
+            "nullable": false,
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the team",
+            "example": "Product engineering team",
+            "nullable": true
+          },
+          "headId": {
+            "type": "number",
+            "description": "The head user ID of the team",
+            "example": 1,
+            "nullable": true
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "GetTeamsDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Filter teams by title (contains)",
+            "example": "Eng"
+          },
+          "description": {
+            "type": "string",
+            "description": "Filter teams by description (contains)",
+            "example": "Product",
+            "nullable": true
+          },
+          "search": {
+            "type": "string",
+            "description": "Search by title/description (contains)",
+            "example": "engineering"
+          },
+          "headId": {
+            "type": "number",
+            "description": "Filter by headId",
+            "example": 1,
+            "nullable": true
+          },
+          "memberId": {
+            "type": "number",
+            "description": "Filter by memberId (team contains this user)",
+            "example": 1
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Field to sort by",
+            "enum": [
+              "id",
+              "title",
+              "description",
+              "headId",
+              "createdAt",
+              "updatedAt"
+            ],
+            "example": "title"
+          },
+          "sortDirection": {
+            "type": "string",
+            "description": "Sort direction",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "example": "asc",
+            "default": "desc"
+          },
+          "skip": {
+            "type": "number",
+            "description": "Number of items to skip",
+            "example": 1,
+            "minimum": 0,
+            "default": 0
+          },
+          "take": {
+            "type": "number",
+            "description": "Number of items to take",
+            "example": 10,
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          }
+        }
+      },
+      "TeamsPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Team"
+            }
+          },
+          "count": {
+            "type": "number",
+            "description": "Number of teams in current page",
+            "example": 1
+          },
+          "total": {
+            "type": "number",
+            "description": "Total number of teams matching the filter",
+            "example": 10
+          }
+        },
+        "required": [
+          "items",
+          "count",
+          "total"
+        ]
+      },
+      "TeamWithRelations": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the team",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the team",
+            "example": "Engineering"
+          },
+          "description": {
+            "type": "object",
+            "description": "The description of the team",
+            "example": "Product engineering team",
+            "nullable": true
+          },
+          "headId": {
+            "type": "object",
+            "description": "The head user ID of the team",
+            "example": 1,
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The created at date of the team",
+            "example": "2021-01-01"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The updated at date of the team",
+            "example": "2021-01-01"
+          },
+          "head": {
+            "description": "The head user of the team",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/User"
+              }
+            ]
+          },
+          "members": {
+            "description": "The members of the team",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateTeamDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the team",
+            "example": "Engineering",
+            "nullable": false,
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the team",
+            "example": "Product engineering team",
+            "nullable": true
+          },
+          "headId": {
+            "type": "number",
+            "description": "The head user ID of the team",
+            "example": 1,
+            "nullable": true
+          }
+        }
+      },
+      "CreatePositionDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the position",
+            "example": "Software Engineer",
+            "nullable": false,
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the position",
+            "example": "Builds and maintains backend services",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "GetPositionsDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Filter positions by title (contains)",
+            "example": "Engineer"
+          },
+          "description": {
+            "type": "string",
+            "description": "Filter positions by description (contains)",
+            "example": "backend",
+            "nullable": true
+          },
+          "search": {
+            "type": "string",
+            "description": "Search by title/description (contains)",
+            "example": "software"
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "Field to sort by",
+            "enum": [
+              "id",
+              "title",
+              "description",
+              "createdAt",
+              "updatedAt"
+            ],
+            "example": "title"
+          },
+          "sortDirection": {
+            "type": "string",
+            "description": "Sort direction",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "example": "asc",
+            "default": "desc"
+          },
+          "skip": {
+            "type": "number",
+            "description": "Number of items to skip",
+            "example": 1,
+            "minimum": 0,
+            "default": 0
+          },
+          "take": {
+            "type": "number",
+            "description": "Number of items to take",
+            "example": 10,
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          }
+        }
+      },
+      "PositionsPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Position"
+            }
+          },
+          "count": {
+            "type": "number",
+            "description": "Number of positions in current page",
+            "example": 1
+          },
+          "total": {
+            "type": "number",
+            "description": "Total number of positions matching the filter",
+            "example": 10
+          }
+        },
+        "required": [
+          "items",
+          "count",
+          "total"
+        ]
+      },
+      "PositionWithRelations": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The ID of the position",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the position",
+            "example": "Software Engineer"
+          },
+          "description": {
+            "type": "object",
+            "description": "The description of the position",
+            "example": "Builds and maintains backend services",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The created at date of the position",
+            "example": "2021-01-01"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The updated at date of the position",
+            "example": "2021-01-01"
+          },
+          "users": {
+            "description": "The users with this position",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdatePositionDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the position",
+            "example": "Software Engineer",
+            "nullable": false,
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the position",
+            "example": "Builds and maintains backend services",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 255
+          }
+        }
+      }
+    }
+  }
+}

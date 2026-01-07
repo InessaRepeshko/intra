@@ -34,7 +34,7 @@ import { GetFeedback360CyclesDto } from '../dto/cycle/get-feedback360-cycles.dto
 import { Feedback360CyclesPageDto } from '../dto/cycle/feedback360-cycles-page.dto';
 
 @Controller('feedback360/cycles')
-@ApiTags('Feedback360 Cycles')
+@ApiTags('Feedback360 / Cycles')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: Feedback360Cycle, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
 export class Feedback360CyclesController {
@@ -42,7 +42,11 @@ export class Feedback360CyclesController {
 
   @Post()
   @SerializeOptions({ type: Feedback360Cycle, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Create a new feedback360 cycle' })
+  @ApiOperation({
+    operationId: 'createFeedback360Cycle',
+    summary: 'Create a new feedback360 cycle',
+    description: 'Create a new feedback360 cycle'
+  })
   @ApiBody({ type: CreateFeedback360CycleDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -68,7 +72,11 @@ export class Feedback360CyclesController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get feedback360 cycles (filters + pagination)' })
+  @ApiOperation({
+    operationId: 'getFeedback360Cycles',
+    summary: 'Get feedback360 cycles (filters + pagination)',
+    description: 'Get feedback360 cycles (filters + pagination)'
+  })
   @ApiQuery({
     name: 'query',
     type: GetFeedback360CyclesDto,
@@ -88,7 +96,11 @@ export class Feedback360CyclesController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a feedback360 cycle by ID' })
+  @ApiOperation({
+    operationId: 'getFeedback360CycleById',
+    summary: 'Get a feedback360 cycle by ID',
+    description: 'Get a feedback360 cycle by ID'
+  })
   @ApiParam({ required: true, name: 'id', type: 'number', description: 'The cycle ID', example: 1 })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -103,7 +115,11 @@ export class Feedback360CyclesController {
 
   @Patch(':id')
   @SerializeOptions({ type: Feedback360Cycle, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Update a feedback360 cycle by ID' })
+  @ApiOperation({
+    operationId: 'updateFeedback360CycleById',
+    summary: 'Update a feedback360 cycle by ID',
+    description: 'Update a feedback360 cycle by ID'
+  })
   @ApiParam({ required: true, name: 'id', type: 'number', description: 'The cycle ID', example: 1 })
   @ApiBody({ required: true, type: UpdateFeedback360CycleDto })
   @ApiResponse({
@@ -131,7 +147,11 @@ export class Feedback360CyclesController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a feedback360 cycle by ID' })
+  @ApiOperation({
+    operationId: 'deleteFeedback360CycleById',
+    summary: 'Delete a feedback360 cycle by ID',
+    description: 'Delete a feedback360 cycle by ID'
+  })
   @ApiParam({ required: true, name: 'id', type: 'number', description: 'The cycle ID', example: 1 })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'The cycle has been successfully deleted.' })
   @ApiDeletionErrorResponses()

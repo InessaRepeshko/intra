@@ -35,7 +35,7 @@ import { GetFeedback360RespondentRelationsDto } from '../dto/respondent-relation
 import { Feedback360RespondentRelationsPageDto } from '../dto/respondent-relation/feedback360-respondent-relations-page.dto';
 
 @Controller('feedback360/respondent-relations')
-@ApiTags('Feedback360 Respondent Relations')
+@ApiTags('Feedback360 / Respondent Relations')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: Feedback360RespondentRelation, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
 export class Feedback360RespondentRelationsController {
@@ -43,7 +43,11 @@ export class Feedback360RespondentRelationsController {
 
   @Post()
   @SerializeOptions({ type: Feedback360RespondentRelation, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Create a feedback360 respondent relation' })
+  @ApiOperation({
+    operationId: 'createFeedback360RespondentRelation',
+    summary: 'Create a feedback360 respondent relation',
+    description: 'Create a feedback360 respondent relation'
+  })
   @ApiBody({ type: CreateFeedback360RespondentRelationDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -64,7 +68,11 @@ export class Feedback360RespondentRelationsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get respondent relations (filters + pagination)' })
+  @ApiOperation({
+    operationId: 'getFeedback360RespondentRelations',
+    summary: 'Get respondent relations (filters + pagination)',
+    description: 'Get respondent relations (filters + pagination)'
+  })
   @ApiQuery({
     name: 'query',
     type: GetFeedback360RespondentRelationsDto,
@@ -84,7 +92,11 @@ export class Feedback360RespondentRelationsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get respondent relation by ID' })
+  @ApiOperation({
+    operationId: 'getFeedback360RespondentRelationById',
+    summary: 'Get respondent relation by ID',
+    description: 'Get respondent relation by ID'
+  })
   @ApiParam({ required: true, name: 'id', type: 'number', description: 'Relation id', example: 1 })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -99,7 +111,11 @@ export class Feedback360RespondentRelationsController {
 
   @Patch(':id')
   @SerializeOptions({ type: Feedback360RespondentRelation, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Update respondent relation by ID' })
+  @ApiOperation({
+    operationId: 'updateFeedback360RespondentRelationById',
+    summary: 'Update respondent relation by ID',
+    description: 'Update respondent relation by ID'
+  })
   @ApiParam({ required: true, name: 'id', type: 'number', description: 'Relation id', example: 1 })
   @ApiBody({ required: true, type: UpdateFeedback360RespondentRelationDto })
   @ApiResponse({
@@ -123,7 +139,11 @@ export class Feedback360RespondentRelationsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete respondent relation by ID' })
+  @ApiOperation({
+    operationId: 'deleteFeedback360RespondentRelationById',
+    summary: 'Delete respondent relation by ID',
+    description: 'Delete respondent relation by ID'
+  })
   @ApiParam({ required: true, name: 'id', type: 'number', description: 'Relation id', example: 1 })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'The relation has been successfully deleted.' })
   @ApiDeletionErrorResponses()

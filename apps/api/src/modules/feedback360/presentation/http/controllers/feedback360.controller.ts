@@ -19,7 +19,7 @@ import { CreateFeedback360Dto } from '../dto/create-feedback360.dto';
 import { UpdateFeedback360Dto } from '../dto/update-feedback360.dto';
 import { Feedback360 } from '../models/feedback360.entity';
 import { Feedback360HttpMapper } from '../mappers/feedback360.http.mapper';
-import { PUBLIC_SERIALISATION_GROUPS } from '../../../../../common/serialisation/public.serialisation.preset';
+import { PUBLIC_SERIALISATION_GROUPS } from 'src/common/serialisation/public.serialisation.preset';
 import {
   ApiBody,
   ApiOperation,
@@ -33,7 +33,7 @@ import {
   ApiDeletionErrorResponses,
   ApiListReadErrorResponses,
   ApiReadErrorResponses,
-} from '../../../../../common/documentation/api.error.responses.decorator';
+} from 'src/common/documentation/api.error.responses.decorator';
 import { Feedback360Stage } from '../../../domain/enums/feedback360-stage.enum';
 import { GetFeedback360Dto } from '../dto/get-feedback360.dto';
 import { Feedback360PageDto } from '../dto/feedback360-page.dto';
@@ -48,7 +48,11 @@ export class Feedback360Controller {
 
   @Post()
   @SerializeOptions({ type: Feedback360, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Create a new feedback360' })
+  @ApiOperation({ 
+    operationId: 'createFeedback360',
+    summary: 'Create a new feedback360',
+    description: 'Create a new feedback360 with the provided data.' 
+  })
   @ApiBody({ type: CreateFeedback360Dto })
   @ApiResponse({ 
     status: HttpStatus.CREATED,
@@ -72,7 +76,11 @@ export class Feedback360Controller {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all feedback360 with filters and pagination' })
+  @ApiOperation({ 
+    operationId: 'getAllFeedback360',
+    summary: 'Get all feedback360 with filters and pagination',
+    description: 'Get all feedback360 with filters and pagination for feedback360' 
+  })
   @ApiQuery({
     name: 'query',
     type: GetFeedback360Dto,
@@ -92,7 +100,11 @@ export class Feedback360Controller {
   }
 
   @Get('by-ratee/:rateeId')
-  @ApiOperation({ summary: 'Get feedback360 by ratee ID' })
+  @ApiOperation({ 
+    operationId: 'getFeedback360ByRateeId',
+    summary: 'Get feedback360 by ratee ID',
+    description: 'Get feedback360 by ratee ID'
+  })
   @ApiParam({
     required: true,
     name: 'rateeId',
@@ -116,7 +128,11 @@ export class Feedback360Controller {
   }
 
   @Get('by-hr/:hrId')
-  @ApiOperation({ summary: 'Get feedback360 by HR ID' })
+  @ApiOperation({ 
+    operationId: 'getFeedback360ByHrId',
+    summary: 'Get feedback360 by HR ID',
+    description: 'Get feedback360 by HR ID'
+  })
   @ApiParam({
     required: true,
     name: 'hrId',
@@ -140,7 +156,11 @@ export class Feedback360Controller {
   }
 
   @Get('by-position/:positionId')
-  @ApiOperation({ summary: 'Get feedback360 by position ID' })
+  @ApiOperation({ 
+    operationId: 'getFeedback360ByPositionId',
+    summary: 'Get feedback360 by position ID',
+    description: 'Get feedback360 by position ID'
+  })
   @ApiParam({
     required: true,
     name: 'positionId',
@@ -164,7 +184,11 @@ export class Feedback360Controller {
   }
 
   @Get('by-cycle/:cycleId')
-  @ApiOperation({ summary: 'Get feedback360 by cycle ID' })
+  @ApiOperation({ 
+    operationId: 'getFeedback360ByCycleId',
+    summary: 'Get feedback360 by cycle ID',
+    description: 'Get feedback360 by cycle ID'
+  })
   @ApiParam({
     required: true,
     name: 'cycleId',
@@ -188,7 +212,11 @@ export class Feedback360Controller {
   }
 
   @Get('by-report/:reportId')
-  @ApiOperation({ summary: 'Get feedback360 by report ID' })
+  @ApiOperation({ 
+    operationId: 'getFeedback360ByReportId',
+    summary: 'Get feedback360 by report ID',
+    description: 'Get feedback360 by report ID'
+  })
   @ApiParam({
     required: true,
     name: 'reportId',
@@ -212,7 +240,11 @@ export class Feedback360Controller {
   }
 
   @Get('by-stage/:stage')
-  @ApiOperation({ summary: 'Get feedback360 by stage' })
+  @ApiOperation({ 
+    operationId: 'getFeedback360ByStage',
+    summary: 'Get feedback360 by stage',
+    description: 'Get feedback360 by stage'
+  })
   @ApiParam({
     required: true,
     name: 'stage',
@@ -236,7 +268,11 @@ export class Feedback360Controller {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a feedback360 by ID' })
+  @ApiOperation({ 
+    operationId: 'getFeedback360ById',
+    summary: 'Get a feedback360 by ID',
+    description: 'Get a feedback360 by ID'
+  })
   @ApiParam({ 
     required: true, 
     name: 'id', 
@@ -255,7 +291,11 @@ export class Feedback360Controller {
 
   @Patch(':id')
   @SerializeOptions({ type: Feedback360, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Update a feedback360 by ID' })
+  @ApiOperation({ 
+    operationId: 'updateFeedback360ById',
+    summary: 'Update a feedback360 by ID',
+    description: 'Update a feedback360 by ID'
+  })
   @ApiParam({ 
     required: true, 
     name: 'id', 
@@ -286,7 +326,11 @@ export class Feedback360Controller {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a feedback360 by ID' })
+  @ApiOperation({ 
+    operationId: 'deleteFeedback360ById',
+    summary: 'Delete a feedback360 by ID',
+    description: 'Delete a feedback360 by ID'
+  })
   @ApiParam({ 
     required: true, 
     name: 'id', 

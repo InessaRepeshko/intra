@@ -35,7 +35,7 @@ import { GetFeedback360ReviewerRelationsDto } from '../dto/reviewer-relation/get
 import { Feedback360ReviewerRelationsPageDto } from '../dto/reviewer-relation/feedback360-reviewer-relations-page.dto';
 
 @Controller('feedback360/reviewer-relations')
-@ApiTags('Feedback360 Reviewer Relations')
+@ApiTags('Feedback360 / Reviewer Relations')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: Feedback360ReviewerRelation, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
 export class Feedback360ReviewerRelationsController {
@@ -43,7 +43,11 @@ export class Feedback360ReviewerRelationsController {
 
   @Post()
   @SerializeOptions({ type: Feedback360ReviewerRelation, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Create a feedback360 reviewer relation' })
+  @ApiOperation({
+    operationId: 'createFeedback360ReviewerRelation',
+    summary: 'Create a feedback360 reviewer relation',
+    description: 'Create a feedback360 reviewer relation'
+  })
   @ApiBody({ type: CreateFeedback360ReviewerRelationDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -61,7 +65,11 @@ export class Feedback360ReviewerRelationsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get reviewer relations (filters + pagination)' })
+  @ApiOperation({
+    operationId: 'getFeedback360ReviewerRelations',
+    summary: 'Get reviewer relations (filters + pagination)',
+    description: 'Get reviewer relations (filters + pagination)'
+  })
   @ApiQuery({
     name: 'query',
     type: GetFeedback360ReviewerRelationsDto,
@@ -83,7 +91,11 @@ export class Feedback360ReviewerRelationsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get reviewer relation by ID' })
+  @ApiOperation({
+    operationId: 'getFeedback360ReviewerRelationById',
+    summary: 'Get reviewer relation by ID',
+    description: 'Get reviewer relation by ID'
+  })
   @ApiParam({ required: true, name: 'id', type: 'number', description: 'Relation id', example: 1 })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -98,7 +110,11 @@ export class Feedback360ReviewerRelationsController {
 
   @Patch(':id')
   @SerializeOptions({ type: Feedback360ReviewerRelation, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Update reviewer relation by ID' })
+  @ApiOperation({
+    operationId: 'updateFeedback360ReviewerRelationById',
+    summary: 'Update reviewer relation by ID',
+    description: 'Update reviewer relation by ID'
+  })
   @ApiParam({ required: true, name: 'id', type: 'number', description: 'Relation id', example: 1 })
   @ApiBody({ required: true, type: UpdateFeedback360ReviewerRelationDto })
   @ApiResponse({
@@ -121,7 +137,11 @@ export class Feedback360ReviewerRelationsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete reviewer relation by ID' })
+  @ApiOperation({
+    operationId: 'deleteFeedback360ReviewerRelationById',
+    summary: 'Delete reviewer relation by ID',
+    description: 'Delete reviewer relation by ID'
+  })
   @ApiParam({ required: true, name: 'id', type: 'number', description: 'Relation id', example: 1 })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'The relation has been successfully deleted.' })
   @ApiDeletionErrorResponses()

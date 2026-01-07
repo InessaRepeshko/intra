@@ -40,7 +40,11 @@ export class TeamsController {
 
   @Post()
   @SerializeOptions({ type: Team, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Create a new team' })
+  @ApiOperation({ 
+    operationId: 'createTeam',
+    summary: 'Create a new team',
+    description: 'Create a new team with the provided data.'
+  })
   @ApiBody({ type: CreateTeamDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -59,7 +63,11 @@ export class TeamsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all teams with filters, sorting and pagination' })
+  @ApiOperation({ 
+    operationId: 'getAllTeams',
+    summary: 'Get all teams with filters, sorting and pagination',
+    description: 'Get all teams with filters, sorting and pagination for teams'
+  })
   @ApiQuery({
     name: 'query',
     type: GetTeamsDto,
@@ -81,7 +89,11 @@ export class TeamsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a team by ID' })
+  @ApiOperation({ 
+    operationId: 'getTeamById',
+    summary: 'Get a team by ID',
+    description: 'Get a team by ID'
+  })
   @ApiParam({
     required: true,
     name: 'id',
@@ -102,7 +114,11 @@ export class TeamsController {
 
   @Get(':id/relations')
   @SerializeOptions({ type: TeamWithRelations, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
-  @ApiOperation({ summary: 'Get a team by ID with all relationships' })
+  @ApiOperation({ 
+    operationId: 'getTeamByIdWithRelations',
+    summary: 'Get a team by ID with all relationships',
+    description: 'Get a team by ID with all relationships'
+  })
   @ApiParam({
     required: true,
     name: 'id',
@@ -123,7 +139,11 @@ export class TeamsController {
 
   @Patch(':id')
   @SerializeOptions({ type: Team, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Update a team by ID' })
+  @ApiOperation({ 
+    operationId: 'updateTeam',
+    summary: 'Update a team by ID',
+    description: 'Update a team by ID'
+  })
   @ApiParam({
     required: true,
     name: 'id',
@@ -153,7 +173,11 @@ export class TeamsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a team by ID' })
+  @ApiOperation({ 
+    operationId: 'deleteTeam',
+    summary: 'Delete a team by ID',
+    description: 'Delete a team by ID'
+  })
   @ApiParam({
     required: true,
     name: 'id',

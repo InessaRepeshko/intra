@@ -1,5 +1,5 @@
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { INestApplication } from '@nestjs/common';
 import { getAppName } from './app.config';
@@ -36,4 +36,6 @@ export function setupSwagger(app: INestApplication): void {
                 'utf8'
             ),
     });
+
+    writeFileSync('./openapi.json', JSON.stringify(document, null, 2));
 }

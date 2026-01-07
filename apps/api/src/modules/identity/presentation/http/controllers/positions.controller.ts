@@ -39,7 +39,11 @@ export class PositionsController {
 
   @Post()
   @SerializeOptions({ type: Position, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Create a new position' })
+  @ApiOperation({ 
+    operationId: 'createPosition',
+    summary: 'Create a new position',
+    description: 'Create a new position with the provided data.'
+  })
   @ApiBody({ type: CreatePositionDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -57,7 +61,11 @@ export class PositionsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all positions with filters, sorting and pagination' })
+  @ApiOperation({ 
+    operationId: 'getAllPositions',
+    summary: 'Get all positions with filters, sorting and pagination',
+    description: 'Get all positions with filters, sorting and pagination for positions'
+  })
   @ApiQuery({
     name: 'query',
     type: GetPositionsDto,
@@ -79,7 +87,11 @@ export class PositionsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a position by ID' })
+  @ApiOperation({ 
+    operationId: 'getPositionById',
+    summary: 'Get a position by ID',
+    description: 'Get a position by ID'
+  })
   @ApiParam({
     required: true,
     name: 'id',
@@ -100,7 +112,11 @@ export class PositionsController {
 
   @Get(':id/relations')
   @SerializeOptions({ type: PositionWithRelations, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
-  @ApiOperation({ summary: 'Get a position by ID with all relationships' })
+  @ApiOperation({ 
+    operationId: 'getPositionByIdWithRelations',
+    summary: 'Get a position by ID with all relationships',
+    description: 'Get a position by ID with all relationships'
+  })
   @ApiParam({
     required: true,
     name: 'id',
@@ -121,7 +137,11 @@ export class PositionsController {
 
   @Patch(':id')
   @SerializeOptions({ type: Position, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Update a position by ID' })
+  @ApiOperation({ 
+    operationId: 'updatePosition',
+    summary: 'Update a position by ID',
+    description: 'Update a position by ID'
+  })
   @ApiParam({
     required: true,
     name: 'id',
@@ -151,7 +171,11 @@ export class PositionsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a position by ID' })
+  @ApiOperation({ 
+    operationId: 'deletePosition',
+    summary: 'Delete a position by ID',
+    description: 'Delete a position by ID'
+  })
   @ApiParam({
     required: true,
     name: 'id',

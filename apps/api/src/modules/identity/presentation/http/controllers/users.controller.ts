@@ -47,7 +47,11 @@ export class UsersController {
 
   @Post()
   @SerializeOptions({ type: User, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Create a new user' })
+  @ApiOperation({ 
+    operationId: 'createUser',
+    summary: 'Create a new user',
+    description: 'Create a new user with the provided data.'
+  })  
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -71,7 +75,11 @@ export class UsersController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all users with filters, sorting and pagination' })
+  @ApiOperation({ 
+    operationId: 'getAllUsers',
+    summary: 'Get all users with filters, sorting and pagination',
+    description: 'Get all users with filters, sorting and pagination for users'
+  })
   @ApiQuery({
     name: 'query',
     type: GetUsersDto,
@@ -93,7 +101,11 @@ export class UsersController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a user by ID' })
+  @ApiOperation({ 
+    operationId: 'getUserById',
+    summary: 'Get a user by ID',
+    description: 'Get a user by ID'
+  })
   @ApiParam({
     required: true,
     name: 'id',
@@ -114,7 +126,11 @@ export class UsersController {
 
   @Get(':id/relations')
   @SerializeOptions({ type: UserWithRelations, groups: PUBLIC_SERIALISATION_GROUPS.BASIC })
-  @ApiOperation({ summary: 'Get a user by ID with all relationships' })
+  @ApiOperation({ 
+    operationId: 'getUserByIdWithRelations',
+    summary: 'Get a user by ID with all relationships',
+    description: 'Get a user by ID with all relationships'
+  })
   @ApiParam({
     required: true,
     name: 'id',
@@ -135,7 +151,11 @@ export class UsersController {
 
   @Patch(':id')
   @SerializeOptions({ type: User, groups: PUBLIC_SERIALISATION_GROUPS.SYSTEMIC })
-  @ApiOperation({ summary: 'Update a user by ID' })
+  @ApiOperation({   
+    operationId: 'updateUser',
+    summary: 'Update a user by ID',
+    description: 'Update a user by ID'
+  })
   @ApiParam({
     required: true,
     name: 'id',
@@ -170,7 +190,11 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a user by ID' })
+  @ApiOperation({ 
+    operationId: 'deleteUser',
+    summary: 'Delete a user by ID',
+    description: 'Delete a user by ID'
+  })
   @ApiParam({
     required: true,
     name: 'id',
