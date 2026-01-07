@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { getAppName } from './config/app.config';
-import { APP_VERSION, GLOBAL_PREFIX } from './config/constants';
+import { getApiVersion } from './config/app.config';
+import { GLOBAL_PREFIX } from './config/constants';
 
 @Injectable()
 export class AppService {
@@ -9,7 +10,7 @@ export class AppService {
 
   getHomePageMsg(): string {
     const appName = this.configService.get<string>('app.name', getAppName());
-    const appVersion = this.configService.get<string>('app.version', APP_VERSION);
+    const appVersion = this.configService.get<string>('app.version', getApiVersion());
     return `Welcome to ${appName} API v${appVersion}`;
   }
 

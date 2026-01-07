@@ -1,8 +1,10 @@
 import { getEnvVarAsStr, getEnvVarAsInt } from './env.utils';
-import { APP_VERSION, GLOBAL_PREFIX, LOGO_FILENAME, PUBLIC_DIR_PATH } from './constants';
+import { VERSION, GLOBAL_PREFIX, LOGO_FILENAME, PUBLIC_DIR_PATH } from './constants';
 import { version } from '../../../../package.json';
 
 export const getAppName = () => getEnvVarAsStr('APP_NAME');
+
+export const getApiVersion = () => VERSION ?? version;
 
 export default () => {
     const frontendProtocol = getEnvVarAsStr('APP_FRONTEND_PROTOCOL');
@@ -14,7 +16,7 @@ export default () => {
     return {
         app: {
             name: appName,
-            version: APP_VERSION ?? version,
+            version: getApiVersion(),
             domain: getEnvVarAsStr('APP_DOMAIN'),
             supportEmail: getEnvVarAsStr('APP_SUPPORT_EMAIL'),
             protocol: getEnvVarAsStr('APP_PROTOCOL'),

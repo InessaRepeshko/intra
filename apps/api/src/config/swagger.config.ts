@@ -5,16 +5,30 @@ import { INestApplication } from '@nestjs/common';
 import { getAppName } from './app.config';
 import { GLOBAL_PREFIX } from './constants';
 import { FAVICON_PATH } from './constants';
+import { getApiVersion } from './app.config';
+import { OPENAPI_PATH } from './constants';
 
 export function setupSwagger(app: INestApplication): void {
     const appName = getAppName();
     const config = new DocumentBuilder()
         .setTitle(`${appName} API`)
         .setDescription(`API documentation for ${appName}`)
-        .setVersion('1.0')
+        .setVersion(getApiVersion())
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
+
+    document.servers = [
+        {
+            url: '{protocol}://{host}:{port}',
+            description: 'Development server',
+            variables: {
+                protocol: { default: 'http' },
+                host: { default: 'localhost' },
+                port: { default: '8080' },
+            },
+        },
+    ];
 
     SwaggerModule.setup(GLOBAL_PREFIX, app, document, {
         customSiteTitle: `${appName} API`,
@@ -37,5 +51,5 @@ export function setupSwagger(app: INestApplication): void {
             ),
     });
 
-    writeFileSync('./openapi.json', JSON.stringify(document, null, 2));
+    writeFileSync(OPENAPI_PATH, JSON.stringify(document, null, 2));
 }

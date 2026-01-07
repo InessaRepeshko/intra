@@ -18,7 +18,8 @@
     },
     "/users": {
       "post": {
-        "operationId": "UsersController_create",
+        "description": "Create a new user with the provided data.",
+        "operationId": "createUser",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -60,7 +61,8 @@
         ]
       },
       "get": {
-        "operationId": "UsersController_findAll",
+        "description": "Get all users with filters, sorting and pagination for users",
+        "operationId": "getAllUsers",
         "parameters": [
           {
             "name": "email",
@@ -226,7 +228,8 @@
     },
     "/users/{id}": {
       "get": {
-        "operationId": "UsersController_findOne",
+        "description": "Get a user by ID",
+        "operationId": "getUserById",
         "parameters": [
           {
             "name": "id",
@@ -263,7 +266,8 @@
         ]
       },
       "patch": {
-        "operationId": "UsersController_update",
+        "description": "Update a user by ID",
+        "operationId": "updateUser",
         "parameters": [
           {
             "name": "id",
@@ -317,7 +321,8 @@
         ]
       },
       "delete": {
-        "operationId": "UsersController_remove",
+        "description": "Delete a user by ID",
+        "operationId": "deleteUser",
         "parameters": [
           {
             "name": "id",
@@ -355,7 +360,8 @@
     },
     "/users/{id}/relations": {
       "get": {
-        "operationId": "UsersController_findOneWithRelations",
+        "description": "Get a user by ID with all relationships",
+        "operationId": "getUserByIdWithRelations",
         "parameters": [
           {
             "name": "id",
@@ -394,7 +400,8 @@
     },
     "/feedback360": {
       "post": {
-        "operationId": "Feedback360Controller_create",
+        "description": "Create a new feedback360 with the provided data.",
+        "operationId": "createFeedback360",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -436,7 +443,8 @@
         ]
       },
       "get": {
-        "operationId": "Feedback360Controller_findAll",
+        "description": "Get all feedback360 with filters and pagination for feedback360",
+        "operationId": "getAllFeedback360",
         "parameters": [
           {
             "name": "rateeId",
@@ -578,7 +586,8 @@
     },
     "/feedback360/by-ratee/{rateeId}": {
       "get": {
-        "operationId": "Feedback360Controller_findByRateeId",
+        "description": "Get feedback360 by ratee ID",
+        "operationId": "getFeedback360ByRateeId",
         "parameters": [
           {
             "name": "rateeId",
@@ -711,7 +720,8 @@
     },
     "/feedback360/by-hr/{hrId}": {
       "get": {
-        "operationId": "Feedback360Controller_findByHrId",
+        "description": "Get feedback360 by HR ID",
+        "operationId": "getFeedback360ByHrId",
         "parameters": [
           {
             "name": "hrId",
@@ -844,7 +854,8 @@
     },
     "/feedback360/by-position/{positionId}": {
       "get": {
-        "operationId": "Feedback360Controller_findByPositionId",
+        "description": "Get feedback360 by position ID",
+        "operationId": "getFeedback360ByPositionId",
         "parameters": [
           {
             "name": "positionId",
@@ -977,7 +988,8 @@
     },
     "/feedback360/by-cycle/{cycleId}": {
       "get": {
-        "operationId": "Feedback360Controller_findByCycleId",
+        "description": "Get feedback360 by cycle ID",
+        "operationId": "getFeedback360ByCycleId",
         "parameters": [
           {
             "name": "cycleId",
@@ -1109,7 +1121,8 @@
     },
     "/feedback360/by-report/{reportId}": {
       "get": {
-        "operationId": "Feedback360Controller_findByReportId",
+        "description": "Get feedback360 by report ID",
+        "operationId": "getFeedback360ByReportId",
         "parameters": [
           {
             "name": "reportId",
@@ -1241,7 +1254,8 @@
     },
     "/feedback360/by-stage/{stage}": {
       "get": {
-        "operationId": "Feedback360Controller_findByStage",
+        "description": "Get feedback360 by stage",
+        "operationId": "getFeedback360ByStage",
         "parameters": [
           {
             "name": "stage",
@@ -1374,7 +1388,8 @@
     },
     "/feedback360/{id}": {
       "get": {
-        "operationId": "Feedback360Controller_findOne",
+        "description": "Get a feedback360 by ID",
+        "operationId": "getFeedback360ById",
         "parameters": [
           {
             "name": "id",
@@ -1411,7 +1426,8 @@
         ]
       },
       "patch": {
-        "operationId": "Feedback360Controller_update",
+        "description": "Update a feedback360 by ID",
+        "operationId": "updateFeedback360ById",
         "parameters": [
           {
             "name": "id",
@@ -1465,7 +1481,8 @@
         ]
       },
       "delete": {
-        "operationId": "Feedback360Controller_remove",
+        "description": "Delete a feedback360 by ID",
+        "operationId": "deleteFeedback360ById",
         "parameters": [
           {
             "name": "id",
@@ -1503,7 +1520,8 @@
     },
     "/feedback360/cycles": {
       "post": {
-        "operationId": "Feedback360CyclesController_create",
+        "description": "Create a new feedback360 cycle",
+        "operationId": "createFeedback360Cycle",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1545,7 +1563,8 @@
         ]
       },
       "get": {
-        "operationId": "Feedback360CyclesController_findAll",
+        "description": "Get feedback360 cycles (filters + pagination)",
+        "operationId": "getFeedback360Cycles",
         "parameters": [
           {
             "name": "hrId",
@@ -1671,7 +1690,8 @@
     },
     "/feedback360/cycles/{id}": {
       "get": {
-        "operationId": "Feedback360CyclesController_findOne",
+        "description": "Get a feedback360 cycle by ID",
+        "operationId": "getFeedback360CycleById",
         "parameters": [
           {
             "name": "id",
@@ -1708,7 +1728,8 @@
         ]
       },
       "patch": {
-        "operationId": "Feedback360CyclesController_update",
+        "description": "Update a feedback360 cycle by ID",
+        "operationId": "updateFeedback360CycleById",
         "parameters": [
           {
             "name": "id",
@@ -1761,7 +1782,8 @@
         ]
       },
       "delete": {
-        "operationId": "Feedback360CyclesController_remove",
+        "description": "Delete a feedback360 cycle by ID",
+        "operationId": "deleteFeedback360CycleById",
         "parameters": [
           {
             "name": "id",
@@ -1799,7 +1821,8 @@
     },
     "/feedback360/respondent-relations": {
       "post": {
-        "operationId": "Feedback360RespondentRelationsController_create",
+        "description": "Create a feedback360 respondent relation",
+        "operationId": "createFeedback360RespondentRelation",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1841,7 +1864,8 @@
         ]
       },
       "get": {
-        "operationId": "Feedback360RespondentRelationsController_findAll",
+        "description": "Get respondent relations (filters + pagination)",
+        "operationId": "getFeedback360RespondentRelations",
         "parameters": [
           {
             "name": "feedback360Id",
@@ -1958,7 +1982,8 @@
     },
     "/feedback360/respondent-relations/{id}": {
       "get": {
-        "operationId": "Feedback360RespondentRelationsController_findOne",
+        "description": "Get respondent relation by ID",
+        "operationId": "getFeedback360RespondentRelationById",
         "parameters": [
           {
             "name": "id",
@@ -1995,7 +2020,8 @@
         ]
       },
       "patch": {
-        "operationId": "Feedback360RespondentRelationsController_update",
+        "description": "Update respondent relation by ID",
+        "operationId": "updateFeedback360RespondentRelationById",
         "parameters": [
           {
             "name": "id",
@@ -2048,7 +2074,8 @@
         ]
       },
       "delete": {
-        "operationId": "Feedback360RespondentRelationsController_remove",
+        "description": "Delete respondent relation by ID",
+        "operationId": "deleteFeedback360RespondentRelationById",
         "parameters": [
           {
             "name": "id",
@@ -2086,7 +2113,8 @@
     },
     "/feedback360/reviewer-relations": {
       "post": {
-        "operationId": "Feedback360ReviewerRelationsController_create",
+        "description": "Create a feedback360 reviewer relation",
+        "operationId": "createFeedback360ReviewerRelation",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -2128,7 +2156,8 @@
         ]
       },
       "get": {
-        "operationId": "Feedback360ReviewerRelationsController_findAll",
+        "description": "Get reviewer relations (filters + pagination)",
+        "operationId": "getFeedback360ReviewerRelations",
         "parameters": [
           {
             "name": "feedback360Id",
@@ -2208,7 +2237,8 @@
     },
     "/feedback360/reviewer-relations/{id}": {
       "get": {
-        "operationId": "Feedback360ReviewerRelationsController_findOne",
+        "description": "Get reviewer relation by ID",
+        "operationId": "getFeedback360ReviewerRelationById",
         "parameters": [
           {
             "name": "id",
@@ -2245,7 +2275,8 @@
         ]
       },
       "patch": {
-        "operationId": "Feedback360ReviewerRelationsController_update",
+        "description": "Update reviewer relation by ID",
+        "operationId": "updateFeedback360ReviewerRelationById",
         "parameters": [
           {
             "name": "id",
@@ -2298,7 +2329,8 @@
         ]
       },
       "delete": {
-        "operationId": "Feedback360ReviewerRelationsController_remove",
+        "description": "Delete reviewer relation by ID",
+        "operationId": "deleteFeedback360ReviewerRelationById",
         "parameters": [
           {
             "name": "id",
@@ -2336,7 +2368,8 @@
     },
     "/teams": {
       "post": {
-        "operationId": "TeamsController_create",
+        "description": "Create a new team with the provided data.",
+        "operationId": "createTeam",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -2378,7 +2411,8 @@
         ]
       },
       "get": {
-        "operationId": "TeamsController_findAll",
+        "description": "Get all teams with filters, sorting and pagination for teams",
+        "operationId": "getAllTeams",
         "parameters": [
           {
             "name": "title",
@@ -2523,7 +2557,8 @@
     },
     "/teams/{id}": {
       "get": {
-        "operationId": "TeamsController_findOne",
+        "description": "Get a team by ID",
+        "operationId": "getTeamById",
         "parameters": [
           {
             "name": "id",
@@ -2560,7 +2595,8 @@
         ]
       },
       "patch": {
-        "operationId": "TeamsController_update",
+        "description": "Update a team by ID",
+        "operationId": "updateTeam",
         "parameters": [
           {
             "name": "id",
@@ -2614,7 +2650,8 @@
         ]
       },
       "delete": {
-        "operationId": "TeamsController_remove",
+        "description": "Delete a team by ID",
+        "operationId": "deleteTeam",
         "parameters": [
           {
             "name": "id",
@@ -2652,7 +2689,8 @@
     },
     "/teams/{id}/relations": {
       "get": {
-        "operationId": "TeamsController_findOneWithRelations",
+        "description": "Get a team by ID with all relationships",
+        "operationId": "getTeamByIdWithRelations",
         "parameters": [
           {
             "name": "id",
@@ -2691,7 +2729,8 @@
     },
     "/positions": {
       "post": {
-        "operationId": "PositionsController_create",
+        "description": "Create a new position with the provided data.",
+        "operationId": "createPosition",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -2733,7 +2772,8 @@
         ]
       },
       "get": {
-        "operationId": "PositionsController_findAll",
+        "description": "Get all positions with filters, sorting and pagination for positions",
+        "operationId": "getAllPositions",
         "parameters": [
           {
             "name": "title",
@@ -2856,7 +2896,8 @@
     },
     "/positions/{id}": {
       "get": {
-        "operationId": "PositionsController_findOne",
+        "description": "Get a position by ID",
+        "operationId": "getPositionById",
         "parameters": [
           {
             "name": "id",
@@ -2893,7 +2934,8 @@
         ]
       },
       "patch": {
-        "operationId": "PositionsController_update",
+        "description": "Update a position by ID",
+        "operationId": "updatePosition",
         "parameters": [
           {
             "name": "id",
@@ -2947,7 +2989,8 @@
         ]
       },
       "delete": {
-        "operationId": "PositionsController_remove",
+        "description": "Delete a position by ID",
+        "operationId": "deletePosition",
         "parameters": [
           {
             "name": "id",
@@ -2985,7 +3028,8 @@
     },
     "/positions/{id}/relations": {
       "get": {
-        "operationId": "PositionsController_findOneWithRelations",
+        "description": "Get a position by ID with all relationships",
+        "operationId": "getPositionByIdWithRelations",
         "parameters": [
           {
             "name": "id",
@@ -3030,7 +3074,23 @@
     "contact": {}
   },
   "tags": [],
-  "servers": [],
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}",
+      "description": "Development server",
+      "variables": {
+        "protocol": {
+          "default": "http"
+        },
+        "host": {
+          "default": "localhost"
+        },
+        "port": {
+          "default": "8080"
+        }
+      }
+    }
+  ],
   "components": {
     "schemas": {
       "CreateUserDto": {
