@@ -1,58 +1,21 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { readFile, readFileSync } from 'fs';
-import { join } from 'path';
+import { ClassSerializerInterceptor } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { setupGlobalPipes } from './config/global-pipes.config';
+import { setupSwagger } from './config/swagger.config';
+import { setupServer } from './config/server.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+
   app.enableShutdownHooks();
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  );
+  setupGlobalPipes(app);
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  setupSwagger(app);
 
-  const config = new DocumentBuilder()
-    .setTitle('Intra API')
-    .setDescription('API documentation for Intra system')
-    .setVersion('1.0')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document, {
-    customSiteTitle: 'Intra API',
-    swaggerOptions: {
-      theme: 'dark',
-      filter: true,
-    },
-    customCss: 
-  //   `
-  //   html, body {
-  //     background-color: #020617 !important;
-  //   }
-
-  //   .swagger-ui {
-  //     background-color: transparent;
-  //   }
-  // ` + 
-  readFileSync(
-      join(
-        process.cwd(), 
-        'node_modules', 
-        'swagger-ui-themes', 
-        'themes', 
-        '3.x', 
-        'theme-outline.css'
-      ),
-      'utf8'
-    ),
-  });
-
-  await app.listen(process.env.PORT ?? 3000);
+  await setupServer(app, configService);
 }
+
 bootstrap();
