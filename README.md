@@ -1,45 +1,128 @@
-# intra-backend
+![Intra Logo](apps/docs/public/1.png)
+# Intra
 
-Backend сервіс для Intra, побудований на **NestJS** та **Prisma**.
+## ⚡ Quick Start
+| Step | DEV | TEST |
+|-----:|-----|------|
+| 1. Start infrastructure | ```npm run docker:up``` | ```npm run docker:test:up``` |
+| 2. Apply migrations | ```npm run migrate``` | ```npm run migrate:test:reset``` |
+| 3. Generate Prisma Client | ```npm run migrate:generate``` | ```npm run migrate:test:generate``` |
+| 4. Seed database (optional) | ```npm run migrate:seed``` | ```npm run migrate:test:seed``` |
+| 5. Build project | ```npm run build``` | ```npm run build``` |
+| 6. Start application | ```npm run start:dev``` | ```npm run start:test``` |
 
-## Швидкий старт
+## 🚀 How to Run the Intra Backend
+This paragraph describes how to **set up, migrate, and run** the Intra backend application in **development** and **test** environments.
 
-1) Встановити залежності:
+### 📦 Prerequisites
+Make sure the following tools are installed:
+- Node.js (LTS)
+- npm
+- Docker & Docker Compose
+- MySQL (via Docker)
+- Git
 
+### 1️⃣ Clone the Repository
+```bash
+git clone <repository-url> intra-backend
+cd intra-backend
+```
+
+### 2️⃣ Install Dependencies
 ```bash
 npm install
 ```
 
-2) Підготувати змінні середовища (приклад):
-
+### 3️⃣ Environment Configuration
+#### 🟢 Development Environment
+Create `.env.development.local` file:
 ```bash
 cp .env.development.example .env.development.local
 ```
 
-3) Підняти інфраструктуру (якщо використовуєте Docker):
+#### 🟡 Test Environment
+Create `.env.test` file:
+```bash
+cp .env.test.example .env.test
+```
 
+> ⚠️ DEV and TEST environments must use different databases
+
+### 4️⃣ Run Infrastructure
+Start Docker containers:
 ```bash
 npm run docker:up
 ```
-
-4) Міграції/генерація Prisma та старт:
-
+Check running containers:
 ```bash
-npm run migrate:generate
-npm run migrate
-npm run start:dev
+npm run docker:view
 ```
 
-## Корисні команди
+### 5️⃣ Database Migrations (DEV)
+Create and apply migrations (only in DEV):
+```bash
+npm run migrate:create
+```
+Generate Prisma Client:
+```bash
+npm run migrate:generate
+```
+(Optional) Seed database with initial data:
+```bash
+npm run migrate:seed
+```
+
+### 6️⃣ Build the Project
+```bash
+npm run build
+```
+
+### 7️⃣ Start the Application
+```bash
+npm run start:dev
+```
+The API will be available at 👉 http://localhost:8080/api
+
+### 8️⃣ Prepare Test Database
+Reset and apply all migrations to the test database:
+```bash
+npm run migrate:test:reset
+```
+(Optional) Seed test database:
+```bash
+npm run seed:test
+```
+
+### 9️⃣ Run Tests
+```bash
+npm run test
+```
+Run unit tests only:
+```bash
+npm run test:unit
+```
+Run e2e tests only:
+```bash
+npm run test:e2e
+```
+
+## 📚 Useful Commands
 
 - **Docker**
-  - `npm run docker:up` — підняти контейнери
-  - `npm run docker:down` — опустити контейнери та видалити volumes
+  - `npm run docker:up` — start containers
+  - `npm run docker:view` — view running containers
+  - `npm run docker:down` — stop containers and remove volumes
 - **Prisma**
-  - `npm run migrate:create` — створити/застосувати міграцію (dev)
-  - `npm run migrate:deploy` — застосувати міграції (prod-like) *(якщо налаштовано)*
-  - `npm run migrate:generate` — `prisma generate`
-  - `npm run migrate:reset` — скинути БД та прогнати міграції
-- **Розробка**
-  - `npm run start:dev` — запуск у watch mode
-  - `npm run lint` / `npm run format`
+  - `npm run migrate:create` — create/apply migration (dev)
+  - `npm run migrate:deploy` — apply migrations
+  - `npm run migrate:generate` — prisma generate
+  - `npm run migrate:reset` — reset DB and apply migrations
+- **Running**
+  - `npm run start:dev` — run in watch mode
+  - `npm run start:test` — run in test mode
+  - `npm run start:debug` — run in debug mode
+- **Linting and Formatting**
+  - `npm run lint` - lint code
+  - `npm run format` - format code
+
+
