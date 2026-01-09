@@ -91,7 +91,9 @@
     ],
     "rootDir": "apps/api",
     "moduleNameMapper": {
-      "^src/(.*)$": "<rootDir>/src/$1"
+      "^src/(.*)$": "<rootDir>/src/$1",
+      "^@test-utils/(.*)$": "<rootDir>/../../packages/test-utils/src/$1",
+      "^@test-utils$": "<rootDir>/../../packages/test-utils/src/index.ts"
     },
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
