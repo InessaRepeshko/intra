@@ -6,10 +6,9 @@
 |-----:|-----|------|
 | 1. Start infrastructure | ```npm run docker:up``` | ```npm run docker:test:up``` |
 | 2. Apply migrations | ```npm run migrate``` | ```npm run migrate:test:reset``` |
-| 3. Generate Prisma Client | ```npm run migrate:generate``` | ```npm run migrate:test:generate``` |
-| 4. Seed database (optional) | ```npm run migrate:seed``` | ```npm run migrate:test:seed``` |
-| 5. Build project | ```npm run build``` | ```npm run build``` |
-| 6. Start application | ```npm run start:dev``` | ```npm run start:test``` |
+| 3. Generate Prisma Client | ```npm run migrate:generate``` | - |
+| 4. Optional: seed database | ```npm run migrate:seed``` | - |
+| 5. Start application | ```npm run start:dev``` | ```npm run start:test``` |
 
 ## 🚀 How to Run the Intra Backend
 This paragraph describes how to **set up, migrate, and run** the Intra backend application in **development** and **test** environments.
@@ -122,7 +121,7 @@ npm run test:e2e
   - `npm run start:test` — run in test mode
   - `npm run start:debug` — run in debug mode
 - **Linting and Formatting**
-  - `npm run lint` - lint code
-  - `npm run format` - format code
+  - `npm run lint` - lint and auto fix with ESLint
+  - `npm run format` - format with Prettier
 
 
