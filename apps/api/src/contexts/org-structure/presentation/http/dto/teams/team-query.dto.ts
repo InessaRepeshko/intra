@@ -1,44 +1,36 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, MaxLength } from 'class-validator';
+import { WithPagination } from 'src/common/mixins/with-pagination.mixin';
+import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { TeamConstants } from 'src/common/validators/constants';
 import { TeamSortField } from '../../../../application/ports/team.repository.port';
 
-export class TeamQueryDto {
+class TeamQueryBase {}
+
+export class TeamQueryDto extends WithPagination(TeamQueryBase) {
   @ApiPropertyOptional({ description: 'Search by title or description', maxLength: 255 })
   @IsOptional()
+  @ToOptionalTrimmedString()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(TeamConstants.TITLE_MAX_LENGTH)
   search?: string;
 
   @ApiPropertyOptional({ type: Number, description: 'Id of team leader' })
   @IsOptional()
-  @Type(() => Number)
+  @ToOptionalInt({ min: 1 })
   @IsInt()
-  @Min(1)
   headId?: number;
-
-  @ApiPropertyOptional({ type: Number, description: 'Number of items to skip', default: 0 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  skip?: number;
-
-  @ApiPropertyOptional({ type: Number, description: 'Number of items to return', default: 20 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  take?: number;
 
   @ApiPropertyOptional({ enum: TeamSortField, default: TeamSortField.CREATED_AT })
   @IsOptional()
+  @ToOptionalEnum(TeamSortField)
   @IsEnum(TeamSortField)
   sortBy?: TeamSortField;
 
   @ApiPropertyOptional({ enum: SortDirection, default: SortDirection.DESC })
   @IsOptional()
+  @ToOptionalEnum(SortDirection)
   @IsEnum(SortDirection)
   sortDirection?: SortDirection;
 }

@@ -2,7 +2,7 @@ export const PositionConstants = {
     TITLE_MIN_LENGTH: 1,
     TITLE_MAX_LENGTH: 255,
     DESCRIPTION_MIN_LENGTH: 1,
-    DESCRIPTION_MAX_LENGTH: 255,
+    DESCRIPTION_MAX_LENGTH: 1000,
 }
 
 

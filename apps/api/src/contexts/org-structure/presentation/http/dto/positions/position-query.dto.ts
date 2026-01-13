@@ -1,37 +1,30 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator';
+import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
+import { WithPagination } from 'src/common/mixins/with-pagination.mixin';
+import { ToOptionalEnum, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
+import { PositionConstants } from 'src/common/validators/constants';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import { PositionSortField } from '../../../../application/ports/position.repository.port';
 
-export class PositionQueryDto {
+class PositionQueryBase {}
+
+export class PositionQueryDto extends WithPagination(PositionQueryBase) {
   @ApiPropertyOptional({ description: 'Search by title or description', maxLength: 255 })
   @IsOptional()
+  @ToOptionalTrimmedString()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(PositionConstants.TITLE_MAX_LENGTH)
   search?: string;
-
-  @ApiPropertyOptional({ type: Number, description: 'Number of items to skip', default: 0 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  skip?: number;
-
-  @ApiPropertyOptional({ type: Number, description: 'Number of items to return', default: 20 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  take?: number;
 
   @ApiPropertyOptional({ enum: PositionSortField, default: PositionSortField.CREATED_AT })
   @IsOptional()
+  @ToOptionalEnum(PositionSortField)
   @IsEnum(PositionSortField)
   sortBy?: PositionSortField;
 
   @ApiPropertyOptional({ enum: SortDirection, default: SortDirection.DESC })
   @IsOptional()
+  @ToOptionalEnum(SortDirection)
   @IsEnum(SortDirection)
   sortDirection?: SortDirection;
 }
