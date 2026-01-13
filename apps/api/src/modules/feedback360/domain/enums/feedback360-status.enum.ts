@@ -1,8 +1,0 @@
-export enum Feedback360Status {
-  PENDING = 'PENDING',
-  INPROGRESS = 'INPROGRESS',
-  COMPLETED = 'COMPLETED',
-  CANCELED = 'CANCELED',
-}
-
-
