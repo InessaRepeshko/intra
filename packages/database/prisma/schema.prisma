@@ -4,35 +4,69 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
-// generator dbml {
-//   provider = "prisma-dbml-generator"
-//   output   = "../docs/db/generated"
-// }
+enum IdentityRole {
+  ADMIN   @map("admin")
+  HR      @map("hr")
+  MANAGER @map("manager")
+  EMPLOYEE @map("employee")
+	@@map("identity_role")
+}
 
-model ClusterUserRelation {
-  id                Int               @id @default(autoincrement())
-  cycleId           Int?              @map("cycle_id")
-  clusterId         Int               @map("cluster_id")
-  userId            Int               @map("user_id")
-  score             Float
-  createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt         DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
-  cycle             Feedback360Cycle? @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clusters_users_relations_ibfk_1")
-  competenceCluster CompetenceCluster @relation(fields: [clusterId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clusters_users_relations_ibfk_2")
-  user              User              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clusters_users_relations_ibfk_3")
+model Role {
+  id          Int            @id @default(autoincrement())
+  code        IdentityRole  @unique(map: "unique_role_code")
+  title       String         @db.VarChar(255)
+  description String?        @db.Text
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt   DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  userRoles UserRole[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  id         Int           @id @default(autoincrement())
+  userId     Int           @map("user_id")
+  roleCode   IdentityRole @map("role_code")
+  assignedAt DateTime      @default(now()) @map("assigned_at") @db.Timestamp(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_roles_ibfk_1")
+  role Role @relation(fields: [roleCode], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "user_roles_ibfk_2")
+
+  @@unique([userId, roleCode], map: "unique_user_role")
+  @@index([roleCode], map: "idx_role_code")
+  @@index([userId], map: "idx_user_id")
+  @@map("user_roles")
+}
+
+model Feedback360ClusterScore {
+  id                 Int               @id @default(autoincrement())
+  cycleId            Int?              @map("cycle_id")
+  clusterId          Int               @map("cluster_id")
+  userId             Int               @map("user_id")
+  feedback360Id      Int?              @map("feedback360_id")
+  score              Float
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt          DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+  cycle              Feedback360Cycle? @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clusters_users_relations_ibfk_1")
+  competenceCluster  CompetenceCluster @relation(fields: [clusterId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clusters_users_relations_ibfk_2")
+  user               User              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clusters_users_relations_ibfk_3")
+  feedback360        Feedback360?      @relation(fields: [feedback360Id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clusters_users_relations_ibfk_4")
 
   @@unique([clusterId, userId], map: "unique_cluster_member")
   @@index([cycleId], map: "cycle_id")
   @@index([clusterId], map: "idx_cluster")
   @@index([userId], map: "idx_user")
+  @@index([feedback360Id], map: "idx_feedback360")
   @@map("clusters_users_relations")
 }
 
 model Competence {
   id                 Int                 @id @default(autoincrement())
+  code               String?             @unique(map: "unique_competence_code") @db.VarChar(100)
   title              String              @unique(map: "unique_competence_title") @db.VarChar(255)
   description        String?             @db.Text
   createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
@@ -41,6 +75,7 @@ model Competence {
   questions          Question[]
 
   @@map("competences")
+  feedback360Questions Feedback360Question[] @relation(map: "feedback360_questions_ibfk_3")
 }
 
 model CompetenceCluster {
@@ -55,7 +90,7 @@ model CompetenceCluster {
   employeesCount       Int                   @map("employees_count")
   createdAt            DateTime              @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
-  clusterUserRelations ClusterUserRelation[]
+  clusterScores        Feedback360ClusterScore[]
   cycle                Feedback360Cycle?     @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "competences_clusters_ibfk_1")
   competence           Competence            @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "competences_clusters_ibfk_2")
 
@@ -74,11 +109,9 @@ model Feedback360 {
   hrNote     String?           @map("hr_note") @db.Text
   cycleId    Int?              @map("cycle_id")
   stage      feedback360_stage @default(VERIFICATION_BY_HR)
-  reportId   Int?              @map("report_id")
   createdAt  DateTime          @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt  DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  selectedReport Feedback360Report? @relation("feedback360_report_idTofeedback360_reports", fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_ibfk_1")
   cycle          Feedback360Cycle?  @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_ibfk_2")
   ratee          User               @relation("feedback360_ratee_idTousers", fields: [rateeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_ibfk_3")
   hr             User               @relation("feedback360_hr_idTousers", fields: [hrId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_ibfk_4")
@@ -86,15 +119,15 @@ model Feedback360 {
 
   answers             Feedback360Answer[]
   questionRelations   Feedback360QuestionRelation[]
-  generatedReport     Feedback360Report?              @relation("feedback360_reports_feedback360_idTofeedback360")
+  report              Feedback360Report?              @relation("feedback360_reports_feedback360_idTofeedback360")
   respondentRelations Feedback360RespondentRelation[]
   reviewerRelations   Feedback360ReviewerRelation[]
+  clusterScores       Feedback360ClusterScore[]
 
   @@index([cycleId], map: "idx_cycle")
   @@index([hrId], map: "idx_hr")
   @@index([positionId], map: "idx_position")
   @@index([rateeId], map: "idx_ratee")
-  @@index([reportId], map: "idx_report_id")
   @@index([stage], map: "idx_stage")
   @@map("feedback360")
 }
@@ -103,6 +136,7 @@ model Feedback360Answer {
   id                 Int                   @id @default(autoincrement())
   feedback360Id      Int                   @map("feedback360_id")
   questionId         Int                   @map("question_id")
+  feedback360QuestionId Int?               @map("feedback360_question_id")
   respondentCategory respondent_category   @map("respondent_category")
   answerType         questions_answer_type @default(NUMERICAL_SCALE) @map("answer_type")
   numericalValue     Int?                  @map("numerical_value") @db.TinyInt
@@ -110,10 +144,12 @@ model Feedback360Answer {
   createdAt          DateTime              @default(now()) @map("created_at") @db.Timestamp(0)
 
   question    Question    @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_answers_ibfk_1")
+  feedback360Question Feedback360Question? @relation(fields: [feedback360QuestionId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "feedback360_answers_ibfk_3")
   feedback360 Feedback360 @relation(fields: [feedback360Id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_answers_ibfk_2")
 
   @@index([feedback360Id], map: "idx_feedback360")
   @@index([questionId], map: "idx_question")
+  @@index([feedback360QuestionId], map: "idx_feedback360_question")
   @@map("feedback360_answers")
 }
 
@@ -132,15 +168,40 @@ model Feedback360Cycle {
   createdAt        DateTime                 @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt        DateTime                 @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  clusterUserRelations ClusterUserRelation[]
-  competenceClusters   CompetenceCluster[]
-  feedback360s         Feedback360[]
-  hr                   User                  @relation(fields: [hrId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_cycles_ibfk_1")
-  reports              Feedback360Report[]
+  clusterScores      Feedback360ClusterScore[]
+  competenceClusters CompetenceCluster[]
+  feedback360s       Feedback360[]
+  hr                 User                  @relation(fields: [hrId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_cycles_ibfk_1")
+  reports            Feedback360Report[]
 
   @@index([hrId], map: "idx_hr")
   @@index([stage], map: "idx_stage")
   @@map("feedback360_cycles")
+  feedback360Questions Feedback360Question[] @relation(map: "feedback360_questions_ibfk_1")
+}
+
+model Feedback360Question {
+  id                  Int                   @id @default(autoincrement())
+  cycleId             Int?                  @map("cycle_id")
+  questionId          Int?                  @map("question_id")
+  title               String                @db.Text
+  answerType          questions_answer_type @map("answer_type")
+  competenceId        Int?                  @map("competence_id")
+  positionId          Int?                  @map("position_id")
+  isForSelfassessment Boolean?              @default(false) @map("is_for_selfassessment")
+  createdAt           DateTime              @default(now()) @map("created_at") @db.Timestamp(0)
+
+  cycle      Feedback360Cycle? @relation(fields: [cycleId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "feedback360_questions_ibfk_1")
+  question   Question?         @relation(fields: [questionId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "feedback360_questions_ibfk_2")
+  competence Competence?       @relation(fields: [competenceId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "feedback360_questions_ibfk_3")
+  position   Position?         @relation(fields: [positionId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "feedback360_questions_ibfk_4")
+  answers    Feedback360Answer[]
+
+  @@index([cycleId], map: "idx_cycle")
+  @@index([questionId], map: "idx_question")
+  @@index([competenceId], map: "idx_competence")
+  @@index([positionId], map: "idx_position")
+  @@map("feedback360_questions")
 }
 
 model Feedback360QuestionRelation {
@@ -176,11 +237,10 @@ model Feedback360Report {
   totalDeltaByOthers           Float?   @map("total_delta_by_others")
   createdAt                    DateTime @default(now()) @map("created_at") @db.Timestamp(0)
 
-  selectedByFeedback360s Feedback360[]     @relation("feedback360_report_idTofeedback360_reports")
-  feedback360            Feedback360       @relation("feedback360_reports_feedback360_idTofeedback360", fields: [feedback360Id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_reports_ibfk_1")
-  cycle                  Feedback360Cycle? @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_reports_ibfk_2")
-  analytics              ReportAnalytics[]
-  comments               ReportComment[]
+  feedback360 Feedback360       @relation("feedback360_reports_feedback360_idTofeedback360", fields: [feedback360Id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_reports_ibfk_1")
+  cycle       Feedback360Cycle? @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "feedback360_reports_ibfk_2")
+  analytics   ReportAnalytics[]
+  comments    ReportComment[]
 
   @@index([cycleId], map: "idx_cycle")
   @@map("feedback360_reports")
@@ -193,6 +253,8 @@ model Feedback360RespondentRelation {
   respondentCategory respondent_category                                  @map("respondent_category")
   feedback360Status  feedback360_status                                   @default(PENDING) @map("feedback360_status")
   respondentNote     String?                                              @map("respondent_note") @db.Text
+  invitedAt          DateTime?                                            @map("invited_at") @db.Timestamp(0)
+  respondedAt        DateTime?                                            @map("responded_at") @db.Timestamp(0)
   createdAt          DateTime                                             @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt          DateTime                                             @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
@@ -232,8 +294,25 @@ model Position {
   feedback360s      Feedback360[]
   questionPositions QuestionPositionRelation[]
   users             User[]
+  parentLinks       PositionHierarchy[] @relation("position_parent")
+  childLinks        PositionHierarchy[] @relation("position_child")
 
   @@map("positions")
+  feedback360Questions Feedback360Question[] @relation(map: "feedback360_questions_ibfk_4")
+}
+
+model PositionHierarchy {
+  id                Int       @id @default(autoincrement())
+  parentPositionId  Int       @map("parent_position_id")
+  childPositionId   Int       @map("child_position_id")
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamp(0)
+
+  parent Position @relation("position_parent", fields: [parentPositionId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "positions_hierarchy_ibfk_1")
+  child  Position @relation("position_child", fields: [childPositionId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "positions_hierarchy_ibfk_2")
+
+  @@unique([parentPositionId, childPositionId], map: "unique_position_hierarchy")
+  @@index([childPositionId], map: "idx_child_position")
+  @@map("positions_hierarchy")
 }
 
 model Question {
@@ -253,6 +332,7 @@ model Question {
 
   @@index([competenceId], map: "idx_competence")
   @@map("questions")
+  feedback360Questions Feedback360Question[] @relation(map: "feedback360_questions_ibfk_2")
 }
 
 model QuestionPositionRelation {
@@ -281,6 +361,7 @@ model ReportAnalytics {
   deltaBySelfAssessment   Float?                        @map("delta_by_self_assessment")
   deltaByTeam             Float?                        @map("delta_by_team")
   deltaByOther            Float?                        @map("delta_by_other")
+  dimension               String?                       @map("dimension") @db.VarChar(255)
   createdAt               DateTime                      @default(now()) @map("created_at") @db.Timestamp(0)
 
   report Feedback360Report @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reports_analytics_ibfk_1")
@@ -297,11 +378,31 @@ model ReportComment {
   commentSentiment   comment_sentiment                  @default(POSITIVE) @map("comment_sentiment")
   numberOfMentions   Int?                               @map("number_of_mentions")
   respondentCategory respondent_category                @map("respondent_category")
+  authorId           Int?                               @map("author_id")
+  createdAt          DateTime                           @default(now()) @map("created_at") @db.Timestamp(0)
 
   report Feedback360Report @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reports_comments_ibfk_1")
+  author User?             @relation(fields: [authorId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "reports_comments_ibfk_2")
 
   @@index([reportId], map: "idx_report")
+  @@index([authorId], map: "idx_author")
   @@map("reports_comments")
+}
+
+model TeamMembership {
+  id        Int       @id @default(autoincrement())
+  teamId    Int       @map("team_id")
+  userId    Int       @map("user_id")
+  isPrimary Boolean?  @default(false) @map("is_primary")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(0)
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "team_memberships_ibfk_1")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "team_memberships_ibfk_2")
+
+  @@unique([teamId, userId, isPrimary], map: "unique_team_member")
+  @@index([teamId], map: "idx_team")
+  @@index([userId], map: "idx_user")
+  @@map("team_memberships")
 }
 
 model Team {
@@ -314,6 +415,7 @@ model Team {
 
   head    User?  @relation("teams_head_idTousers", fields: [headId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "teams_ibfk_1")
   members User[] @relation("users_team_idToteams")
+  memberships TeamMembership[]
 
   @@index([headId], map: "idx_head")
   @@map("teams")
@@ -328,13 +430,14 @@ model User {
   email        String       @unique(map: "email") @db.VarChar(100)
   passwordHash String       @map("password_hash") @db.VarChar(300)
   status       users_status @default(ACTIVE)
-  positionId   Int          @map("position_id")
-  teamId       Int          @map("team_id")
+  positionId   Int?         @map("position_id")
+  teamId       Int?         @map("team_id")
   managerId    Int?         @map("manager_id")
   createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  clusterUserRelations           ClusterUserRelation[]
+  clusterScores                  Feedback360ClusterScore[]
+  userRoles                      UserRole[]
   feedback360AsRatee             Feedback360[]                   @relation("feedback360_ratee_idTousers")
   feedback360AsHr                Feedback360[]                   @relation("feedback360_hr_idTousers")
   feedback360CyclesAsHr          Feedback360Cycle[]
@@ -343,14 +446,16 @@ model User {
   teamsLed                       Team[]                          @relation("teams_head_idTousers")
   manager                        User?                           @relation("usersTousers", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_1")
   subordinates                   User[]                          @relation("usersTousers")
-  team                           Team                            @relation("users_team_idToteams", fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_2")
-  position                       Position                        @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_3")
+  team                           Team?                           @relation("users_team_idToteams", fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_2")
+  position                       Position?                       @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_3")
+  teamsMemberships               TeamMembership[]
 
   @@index([managerId], map: "idx_manager")
   @@index([positionId], map: "idx_position")
   @@index([teamId], map: "idx_team")
   @@index([fullName], map: "idx_title")
   @@map("users")
+  reportComments ReportComment[] @relation(map: "reports_comments_ibfk_2")
 }
 
 enum questions_answer_type {

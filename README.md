@@ -112,7 +112,7 @@ npm run test:e2e
   - `npm run docker:view` — view running containers
   - `npm run docker:down` — stop containers and remove volumes
 - **Prisma**
-  - `npm run migrate:create` — create/apply migration (dev)
+  - `npm run migrate:create -- --name <migration-name>` — create/apply migration (dev)
   - `npm run migrate:deploy` — apply migrations
   - `npm run migrate:generate` — prisma generate
   - `npm run migrate:reset` — reset DB and apply migrations
