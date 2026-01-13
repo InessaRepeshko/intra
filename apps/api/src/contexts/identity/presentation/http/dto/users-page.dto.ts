@@ -5,9 +5,9 @@ export class UsersPageDto {
   @ApiProperty({ type: [UserResponse] })
   items!: UserResponse[];
 
-  @ApiProperty({ description: 'Кількість елементів у відповіді', example: 10 })
+  @ApiProperty({ description: 'Number of elements in response', example: 10 })
   count!: number;
 
-  @ApiProperty({ description: 'Загальна кількість записів', example: 100 })
+  @ApiProperty({ description: 'Total number of records', example: 100 })
   total!: number;
 }

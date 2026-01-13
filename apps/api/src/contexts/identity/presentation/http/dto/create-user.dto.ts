@@ -4,30 +4,30 @@ import { IsEmail, IsEnum, IsInt, IsNotEmpty, IsOptional, IsPositive, IsString, M
 import { IdentityUserStatus } from '../../../domain/identity-user-status.enum';
 
 export class CreateUserDto {
-  @ApiProperty({ description: "Ім'я користувача", example: 'Іван' })
+  @ApiProperty({ description: `User's first name`, example: 'Valerii' })
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
   firstName!: string;
 
-  @ApiPropertyOptional({ description: 'По-батькові', example: 'Іванович' })
+  @ApiPropertyOptional({ description: `User's second name`, example: 'Velychko' })
   @IsOptional()
   @IsString()
   @MaxLength(100)
   secondName?: string | null;
 
-  @ApiProperty({ description: 'Прізвище користувача', example: 'Петренко' })
+  @ApiProperty({ description: `User's last name`, example: 'Valeriiovych' })
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
   lastName!: string;
 
-  @ApiProperty({ description: 'Електронна пошта', example: 'ivan@example.com' })
+  @ApiProperty({ description: `User's email`, example: 'valerii.velychko@example.com' })
   @IsEmail()
   email!: string;
 
   @ApiPropertyOptional({
-    description: 'Попередньо обчислений hash пароля або плейсхолдер для зовнішньої автентифікації',
+    description: `Precomputed password hash or placeholder for external authentication`,
     example: '__external_auth__',
   })
   @IsOptional()
@@ -37,27 +37,27 @@ export class CreateUserDto {
   @ApiPropertyOptional({
     enum: IdentityUserStatus,
     default: IdentityUserStatus.ACTIVE,
-    description: 'Статус користувача',
+    description: `User's status`,
   })
   @IsOptional()
   @IsEnum(IdentityUserStatus)
   status?: IdentityUserStatus;
 
-  @ApiPropertyOptional({ description: 'ID посади', type: Number, example: 1 })
+  @ApiPropertyOptional({ description: `Position ID`, type: Number, example: 1 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @IsPositive()
   positionId?: number | null;
 
-  @ApiPropertyOptional({ description: 'ID команди', type: Number, example: 10 })
+  @ApiPropertyOptional({ description: `Team ID`, type: Number, example: 10 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @IsPositive()
   teamId?: number | null;
 
-  @ApiPropertyOptional({ description: 'ID менеджера', type: Number, example: 2 })
+  @ApiPropertyOptional({ description: `Manager ID`, type: Number, example: 2 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()

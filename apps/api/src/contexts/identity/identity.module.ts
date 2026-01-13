@@ -5,8 +5,8 @@ import { IdentityUserService } from './application/services/identity-user.servic
 import { IdentityRoleService } from './application/services/identity-role.service';
 import { IDENTITY_USER_REPOSITORY } from './application/ports/user.repository.port';
 import { IDENTITY_ROLE_REPOSITORY } from './application/ports/role.repository.port';
-import { PrismaUserRepository } from './infrastructure/prisma/prisma-user.repository';
-import { PrismaRoleRepository } from './infrastructure/prisma/prisma-role.repository';
+import { UserRepository } from './infrastructure/prisma-repositories/user.repository';
+import { RoleRepository } from './infrastructure/prisma-repositories/role.repository';
 import { IdentityRolesController } from './presentation/http/controllers/identity-roles.controller';
 
 @Module({
@@ -15,10 +15,10 @@ import { IdentityRolesController } from './presentation/http/controllers/identit
   providers: [
     IdentityUserService,
     IdentityRoleService,
-    PrismaUserRepository,
-    PrismaRoleRepository,
-    { provide: IDENTITY_USER_REPOSITORY, useExisting: PrismaUserRepository },
-    { provide: IDENTITY_ROLE_REPOSITORY, useExisting: PrismaRoleRepository },
+    UserRepository,
+    RoleRepository,
+    { provide: IDENTITY_USER_REPOSITORY, useExisting: UserRepository },
+    { provide: IDENTITY_ROLE_REPOSITORY, useExisting: RoleRepository },
   ],
   exports: [IdentityUserService, IdentityRoleService],
 })

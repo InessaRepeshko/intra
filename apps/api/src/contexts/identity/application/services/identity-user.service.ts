@@ -1,8 +1,9 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { IDENTITY_ROLE_REPOSITORY, RoleRepositoryPort } from '../ports/role.repository.port';
+import type { RoleRepositoryPort } from '../ports/role.repository.port';
+import { IDENTITY_ROLE_REPOSITORY } from '../ports/role.repository.port';
+import type { UserRepositoryPort } from '../ports/user.repository.port';
 import {
   IDENTITY_USER_REPOSITORY,
-  UserRepositoryPort,
   UserSearchQuery,
   UserSearchResult,
   UserUpdatePayload,

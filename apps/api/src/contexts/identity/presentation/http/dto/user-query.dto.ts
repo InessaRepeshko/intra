@@ -6,63 +6,63 @@ import { UserSortField } from '../../../application/ports/user.repository.port';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 
 export class UserQueryDto {
-  @ApiPropertyOptional({ description: 'Пошук по імені/прізвищу/email', maxLength: 100 })
+  @ApiPropertyOptional({ description: `Search by first name/last name/email`, maxLength: 100 })
   @IsOptional()
   @IsString()
   @MaxLength(100)
   search?: string;
 
-  @ApiPropertyOptional({ description: 'Email користувача', example: 'ivan@example.com' })
+  @ApiPropertyOptional({ description: `User's email`, example: 'valerii.velychko@example.com' })
   @IsOptional()
   @IsString()
   email?: string;
 
-  @ApiPropertyOptional({ enum: IdentityUserStatus, description: 'Статус користувача' })
+  @ApiPropertyOptional({ enum: IdentityUserStatus, description: `User's status` })
   @IsOptional()
   @IsEnum(IdentityUserStatus)
   status?: IdentityUserStatus;
 
-  @ApiPropertyOptional({ type: Number, description: 'Команда' })
+  @ApiPropertyOptional({ type: Number, description: `Team ID` })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @IsPositive()
   teamId?: number;
 
-  @ApiPropertyOptional({ type: Number, description: 'Посада' })
+  @ApiPropertyOptional({ type: Number, description: `Position ID` })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @IsPositive()
   positionId?: number;
 
-  @ApiPropertyOptional({ type: Number, description: 'Менеджер' })
+  @ApiPropertyOptional({ type: Number, description: `Manager ID` })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @IsPositive()
   managerId?: number;
 
-  @ApiPropertyOptional({ type: Number, description: 'Скільки елементів пропустити', default: 0 })
+  @ApiPropertyOptional({ type: Number, description: `Skip how many elements`, default: 0 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(0)
   skip?: number;
 
-  @ApiPropertyOptional({ type: Number, description: 'Скільки елементів повернути', default: 20 })
+  @ApiPropertyOptional({ type: Number, description: `Return how many elements`, default: 20 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
   take?: number;
 
-  @ApiPropertyOptional({ enum: UserSortField, description: 'Поле сортування', default: UserSortField.CREATED_AT })
+  @ApiPropertyOptional({ enum: UserSortField, description: `Sorting field`, default: UserSortField.CREATED_AT })
   @IsOptional()
   @IsEnum(UserSortField)
   sortBy?: UserSortField;
 
-  @ApiPropertyOptional({ enum: SortDirection, description: 'Напрям сортування', default: SortDirection.DESC })
+  @ApiPropertyOptional({ enum: SortDirection, description: `Sorting direction`, default: SortDirection.DESC })
   @IsOptional()
   @IsEnum(SortDirection)
   sortDirection?: SortDirection;

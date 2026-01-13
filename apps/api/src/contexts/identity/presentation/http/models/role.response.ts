@@ -7,11 +7,11 @@ export class RoleResponse {
   @Expose()
   code!: IdentityRole;
 
-  @ApiProperty({ example: 'Менеджер' })
+  @ApiProperty({ example: 'Manager' })
   @Expose()
   title!: string;
 
-  @ApiProperty({ example: 'Користувач із роллю менеджера', nullable: true })
+  @ApiProperty({ example: 'Responsible for managing the team', nullable: true })
   @Expose()
   description?: string | null;
 }

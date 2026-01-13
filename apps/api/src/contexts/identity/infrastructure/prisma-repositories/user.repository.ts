@@ -3,12 +3,12 @@ import { Prisma, IdentityUsersStatus } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserRepositoryPort, UserSearchQuery, UserSearchResult, UserSortField, UserUpdatePayload } from '../../application/ports/user.repository.port';
 import { UserDomain } from '../../domain/user.domain';
-import { PrismaIdentityMapper, PrismaUserWithRoles } from './prisma-identity.mapper';
+import { IdentityMapper, UserWithRoles } from './identity.mapper';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import { IdentityRole } from '../../domain/identity-role.enum';
 
 @Injectable()
-export class PrismaUserRepository implements UserRepositoryPort {
+export class UserRepository implements UserRepositoryPort {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(user: UserDomain): Promise<UserDomain> {
@@ -37,7 +37,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
       include: this.withRolesInclude(true),
     });
 
-    return PrismaIdentityMapper.toUserDomain(created);
+    return IdentityMapper.toUserDomain(created);
   }
 
   async findById(id: number, opts?: { withRoles?: boolean }): Promise<UserDomain | null> {
@@ -46,7 +46,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
       include: this.withRolesInclude(opts?.withRoles),
     });
 
-    return user ? PrismaIdentityMapper.toUserDomain(user) : null;
+    return user ? IdentityMapper.toUserDomain(user) : null;
   }
 
   async search(query: UserSearchQuery): Promise<UserSearchResult> {
@@ -64,7 +64,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
       this.prisma.user.count({ where }),
     ]);
 
-    const mapped = items.map((u) => PrismaIdentityMapper.toUserDomain(u as PrismaUserWithRoles));
+    const mapped = items.map((u) => IdentityMapper.toUserDomain(u as UserWithRoles));
     return { items: mapped, count: mapped.length, total };
   }
 
@@ -75,7 +75,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
       include: this.withRolesInclude(true),
     });
 
-    return PrismaIdentityMapper.toUserDomain(updated);
+    return IdentityMapper.toUserDomain(updated);
   }
 
   async deleteById(id: number): Promise<void> {
@@ -121,10 +121,10 @@ export class PrismaUserRepository implements UserRepositoryPort {
       ...(search
         ? {
             OR: [
-              { firstName: { contains: search, mode: 'insensitive' } },
-              { lastName: { contains: search, mode: 'insensitive' } },
-              { email: { contains: search, mode: 'insensitive' } },
-              { fullName: { contains: search, mode: 'insensitive' } },
+              { firstName: { contains: search } },
+              { lastName: { contains: search } },
+              { email: { contains: search } },
+              { fullName: { contains: search } },
             ],
           }
         : {}),

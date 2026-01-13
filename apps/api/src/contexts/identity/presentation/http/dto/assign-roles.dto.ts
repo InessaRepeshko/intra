@@ -4,7 +4,7 @@ import { IdentityRole } from '../../../domain/identity-role.enum';
 
 export class AssignRolesDto {
   @ApiProperty({
-    description: 'Коди ролей, які треба призначити користувачу (замінюють існуючі)',
+    description: 'Role codes to assign to the user (replace existing)',
     isArray: true,
     enum: IdentityRole,
     example: [IdentityRole.MANAGER, IdentityRole.HR],

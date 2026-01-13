@@ -8,23 +8,23 @@ export class UserResponse {
   @Expose()
   id!: number;
 
-  @ApiProperty({ example: 'Іван' })
+  @ApiProperty({ example: 'Valerii' })
   @Expose()
   firstName!: string;
 
-  @ApiProperty({ example: 'Іванович', nullable: true })
+  @ApiProperty({ example: 'Velychko', nullable: true })
   @Expose()
   secondName!: string | null;
 
-  @ApiProperty({ example: 'Петренко' })
+  @ApiProperty({ example: 'Valeriiovych' })
   @Expose()
   lastName!: string;
 
-  @ApiProperty({ example: 'Іван Іванович Петренко', nullable: true })
+  @ApiProperty({ example: 'Valerii Valeriiovych Velychko', nullable: true })
   @Expose()
   fullName!: string | null;
 
-  @ApiProperty({ example: 'ivan@example.com' })
+  @ApiProperty({ example: 'valerii.velychko@example.com' })
   @Expose()
   email!: string;
 

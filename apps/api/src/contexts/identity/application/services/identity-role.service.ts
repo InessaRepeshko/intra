@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IDENTITY_ROLE_REPOSITORY, RoleRepositoryPort } from '../ports/role.repository.port';
+import type { RoleRepositoryPort } from '../ports/role.repository.port';
+import { IDENTITY_ROLE_REPOSITORY } from '../ports/role.repository.port';
 import { RoleDomain } from '../../domain/role.domain';
 import { IdentityRole } from '../../domain/identity-role.enum';
 

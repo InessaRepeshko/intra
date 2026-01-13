@@ -10,7 +10,7 @@ export class IdentityRolesController {
   constructor(private readonly service: IdentityRoleService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Отримати довідник ролей' })
+  @ApiOperation({ summary: 'Get the role dictionary' })
   @ApiResponse({ status: 200, type: [RoleResponse] })
   async list(): Promise<RoleResponse[]> {
     const roles = await this.service.list();

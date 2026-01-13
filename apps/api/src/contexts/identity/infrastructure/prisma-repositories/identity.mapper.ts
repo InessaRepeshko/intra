@@ -10,10 +10,10 @@ import { IdentityUserStatus } from '../../domain/identity-user-status.enum';
 import { UserDomain } from '../../domain/user.domain';
 import { RoleDomain } from '../../domain/role.domain';
 
-export type PrismaUserWithRoles = User & { userRoles?: (UserRole & { role?: Role | null })[] };
+export type UserWithRoles = User & { userRoles?: (UserRole & { role?: Role | null })[] };
 
-export class PrismaIdentityMapper {
-  static toUserDomain(user: PrismaUserWithRoles): UserDomain {
+export class IdentityMapper {
+  static toUserDomain(user: UserWithRoles): UserDomain {
     const roles = (user.userRoles ?? []).map((relation) => relation.roleCode as IdentityRole);
 
     return UserDomain.create({
@@ -49,7 +49,7 @@ export class PrismaIdentityMapper {
     return status as PrismaIdentityUserStatus | undefined;
   }
 
-  static fromRole(role: IdentityRole): PrismaIdentityRole {
-    return role as PrismaIdentityRole;
+  static fromRole(role: IdentityRole): PrismaIdentityRole | undefined {
+    return role as PrismaIdentityRole | undefined;
   }
 }

@@ -32,7 +32,7 @@ export class IdentityUsersController {
   constructor(private readonly service: IdentityUserService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Створити користувача' })
+  @ApiOperation({ summary: 'Create a user' })
   @ApiResponse({ status: HttpStatus.CREATED, type: UserResponse })
   async create(@Body() dto: CreateUserDto): Promise<UserResponse> {
     const created = await this.service.create({
@@ -50,7 +50,7 @@ export class IdentityUsersController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Пошук користувачів' })
+  @ApiOperation({ summary: 'Search users' })
   @ApiResponse({ status: HttpStatus.OK, type: UsersPageDto })
   async search(@Query() query: UserQueryDto): Promise<UsersPageDto> {
     const result = await this.service.search({
@@ -64,7 +64,7 @@ export class IdentityUsersController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Отримати користувача за id' })
+  @ApiOperation({ summary: 'Get a user by id' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponse })
   async getById(@Param('id') id: string): Promise<UserResponse> {
     const user = await this.service.getById(Number(id), { withRoles: true });
@@ -72,7 +72,7 @@ export class IdentityUsersController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Оновити користувача' })
+  @ApiOperation({ summary: 'Update a user' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponse })
   async update(@Param('id') id: string, @Body() dto: UpdateUserDto): Promise<UserResponse> {
     const updated = await this.service.update(Number(id), {
@@ -89,7 +89,7 @@ export class IdentityUsersController {
   }
 
   @Put(':id/roles')
-  @ApiOperation({ summary: 'Змінити ролі користувача (повна заміна)' })
+  @ApiOperation({ summary: 'Change the user roles (full replacement)' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponse })
   async replaceRoles(@Param('id') id: string, @Body() dto: AssignRolesDto): Promise<UserResponse> {
     const updated = await this.service.replaceRoles(Number(id), dto.roles);
@@ -98,7 +98,7 @@ export class IdentityUsersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Видалити користувача' })
+  @ApiOperation({ summary: 'Delete a user' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   async delete(@Param('id') id: string): Promise<void> {
     await this.service.delete(Number(id));
