@@ -3,8 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/identity/users.module';
-import { TeamsModule } from './modules/identity/teams.module';
-import { PositionsModule } from './modules/identity/positions.module';
+import { OrgStructureModule } from './contexts/org-structure/org-structure.module';
 import { Feedback360Module } from './modules/feedback360/feedback360.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.app.config';
@@ -23,8 +22,7 @@ import { join } from 'path';
     }),
     UsersModule,
     Feedback360Module,
-    TeamsModule,
-    PositionsModule,
+    OrgStructureModule,
   ],
   controllers: [AppController],
   providers: [AppService],
