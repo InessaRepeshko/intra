@@ -6,7 +6,6 @@ import type { TeamRepositoryPort } from '../ports/team.repository.port';
 import {
   ORG_TEAM_REPOSITORY,
   TeamSearchQuery,
-  TeamSearchResult,
   TeamUpdatePayload,
 } from '../ports/team.repository.port';
 
@@ -43,7 +42,7 @@ export class TeamService {
     return this.teams.create(team);
   }
 
-  async search(query: TeamSearchQuery): Promise<TeamSearchResult> {
+  async search(query: TeamSearchQuery): Promise<TeamDomain[]> {
     return this.teams.search(query);
   }
 

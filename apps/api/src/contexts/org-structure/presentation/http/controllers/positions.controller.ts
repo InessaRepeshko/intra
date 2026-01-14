@@ -48,8 +48,8 @@ export class PositionsController {
   @ApiResponse({ status: HttpStatus.OK, type: PositionResponse, isArray: true })
   @ApiListReadErrorResponses()
   async search(@Query() query: PositionQueryDto): Promise<PositionResponse[]> {
-    const result = await this.positions.search(query);
-    return result.items.map(PositionHttpMapper.toResponse);
+    const positions = await this.positions.search(query);
+    return positions.map(PositionHttpMapper.toResponse);
   }
 
   @Get(':id')

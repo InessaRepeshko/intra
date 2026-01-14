@@ -49,8 +49,8 @@ export class TeamsController {
   @ApiResponse({ status: HttpStatus.OK, type: TeamResponse, isArray: true })
   @ApiListReadErrorResponses()
   async search(@Query() query: TeamQueryDto): Promise<TeamResponse[]> {
-    const result = await this.service.search(query);
-    return result.map(TeamHttpMapper.toResponse);
+    const teams = await this.service.search(query);
+    return teams.map(TeamHttpMapper.toResponse);
   }
 
   @Get(':id')

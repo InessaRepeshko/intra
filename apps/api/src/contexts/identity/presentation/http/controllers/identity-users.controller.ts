@@ -55,10 +55,10 @@ export class IdentityUsersController {
   @ApiResponse({ status: HttpStatus.OK, type: UserResponse, isArray: true })
   @ApiListReadErrorResponses()
   async search(@Query() query: UserQueryDto): Promise<UserResponse[]> {
-    const result = await this.service.search({
+    const users = await this.service.search({
       ...query,
     });
-    return result.items.map(UserHttpMapper.toResponse);
+    return users.map(UserHttpMapper.toResponse);
   }
 
   @Get(':id')

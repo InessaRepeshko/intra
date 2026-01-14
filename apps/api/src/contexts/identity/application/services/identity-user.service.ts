@@ -5,7 +5,6 @@ import type { UserRepositoryPort } from '../ports/user.repository.port';
 import {
   IDENTITY_USER_REPOSITORY,
   UserSearchQuery,
-  UserSearchResult,
   UserUpdatePayload,
 } from '../ports/user.repository.port';
 import { IdentityUserStatus } from '../../domain/identity-user-status.enum';
@@ -51,7 +50,7 @@ export class IdentityUserService {
     return this.users.create(user);
   }
 
-  async search(query: UserSearchQuery): Promise<UserSearchResult> {
+  async search(query: UserSearchQuery): Promise<UserDomain[]> {
     return this.users.search(query);
   }
 

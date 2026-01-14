@@ -3,7 +3,6 @@ import type { PositionRepositoryPort } from '../ports/position.repository.port';
 import {
   ORG_POSITION_REPOSITORY,
   PositionSearchQuery,
-  PositionSearchResult,
   PositionUpdatePayload,
 } from '../ports/position.repository.port';
 import { PositionDomain } from '../../domain/position.domain';
@@ -27,7 +26,7 @@ export class PositionService {
     return this.positions.create(position);
   }
 
-  async search(query: PositionSearchQuery): Promise<PositionSearchResult> {
+  async search(query: PositionSearchQuery): Promise<PositionDomain[]> {
     return this.positions.search(query);
   }
 
