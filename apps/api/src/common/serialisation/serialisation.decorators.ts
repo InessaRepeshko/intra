@@ -3,10 +3,6 @@ import { SerialisationGroupValue } from './serialisation.groups';
 
 type GroupExposeOptions = Omit<ExposeOptions, 'groups'>;
 
-/**
- * Базовий хелпер: @Expose(...) з доданими groups.
- * Дозволяє за потреби передати інші опції Expose (name, since, until, toPlainOnly, toClassOnly).
- */
 export function ExposeWithGroup(
   group: SerialisationGroupValue,
   options: GroupExposeOptions = {},

@@ -7,10 +7,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-/**
- * Спільні помилки для CRUD/mutation ендпоїнтів.
- * Виносить повторювані Swagger-декоратори в один.
- */
 export function ApiCreateAndUpdateErrorResponses() {
   return applyDecorators(
     ApiBadRequestResponse({ description: 'Invalid data' }),

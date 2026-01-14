@@ -4,10 +4,6 @@ function isEmpty(value: unknown): boolean {
   return value === undefined || value === null || (typeof value === 'string' && value.trim() === '');
 }
 
-/**
- * Trim string; empty -> undefined (для optional полів).
- * Некоректні типи лишає як є (валідація має впіймати).
- */
 export function ToOptionalTrimmedString(): PropertyDecorator {
   return Transform(({ value }) => {
     if (isEmpty(value)) return undefined;
@@ -18,17 +14,17 @@ export function ToOptionalTrimmedString(): PropertyDecorator {
 }
 
 /**
- * Парсить ціле число з query.
+ * Parse integer from query.
  * - ''/null/undefined -> undefined
  * - '123' -> 123
- * - 'abc' -> NaN (щоб IsInt/Min звалилися і повернуло 400)
+ * - 'abc' -> NaN (to catch IsInt/Min and return 400)
  */
 export function ToOptionalInt(options?: { min?: number; max?: number }): PropertyDecorator {
   return Transform(({ value }) => {
     if (isEmpty(value)) return undefined;
     const n = typeof value === 'number' ? value : Number(String(value).trim());
     if (Number.isNaN(n)) return NaN;
-    // тільки integer; десяткові залишаємо як є (IsInt впіймає)
+    // only integer; decimal leave as is (IsInt will catch it)
     const int = Number.isInteger(n) ? n : n;
     if (options?.min !== undefined && typeof int === 'number' && int < options.min) return int;
     if (options?.max !== undefined && typeof int === 'number' && int > options.max) return int;
@@ -36,9 +32,6 @@ export function ToOptionalInt(options?: { min?: number; max?: number }): Propert
   });
 }
 
-/**
- * Порожнє -> undefined. Інакше лишає значення (IsEnum має впіймати невалідне).
- */
 export function ToOptionalEnum<TEnum extends object>(_enum: TEnum): PropertyDecorator {
   return Transform(({ value }) => {
     if (isEmpty(value)) return undefined;
@@ -47,11 +40,11 @@ export function ToOptionalEnum<TEnum extends object>(_enum: TEnum): PropertyDeco
 }
 
 /**
- * Парсить boolean з query.
+ * Parse boolean from query.
  * - '' -> undefined
  * - 'true'/'1' -> true
  * - 'false'/'0' -> false
- * - інше лишаємо як є (IsBoolean має впіймати і повернути 400)
+ * - other leave as is (IsBoolean will catch and return 400)
  */
 export function ToOptionalBool(): PropertyDecorator {
   return Transform(({ value }) => {
@@ -66,10 +59,10 @@ export function ToOptionalBool(): PropertyDecorator {
 }
 
 /**
- * Парсить дату з query.
+ * Parse date from query.
  * - '' -> undefined
- * - валідний ISO/Date-string -> Date
- * - невалідний -> Invalid Date (IsDate має впіймати і повернути 400)
+ * - valid ISO/Date-string -> Date
+ * - invalid -> Invalid Date (IsDate will catch and return 400)
  */
 export function ToOptionalDate(): PropertyDecorator {
   return Transform(({ value }) => {

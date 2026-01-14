@@ -22,6 +22,7 @@ import { PositionResponse } from '../models/position.response';
 import { PositionHttpMapper } from '../mappers/position.http.mapper';
 import { PositionQueryDto } from '../dto/positions/position-query.dto';
 import { CreatePositionLinkDto } from '../dto/positions/create-position-link.dto';
+import { ApiCreateAndUpdateErrorResponses, ApiDeletionErrorResponses, ApiListReadErrorResponses, ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 
 @ApiTags('Org Structure / Positions')
 @Controller('org/positions')
@@ -36,6 +37,7 @@ export class PositionsController {
   @Post()
   @ApiOperation({ summary: 'Create a position' })
   @ApiResponse({ status: HttpStatus.CREATED, type: PositionResponse })
+  @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreatePositionDto): Promise<PositionResponse> {
     const created = await this.positions.create({ title: dto.title, description: dto.description });
     return PositionHttpMapper.toResponse(created);
@@ -44,6 +46,7 @@ export class PositionsController {
   @Get()
   @ApiOperation({ summary: 'Search positions' })
   @ApiResponse({ status: HttpStatus.OK, type: PositionResponse, isArray: true })
+  @ApiListReadErrorResponses()
   async search(@Query() query: PositionQueryDto): Promise<PositionResponse[]> {
     const result = await this.positions.search(query);
     return result.items.map(PositionHttpMapper.toResponse);
@@ -52,6 +55,7 @@ export class PositionsController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a position by id' })
   @ApiResponse({ status: HttpStatus.OK, type: PositionResponse })
+  @ApiReadErrorResponses()
   async getById(@Param('id') id: string): Promise<PositionResponse> {
     const position = await this.positions.getById(Number(id));
     return PositionHttpMapper.toResponse(position);
@@ -60,6 +64,7 @@ export class PositionsController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update a position' })
   @ApiResponse({ status: HttpStatus.OK, type: PositionResponse })
+  @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdatePositionDto): Promise<PositionResponse> {
     const updated = await this.positions.update(Number(id), dto);
     return PositionHttpMapper.toResponse(updated);
@@ -69,6 +74,7 @@ export class PositionsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a position' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @ApiDeletionErrorResponses()
   async delete(@Param('id') id: string): Promise<void> {
     await this.positions.delete(Number(id));
   }
@@ -76,6 +82,7 @@ export class PositionsController {
   @Post(':id/children')
   @ApiOperation({ summary: 'Add a child position' })
   @ApiResponse({ status: HttpStatus.CREATED, type: PositionResponse })
+  @ApiCreateAndUpdateErrorResponses()
   async linkChild(@Param('id') id: string, @Body() dto: CreatePositionLinkDto): Promise<PositionResponse> {
     await this.hierarchy.link(Number(id), dto.childId);
     const child = await this.positions.getById(dto.childId);
@@ -86,6 +93,7 @@ export class PositionsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a child position' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @ApiDeletionErrorResponses()
   async unlinkChild(@Param('id') id: string, @Param('childId') childId: string): Promise<void> {
     await this.hierarchy.unlink(Number(id), Number(childId));
   }
@@ -93,6 +101,7 @@ export class PositionsController {
   @Get(':id/children')
   @ApiOperation({ summary: 'List child positions' })
   @ApiResponse({ status: HttpStatus.OK, type: [PositionResponse] })
+  @ApiListReadErrorResponses()
   async listChildren(@Param('id') id: string): Promise<PositionResponse[]> {
     const children = await this.hierarchy.listChildren(Number(id));
     return children.map(PositionHttpMapper.toResponse);
@@ -101,6 +110,7 @@ export class PositionsController {
   @Get(':id/parents')
   @ApiOperation({ summary: 'List parent positions' })
   @ApiResponse({ status: HttpStatus.OK, type: [PositionResponse] })
+  @ApiListReadErrorResponses()
   async listParents(@Param('id') id: string): Promise<PositionResponse[]> {
     const parents = await this.hierarchy.listParents(Number(id));
     return parents.map(PositionHttpMapper.toResponse);

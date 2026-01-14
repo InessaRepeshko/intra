@@ -1,6 +1,3 @@
-/**
- * Ключі об'єкта SERIALISATION_GROUPS
- */
 export enum SerialisationGroupKey {
     BASIC = 'BASIC',
     CONFIDENTIAL = 'CONFIDENTIAL',
@@ -8,9 +5,6 @@ export enum SerialisationGroupKey {
     PRIVATE = 'PRIVATE',
 }
 
-/**
- * Значення об'єкта SERIALISATION_GROUPS
- */
 export enum SerialisationGroupValue {
     BASIC = 'basic',
     CONFIDENTIAL = 'confidential',
@@ -26,9 +20,9 @@ export const SERIALISATION_GROUPS = {
 };
 
 /**
- * Конструктор “серіалізаційних наборів” для конкретної моделі.
- * - VALUES: дозволені group-values для @Expose на полях моделі
- * - GROUPS: набори активних groups для @SerializeOptions (в контролерах)
+ * Constructor for "serialization sets" for a specific model.
+ * - VALUES: allowed group-values for @Expose on fields of the model
+ * - GROUPS: sets of active groups for @SerializeOptions (in controllers)
  */
 export function defineModelSerialisation<
     const K extends readonly SerialisationGroupKey[],
@@ -40,11 +34,11 @@ export function defineModelSerialisation<
 }
 
 /**
- * Type-safe runtime "pick" (аналог TS Pick<...>, але на рівні значень).
- * Повертає об'єкт лише з вказаними ключами, зберігаючи типи.
- * @param obj - Об'єкт, з якого беремо значення
- * @param keys - Ключі, які беремо з об'єкта
- * @returns Об'єкт з вказаними ключами
+ * Type-safe runtime "pick" (analogue of TS Pick<...>, but at the level of values).
+ * Returns an object only with the specified keys, preserving types.
+ * @param obj - Object from which we take the values
+ * @param keys - Keys from the object
+ * @returns Object with the specified keys
  */
 export function pickGroup<const T extends Record<PropertyKey, unknown>, const K extends readonly (keyof T)[]>(
     obj: T,

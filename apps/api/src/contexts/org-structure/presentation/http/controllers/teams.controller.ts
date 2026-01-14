@@ -22,6 +22,7 @@ import { TeamResponse } from '../models/team.response';
 import { TeamQueryDto } from '../dto/teams/team-query.dto';
 import { AddTeamMemberDto } from '../dto/teams/add-team-member.dto';
 import { TeamMemberResponse } from '../models/team-member.response';
+import { ApiCreateAndUpdateErrorResponses, ApiDeletionErrorResponses, ApiListReadErrorResponses, ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 
 @ApiTags('Org Structure / Teams')
 @Controller('org/teams')
@@ -33,6 +34,7 @@ export class TeamsController {
   @Post()
   @ApiOperation({ summary: 'Create a team' })
   @ApiResponse({ status: HttpStatus.CREATED, type: TeamResponse })
+  @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateTeamDto): Promise<TeamResponse> {
     const created = await this.service.create({
       title: dto.title,
@@ -45,6 +47,7 @@ export class TeamsController {
   @Get()
   @ApiOperation({ summary: 'Search teams' })
   @ApiResponse({ status: HttpStatus.OK, type: TeamResponse, isArray: true })
+  @ApiListReadErrorResponses()
   async search(@Query() query: TeamQueryDto): Promise<TeamResponse[]> {
     const result = await this.service.search(query);
     return result.map(TeamHttpMapper.toResponse);
@@ -53,6 +56,7 @@ export class TeamsController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a team by id' })
   @ApiResponse({ status: HttpStatus.OK, type: TeamResponse })
+  @ApiReadErrorResponses()
   async getById(@Param('id') id: string): Promise<TeamResponse> {
     const team = await this.service.getById(Number(id));
     return TeamHttpMapper.toResponse(team);
@@ -61,6 +65,7 @@ export class TeamsController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update a team' })
   @ApiResponse({ status: HttpStatus.OK, type: TeamResponse })
+  @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateTeamDto): Promise<TeamResponse> {
     const updated = await this.service.update(Number(id), dto);
     return TeamHttpMapper.toResponse(updated);
@@ -70,6 +75,7 @@ export class TeamsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a team' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @ApiDeletionErrorResponses()
   async delete(@Param('id') id: string): Promise<void> {
     await this.service.delete(Number(id));
   }
@@ -77,6 +83,7 @@ export class TeamsController {
   @Post(':id/members')
   @ApiOperation({ summary: 'Add a member to a team' })
   @ApiResponse({ status: HttpStatus.CREATED, type: TeamMemberResponse })
+  @ApiCreateAndUpdateErrorResponses()
   async addMember(@Param('id') id: string, @Body() dto: AddTeamMemberDto): Promise<TeamMemberResponse> {
     const membership = await this.service.addMember(Number(id), { userId: dto.userId, isPrimary: dto.isPrimary }, { withUser: true });
     return TeamHttpMapper.toMemberResponse(membership);
@@ -85,6 +92,7 @@ export class TeamsController {
   @Get(':id/members')
   @ApiOperation({ summary: 'Get the team members' })
   @ApiResponse({ status: HttpStatus.OK, type: [TeamMemberResponse] })
+  @ApiListReadErrorResponses()
   async listMembers(@Param('id') id: string): Promise<TeamMemberResponse[]> {
     const members = await this.service.listMembers(Number(id), { withUsers: true });
     return members.map(TeamHttpMapper.toMemberResponse);
@@ -94,6 +102,7 @@ export class TeamsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a member from a team' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @ApiDeletionErrorResponses()
   async removeMember(@Param('id') id: string, @Param('userId') userId: string): Promise<void> {
     await this.service.removeMember(Number(id), Number(userId));
   }

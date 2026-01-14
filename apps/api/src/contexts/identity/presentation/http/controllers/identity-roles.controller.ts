@@ -1,7 +1,8 @@
-import { ClassSerializerInterceptor, Controller, Get, UseInterceptors } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Get, HttpStatus, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IdentityRoleService } from '../../../application/services/identity-role.service';
 import { RoleResponse } from '../models/role.response';
+import { ApiListReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 
 @ApiTags('Identity / Roles')
 @Controller('identity/roles')
@@ -11,7 +12,8 @@ export class IdentityRolesController {
 
   @Get()
   @ApiOperation({ summary: 'Get the role dictionary' })
-  @ApiResponse({ status: 200, type: [RoleResponse] })
+  @ApiResponse({ status: HttpStatus.OK, type: [RoleResponse] })
+  @ApiListReadErrorResponses()
   async list(): Promise<RoleResponse[]> {
     const roles = await this.service.list();
     return roles.map((r) => {

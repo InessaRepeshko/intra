@@ -3,10 +3,6 @@ import {
   defineModelSerialisation,
 } from './serialisation.groups';
 
-/**
- * Стандартний пресет серіалізації “без PRIVATE”.
- * Підходить для більшості публічних сутностей/ендпоінтів.
- */
 export const PUBLIC_SERIALISATION = defineModelSerialisation([
   SerialisationGroupKey.BASIC,
   SerialisationGroupKey.CONFIDENTIAL,
