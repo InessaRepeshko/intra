@@ -6,11 +6,17 @@ import { SortDirection } from 'src/common/enums/sort-direction.enum';
 export const IDENTITY_USER_REPOSITORY = Symbol('IDENTITY.USER_REPOSITORY');
 
 export enum UserSortField {
-  CREATED_AT = 'createdAt',
+  ID = 'id',
   FIRST_NAME = 'firstName',
   LAST_NAME = 'lastName',
+  FULL_NAME = 'fullName',
   EMAIL = 'email',
   STATUS = 'status',
+  POSITION_ID = 'positionId',
+  TEAM_ID = 'teamId',
+  MANAGER_ID = 'managerId',
+  CREATED_AT = 'createdAt',
+  UPDATED_AT = 'updatedAt',
 }
 
 export type UserSearchQuery = {

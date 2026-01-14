@@ -4,7 +4,7 @@ import { ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.tr
 import { PositionConstants } from 'src/common/validators/constants';
 
 export class CreatePositionDto {
-  @ApiProperty({ example: 'Senior Backend Engineer' })
+  @ApiProperty({ description: 'Position title', example: 'Senior Backend Engineer', maxLength: PositionConstants.TITLE_MAX_LENGTH, minLength: PositionConstants.TITLE_MIN_LENGTH })
   @ToOptionalTrimmedString()
   @IsString()
   @IsNotEmpty()
@@ -12,10 +12,11 @@ export class CreatePositionDto {
   @MaxLength(PositionConstants.TITLE_MAX_LENGTH)
   title!: string;
 
-  @ApiPropertyOptional({ example: 'Backend development, architecture design, code reviews', nullable: true })
+  @ApiPropertyOptional({ description: 'Position description', example: 'Backend development, architecture design, code reviews', nullable: true, maxLength: PositionConstants.DESCRIPTION_MAX_LENGTH, minLength: PositionConstants.DESCRIPTION_MIN_LENGTH })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()
+  @MinLength(PositionConstants.DESCRIPTION_MIN_LENGTH)
   @MaxLength(PositionConstants.DESCRIPTION_MAX_LENGTH)
   description?: string | null;
 }

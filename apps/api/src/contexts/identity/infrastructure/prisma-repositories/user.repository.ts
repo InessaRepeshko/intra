@@ -126,8 +126,8 @@ export class UserRepository implements UserRepositoryPort {
   }
 
   private buildOrder(query: UserSearchQuery): Prisma.UserOrderByWithRelationInput[] {
-    const field = query.sortBy ?? UserSortField.CREATED_AT;
-    const direction = query.sortDirection ?? SortDirection.DESC;
+    const field = query.sortBy ?? UserSortField.ID;
+    const direction = query.sortDirection ?? SortDirection.ASC;
     return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
   }
 

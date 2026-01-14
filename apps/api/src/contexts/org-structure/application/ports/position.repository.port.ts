@@ -4,8 +4,11 @@ import { PositionDomain } from '../../domain/position.domain';
 export const ORG_POSITION_REPOSITORY = Symbol('ORG_STRUCTURE.POSITION_REPOSITORY');
 
 export enum PositionSortField {
-  CREATED_AT = 'createdAt',
+  ID = 'id',
   TITLE = 'title',
+  DESCRIPTION = 'description',
+  CREATED_AT = 'createdAt',
+  UPDATED_AT = 'updatedAt',
 }
 
 export type PositionSearchQuery = {

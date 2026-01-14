@@ -106,8 +106,8 @@ export class TeamRepository implements TeamRepositoryPort {
   }
 
   private buildOrder(query: TeamSearchQuery): Prisma.TeamOrderByWithRelationInput[] {
-    const field = query.sortBy ?? TeamSortField.CREATED_AT;
-    const direction = query.sortDirection ?? SortDirection.DESC;
+    const field = query.sortBy ?? TeamSortField.ID;
+    const direction = query.sortDirection ?? SortDirection.ASC;
     return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
   }
 }

@@ -67,8 +67,8 @@ export class PositionRepository implements PositionRepositoryPort {
   }
 
   private buildOrder(query: PositionSearchQuery): Prisma.PositionOrderByWithRelationInput[] {
-    const field = query.sortBy ?? PositionSortField.CREATED_AT;
-    const direction = query.sortDirection ?? SortDirection.DESC;
+    const field = query.sortBy ?? PositionSortField.ID;
+    const direction = query.sortDirection ?? SortDirection.ASC;
     return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
   }
 }

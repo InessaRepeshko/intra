@@ -5,8 +5,12 @@ import { TeamMembershipDomain } from '../../domain/team-membership.domain';
 export const ORG_TEAM_REPOSITORY = Symbol('ORG_STRUCTURE.TEAM_REPOSITORY');
 
 export enum TeamSortField {
-  CREATED_AT = 'createdAt',
+  ID = 'id',
   TITLE = 'title',
+  DESCRIPTION = 'description',
+  HEAD_ID = 'headId',
+  CREATED_AT = 'createdAt',
+  UPDATED_AT = 'updatedAt',
 }
 
 export type TeamSearchQuery = {
