@@ -19,7 +19,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     super({ adapter });
   }
 
-
   async onModuleInit() {
     if (!process.env.DATABASE_URL) {
       throw new Error(

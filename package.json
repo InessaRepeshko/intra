@@ -11,12 +11,10 @@
     "docker:view": "docker ps -a",
     "docker:stop": "docker-compose stop",
     "docker:down": "docker-compose down -v",
-
     "// --- Prisma Basic Commands ---": "",
     "prisma:config": "npx prisma --config ./packages/database/prisma/prisma.config.ts",
     "prisma:dev": "dotenv -e .env.development.local -- npm run prisma:config --",
     "prisma:test": "dotenv -e .env.test -- npm run prisma:config --",
-
     "// --- Prisma Commands for DEV environment ---": "",
     "db:deploy": "npm run prisma:dev migrate deploy",
     "db:create": "npm run prisma:dev migrate dev",
@@ -24,19 +22,16 @@
     "db:seed": "npm run prisma:dev db seed",
     "db:reset": "npm run prisma:dev migrate reset --force",
     "db:refresh": "npm run db:reset && npm run db:generate && npm run db:seed",
-
     "// --- Prisma Commands for TEST environment ---": "",
     "db:test:deploy": "npm run prisma:test migrate deploy",
     "db:test:generate": "npm run prisma:test generate",
     "db:test:reset": "npm run prisma:test migrate reset --force",
     "db:test:seed": "npm run prisma:test db seed",
     "db:test:refresh": "npm run db:test:reset && npm run db:test:generate && npm run db:test:seed",
-   
     "// --- Environment Commands ---": "",
-    "env:dev": "dotenv -e .env.development.local -v NODE_ENV=development",  
+    "env:dev": "dotenv -e .env.development.local -v NODE_ENV=development",
     "env:test": "dotenv -e .env.test -v NODE_ENV=test",
     "env:prod": "dotenv -e .env.production -v NODE_ENV=production",
-
     "// --- Running Commands ---": "",
     "start": "npm run env:dev -- nest start",
     "start:dev": "npm run env:dev -- nest start --watch",
@@ -45,7 +40,6 @@
     "start:prod": "npm run env:prod -- node dist/apps/api/src/main",
     "refresh": "npm run db:refresh && npm run start:dev",
     "refresh:test": "npm run db:test:refresh && npm run start:test",
-    
     "// --- Testing Commands ---": "",
     "test": "npx jest --clearCache && npx jest",
     "test:unit": "npx jest --watch --config jest-unit.config.ts",
@@ -53,7 +47,6 @@
     "test:watch": "npx jest --watch",
     "test:cov": "npx jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    
     "// --- Other Commands ---": "",
     "build": "nest build",
     "format": "prettier --write \"apps/api/src/**/*.ts\" \"apps/api/test/**/*.ts\"",
@@ -102,6 +95,7 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
   },

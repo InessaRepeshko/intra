@@ -5,10 +5,12 @@ export default () => ({
     database: {
         host: getEnvVarAsStr('DATABASE_HOST'),
         port: getEnvVarAsInt('DATABASE_PORT'),
-        username: getEnvVarAsStr('DATABASE_USER'),
+        user: getEnvVarAsStr('DATABASE_USER'),
         password: getEnvVarAsStr('DATABASE_PASSWORD'),
         name: getEnvVarAsStr('DATABASE_NAME'),
-        connectionLimit: CONNECTION_LIMIT,
         url: getEnvVarAsStr('DATABASE_URL'),
+        shadowName: getEnvVarAsStr('SHADOW_DATABASE_NAME'),
+        shadowUrl: getEnvVarAsStr('SHADOW_DATABASE_URL'),
+        connectionLimit: CONNECTION_LIMIT,
     },
 });
