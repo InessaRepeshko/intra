@@ -9,6 +9,6 @@ export async function setupServer(app: INestApplication, configService: ConfigSe
     const globalPrefix = configService.getOrThrow<string>('app.globalPrefix');
     const docsUrl = `${appUrl}/${globalPrefix}`;
 
-    console.log(`\n✔ Application is running on: ${appUrl}`);
-    console.log(`\n✔ API Docs is available on: ${docsUrl}\n`);
+    console.log(`\n✔️ Application is running on: ${appUrl}`);
+    console.log(`\n✔️ API Docs is available on: ${docsUrl}\n`);
 }

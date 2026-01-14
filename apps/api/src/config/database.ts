@@ -1,5 +1,5 @@
 import { CONNECTION_LIMIT } from './constants';
-import { getEnvVarAsInt, getEnvVarAsStr } from './env.utils';
+import { getEnvVarAsInt, getEnvVarAsStr } from './env-utils';
 
 export default () => ({
     database: {

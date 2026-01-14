@@ -1,4 +1,4 @@
-import { getEnvVarAsStr, getEnvVarAsInt } from './env.utils';
+import { getEnvVarAsStr, getEnvVarAsInt } from './env-utils';
 import { VERSION, GLOBAL_PREFIX, LOGO_FILENAME, PUBLIC_DIR_PATH } from './constants';
 import { version } from '../../../../package.json';
 

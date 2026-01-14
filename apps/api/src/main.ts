@@ -2,9 +2,9 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ClassSerializerInterceptor } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { setupGlobalPipes } from './config/global-pipes.config';
-import { setupSwagger } from './config/swagger.config';
-import { setupServer } from './config/server.config';
+import { setupGlobalPipes } from './config/global-pipes';
+import { setupSwagger } from './config/swagger';
+import { setupServer } from './config/server';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

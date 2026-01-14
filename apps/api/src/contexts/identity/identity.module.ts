@@ -22,4 +22,4 @@ import { IdentityRolesController } from './presentation/http/controllers/identit
   ],
   exports: [IdentityUserService, IdentityRoleService],
 })
-export class IdentityContextModule {}
+export class IdentityModule {}

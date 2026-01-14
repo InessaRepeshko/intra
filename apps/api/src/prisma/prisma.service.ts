@@ -1,14 +1,26 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import { PrismaClient } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
-
   private readonly logger = new Logger(PrismaService.name);
 
+  constructor(private readonly configService: ConfigService) {
+    const  adapter = new PrismaMariaDb({
+      host: configService.get<string>('database.host'),
+      port: configService.get<number>('database.port'),
+      user: configService.get<string>('database.user'),
+      password: configService.get<string>('database.password'),
+      database: configService.get<string>('database.name'),
+      connectionLimit: configService.get<number>('database.connectionLimit'),
+    });
+    super({ adapter });
+  }
+
+
   async onModuleInit() {
-    // Prisma бере url datasource з env("DATABASE_URL") у schema.prisma.
-    // Якщо змінна не задана — краще впасти з чітким повідомленням, ніж з неочевидною Prisma-ошибкою.
     if (!process.env.DATABASE_URL) {
       throw new Error(
         [

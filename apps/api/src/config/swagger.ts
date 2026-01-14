@@ -2,10 +2,10 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { INestApplication } from '@nestjs/common';
-import { getAppName } from './app.config';
+import { getAppName } from './app';
 import { GLOBAL_PREFIX } from './constants';
 import { FAVICON_PATH } from './constants';
-import { getApiVersion } from './app.config';
+import { getApiVersion } from './app';
 import { OPENAPI_PATH } from './constants';
 
 export function setupSwagger(app: INestApplication): void {

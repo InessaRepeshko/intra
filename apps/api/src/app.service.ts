@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { getAppName } from './config/app.config';
-import { getApiVersion } from './config/app.config';
+import { getAppName } from './config/app';
+import { getApiVersion } from './config/app';
 import { GLOBAL_PREFIX } from './config/constants';
 
 @Injectable()
