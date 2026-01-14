@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { OrgStructureMapper } from './org-structure.mapper';
-import { TeamRepositoryPort, TeamSearchQuery, TeamSearchResult, TeamSortField, TeamUpdatePayload } from '../../application/ports/team.repository.port';
+import { TeamRepositoryPort, TeamSearchQuery, TeamSortField, TeamUpdatePayload } from '../../application/ports/team.repository.port';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import type { TeamDomain } from '../../domain/team.domain';
 import type { TeamMembershipDomain } from '../../domain/team-membership.domain';
@@ -27,22 +27,16 @@ export class TeamRepository implements TeamRepositoryPort {
     return found ? OrgStructureMapper.toTeamDomain(found) : null;
   }
 
-  async search(query: TeamSearchQuery): Promise<TeamSearchResult> {
+  async search(query: TeamSearchQuery): Promise<TeamDomain[]> {
     const where = this.buildWhere(query);
     const orderBy = this.buildOrder(query);
 
-    const [items, total] = await this.prisma.$transaction([
-      this.prisma.team.findMany({
-        where,
-        skip: query.skip,
-        take: query.take,
-        orderBy,
-      }),
-      this.prisma.team.count({ where }),
-    ]);
+    const items = await this.prisma.team.findMany({
+      where,
+      orderBy,
+    });
 
-    const mapped = items.map(OrgStructureMapper.toTeamDomain);
-    return { items: mapped, count: mapped.length, total };
+    return items.map(OrgStructureMapper.toTeamDomain);
   }
 
   async updateById(id: number, patch: TeamUpdatePayload): Promise<TeamDomain> {

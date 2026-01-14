@@ -3,7 +3,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import {
   PositionRepositoryPort,
   PositionSearchQuery,
-  PositionSearchResult,
   PositionSortField,
   PositionUpdatePayload,
 } from '../../application/ports/position.repository.port';
@@ -31,22 +30,16 @@ export class PositionRepository implements PositionRepositoryPort {
     return found ? OrgStructureMapper.toPositionDomain(found) : null;
   }
 
-  async search(query: PositionSearchQuery): Promise<PositionSearchResult> {
+  async search(query: PositionSearchQuery): Promise<PositionDomain[]> {
     const where = this.buildWhere(query);
     const orderBy = this.buildOrder(query);
 
-    const [items, total] = await this.prisma.$transaction([
-      this.prisma.position.findMany({
-        where,
-        skip: query.skip,
-        take: query.take,
-        orderBy,
-      }),
-      this.prisma.position.count({ where }),
-    ]);
+    const items = await this.prisma.position.findMany({
+      where,
+      orderBy,
+    });
 
-    const mapped = items.map(OrgStructureMapper.toPositionDomain);
-    return { items: mapped, count: mapped.length, total };
+    return items.map(OrgStructureMapper.toPositionDomain);
   }
 
   async updateById(id: number, patch: PositionUpdatePayload): Promise<PositionDomain> {

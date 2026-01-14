@@ -10,18 +10,10 @@ export enum TeamSortField {
 }
 
 export type TeamSearchQuery = {
-  skip?: number;
-  take?: number;
   search?: string;
   headId?: number;
   sortBy?: TeamSortField;
   sortDirection?: SortDirection;
-};
-
-export type TeamSearchResult = {
-  items: TeamDomain[];
-  count: number;
-  total: number;
 };
 
 export type TeamUpdatePayload = Partial<{
@@ -33,7 +25,7 @@ export type TeamUpdatePayload = Partial<{
 export interface TeamRepositoryPort {
   create(team: TeamDomain): Promise<TeamDomain>;
   findById(id: number): Promise<TeamDomain | null>;
-  search(query: TeamSearchQuery): Promise<TeamSearchResult>;
+  search(query: TeamSearchQuery): Promise<TeamDomain[]>;
   updateById(id: number, patch: TeamUpdatePayload): Promise<TeamDomain>;
   deleteById(id: number): Promise<void>;
   addMember(teamId: number, userId: number, isPrimary?: boolean | null): Promise<TeamMembershipDomain>;

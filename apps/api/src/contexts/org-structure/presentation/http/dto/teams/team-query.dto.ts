@@ -1,14 +1,11 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength } from 'class-validator';
-import { WithPagination } from 'src/common/mixins/with-pagination.mixin';
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import { TeamConstants } from 'src/common/validators/constants';
 import { TeamSortField } from '../../../../application/ports/team.repository.port';
 
-class TeamQueryBase {}
-
-export class TeamQueryDto extends WithPagination(TeamQueryBase) {
+export class TeamQueryDto {
   @ApiPropertyOptional({ description: 'Search by title or description', maxLength: 255 })
   @IsOptional()
   @ToOptionalTrimmedString()

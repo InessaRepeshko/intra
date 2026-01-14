@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, IdentityUsersStatus } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserRepositoryPort, UserSearchQuery, UserSearchResult, UserSortField, UserUpdatePayload } from '../../application/ports/user.repository.port';
+import { UserRepositoryPort, UserSearchQuery, UserSortField, UserUpdatePayload } from '../../application/ports/user.repository.port';
 import { UserDomain } from '../../domain/user.domain';
 import { IdentityMapper, UserWithRoles } from './identity.mapper';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
@@ -49,23 +49,17 @@ export class UserRepository implements UserRepositoryPort {
     return user ? IdentityMapper.toUserDomain(user) : null;
   }
 
-  async search(query: UserSearchQuery): Promise<UserSearchResult> {
+  async search(query: UserSearchQuery): Promise<UserDomain[]> {
     const where = this.buildWhere(query);
     const orderBy = this.buildOrder(query);
 
-    const [items, total] = await this.prisma.$transaction([
-      this.prisma.user.findMany({
-        where,
-        skip: query.skip,
-        take: query.take,
-        orderBy,
-        include: this.withRolesInclude(true),
-      }),
-      this.prisma.user.count({ where }),
-    ]);
+    const items = await this.prisma.user.findMany({
+      where,
+      orderBy,
+      include: this.withRolesInclude(true),
+    });
 
-    const mapped = items.map((u) => IdentityMapper.toUserDomain(u as UserWithRoles));
-    return { items: mapped, count: mapped.length, total };
+    return items.map((u) => IdentityMapper.toUserDomain(u as UserWithRoles));
   }
 
   async updateById(id: number, patch: UserUpdatePayload): Promise<UserDomain> {

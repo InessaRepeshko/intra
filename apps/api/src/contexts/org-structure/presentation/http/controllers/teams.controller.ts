@@ -20,7 +20,6 @@ import { UpdateTeamDto } from '../dto/teams/update-team.dto';
 import { TeamHttpMapper } from '../mappers/team.http.mapper';
 import { TeamResponse } from '../models/team.response';
 import { TeamQueryDto } from '../dto/teams/team-query.dto';
-import { TeamsPageDto } from '../dto/teams/teams-page.dto';
 import { AddTeamMemberDto } from '../dto/teams/add-team-member.dto';
 import { TeamMemberResponse } from '../models/team-member.response';
 
@@ -45,14 +44,10 @@ export class TeamsController {
 
   @Get()
   @ApiOperation({ summary: 'Search teams' })
-  @ApiResponse({ status: HttpStatus.OK, type: TeamsPageDto })
-  async search(@Query() query: TeamQueryDto): Promise<TeamsPageDto> {
+  @ApiResponse({ status: HttpStatus.OK, type: TeamResponse, isArray: true })
+  async search(@Query() query: TeamQueryDto): Promise<TeamResponse[]> {
     const result = await this.service.search(query);
-    return {
-      items: result.items.map(TeamHttpMapper.toResponse),
-      count: result.count,
-      total: result.total,
-    };
+    return result.map(TeamHttpMapper.toResponse);
   }
 
   @Get(':id')

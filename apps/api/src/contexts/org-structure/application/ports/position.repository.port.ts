@@ -9,17 +9,9 @@ export enum PositionSortField {
 }
 
 export type PositionSearchQuery = {
-  skip?: number;
-  take?: number;
   search?: string;
   sortBy?: PositionSortField;
   sortDirection?: SortDirection;
-};
-
-export type PositionSearchResult = {
-  items: PositionDomain[];
-  count: number;
-  total: number;
 };
 
 export type PositionUpdatePayload = Partial<{
@@ -30,7 +22,7 @@ export type PositionUpdatePayload = Partial<{
 export interface PositionRepositoryPort {
   create(position: PositionDomain): Promise<PositionDomain>;
   findById(id: number): Promise<PositionDomain | null>;
-  search(query: PositionSearchQuery): Promise<PositionSearchResult>;
+  search(query: PositionSearchQuery): Promise<PositionDomain[]>;
   updateById(id: number, patch: PositionUpdatePayload): Promise<PositionDomain>;
   deleteById(id: number): Promise<void>;
 }

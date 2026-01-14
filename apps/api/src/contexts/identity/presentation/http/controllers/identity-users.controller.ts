@@ -20,7 +20,6 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserHttpMapper } from '../mappers/user.http.mapper';
 import { UserQueryDto } from '../dto/user-query.dto';
-import { UsersPageDto } from '../dto/users-page.dto';
 import { UserResponse } from '../models/user.response';
 import { AssignRolesDto } from '../dto/assign-roles.dto';
 
@@ -51,16 +50,12 @@ export class IdentityUsersController {
 
   @Get()
   @ApiOperation({ summary: 'Search users' })
-  @ApiResponse({ status: HttpStatus.OK, type: UsersPageDto })
-  async search(@Query() query: UserQueryDto): Promise<UsersPageDto> {
+  @ApiResponse({ status: HttpStatus.OK, type: UserResponse, isArray: true })
+  async search(@Query() query: UserQueryDto): Promise<UserResponse[]> {
     const result = await this.service.search({
       ...query,
     });
-    return {
-      items: result.items.map(UserHttpMapper.toResponse),
-      count: result.count,
-      total: result.total,
-    };
+    return result.items.map(UserHttpMapper.toResponse);
   }
 
   @Get(':id')

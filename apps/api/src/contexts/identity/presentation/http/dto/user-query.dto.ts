@@ -1,16 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail } from 'src/common/validators/email.validator';
 import { IsEnum, IsInt, IsOptional, IsPositive, IsString, MaxLength } from 'class-validator';
-import { WithPagination } from 'src/common/mixins/with-pagination.mixin';
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { IdentityUserStatus } from '../../../domain/identity-user-status.enum';
 import { UserSortField } from '../../../application/ports/user.repository.port';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import { UserConstants } from 'src/common/validators/constants';
 
-class UserQueryBase {}
-
-export class UserQueryDto extends WithPagination(UserQueryBase) {
+export class UserQueryDto {
   @ApiPropertyOptional({ description: `Search by first name/last name/email`, maxLength: 100 })
   @IsOptional()
   @ToOptionalTrimmedString()

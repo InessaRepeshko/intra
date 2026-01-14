@@ -21,7 +21,6 @@ import { UpdatePositionDto } from '../dto/positions/update-position.dto';
 import { PositionResponse } from '../models/position.response';
 import { PositionHttpMapper } from '../mappers/position.http.mapper';
 import { PositionQueryDto } from '../dto/positions/position-query.dto';
-import { PositionsPageDto } from '../dto/positions/positions-page.dto';
 import { CreatePositionLinkDto } from '../dto/positions/create-position-link.dto';
 
 @ApiTags('Org Structure / Positions')
@@ -44,14 +43,10 @@ export class PositionsController {
 
   @Get()
   @ApiOperation({ summary: 'Search positions' })
-  @ApiResponse({ status: HttpStatus.OK, type: PositionsPageDto })
-  async search(@Query() query: PositionQueryDto): Promise<PositionsPageDto> {
+  @ApiResponse({ status: HttpStatus.OK, type: PositionResponse, isArray: true })
+  async search(@Query() query: PositionQueryDto): Promise<PositionResponse[]> {
     const result = await this.positions.search(query);
-    return {
-      items: result.items.map(PositionHttpMapper.toResponse),
-      count: result.count,
-      total: result.total,
-    };
+    return result.items.map(PositionHttpMapper.toResponse);
   }
 
   @Get(':id')

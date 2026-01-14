@@ -14,8 +14,6 @@ export enum UserSortField {
 }
 
 export type UserSearchQuery = {
-  skip?: number;
-  take?: number;
   search?: string;
   email?: string;
   status?: IdentityUserStatus;
@@ -24,12 +22,6 @@ export type UserSearchQuery = {
   managerId?: number;
   sortBy?: UserSortField;
   sortDirection?: SortDirection;
-};
-
-export type UserSearchResult = {
-  items: UserDomain[];
-  count: number;
-  total: number;
 };
 
 export type UserUpdatePayload = Partial<{
@@ -47,7 +39,7 @@ export type UserUpdatePayload = Partial<{
 export interface UserRepositoryPort {
   create(user: UserDomain): Promise<UserDomain>;
   findById(id: number, opts?: { withRoles?: boolean }): Promise<UserDomain | null>;
-  search(query: UserSearchQuery): Promise<UserSearchResult>;
+  search(query: UserSearchQuery): Promise<UserDomain[]>;
   updateById(id: number, patch: UserUpdatePayload): Promise<UserDomain>;
   deleteById(id: number): Promise<void>;
   replaceRoles(userId: number, roles: IdentityRole[]): Promise<UserDomain>;
