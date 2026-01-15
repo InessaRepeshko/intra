@@ -3,8 +3,10 @@
     "collection": "@nestjs/schematics",
     "sourceRoot": "src",
     "compilerOptions": {
+        "outDir": "./dist",
         "deleteOutDir": true,
         "tsConfigPath": "./tsconfig.json",
+        "assets": ["**/*.assets"],
         "plugins": [
             {
                 "name": "@nestjs/swagger",

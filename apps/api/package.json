@@ -6,25 +6,25 @@
     "env:test": "dotenv -e ../../.env.test -v NODE_ENV=test",
     "env:prod": "dotenv -e ../../.env.production -v NODE_ENV=production",
 
-    "start": "npm run env:dev -- nest start",
-    "start:dev": "npm run env:dev -- nest start --watch",
-    "start:test": "npm run env:test -- nest start",
-    "start:debug": "npm run env:dev -- nest start --debug --watch",
-    "start:prod": "npm run env:prod -- node ../../dist/apps/api/src/main.js",
+    "start": "pnpm env:dev -- nest start",
+    "start:dev": "pnpm env:dev -- nest start --watch",
+    "start:test": "pnpm env:test -- nest start",
+    "start:debug": "pnpm env:dev -- nest start --debug --watch",
+    "start:prod": "pnpm env:prod -- node ./dist/apps/api/src/main.js",
 
-    "refresh": "npm run db:refresh -w @intra/database && npm run start:dev",
-    "refresh:test": "npm run db:test:refresh -w @intra/database && npm run start:test",
+    "refresh": "pnpm db:refresh -w @intra/database && pnpm start:dev",
+    "refresh:test": "pnpm db:test:refresh -w @intra/database && pnpm start:test",
 
-    "dev": "npm run start:dev",
+    "dev": "pnpm start:dev",
     "build": "nest build",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
 
-    "test": "npx jest --clearCache && npx jest",
-    "test:unit": "npx jest --watch --testMatch \"**/*.spec.ts\"",
-    "test:e2e": "npx jest --watch --testMatch \"**/*.e2e-spec.ts\"",
-    "test:watch": "npx jest --watch",
-    "test:cov": "npx jest --coverage",
+    "test": "pnpm jest --clearCache && pnpm jest",
+    "test:unit": "pnpm jest --watch --testMatch \"**/*.spec.ts\"",
+    "test:e2e": "pnpm jest --watch --testMatch \"**/*.e2e-spec.ts\"",
+    "test:watch": "pnpm jest --watch",
+    "test:cov": "pnpm jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
     },
     "dependencies": {

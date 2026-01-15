@@ -5,16 +5,14 @@
   "author": "Inessa Repeshko",
   "private": true,
   "license": "MIT",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "packageManager": "pnpm@10.28.0",
   "scripts": {
     "// --- Dev & Build ---": "",
     "dev": "turbo run dev --parallel",
     "dev:api": "turbo run dev --filter=@intra/api",
     "dev:web": "turbo run dev --filter=@intra/web",
-    "build": "turbo run build",
+    "build": "turbo run build --filter=!@intra/web",
+    "clean": "rm -rf node_modules **/node_modules dist **/dist",
     "lint": "turbo run lint",
     "format": "turbo run format --filter=@intra/api",
 

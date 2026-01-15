@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { getAppName } from './config/app';
 import { getApiVersion } from './config/app';
-import { GLOBAL_PREFIX } from './config/constants';
+import { DOCUMENTATION_PREFIX } from './config/constants';
 
 @Injectable()
 export class AppService {
@@ -18,7 +18,7 @@ export class AppService {
     const protocol = this.configService.get<string>('app.protocol', 'http');
     const host = this.configService.get<string>('app.host', 'localhost');
     const port = this.configService.get<number>('app.port', 8080);
-    const globalPrefix = this.configService.get<string>('app.globalPrefix', GLOBAL_PREFIX);
+    const globalPrefix = this.configService.get<string>('app.globalPrefix', DOCUMENTATION_PREFIX);
     return `${protocol}://${host}:${port}/${globalPrefix}`;
   }
 }

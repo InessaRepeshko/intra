@@ -1,13 +1,13 @@
 {
     "$schema": "https://turbo.build/schema.json",
-    "pipeline": {
+    "tasks": {
       "prisma:config": { "cache": false },
       "prisma:dev": { "cache": false },
       "prisma:test": { "cache": false },
 
       "db:generate": {
-        "inputs": ["packages/database/prisma/schema.prisma"],
-        "outputs": ["packages/database/src/generated/**"],
+        "inputs": ["prisma/schema.prisma"],
+        "outputs": ["src/generated/**"],
         "cache": true
       },
       "db:deploy": { "cache": false },
@@ -23,8 +23,8 @@
       "db:test:refresh": { "cache": false },
 
       "build": {
-        "dependsOn": ["^db:generate"],
-        "outputs": ["dist/**", ".next/**"],
+        "dependsOn": ["^build", "^db:generate"],
+        "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
         "cache": true
       },
       "format": { "cache": false },

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from 'src/prisma/database.module';
+import { DatabaseModule } from 'src/database/database.module';
 import { IdentityModule } from '../identity/identity.module';
 import { TeamService } from './application/services/team.service';
 import { PositionService } from './application/services/position.service';

@@ -1,5 +1,5 @@
 import { getEnvVarAsStr, getEnvVarAsInt } from './env-utils';
-import { VERSION, GLOBAL_PREFIX, LOGO_FILENAME, PUBLIC_DIR_PATH } from './constants';
+import { VERSION, DOCUMENTATION_PREFIX, LOGO_FILENAME, PUBLIC_DIR_PATH } from './constants';
 import { version } from '../../../../package.json';
 
 export const getAppName = () => getEnvVarAsStr('APP_NAME');
@@ -22,7 +22,7 @@ export default () => {
             protocol: getEnvVarAsStr('APP_PROTOCOL'),
             port: getEnvVarAsInt('APP_PORT'),
             host: getEnvVarAsStr('APP_HOST'),
-            globalPrefix: GLOBAL_PREFIX,
+            globalPrefix: DOCUMENTATION_PREFIX,
             frontendProtocol,
             frontendHost,
             frontendPort,

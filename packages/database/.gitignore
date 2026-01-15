@@ -1,1 +1,3 @@
+.turbo
 src/generated
+!src/generated/index.ts

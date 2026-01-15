@@ -19,7 +19,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       throw new Error(
         [
           'DATABASE_URL is not set.',
-          'Set it in your environment or run the app via dotenv-cli (e.g. `npm run start:dev`).',
+          'Set it in your environment or run the app via dotenv-cli (e.g. `pnpm start:dev`).',
           'Expected file: .env.development.local (see package.json scripts).',
         ].join(' '),
       );

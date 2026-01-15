@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@intra/database';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/database/prisma.service';
 import { PositionHierarchyRepositoryPort } from '../../application/ports/position-hierarchy.repository.port';
 import { OrgStructureMapper } from './org-structure.mapper';
 import type { PositionHierarchyDomain } from '../../domain/position-hierarchy.domain';

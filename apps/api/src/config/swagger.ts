@@ -3,7 +3,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { INestApplication } from '@nestjs/common';
 import { getAppName } from './app';
-import { GLOBAL_PREFIX } from './constants';
+import { DOCUMENTATION_PREFIX } from './constants';
 import { FAVICON_PATH } from './constants';
 import { getApiVersion } from './app';
 import { OPENAPI_PATH } from './constants';
@@ -30,7 +30,7 @@ export function setupSwagger(app: INestApplication): void {
         },
     ];
 
-    SwaggerModule.setup(GLOBAL_PREFIX, app, document, {
+    SwaggerModule.setup(DOCUMENTATION_PREFIX, app, document, {
         customSiteTitle: `${appName} API`,
         customfavIcon: FAVICON_PATH,
         swaggerOptions: {

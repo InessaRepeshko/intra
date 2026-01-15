@@ -8,6 +8,6 @@ export const LOGO_PATH = `/public/${LOGO_FILENAME}`;
 export const FAVICON_FILENAME = 'favicon.ico';
 export const FAVICON_PATH = `/public/${FAVICON_FILENAME}`;
 
-export const GLOBAL_PREFIX = 'api';
+export const DOCUMENTATION_PREFIX = 'docs';
 
 export const CONNECTION_LIMIT = 10;

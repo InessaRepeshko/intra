@@ -1,11 +1,13 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/apps/api",
+    "outDir": "./dist",
     "baseUrl": ".",
     "rootDir": "src",
     "paths": {
-      "src/*": ["src/*"]
+      "src/*": ["src/*"],
+      "@intra/database": ["../../packages/database/src/generated"],
+      "@intra/database/*": ["../../packages/database/src/generated/*"]
     }
   },
   "include": ["src/**/*"],

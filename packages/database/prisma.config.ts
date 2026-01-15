@@ -15,10 +15,10 @@
 import type { PrismaConfig } from "prisma";
 
 export default ({
-  schema: "./schema.prisma",
+  schema: "./prisma/schema.prisma",
   migrations: {
-    path: "./migrations",
-    seed: "npx tsx prisma/seeds/seeds.ts"
+    path: "./prisma/migrations",
+    seed: "pnpm tsx ./prisma/seeds/seeds.ts"
   },
   datasource: {
     url: process.env.DATABASE_URL!, 

@@ -2,17 +2,18 @@ import { PrismaClient } from '@intra/database';
 import seedPositions from './contexts/positions';
 import seedTeams, { TEAM_SEED_DATA, type TeamMap } from './contexts/teams';
 import seedUsers from './contexts/identity';
-// import getDBConfig from '../../../../apps/api/src/config/database';
-// import { PrismaPg } from '@prisma/adapter-pg'
+// import getDBConfig from '@intra/api/src/config/database';
+import { PrismaPg } from '@prisma/adapter-pg'
 import type { UserMap } from './contexts/identity';
 
-// const prisma = new PrismaClient({
-//   adapter: new PrismaPg({
-//     connectionString: getDBConfig()?.database?.url ?? null,
-//   }),
-// });
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({
+    // connectionString: getDBConfig()?.database?.url ?? null,
+    connectionString: process.env.DATABASE_URL ?? null,
+  }),
+});
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 async function assignTeamHeads(
   teamMap: TeamMap,

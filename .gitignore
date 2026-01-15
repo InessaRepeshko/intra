@@ -59,7 +59,46 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
+
+
+# --- Dependencies ---
+# pnpm uses hard links, so node_modules should not be in Git
+node_modules/
+.pnpm-debug.log*
+
+# --- Build and cache ---
+# Output files of NestJS and other applications
+dist/
+build/
+# Local cache of Turborepo tasks - never push it
+.turbo/
+
+# --- Prisma ---
+# Generated client (if you use custom output in packages/database)
+packages/database/src/generated/*
+!packages/database/src/generated/index.ts
+# Configuration files of the environment with passwords to the database
+.env
+.env.*.local
+!.env.development.example
+!.env.test.example
+
+# --- IDE and system files ---
+.DS_Store
+.idea/
+# We push settings.json and .cursorignore, but ignore other temporary data
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# --- Logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 /generated/prisma
 src/generated
 
 .turbo
+tsconfig.tsbuildinfo
