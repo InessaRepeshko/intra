@@ -3,21 +3,16 @@ import seedPositions from './contexts/positions';
 import seedTeams, { TEAM_SEED_DATA, type TeamMap } from './contexts/teams';
 import seedUsers from './contexts/identity';
 import getDBConfig from '../../../../apps/api/src/config/database';
-import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+import { PrismaPg } from '@prisma/adapter-pg'
 import type { UserMap } from './contexts/identity';
 
-const dbConfig = getDBConfig().database;
+// const prisma = new PrismaClient({
+//   adapter: new PrismaPg({
+//     connectionString: getDBConfig()?.database?.url ?? null,
+//   }),
+// });
 
-const prisma = new PrismaClient({
-  adapter: new PrismaMariaDb({
-    host: dbConfig.host,
-    port: dbConfig.port,
-    user: dbConfig.user,
-    password: dbConfig.password,
-    database: dbConfig.name,
-    connectionLimit: dbConfig.connectionLimit,
-  }),
-});
+const prisma = new PrismaClient();
 
 async function assignTeamHeads(
   teamMap: TeamMap,

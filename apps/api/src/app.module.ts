@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { IdentityModule } from './contexts/identity/identity.module';
@@ -8,6 +8,9 @@ import appConfig from './config/app';
 import databaseConfig from './config/database';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { PrismaService } from './prisma/prisma.service';
+import { IdentityRoleService } from './contexts/identity/application/services/identity-role.service';
+import { IdentityUserService } from './contexts/identity/application/services/identity-user.service';
 
 @Module({
   imports: [
@@ -23,6 +26,6 @@ import { join } from 'path';
     OrgStructureModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, PrismaService, ConfigService, IdentityRoleService, IdentityUserService],
 })
 export class AppModule { }

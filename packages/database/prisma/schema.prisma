@@ -1,14 +1,16 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  // output   = "./generated/prisma"
 }
 
 generator dbml {
   provider = "prisma-dbml-generator"
   schema = "packages/database/prisma/schema.prisma"
+  output = "./generated/dbml"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 // ==================== Identity ====================
@@ -191,7 +193,7 @@ model CompetenceCluster {
   competence           Competence            @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "competence_clusters_ibfk_2")
 
   @@unique([cycleId, competenceId, lowerBound, upperBound], map: "competence_unique_competence_cluster")
-  @@index([competenceId], map: "competence_idx_competence")
+  @@index([competenceId], map: "competence_cluster_idx_competence")
   @@index([cycleId], map: "competence_idx_cycle")
   @@map("competence_clusters")
 }
@@ -211,7 +213,7 @@ model Question {
   competence                   Competence                    @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "competence_questions_ibfk_1")
   questionPositions            QuestionPositionRelation[]
 
-  @@index([competenceId], map: "competence_idx_competence")
+  @@index([competenceId], map: "question_idx_competence")
   @@map("competence_questions")
   feedback360Questions Feedback360Question[] @relation(map: "feedback360_questions_ibfk_question")
 }
@@ -375,7 +377,7 @@ model Feedback360Answer {
   feedback360QuestionId  Int?                  @map("feedback360_question_id")
   respondentCategory     RespondentCategory   @map("respondent_category")
   answerType             CompetenceQuestionAnswerType @default(NUMERICAL_SCALE) @map("answer_type")
-  numericalValue         Int?                  @map("numerical_value") @db.TinyInt
+  numericalValue         Int?                  @map("numerical_value") @db.SmallInt
   textValue              String?               @map("text_value") @db.Text
   createdAt              DateTime              @default(now()) @map("created_at") @db.Timestamp(0)
 
