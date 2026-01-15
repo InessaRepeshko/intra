@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@intra/database';
 
 export type PositionMap = Map<string, { id: number }>;
 

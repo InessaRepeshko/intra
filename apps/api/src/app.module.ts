@@ -8,9 +8,7 @@ import appConfig from './config/app';
 import databaseConfig from './config/database';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { PrismaService } from './prisma/prisma.service';
-import { IdentityRoleService } from './contexts/identity/application/services/identity-role.service';
-import { IdentityUserService } from './contexts/identity/application/services/identity-user.service';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -22,10 +20,11 @@ import { IdentityUserService } from './contexts/identity/application/services/id
       rootPath: join(process.cwd(), 'apps', 'docs', 'public'),
       serveRoot: '/public',
     }),
+    DatabaseModule,
     IdentityModule,
     OrgStructureModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, ConfigService, IdentityRoleService, IdentityUserService],
+  providers: [AppService],
 })
 export class AppModule { }

@@ -3,7 +3,34 @@
   "private": true,
   "version": "1.0.0",
   "description": "Shared Prisma schema + migrations for Intra monorepo",
-  "license": "MIT"
+  "license": "MIT",
+  "main": "./src/generated/index.js",
+  "types": "./src/generated/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/generated/index.d.ts",
+      "default": "./src/generated/index.js"
+    }
+  },
+  "scripts": {
+    "prisma:config": "prisma --config ./prisma.config.ts",
+    "prisma:dev": "dotenv -e ../../.env.development.local -- npm run prisma:config --",
+    "prisma:test": "dotenv -e ../../.env.test -- npm run prisma:config --",
+
+    "db:deploy": "npm run prisma:dev -- migrate deploy",
+    "db:create": "npm run prisma:dev -- migrate dev",
+    "db:generate": "npm run prisma:dev -- generate",
+    "db:seed": "npm run prisma:dev -- db seed",
+    "db:reset": "npm run prisma:dev -- migrate reset --force",
+    "db:refresh": "npm run db:reset && npm run db:generate && npm run db:seed",
+
+    "db:test:deploy": "npm run prisma:test -- migrate deploy",
+    "db:test:generate": "npm run prisma:test -- generate",
+    "db:test:reset": "npm run prisma:test -- migrate reset --force",
+    "db:test:seed": "npm run prisma:test -- db seed",
+    "db:test:refresh": "npm run db:test:reset && npm run db:test:generate && npm run db:test:seed",
+
+    "migrate": "npm run db:create",
+    "db:migrate": "npm run db:create"
+  }
 }
-
-

@@ -13,9 +13,10 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "src/*": ["apps/api/src/*"]
+      "@intra/database": ["packages/database/src/generated"],
+      "@intra/database/*": ["packages/database/src/generated/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

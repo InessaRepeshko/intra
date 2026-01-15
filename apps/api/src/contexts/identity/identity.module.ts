@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { DatabaseModule } from 'src/prisma/database.module';
 import { IdentityUsersController } from './presentation/http/controllers/identity-users.controller';
 import { IdentityUserService } from './application/services/identity-user.service';
 import { IdentityRoleService } from './application/services/identity-role.service';
@@ -10,7 +10,7 @@ import { RoleRepository } from './infrastructure/prisma-repositories/role.reposi
 import { IdentityRolesController } from './presentation/http/controllers/identity-roles.controller';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [DatabaseModule],
   controllers: [IdentityUsersController, IdentityRolesController],
   providers: [
     IdentityUserService,

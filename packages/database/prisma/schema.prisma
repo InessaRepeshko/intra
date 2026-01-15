@@ -1,12 +1,12 @@
 generator client {
   provider = "prisma-client"
-  // output   = "./generated/prisma"
+  output   = "../../../src/generated"
 }
 
 generator dbml {
   provider = "prisma-dbml-generator"
   schema = "packages/database/prisma/schema.prisma"
-  output = "./generated/dbml"
+  output = "./dbml"
 }
 
 datasource db {

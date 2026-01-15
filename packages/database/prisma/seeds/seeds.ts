@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@intra/database';
 import seedPositions from './contexts/positions';
 import seedTeams, { TEAM_SEED_DATA, type TeamMap } from './contexts/teams';
 import seedUsers from './contexts/identity';
-import getDBConfig from '../../../../apps/api/src/config/database';
-import { PrismaPg } from '@prisma/adapter-pg'
+// import getDBConfig from '../../../../apps/api/src/config/database';
+// import { PrismaPg } from '@prisma/adapter-pg'
 import type { UserMap } from './contexts/identity';
 
 // const prisma = new PrismaClient({

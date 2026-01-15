@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@intra/database';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { OrgStructureMapper } from './org-structure.mapper';
 import { TeamRepositoryPort, TeamSearchQuery, TeamSortField, TeamUpdatePayload } from '../../application/ports/team.repository.port';

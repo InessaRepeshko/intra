@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@intra/database';
 
 export type TeamMap = Map<string, { id: number }>;
 

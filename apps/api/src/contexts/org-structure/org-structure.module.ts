@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { DatabaseModule } from 'src/prisma/database.module';
 import { IdentityModule } from '../identity/identity.module';
 import { TeamService } from './application/services/team.service';
 import { PositionService } from './application/services/position.service';
@@ -14,7 +14,7 @@ import { TeamsController } from './presentation/http/controllers/teams.controlle
 import { PositionsController } from './presentation/http/controllers/positions.controller';
 
 @Module({
-  imports: [PrismaModule, IdentityModule],
+  imports: [DatabaseModule, IdentityModule],
   controllers: [TeamsController, PositionsController],
   providers: [
     TeamService,

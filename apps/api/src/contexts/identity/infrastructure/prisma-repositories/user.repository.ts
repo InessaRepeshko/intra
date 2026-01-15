@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, IdentityUsersStatus } from '@prisma/client';
+import { Prisma, IdentityUsersStatus } from '@intra/database';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserRepositoryPort, UserSearchQuery, UserSortField, UserUpdatePayload } from '../../application/ports/user.repository.port';
 import { UserDomain } from '../../domain/user.domain';

@@ -1,4 +1,4 @@
-import { Position, PositionHierarchy, Team, TeamMembership } from '@prisma/client';
+import { Position, PositionHierarchy, Team, TeamMembership } from '@intra/database';
 import { TeamDomain } from '../../domain/team.domain';
 import { TeamMembershipDomain } from '../../domain/team-membership.domain';
 import { PositionDomain } from '../../domain/position.domain';

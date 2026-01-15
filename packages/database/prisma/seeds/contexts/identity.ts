@@ -1,7 +1,7 @@
 import {
   PrismaClient,
   IdentityRole as PrismaIdentityRole
-} from '@prisma/client';
+} from '@intra/database';
 import { pbkdf2Sync, randomBytes } from 'crypto';
 import type { PositionMap } from './positions';
 import type { TeamMap } from './teams';

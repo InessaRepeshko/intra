@@ -4,7 +4,7 @@ import {
   Role,
   User,
   UserRole,
-} from '@prisma/client';
+} from '@intra/database';
 import { IdentityRole } from '../../domain/identity-role.enum';
 import { IdentityUserStatus } from '../../domain/identity-user-status.enum';
 import { UserDomain } from '../../domain/user.domain';

@@ -8,7 +8,7 @@ import {
 } from '../../application/ports/position.repository.port';
 import { OrgStructureMapper } from './org-structure.mapper';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@intra/database';
 import { PositionDomain } from '../../domain/position.domain';
 
 @Injectable()
