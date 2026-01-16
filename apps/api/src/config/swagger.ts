@@ -18,18 +18,6 @@ export function setupSwagger(app: INestApplication): void {
 
     const document = SwaggerModule.createDocument(app, config);
 
-    document.servers = [
-        {
-            url: '{protocol}://{host}:{port}',
-            description: 'Development server',
-            variables: {
-                protocol: { default: 'http' },
-                host: { default: 'localhost' },
-                port: { default: '8080' },
-            },
-        },
-    ];
-
     SwaggerModule.setup(DOCUMENTATION_PREFIX, app, document, {
         customSiteTitle: `${appName} API`,
         customfavIcon: FAVICON_PATH,
@@ -41,6 +29,8 @@ export function setupSwagger(app: INestApplication): void {
             readFileSync(
                 join(
                     process.cwd(),
+                    '..',
+                    '..',
                     'node_modules',
                     'swagger-ui-themes',
                     'themes',

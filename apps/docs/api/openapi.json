@@ -66,19 +66,11 @@
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search by first name/last name/email",
+            "description": "Search by first name or last name or email",
             "schema": {
+              "minLength": 1,
               "maxLength": 100,
-              "type": "string"
-            }
-          },
-          {
-            "name": "email",
-            "required": false,
-            "in": "query",
-            "description": "User's email",
-            "schema": {
-              "example": "valerii.velychko@example.com",
+              "example": "Valerii",
               "type": "string"
             }
           },
@@ -88,6 +80,8 @@
             "in": "query",
             "description": "User's status",
             "schema": {
+              "default": "active",
+              "example": "active",
               "type": "string",
               "enum": [
                 "active",
@@ -101,6 +95,7 @@
             "in": "query",
             "description": "Team ID",
             "schema": {
+              "example": 1,
               "type": "number"
             }
           },
@@ -110,6 +105,7 @@
             "in": "query",
             "description": "Position ID",
             "schema": {
+              "example": 1,
               "type": "number"
             }
           },
@@ -119,6 +115,7 @@
             "in": "query",
             "description": "Manager ID",
             "schema": {
+              "example": 1,
               "type": "number"
             }
           },
@@ -128,14 +125,21 @@
             "in": "query",
             "description": "Sorting field",
             "schema": {
-              "default": "createdAt",
+              "default": "id",
+              "example": "lastName",
               "type": "string",
               "enum": [
-                "createdAt",
+                "id",
                 "firstName",
                 "lastName",
+                "fullName",
                 "email",
-                "status"
+                "status",
+                "positionId",
+                "teamId",
+                "managerId",
+                "createdAt",
+                "updatedAt"
               ]
             }
           },
@@ -146,6 +150,7 @@
             "description": "Sorting direction",
             "schema": {
               "default": "asc",
+              "example": "desc",
               "type": "string",
               "enum": [
                 "asc",
@@ -433,7 +438,9 @@
             "in": "query",
             "description": "Search by title or description",
             "schema": {
+              "minLength": 1,
               "maxLength": 255,
+              "example": "Engineering Team",
               "type": "string"
             }
           },
@@ -443,6 +450,7 @@
             "in": "query",
             "description": "Id of team leader",
             "schema": {
+              "example": 12,
               "type": "number"
             }
           },
@@ -450,12 +458,18 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
+            "description": "Sorting field",
             "schema": {
-              "default": "createdAt",
+              "default": "id",
+              "example": "title",
               "type": "string",
               "enum": [
+                "id",
+                "title",
+                "description",
+                "headId",
                 "createdAt",
-                "title"
+                "updatedAt"
               ]
             }
           },
@@ -463,8 +477,10 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
+            "description": "Sorting direction",
             "schema": {
               "default": "asc",
+              "example": "desc",
               "type": "string",
               "enum": [
                 "asc",
@@ -803,7 +819,9 @@
             "in": "query",
             "description": "Search by title or description",
             "schema": {
+              "minLength": 1,
               "maxLength": 255,
+              "example": "Senior Backend Engineer",
               "type": "string"
             }
           },
@@ -811,12 +829,17 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
+            "description": "Sorting field",
             "schema": {
-              "default": "createdAt",
+              "default": "id",
+              "example": "title",
               "type": "string",
               "enum": [
+                "id",
+                "title",
+                "description",
                 "createdAt",
-                "title"
+                "updatedAt"
               ]
             }
           },
@@ -824,8 +847,10 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
+            "description": "Sorting direction",
             "schema": {
               "default": "asc",
+              "example": "desc",
               "type": "string",
               "enum": [
                 "asc",
@@ -1157,23 +1182,7 @@
     "contact": {}
   },
   "tags": [],
-  "servers": [
-    {
-      "url": "{protocol}://{host}:{port}",
-      "description": "Development server",
-      "variables": {
-        "protocol": {
-          "default": "http"
-        },
-        "host": {
-          "default": "localhost"
-        },
-        "port": {
-          "default": "8080"
-        }
-      }
-    }
-  ],
+  "servers": [],
   "components": {
     "schemas": {
       "CreateUserDto": {
@@ -1182,36 +1191,46 @@
           "firstName": {
             "type": "string",
             "description": "User's first name",
+            "minLength": 1,
+            "maxLength": 100,
             "example": "Valerii"
           },
           "secondName": {
             "type": "object",
             "description": "User's second name",
+            "minLength": 1,
+            "maxLength": 100,
             "example": "Velychko"
           },
           "lastName": {
             "type": "string",
             "description": "User's last name",
+            "minLength": 1,
+            "maxLength": 100,
             "example": "Valeriiovych"
           },
           "email": {
             "type": "string",
             "description": "User's email",
+            "minLength": 1,
+            "maxLength": 100,
             "example": "valerii.velychko@example.com"
           },
           "passwordHash": {
             "type": "string",
             "description": "Precomputed password hash or placeholder for external authentication",
-            "example": "__external_auth__"
+            "example": "__external_auth__",
+            "maxLength": 300
           },
           "status": {
             "type": "string",
+            "description": "User's status",
             "enum": [
               "active",
               "inactive"
             ],
             "default": "active",
-            "description": "User's status"
+            "example": "active"
           },
           "positionId": {
             "type": "number",
@@ -1333,36 +1352,46 @@
           "firstName": {
             "type": "string",
             "description": "User's first name",
+            "minLength": 1,
+            "maxLength": 100,
             "example": "Valerii"
           },
           "secondName": {
             "type": "object",
             "description": "User's second name",
+            "minLength": 1,
+            "maxLength": 100,
             "example": "Velychko"
           },
           "lastName": {
             "type": "string",
             "description": "User's last name",
+            "minLength": 1,
+            "maxLength": 100,
             "example": "Valeriiovych"
           },
           "email": {
             "type": "string",
             "description": "User's email",
+            "minLength": 1,
+            "maxLength": 100,
             "example": "valerii.velychko@example.com"
           },
           "passwordHash": {
             "type": "string",
             "description": "Precomputed password hash or placeholder for external authentication",
-            "example": "__external_auth__"
+            "example": "__external_auth__",
+            "maxLength": 300
           },
           "status": {
             "type": "string",
+            "description": "User's status",
             "enum": [
               "active",
               "inactive"
             ],
             "default": "active",
-            "description": "User's status"
+            "example": "active"
           },
           "positionId": {
             "type": "number",
@@ -1440,15 +1469,22 @@
         "properties": {
           "title": {
             "type": "string",
-            "example": "Engineering Team"
+            "description": "Team title",
+            "example": "Engineering Team",
+            "maxLength": 255,
+            "minLength": 1
           },
           "description": {
             "type": "object",
+            "description": "Team description",
             "example": "Responsible for product development",
-            "nullable": true
+            "nullable": true,
+            "maxLength": 1000,
+            "minLength": 1
           },
           "headId": {
             "type": "object",
+            "description": "Id of team leader",
             "example": 12,
             "nullable": true
           }
@@ -1501,15 +1537,22 @@
         "properties": {
           "title": {
             "type": "string",
-            "example": "Engineering Team"
+            "description": "Team title",
+            "example": "Engineering Team",
+            "maxLength": 255,
+            "minLength": 1
           },
           "description": {
             "type": "object",
+            "description": "Team description",
             "example": "Responsible for product development",
-            "nullable": true
+            "nullable": true,
+            "maxLength": 1000,
+            "minLength": 1
           },
           "headId": {
             "type": "object",
+            "description": "Id of team leader",
             "example": 12,
             "nullable": true
           }
@@ -1520,13 +1563,13 @@
         "properties": {
           "userId": {
             "type": "number",
-            "example": 15,
-            "description": "User id"
+            "description": "User id",
+            "example": 15
           },
           "isPrimary": {
             "type": "boolean",
-            "example": true,
-            "description": "Is primary membership"
+            "description": "Is primary membership",
+            "example": true
           }
         },
         "required": [
@@ -1573,12 +1616,18 @@
         "properties": {
           "title": {
             "type": "string",
-            "example": "Senior Backend Engineer"
+            "description": "Position title",
+            "example": "Senior Backend Engineer",
+            "maxLength": 255,
+            "minLength": 1
           },
           "description": {
             "type": "object",
+            "description": "Position description",
             "example": "Backend development, architecture design, code reviews",
-            "nullable": true
+            "nullable": true,
+            "maxLength": 1000,
+            "minLength": 1
           }
         },
         "required": [
@@ -1623,12 +1672,18 @@
         "properties": {
           "title": {
             "type": "string",
-            "example": "Senior Backend Engineer"
+            "description": "Position title",
+            "example": "Senior Backend Engineer",
+            "maxLength": 255,
+            "minLength": 1
           },
           "description": {
             "type": "object",
+            "description": "Position description",
             "example": "Backend development, architecture design, code reviews",
-            "nullable": true
+            "nullable": true,
+            "maxLength": 1000,
+            "minLength": 1
           }
         }
       },
@@ -1637,8 +1692,8 @@
         "properties": {
           "childId": {
             "type": "number",
-            "example": 5,
-            "description": "Id of child position"
+            "description": "Id of child position",
+            "example": 5
           }
         },
         "required": [

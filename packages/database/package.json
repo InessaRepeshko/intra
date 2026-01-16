@@ -4,55 +4,31 @@
   "version": "1.0.0",
   "description": "Shared Prisma schema + migrations for Intra monorepo",
   "license": "MIT",
-  "main": "./src/generated/client.ts",
-  "types": "./src/generated/client.ts",
-  "browser": "./src/generated/browser.ts",
-  "models": "./src/generated/models.ts",
-  "enums": "./src/generated/enums.ts",
+  "main": "./src/generated/index.ts",
+  "types": "./src/generated/index.ts",
   "exports": {
     ".": {
-      "types": "./src/generated/client.ts",
-      "import": "./src/generated/client.ts",
-      "default": "./src/generated/client.ts",
-      "require": "./src/generated/client.ts"
-    },
-    "./browser": {
-      "types": "./src/generated/browser.ts",
-      "import": "./src/generated/browser.ts",
-      "default": "./src/generated/browser.ts",
-      "require": "./src/generated/browser.ts"
-    },
-    "./models": {
-      "types": "./src/generated/models.ts",
-      "import": "./src/generated/models.ts",
-      "default": "./src/generated/models.ts",
-      "require": "./src/generated/models.ts"
-    },
-    "./enums": {
-      "types": "./src/generated/enums.ts",
-      "import": "./src/generated/enums.ts",
-      "default": "./src/generated/enums.ts",
-      "require": "./src/generated/enums.ts"
+      "types": "./src/generated/index.ts",
+      "import": "./src/generated/index.ts",
+      "default": "./src/generated/index.ts",
+      "require": "./src/generated/index.ts"
     }
   },
   "scripts": {
     "prisma:config": "prisma --config ./prisma.config.ts",
     "prisma:dev": "dotenv -e ../../.env.development.local -- pnpm prisma:config",
     "prisma:test": "dotenv -e ../../.env.test -- pnpm prisma:config",
-
     "db:deploy": "pnpm prisma:dev -- migrate deploy",
     "db:create": "pnpm prisma:dev -- migrate dev",
     "db:generate": "pnpm prisma:dev -- generate",
     "db:seed": "pnpm prisma:dev -- db seed",
     "db:reset": "pnpm prisma:dev -- migrate reset --force",
     "db:refresh": "pnpm db:reset && pnpm db:generate && pnpm db:seed",
-
     "db:test:deploy": "pnpm prisma:test -- migrate deploy",
     "db:test:generate": "pnpm prisma:test -- generate",
     "db:test:reset": "pnpm prisma:test -- migrate reset --force",
     "db:test:seed": "pnpm prisma:test -- db seed",
     "db:test:refresh": "pnpm db:test:reset && pnpm db:test:generate && pnpm db:test:seed",
-
     "migrate": "pnpm db:create",
     "db:migrate": "pnpm db:create"
   }
