@@ -2,20 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@intra/database';
 import { PrismaService } from 'src/database/prisma.service';
 import {
-  CompetenceQuestionRepositoryPort,
-  CompetenceQuestionSearchQuery,
-  CompetenceQuestionSortField,
-  CompetenceQuestionUpdatePayload,
-} from '../../application/ports/competence-question.repository.port';
-import { CompetenceQuestionDomain } from '../../domain/competence-question.domain';
+  QuestionRepositoryPort,
+  QuestionSearchQuery,
+  QuestionSortField,
+  QuestionUpdatePayload,
+} from '../../application/ports/question.repository.port';
+import { QuestionDomain } from '../../domain/question.domain';
 import { CompetenceMapper } from './competence.mapper';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 
 @Injectable()
-export class CompetenceQuestionRepository implements CompetenceQuestionRepositoryPort {
-  constructor(private readonly prisma: PrismaService) {}
+export class QuestionRepository implements QuestionRepositoryPort {
+  constructor(private readonly prisma: PrismaService) { }
 
-  async create(question: CompetenceQuestionDomain): Promise<CompetenceQuestionDomain> {
+  async create(question: QuestionDomain): Promise<QuestionDomain> {
     const created = await this.prisma.question.create({
       data: {
         title: question.title,
@@ -29,7 +29,7 @@ export class CompetenceQuestionRepository implements CompetenceQuestionRepositor
     return CompetenceMapper.toQuestionDomain(created);
   }
 
-  async findById(id: number): Promise<CompetenceQuestionDomain | null> {
+  async findById(id: number): Promise<QuestionDomain | null> {
     const question = await this.prisma.question.findUnique({
       where: { id },
       include: { questionPositions: { select: { positionId: true } } },
@@ -38,7 +38,7 @@ export class CompetenceQuestionRepository implements CompetenceQuestionRepositor
     return question ? CompetenceMapper.toQuestionDomain(question) : null;
   }
 
-  async search(query: CompetenceQuestionSearchQuery): Promise<CompetenceQuestionDomain[]> {
+  async search(query: QuestionSearchQuery): Promise<QuestionDomain[]> {
     const where = this.buildWhere(query);
     const orderBy = this.buildOrder(query);
 
@@ -51,7 +51,7 @@ export class CompetenceQuestionRepository implements CompetenceQuestionRepositor
     return items.map(CompetenceMapper.toQuestionDomain);
   }
 
-  async updateById(id: number, patch: CompetenceQuestionUpdatePayload): Promise<CompetenceQuestionDomain> {
+  async updateById(id: number, patch: QuestionUpdatePayload): Promise<QuestionDomain> {
     const updated = await this.prisma.question.update({
       where: { id },
       data: {
@@ -67,31 +67,31 @@ export class CompetenceQuestionRepository implements CompetenceQuestionRepositor
     await this.prisma.question.delete({ where: { id } });
   }
 
-  private buildWhere(query: CompetenceQuestionSearchQuery): Prisma.QuestionWhereInput {
+  private buildWhere(query: QuestionSearchQuery): Prisma.QuestionWhereInput {
     const { competenceId, positionId, status, answerType, isForSelfassessment, search } = query;
 
     return {
       ...(competenceId ? { competenceId } : {}),
       ...(positionId
         ? {
-            questionPositions: {
-              some: { positionId },
-            },
-          }
+          questionPositions: {
+            some: { positionId },
+          },
+        }
         : {}),
       ...(status ? { questionStatus: status } : {}),
       ...(answerType ? { answerType } : {}),
       ...(isForSelfassessment !== undefined ? { isForSelfassessment } : {}),
       ...(search
         ? {
-            title: { contains: search, mode: 'insensitive' },
-          }
+          title: { contains: search, mode: 'insensitive' },
+        }
         : {}),
     };
   }
 
-  private buildOrder(query: CompetenceQuestionSearchQuery): Prisma.QuestionOrderByWithRelationInput[] {
-    const field = query.sortBy ?? CompetenceQuestionSortField.ID;
+  private buildOrder(query: QuestionSearchQuery): Prisma.QuestionOrderByWithRelationInput[] {
+    const field = query.sortBy ?? QuestionSortField.ID;
     const direction = query.sortDirection ?? SortDirection.ASC;
     return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
   }

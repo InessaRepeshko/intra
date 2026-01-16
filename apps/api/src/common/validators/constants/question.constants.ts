@@ -1,4 +1,4 @@
-export const CompetenceQuestionConstants = {
+export const QuestionConstants = {
   TITLE_MIN_LENGTH: 1,
   TITLE_MAX_LENGTH: 1000,
 };

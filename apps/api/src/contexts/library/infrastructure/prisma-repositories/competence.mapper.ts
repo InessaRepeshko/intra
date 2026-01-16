@@ -1,17 +1,17 @@
 import {
   Competence,
-  CompetenceCluster,
-  CompetenceQuestionAnswerType as PrismaCompetenceQuestionAnswerType,
-  CompetenceQuestionStatus as PrismaCompetenceQuestionStatus,
+  Cluster,
+  AnswerType as PrismaAnswerType,
+  QuestionStatus as PrismaQuestionStatus,
   Question,
   QuestionPositionRelation,
 } from '@intra/database';
 import { CompetenceDomain } from '../../domain/competence.domain';
-import { CompetenceClusterDomain } from '../../domain/competence-cluster.domain';
-import { CompetenceQuestionDomain } from '../../domain/competence-question.domain';
-import { CompetenceQuestionAnswerType } from '../../domain/competence-question-answer-type.enum';
-import { CompetenceQuestionStatus } from '../../domain/competence-question-status.enum';
-import { CompetenceQuestionPositionDomain } from '../../domain/competence-question-position.domain';
+import { ClusterDomain } from '../../domain/cluster.domain';
+import { QuestionDomain } from '../../domain/question.domain';
+import { AnswerType } from '../../domain/answer-type.enum';
+import { QuestionStatus } from '../../domain/question-status.enum';
+import { QuestionPositionDomain } from '../../domain/question-position.domain';
 
 type QuestionWithPositions = Question & { questionPositions?: { positionId: number }[] };
 
@@ -27,8 +27,8 @@ export class CompetenceMapper {
     });
   }
 
-  static toClusterDomain(cluster: CompetenceCluster): CompetenceClusterDomain {
-    return CompetenceClusterDomain.create({
+  static toClusterDomain(cluster: Cluster): ClusterDomain {
+    return ClusterDomain.create({
       id: cluster.id,
       competenceId: cluster.competenceId,
       cycleId: cluster.cycleId,
@@ -43,22 +43,22 @@ export class CompetenceMapper {
     });
   }
 
-  static toQuestionDomain(question: QuestionWithPositions): CompetenceQuestionDomain {
-    return CompetenceQuestionDomain.create({
+  static toQuestionDomain(question: QuestionWithPositions): QuestionDomain {
+    return QuestionDomain.create({
       id: question.id,
       title: question.title,
-      answerType: question.answerType as CompetenceQuestionAnswerType,
+      answerType: question.answerType as AnswerType,
       competenceId: question.competenceId,
       isForSelfassessment: question.isForSelfassessment ?? false,
-      questionStatus: question.questionStatus as CompetenceQuestionStatus,
+      questionStatus: question.questionStatus as QuestionStatus,
       createdAt: question.createdAt,
       updatedAt: question.updatedAt,
       positionIds: question.questionPositions?.map((q) => q.positionId) ?? [],
     });
   }
 
-  static toQuestionPositionDomain(relation: QuestionPositionRelation): CompetenceQuestionPositionDomain {
-    return CompetenceQuestionPositionDomain.create({
+  static toQuestionPositionDomain(relation: QuestionPositionRelation): QuestionPositionDomain {
+    return QuestionPositionDomain.create({
       id: relation.id,
       questionId: relation.questionId,
       positionId: relation.positionId,
@@ -66,12 +66,12 @@ export class CompetenceMapper {
     });
   }
 
-  static toPrismaAnswerType(answerType: CompetenceQuestionAnswerType): PrismaCompetenceQuestionAnswerType {
-    return answerType as PrismaCompetenceQuestionAnswerType;
+  static toPrismaAnswerType(answerType: AnswerType): PrismaAnswerType {
+    return answerType as PrismaAnswerType;
   }
 
-  static toPrismaStatus(status: CompetenceQuestionStatus): PrismaCompetenceQuestionStatus {
-    return status as PrismaCompetenceQuestionStatus;
+  static toPrismaStatus(status: QuestionStatus): PrismaQuestionStatus {
+    return status as PrismaQuestionStatus;
   }
 }
 

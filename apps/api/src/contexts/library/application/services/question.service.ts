@@ -1,50 +1,50 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
-  COMPETENCE_QUESTION_REPOSITORY,
-  CompetenceQuestionRepositoryPort,
-  CompetenceQuestionSearchQuery,
-  CompetenceQuestionUpdatePayload,
-} from '../ports/competence-question.repository.port';
+  QUESTION_REPOSITORY,
+  QuestionRepositoryPort,
+  QuestionSearchQuery,
+  QuestionUpdatePayload,
+} from '../ports/question.repository.port';
 import { CompetenceService } from './competence.service';
-import { CompetenceQuestionDomain } from '../../domain/competence-question.domain';
-import { CompetenceQuestionAnswerType } from '../../domain/competence-question-answer-type.enum';
-import { CompetenceQuestionStatus } from '../../domain/competence-question-status.enum';
+import { QuestionDomain } from '../../domain/question.domain';
+import { AnswerType } from '../../domain/answer-type.enum';
+import { QuestionStatus } from '../../domain/question-status.enum';
 import {
-  COMPETENCE_QUESTION_POSITION_REPOSITORY,
-  CompetenceQuestionPositionRepositoryPort,
-} from '../ports/competence-question-position.repository.port';
+  QUESTION_POSITION_REPOSITORY,
+  QuestionPositionRepositoryPort,
+} from '../ports/question-position.repository.port';
 import { PositionService } from 'src/contexts/org-structure/application/services/position.service';
 
-export type CreateCompetenceQuestionCommand = {
+export type CreateQuestionCommand = {
   competenceId: number;
   title: string;
-  answerType: CompetenceQuestionAnswerType;
+  answerType: AnswerType;
   isForSelfassessment?: boolean;
-  questionStatus?: CompetenceQuestionStatus;
+  questionStatus?: QuestionStatus;
   positionIds?: number[];
 };
 
-export type UpdateCompetenceQuestionCommand = Partial<CreateCompetenceQuestionCommand>;
+export type UpdateQuestionCommand = Partial<CreateQuestionCommand>;
 
 @Injectable()
-export class CompetenceQuestionService {
+export class QuestionService {
   constructor(
-    @Inject(COMPETENCE_QUESTION_REPOSITORY) private readonly questions: CompetenceQuestionRepositoryPort,
-    @Inject(COMPETENCE_QUESTION_POSITION_REPOSITORY)
-    private readonly questionPositions: CompetenceQuestionPositionRepositoryPort,
+    @Inject(QUESTION_REPOSITORY) private readonly questions: QuestionRepositoryPort,
+    @Inject(QUESTION_POSITION_REPOSITORY)
+    private readonly questionPositions: QuestionPositionRepositoryPort,
     private readonly competences: CompetenceService,
     private readonly positions: PositionService,
-  ) {}
+  ) { }
 
-  async create(command: CreateCompetenceQuestionCommand): Promise<CompetenceQuestionDomain> {
+  async create(command: CreateQuestionCommand): Promise<QuestionDomain> {
     await this.competences.getById(command.competenceId);
 
-    const question = CompetenceQuestionDomain.create({
+    const question = QuestionDomain.create({
       competenceId: command.competenceId,
       title: command.title,
       answerType: command.answerType,
       isForSelfassessment: command.isForSelfassessment ?? false,
-      questionStatus: command.questionStatus ?? CompetenceQuestionStatus.ACTIVE,
+      questionStatus: command.questionStatus ?? QuestionStatus.ACTIVE,
     });
 
     const created = await this.questions.create(question);
@@ -58,24 +58,24 @@ export class CompetenceQuestionService {
     return this.getById(created.id!);
   }
 
-  async search(query: CompetenceQuestionSearchQuery): Promise<CompetenceQuestionDomain[]> {
+  async search(query: QuestionSearchQuery): Promise<QuestionDomain[]> {
     return this.questions.search(query);
   }
 
-  async getById(id: number): Promise<CompetenceQuestionDomain> {
+  async getById(id: number): Promise<QuestionDomain> {
     const question = await this.questions.findById(id);
-    if (!question) throw new NotFoundException('Competence question not found');
+    if (!question) throw new NotFoundException('Question not found');
     return question;
   }
 
-  async update(id: number, patch: UpdateCompetenceQuestionCommand): Promise<CompetenceQuestionDomain> {
+  async update(id: number, patch: UpdateQuestionCommand): Promise<QuestionDomain> {
     const current = await this.getById(id);
 
     if (patch.competenceId && patch.competenceId !== current.competenceId) {
       await this.competences.getById(patch.competenceId);
     }
 
-    const payload: CompetenceQuestionUpdatePayload = {
+    const payload: QuestionUpdatePayload = {
       ...(patch.competenceId !== undefined ? { competenceId: patch.competenceId } : {}),
       ...(patch.title !== undefined ? { title: patch.title } : {}),
       ...(patch.answerType !== undefined ? { answerType: patch.answerType } : {}),
@@ -99,7 +99,7 @@ export class CompetenceQuestionService {
     await this.questions.deleteById(id);
   }
 
-  async attachPosition(questionId: number, positionId: number): Promise<CompetenceQuestionDomain> {
+  async attachPosition(questionId: number, positionId: number): Promise<QuestionDomain> {
     await this.getById(questionId);
     await this.positions.getById(positionId);
 

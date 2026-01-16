@@ -12,7 +12,7 @@ export type UpdateCompetenceCommand = Partial<CreateCompetenceCommand>;
 
 @Injectable()
 export class CompetenceService {
-  constructor(@Inject(COMPETENCE_REPOSITORY) private readonly competences: CompetenceRepositoryPort) {}
+  constructor(@Inject(COMPETENCE_REPOSITORY) private readonly competences: CompetenceRepositoryPort) { }
 
   async create(command: CreateCompetenceCommand): Promise<CompetenceDomain> {
     const competence = CompetenceDomain.create({

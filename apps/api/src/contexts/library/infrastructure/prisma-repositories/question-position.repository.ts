@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@intra/database';
 import { PrismaService } from 'src/database/prisma.service';
-import { CompetenceQuestionPositionRepositoryPort } from '../../application/ports/competence-question-position.repository.port';
-import { CompetenceQuestionPositionDomain } from '../../domain/competence-question-position.domain';
+import { QuestionPositionRepositoryPort } from '../../application/ports/question-position.repository.port';
+import { QuestionPositionDomain } from '../../domain/question-position.domain';
 import { CompetenceMapper } from './competence.mapper';
 
 @Injectable()
-export class CompetenceQuestionPositionRepository implements CompetenceQuestionPositionRepositoryPort {
-  constructor(private readonly prisma: PrismaService) {}
+export class QuestionPositionRepository implements QuestionPositionRepositoryPort {
+  constructor(private readonly prisma: PrismaService) { }
 
-  async link(questionId: number, positionId: number): Promise<CompetenceQuestionPositionDomain> {
+  async link(questionId: number, positionId: number): Promise<QuestionPositionDomain> {
     try {
       const relation = await this.prisma.questionPositionRelation.create({
         data: { questionId, positionId },
@@ -32,7 +32,7 @@ export class CompetenceQuestionPositionRepository implements CompetenceQuestionP
     });
   }
 
-  async listByQuestion(questionId: number): Promise<CompetenceQuestionPositionDomain[]> {
+  async listByQuestion(questionId: number): Promise<QuestionPositionDomain[]> {
     const relations = await this.prisma.questionPositionRelation.findMany({
       where: { questionId },
       orderBy: { createdAt: 'desc' },
@@ -41,7 +41,7 @@ export class CompetenceQuestionPositionRepository implements CompetenceQuestionP
     return relations.map(CompetenceMapper.toQuestionPositionDomain);
   }
 
-  async replace(questionId: number, positionIds: number[]): Promise<CompetenceQuestionPositionDomain[]> {
+  async replace(questionId: number, positionIds: number[]): Promise<QuestionPositionDomain[]> {
     const unique = Array.from(new Set(positionIds));
 
     await this.prisma.$transaction(async (tx) => {

@@ -2,12 +2,12 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 import { ToOptionalBool, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
-import { CompetenceQuestionAnswerType } from 'src/contexts/library/domain/competence-question-answer-type.enum';
-import { CompetenceQuestionStatus } from 'src/contexts/library/domain/competence-question-status.enum';
-import { CompetenceQuestionSortField } from 'src/contexts/library/application/ports/competence-question.repository.port';
-import { CompetenceQuestionConstants } from 'src/common/validators/constants';
+import { AnswerType } from 'src/contexts/library/domain/answer-type.enum';
+import { QuestionStatus } from 'src/contexts/library/domain/question-status.enum';
+import { QuestionSortField } from 'src/contexts/library/application/ports/question.repository.port';
+import { QuestionConstants } from 'src/common/validators/constants';
 
-export class CompetenceQuestionQueryDto {
+export class QuestionQueryDto {
   @ApiPropertyOptional({ description: 'Filter by competence id', example: 2 })
   @ToOptionalInt({ min: 1 })
   @IsOptional()
@@ -22,15 +22,15 @@ export class CompetenceQuestionQueryDto {
   @Min(1)
   positionId?: number;
 
-  @ApiPropertyOptional({ enum: CompetenceQuestionStatus, example: CompetenceQuestionStatus.ACTIVE })
+  @ApiPropertyOptional({ enum: QuestionStatus, example: QuestionStatus.ACTIVE })
   @IsOptional()
-  @IsEnum(CompetenceQuestionStatus)
-  status?: CompetenceQuestionStatus;
+  @IsEnum(QuestionStatus)
+  status?: QuestionStatus;
 
-  @ApiPropertyOptional({ enum: CompetenceQuestionAnswerType, example: CompetenceQuestionAnswerType.TEXT_FIELD })
+  @ApiPropertyOptional({ enum: AnswerType, example: AnswerType.TEXT_FIELD })
   @IsOptional()
-  @IsEnum(CompetenceQuestionAnswerType)
-  answerType?: CompetenceQuestionAnswerType;
+  @IsEnum(AnswerType)
+  answerType?: AnswerType;
 
   @ApiPropertyOptional({ description: 'Filter self assessment questions', example: false })
   @ToOptionalBool()
@@ -41,18 +41,18 @@ export class CompetenceQuestionQueryDto {
   @ApiPropertyOptional({
     description: 'Search in title',
     example: 'features',
-    maxLength: CompetenceQuestionConstants.TITLE_MAX_LENGTH,
+    maxLength: QuestionConstants.TITLE_MAX_LENGTH,
   })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()
-  @MaxLength(CompetenceQuestionConstants.TITLE_MAX_LENGTH)
+  @MaxLength(QuestionConstants.TITLE_MAX_LENGTH)
   search?: string;
 
-  @ApiPropertyOptional({ enum: CompetenceQuestionSortField, example: CompetenceQuestionSortField.TITLE })
+  @ApiPropertyOptional({ enum: QuestionSortField, example: QuestionSortField.TITLE })
   @IsOptional()
-  @IsEnum(CompetenceQuestionSortField)
-  sortBy?: CompetenceQuestionSortField;
+  @IsEnum(QuestionSortField)
+  sortBy?: QuestionSortField;
 
   @ApiPropertyOptional({ enum: SortDirection, example: SortDirection.ASC })
   @IsOptional()

@@ -1,4 +1,4 @@
-export type CompetenceClusterProps = {
+export type ClusterProps = {
   id?: number;
   cycleId?: number | null;
   competenceId: number;
@@ -12,7 +12,7 @@ export type CompetenceClusterProps = {
   updatedAt?: Date;
 };
 
-export class CompetenceClusterDomain {
+export class ClusterDomain {
   readonly id?: number;
   readonly cycleId: number | null;
   readonly competenceId: number;
@@ -25,7 +25,7 @@ export class CompetenceClusterDomain {
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
 
-  private constructor(props: CompetenceClusterProps) {
+  private constructor(props: ClusterProps) {
     this.id = props.id;
     this.cycleId = props.cycleId ?? null;
     this.competenceId = props.competenceId;
@@ -39,8 +39,8 @@ export class CompetenceClusterDomain {
     this.updatedAt = props.updatedAt;
   }
 
-  static create(props: CompetenceClusterProps): CompetenceClusterDomain {
-    return new CompetenceClusterDomain(props);
+  static create(props: ClusterProps): ClusterDomain {
+    return new ClusterDomain(props);
   }
 }
 

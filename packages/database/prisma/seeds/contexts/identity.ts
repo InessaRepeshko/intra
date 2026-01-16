@@ -5,7 +5,7 @@ import {
 import { pbkdf2Sync, randomBytes } from 'crypto';
 import type { PositionMap } from './positions';
 import type { TeamMap } from './teams';
-import { IdentityRole } from '../../../../../apps/api/src/contexts/identity/domain/identity-role.enum';
+import { IdentityRole } from '@intra/api/contexts/identity/domain/identity-role.enum';
 
 export type UserMap = Map<string, { id: number }>;
 
@@ -309,7 +309,7 @@ async function seedRoles(prisma: PrismaClient) {
     };
   });
 
-  for (const role of data) {  
+  for (const role of data) {
     await prisma.role.upsert({
       where: { code: role.code },
       update: role,

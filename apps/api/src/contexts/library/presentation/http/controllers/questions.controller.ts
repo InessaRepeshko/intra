@@ -14,12 +14,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CompetenceQuestionService } from '../../../application/services/competence-question.service';
-import { CreateCompetenceQuestionDto } from '../dto/questions/create-competence-question.dto';
-import { CompetenceQuestionResponse } from '../models/competence-question.response';
-import { CompetenceQuestionHttpMapper } from '../mappers/competence-question.http.mapper';
-import { CompetenceQuestionQueryDto } from '../dto/questions/competence-question-query.dto';
-import { UpdateCompetenceQuestionDto } from '../dto/questions/update-competence-question.dto';
+import { QuestionService } from '../../../application/services/question.service';
+import { CreateQuestionDto } from '../dto/questions/create-question.dto';
+import { QuestionResponse } from '../models/question.response';
+import { QuestionHttpMapper } from '../mappers/question.http.mapper';
+import { QuestionQueryDto } from '../dto/questions/question-query.dto';
+import { UpdateQuestionDto } from '../dto/questions/update-question.dto';
 import { AttachQuestionPositionDto } from '../dto/questions/attach-question-position.dto';
 import {
   ApiCreateAndUpdateErrorResponses,
@@ -31,15 +31,15 @@ import {
 @ApiTags('Library / Questions')
 @Controller('library/questions')
 @UseInterceptors(ClassSerializerInterceptor)
-@SerializeOptions({ type: CompetenceQuestionResponse })
-export class CompetenceQuestionsController {
-  constructor(private readonly service: CompetenceQuestionService) {}
+@SerializeOptions({ type: QuestionResponse })
+export class QuestionsController {
+  constructor(private readonly service: QuestionService) { }
 
   @Post()
-  @ApiOperation({ summary: 'Create competence question' })
-  @ApiResponse({ status: HttpStatus.CREATED, type: CompetenceQuestionResponse })
+  @ApiOperation({ summary: 'Create question' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: QuestionResponse })
   @ApiCreateAndUpdateErrorResponses()
-  async create(@Body() dto: CreateCompetenceQuestionDto): Promise<CompetenceQuestionResponse> {
+  async create(@Body() dto: CreateQuestionDto): Promise<QuestionResponse> {
     const created = await this.service.create({
       competenceId: dto.competenceId,
       title: dto.title,
@@ -48,34 +48,34 @@ export class CompetenceQuestionsController {
       questionStatus: dto.questionStatus,
       positionIds: dto.positionIds,
     });
-    return CompetenceQuestionHttpMapper.toResponse(created);
+    return QuestionHttpMapper.toResponse(created);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Search competence questions' })
-  @ApiResponse({ status: HttpStatus.OK, type: CompetenceQuestionResponse, isArray: true })
+  @ApiOperation({ summary: 'Search questions' })
+  @ApiResponse({ status: HttpStatus.OK, type: QuestionResponse, isArray: true })
   @ApiListReadErrorResponses()
-  async search(@Query() query: CompetenceQuestionQueryDto): Promise<CompetenceQuestionResponse[]> {
+  async search(@Query() query: QuestionQueryDto): Promise<QuestionResponse[]> {
     const questions = await this.service.search(query);
-    return questions.map(CompetenceQuestionHttpMapper.toResponse);
+    return questions.map(QuestionHttpMapper.toResponse);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get question by id' })
-  @ApiResponse({ status: HttpStatus.OK, type: CompetenceQuestionResponse })
+  @ApiResponse({ status: HttpStatus.OK, type: QuestionResponse })
   @ApiReadErrorResponses()
-  async getById(@Param('id') id: string): Promise<CompetenceQuestionResponse> {
+  async getById(@Param('id') id: string): Promise<QuestionResponse> {
     const question = await this.service.getById(Number(id));
-    return CompetenceQuestionHttpMapper.toResponse(question);
+    return QuestionHttpMapper.toResponse(question);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update competence question' })
-  @ApiResponse({ status: HttpStatus.OK, type: CompetenceQuestionResponse })
+  @ApiOperation({ summary: 'Update question' })
+  @ApiResponse({ status: HttpStatus.OK, type: QuestionResponse })
   @ApiCreateAndUpdateErrorResponses()
-  async update(@Param('id') id: string, @Body() dto: UpdateCompetenceQuestionDto): Promise<CompetenceQuestionResponse> {
+  async update(@Param('id') id: string, @Body() dto: UpdateQuestionDto): Promise<QuestionResponse> {
     const updated = await this.service.update(Number(id), dto);
-    return CompetenceQuestionHttpMapper.toResponse(updated);
+    return QuestionHttpMapper.toResponse(updated);
   }
 
   @Delete(':id')
@@ -89,14 +89,14 @@ export class CompetenceQuestionsController {
 
   @Post(':id/positions')
   @ApiOperation({ summary: 'Attach question to position' })
-  @ApiResponse({ status: HttpStatus.CREATED, type: CompetenceQuestionResponse })
+  @ApiResponse({ status: HttpStatus.CREATED, type: QuestionResponse })
   @ApiCreateAndUpdateErrorResponses()
   async attachPosition(
     @Param('id') id: string,
     @Body() dto: AttachQuestionPositionDto,
-  ): Promise<CompetenceQuestionResponse> {
+  ): Promise<QuestionResponse> {
     const updated = await this.service.attachPosition(Number(id), dto.positionId);
-    return CompetenceQuestionHttpMapper.toResponse(updated);
+    return QuestionHttpMapper.toResponse(updated);
   }
 
   @Delete(':id/positions/:positionId')

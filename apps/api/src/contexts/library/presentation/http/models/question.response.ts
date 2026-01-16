@@ -1,9 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { CompetenceQuestionAnswerType } from '../../../domain/competence-question-answer-type.enum';
-import { CompetenceQuestionStatus } from '../../../domain/competence-question-status.enum';
+import { AnswerType } from '../../../domain/answer-type.enum';
+import { QuestionStatus } from '../../../domain/question-status.enum';
 
-export class CompetenceQuestionResponse {
+export class QuestionResponse {
   @ApiProperty({ example: 1 })
   @Expose()
   id!: number;
@@ -16,17 +16,17 @@ export class CompetenceQuestionResponse {
   @Expose()
   title!: string;
 
-  @ApiProperty({ enum: CompetenceQuestionAnswerType, example: CompetenceQuestionAnswerType.NUMERICAL_SCALE })
+  @ApiProperty({ enum: AnswerType, example: AnswerType.NUMERICAL_SCALE })
   @Expose()
-  answerType!: CompetenceQuestionAnswerType;
+  answerType!: AnswerType;
 
   @ApiProperty({ example: false })
   @Expose()
   isForSelfassessment!: boolean;
 
-  @ApiProperty({ enum: CompetenceQuestionStatus, example: CompetenceQuestionStatus.ACTIVE })
+  @ApiProperty({ enum: QuestionStatus, example: QuestionStatus.ACTIVE })
   @Expose()
-  questionStatus!: CompetenceQuestionStatus;
+  questionStatus!: QuestionStatus;
 
   @ApiProperty({ example: [1, 2, 3], isArray: true, type: Number })
   @Expose()

@@ -1,14 +1,14 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CompetenceClusterDomain } from '../../domain/competence-cluster.domain';
+import { ClusterDomain } from '../../domain/cluster.domain';
 import {
-  COMPETENCE_CLUSTER_REPOSITORY,
-  CompetenceClusterRepositoryPort,
-  CompetenceClusterSearchQuery,
-  CompetenceClusterUpdatePayload,
-} from '../ports/competence-cluster.repository.port';
+  CLUSTER_REPOSITORY,
+  ClusterRepositoryPort,
+  ClusterSearchQuery,
+  ClusterUpdatePayload,
+} from '../ports/cluster.repository.port';
 import { CompetenceService } from './competence.service';
 
-export type CreateCompetenceClusterCommand = {
+export type CreateClusterCommand = {
   competenceId: number;
   cycleId?: number | null;
   lowerBound: number;
@@ -19,20 +19,20 @@ export type CreateCompetenceClusterCommand = {
   employeesCount: number;
 };
 
-export type UpdateCompetenceClusterCommand = Partial<CreateCompetenceClusterCommand>;
+export type UpdateClusterCommand = Partial<CreateClusterCommand>;
 
 @Injectable()
-export class CompetenceClusterService {
+export class ClusterService {
   constructor(
-    @Inject(COMPETENCE_CLUSTER_REPOSITORY) private readonly clusters: CompetenceClusterRepositoryPort,
+    @Inject(CLUSTER_REPOSITORY) private readonly clusters: ClusterRepositoryPort,
     private readonly competences: CompetenceService,
-  ) {}
+  ) { }
 
-  async create(command: CreateCompetenceClusterCommand): Promise<CompetenceClusterDomain> {
+  async create(command: CreateClusterCommand): Promise<ClusterDomain> {
     await this.ensureBounds(command.lowerBound, command.upperBound);
     await this.competences.getById(command.competenceId);
 
-    const cluster = CompetenceClusterDomain.create({
+    const cluster = ClusterDomain.create({
       competenceId: command.competenceId,
       cycleId: command.cycleId ?? null,
       lowerBound: command.lowerBound,
@@ -46,17 +46,17 @@ export class CompetenceClusterService {
     return this.clusters.create(cluster);
   }
 
-  async search(query: CompetenceClusterSearchQuery): Promise<CompetenceClusterDomain[]> {
+  async search(query: ClusterSearchQuery): Promise<ClusterDomain[]> {
     return this.clusters.search(query);
   }
 
-  async getById(id: number): Promise<CompetenceClusterDomain> {
+  async getById(id: number): Promise<ClusterDomain> {
     const cluster = await this.clusters.findById(id);
-    if (!cluster) throw new NotFoundException('Competence cluster not found');
+    if (!cluster) throw new NotFoundException('Cluster not found');
     return cluster;
   }
 
-  async update(id: number, patch: UpdateCompetenceClusterCommand): Promise<CompetenceClusterDomain> {
+  async update(id: number, patch: UpdateClusterCommand): Promise<ClusterDomain> {
     const current = await this.getById(id);
 
     if (patch.competenceId && patch.competenceId !== current.competenceId) {
@@ -69,7 +69,7 @@ export class CompetenceClusterService {
       await this.ensureBounds(lower, upper);
     }
 
-    const payload: CompetenceClusterUpdatePayload = {
+    const payload: ClusterUpdatePayload = {
       ...(patch.competenceId !== undefined ? { competenceId: patch.competenceId } : {}),
       ...(patch.cycleId !== undefined ? { cycleId: patch.cycleId } : {}),
       ...(patch.lowerBound !== undefined ? { lowerBound: patch.lowerBound } : {}),
@@ -90,7 +90,7 @@ export class CompetenceClusterService {
 
   private async ensureBounds(lower: number, upper: number): Promise<void> {
     if (lower > upper) {
-      throw new BadRequestException('lowerBound must be less than or equal to upperBound');
+      throw new BadRequestException('Lower bound must be less than or equal to upper bound');
     }
   }
 }

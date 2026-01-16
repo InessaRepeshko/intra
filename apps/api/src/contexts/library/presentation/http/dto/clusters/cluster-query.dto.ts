@@ -2,9 +2,9 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
 import { ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
-import { CompetenceClusterSortField } from 'src/contexts/library/application/ports/competence-cluster.repository.port';
+import { ClusterSortField } from 'src/contexts/library/application/ports/cluster.repository.port';
 
-export class CompetenceClusterQueryDto {
+export class ClusterQueryDto {
   @ApiPropertyOptional({ description: 'Filter by competence id', example: 2 })
   @ToOptionalInt({ min: 1 })
   @IsOptional()
@@ -19,10 +19,10 @@ export class CompetenceClusterQueryDto {
   @Min(1)
   cycleId?: number | null;
 
-  @ApiPropertyOptional({ enum: CompetenceClusterSortField, example: CompetenceClusterSortField.CREATED_AT })
+  @ApiPropertyOptional({ enum: ClusterSortField, example: ClusterSortField.CREATED_AT })
   @IsOptional()
-  @IsEnum(CompetenceClusterSortField)
-  sortBy?: CompetenceClusterSortField;
+  @IsEnum(ClusterSortField)
+  sortBy?: ClusterSortField;
 
   @ApiPropertyOptional({ enum: SortDirection, example: SortDirection.ASC })
   @IsOptional()

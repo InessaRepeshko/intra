@@ -1408,14 +1408,14 @@
     },
     "/library/clusters": {
       "post": {
-        "operationId": "CompetenceClustersController_create",
+        "operationId": "ClustersController_create",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCompetenceClusterDto"
+                "$ref": "#/components/schemas/CreateClusterDto"
               }
             }
           }
@@ -1426,7 +1426,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompetenceClusterResponse"
+                  "$ref": "#/components/schemas/ClusterResponse"
                 }
               }
             }
@@ -1444,13 +1444,13 @@
             "description": "Conflict"
           }
         },
-        "summary": "Create competence cluster",
+        "summary": "Create cluster",
         "tags": [
           "Library / Clusters"
         ]
       },
       "get": {
-        "operationId": "CompetenceClustersController_search",
+        "operationId": "ClustersController_search",
         "parameters": [
           {
             "name": "competenceId",
@@ -1509,7 +1509,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CompetenceClusterResponse"
+                    "$ref": "#/components/schemas/ClusterResponse"
                   }
                 }
               }
@@ -1519,7 +1519,7 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "Search competence clusters",
+        "summary": "Search clusters",
         "tags": [
           "Library / Clusters"
         ]
@@ -1527,7 +1527,7 @@
     },
     "/library/clusters/{id}": {
       "get": {
-        "operationId": "CompetenceClustersController_getById",
+        "operationId": "ClustersController_getById",
         "parameters": [
           {
             "name": "id",
@@ -1544,7 +1544,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompetenceClusterResponse"
+                  "$ref": "#/components/schemas/ClusterResponse"
                 }
               }
             }
@@ -1556,13 +1556,13 @@
             "description": "Not found"
           }
         },
-        "summary": "Get competence cluster by id",
+        "summary": "Get cluster by id",
         "tags": [
           "Library / Clusters"
         ]
       },
       "patch": {
-        "operationId": "CompetenceClustersController_update",
+        "operationId": "ClustersController_update",
         "parameters": [
           {
             "name": "id",
@@ -1578,7 +1578,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateCompetenceClusterDto"
+                "$ref": "#/components/schemas/UpdateClusterDto"
               }
             }
           }
@@ -1589,7 +1589,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompetenceClusterResponse"
+                  "$ref": "#/components/schemas/ClusterResponse"
                 }
               }
             }
@@ -1607,13 +1607,13 @@
             "description": "Conflict"
           }
         },
-        "summary": "Update competence cluster",
+        "summary": "Update cluster",
         "tags": [
           "Library / Clusters"
         ]
       },
       "delete": {
-        "operationId": "CompetenceClustersController_delete",
+        "operationId": "ClustersController_delete",
         "parameters": [
           {
             "name": "id",
@@ -1641,7 +1641,7 @@
             "description": "Not found"
           }
         },
-        "summary": "Delete competence cluster",
+        "summary": "Delete cluster",
         "tags": [
           "Library / Clusters"
         ]
@@ -1649,14 +1649,14 @@
     },
     "/library/questions": {
       "post": {
-        "operationId": "CompetenceQuestionsController_create",
+        "operationId": "QuestionsController_create",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCompetenceQuestionDto"
+                "$ref": "#/components/schemas/CreateQuestionDto"
               }
             }
           }
@@ -1667,7 +1667,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompetenceQuestionResponse"
+                  "$ref": "#/components/schemas/QuestionResponse"
                 }
               }
             }
@@ -1685,13 +1685,13 @@
             "description": "Conflict"
           }
         },
-        "summary": "Create competence question",
+        "summary": "Create question",
         "tags": [
           "Library / Questions"
         ]
       },
       "get": {
-        "operationId": "CompetenceQuestionsController_search",
+        "operationId": "QuestionsController_search",
         "parameters": [
           {
             "name": "competenceId",
@@ -1799,7 +1799,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CompetenceQuestionResponse"
+                    "$ref": "#/components/schemas/QuestionResponse"
                   }
                 }
               }
@@ -1809,7 +1809,7 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "Search competence questions",
+        "summary": "Search questions",
         "tags": [
           "Library / Questions"
         ]
@@ -1817,7 +1817,7 @@
     },
     "/library/questions/{id}": {
       "get": {
-        "operationId": "CompetenceQuestionsController_getById",
+        "operationId": "QuestionsController_getById",
         "parameters": [
           {
             "name": "id",
@@ -1834,7 +1834,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompetenceQuestionResponse"
+                  "$ref": "#/components/schemas/QuestionResponse"
                 }
               }
             }
@@ -1852,7 +1852,7 @@
         ]
       },
       "patch": {
-        "operationId": "CompetenceQuestionsController_update",
+        "operationId": "QuestionsController_update",
         "parameters": [
           {
             "name": "id",
@@ -1868,7 +1868,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateCompetenceQuestionDto"
+                "$ref": "#/components/schemas/UpdateQuestionDto"
               }
             }
           }
@@ -1879,7 +1879,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompetenceQuestionResponse"
+                  "$ref": "#/components/schemas/QuestionResponse"
                 }
               }
             }
@@ -1897,13 +1897,13 @@
             "description": "Conflict"
           }
         },
-        "summary": "Update competence question",
+        "summary": "Update question",
         "tags": [
           "Library / Questions"
         ]
       },
       "delete": {
-        "operationId": "CompetenceQuestionsController_delete",
+        "operationId": "QuestionsController_delete",
         "parameters": [
           {
             "name": "id",
@@ -1939,7 +1939,7 @@
     },
     "/library/questions/{id}/positions": {
       "post": {
-        "operationId": "CompetenceQuestionsController_attachPosition",
+        "operationId": "QuestionsController_attachPosition",
         "parameters": [
           {
             "name": "id",
@@ -1966,7 +1966,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompetenceQuestionResponse"
+                  "$ref": "#/components/schemas/QuestionResponse"
                 }
               }
             }
@@ -1990,7 +1990,7 @@
         ]
       },
       "get": {
-        "operationId": "CompetenceQuestionsController_listPositions",
+        "operationId": "QuestionsController_listPositions",
         "parameters": [
           {
             "name": "id",
@@ -2027,7 +2027,7 @@
     },
     "/library/questions/{id}/positions/{positionId}": {
       "delete": {
-        "operationId": "CompetenceQuestionsController_detachPosition",
+        "operationId": "QuestionsController_detachPosition",
         "parameters": [
           {
             "name": "id",
@@ -2691,7 +2691,7 @@
           }
         }
       },
-      "CreateCompetenceClusterDto": {
+      "CreateClusterDto": {
         "type": "object",
         "properties": {
           "competenceId": {
@@ -2746,7 +2746,7 @@
           "employeesCount"
         ]
       },
-      "CompetenceClusterResponse": {
+      "ClusterResponse": {
         "type": "object",
         "properties": {
           "id": {
@@ -2812,7 +2812,7 @@
         "type": "object",
         "properties": {}
       },
-      "UpdateCompetenceClusterDto": {
+      "UpdateClusterDto": {
         "type": "object",
         "properties": {
           "competenceId": {
@@ -2858,7 +2858,7 @@
           }
         }
       },
-      "CreateCompetenceQuestionDto": {
+      "CreateQuestionDto": {
         "type": "object",
         "properties": {
           "competenceId": {
@@ -2914,7 +2914,7 @@
           "answerType"
         ]
       },
-      "CompetenceQuestionResponse": {
+      "QuestionResponse": {
         "type": "object",
         "properties": {
           "id": {
@@ -2979,7 +2979,7 @@
           "positionIds"
         ]
       },
-      "UpdateCompetenceQuestionDto": {
+      "UpdateQuestionDto": {
         "type": "object",
         "properties": {
           "competenceId": {

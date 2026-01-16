@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsInt, IsNumber, IsOptional, Min } from 'class-validator';
 import { ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
 
-export class CreateCompetenceClusterDto {
+export class CreateClusterDto {
   @ApiProperty({ description: 'Competence id', example: 2 })
   @ToOptionalInt({ min: 1 })
   @IsInt()

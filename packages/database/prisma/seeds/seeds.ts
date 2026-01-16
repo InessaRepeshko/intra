@@ -3,18 +3,16 @@ import seedPositions from './contexts/positions';
 import seedPositionHierarchy from './contexts/position-hierarchy';
 import seedTeams, { TEAM_SEED_DATA, type TeamMap } from './contexts/teams';
 import seedUsers from './contexts/identity';
-// import getDBConfig from '@intra/api/src/config/database';
+import getDBConfig from '@intra/api/config/database';
 import { PrismaPg } from '@prisma/adapter-pg'
 import type { UserMap } from './contexts/identity';
+import seedLibrary from './contexts/library/index';
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({
-    // connectionString: getDBConfig()?.database?.url ?? null,
-    connectionString: process.env.DATABASE_URL ?? null,
+    connectionString: getDBConfig()?.database?.url ?? null,
   }),
 });
-
-// const prisma = new PrismaClient();
 
 async function assignTeamHeads(
   teamMap: TeamMap,
@@ -55,6 +53,9 @@ async function main() {
 
   await assignTeamHeads(teams, users);
   console.log('🎩 Assigned team heads.');
+
+  await seedLibrary(prisma);
+  console.log('📚 Seeded library.');
 
   console.log('🌱 End seeding database.');
 }

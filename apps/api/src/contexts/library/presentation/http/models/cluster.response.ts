@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class CompetenceClusterResponse {
+export class ClusterResponse {
   @ApiProperty({ example: 1 })
   @Expose()
   id!: number;

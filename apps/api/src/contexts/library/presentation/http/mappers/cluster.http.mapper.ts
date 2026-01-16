@@ -1,9 +1,9 @@
-import { CompetenceClusterDomain } from '../../../domain/competence-cluster.domain';
-import { CompetenceClusterResponse } from '../models/competence-cluster.response';
+import { ClusterDomain } from '../../../domain/cluster.domain';
+import { ClusterResponse } from '../models/cluster.response';
 
-export class CompetenceClusterHttpMapper {
-  static toResponse(domain: CompetenceClusterDomain): CompetenceClusterResponse {
-    const view = new CompetenceClusterResponse();
+export class ClusterHttpMapper {
+  static toResponse(domain: ClusterDomain): ClusterResponse {
+    const view = new ClusterResponse();
     view.id = domain.id!;
     view.competenceId = domain.competenceId;
     view.cycleId = domain.cycleId;

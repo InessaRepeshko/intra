@@ -74,7 +74,7 @@ Table org_positions {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   feedback360s feedback360_feedbacks [not null]
-  questionPositions competence_question_positions [not null]
+  questionPositions library_question_position [not null]
   superiors org_positions_hierarchy [not null]
   subordinates org_positions_hierarchy [not null]
   feedback360Questions feedback360_questions [not null]
@@ -93,19 +93,19 @@ Table org_positions_hierarchy {
   }
 }
 
-Table competence_competences {
+Table library_competences {
   id Int [pk, increment]
   code String [unique]
   title String [unique, not null]
   description String
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
-  competenceClusters competence_clusters [not null]
-  questions competence_questions [not null]
+  clusters library_clusters [not null]
+  questions library_questions [not null]
   feedback360Questions feedback360_questions [not null]
 }
 
-Table competence_clusters {
+Table library_clusters {
   id Int [pk, increment]
   cycleId Int
   competenceId Int [not null]
@@ -119,35 +119,35 @@ Table competence_clusters {
   updatedAt DateTime [default: `now()`, not null]
   clusterScores feedback360_cluster_scores [not null]
   cycle feedback360_cycles
-  competence competence_competences [not null]
+  competence library_competences [not null]
 
   indexes {
     (cycleId, competenceId, lowerBound, upperBound) [unique]
   }
 }
 
-Table competence_questions {
+Table library_questions {
   id Int [pk, increment]
   title String [not null]
-  answerType CompetenceQuestionAnswerType [not null]
+  answerType AnswerType [not null]
   competenceId Int [not null]
   isForSelfassessment Boolean [default: false]
-  questionStatus CompetenceQuestionStatus [not null, default: 'ACTIVE']
+  questionStatus QuestionStatus [not null, default: 'ACTIVE']
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   feedback360Answers feedback360_answers [not null]
   feedback360QuestionRelations feedback360_questions_relations [not null]
-  competence competence_competences [not null]
-  questionPositions competence_question_positions [not null]
+  competence library_competences [not null]
+  questionPositions library_question_position [not null]
   feedback360Questions feedback360_questions [not null]
 }
 
-Table competence_question_positions {
+Table library_question_position {
   id Int [pk, increment]
   questionId Int [not null]
   positionId Int [not null]
   createdAt DateTime [default: `now()`, not null]
-  question competence_questions [not null]
+  question library_questions [not null]
   position org_positions [not null]
 
   indexes {
@@ -170,7 +170,7 @@ Table feedback360_cycles {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   clusterScores feedback360_cluster_scores [not null]
-  competenceClusters competence_clusters [not null]
+  clusters library_clusters [not null]
   feedback360s feedback360_feedbacks [not null]
   reports reporting_feedback360_reports [not null]
   feedback360Questions feedback360_questions [not null]
@@ -202,14 +202,14 @@ Table feedback360_questions {
   cycleId Int
   questionId Int
   title String [not null]
-  answerType CompetenceQuestionAnswerType [not null]
+  answerType AnswerType [not null]
   competenceId Int
   positionId Int
   isForSelfassessment Boolean [default: false]
   createdAt DateTime [default: `now()`, not null]
   cycle feedback360_cycles
-  question competence_questions
-  competence competence_competences
+  question library_questions
+  competence library_competences
   position org_positions
   answers feedback360_answers [not null]
 }
@@ -219,12 +219,12 @@ Table feedback360_questions_relations {
   feedback360Id Int [not null]
   questionId Int [not null]
   questionTitle String [not null]
-  answerType CompetenceQuestionAnswerType [not null]
+  answerType AnswerType [not null]
   competenceId Int [not null]
   isForSelfassessment Boolean [default: false]
   createdAt DateTime [default: `now()`, not null]
   feedback360 feedback360_feedbacks [not null]
-  question competence_questions [not null]
+  question library_questions [not null]
 
   indexes {
     (feedback360Id, questionId) [unique]
@@ -237,11 +237,11 @@ Table feedback360_answers {
   questionId Int [not null]
   feedback360QuestionId Int
   respondentCategory RespondentCategory [not null]
-  answerType CompetenceQuestionAnswerType [not null, default: 'NUMERICAL_SCALE']
+  answerType AnswerType [not null, default: 'NUMERICAL_SCALE']
   numericalValue Int
   textValue String
   createdAt DateTime [default: `now()`, not null]
-  question competence_questions [not null]
+  question library_questions [not null]
   feedback360Question feedback360_questions
   feedback360 feedback360_feedbacks [not null]
 }
@@ -256,7 +256,7 @@ Table feedback360_cluster_scores {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   cycle feedback360_cycles
-  competenceCluster competence_clusters [not null]
+  cluster library_clusters [not null]
   feedback360 feedback360_feedbacks
 
   indexes {
@@ -358,12 +358,12 @@ Enum IdentityUsersStatus {
   ACTIVE
 }
 
-Enum CompetenceQuestionAnswerType {
+Enum AnswerType {
   NUMERICAL_SCALE
   TEXT_FIELD
 }
 
-Enum CompetenceQuestionStatus {
+Enum QuestionStatus {
   ARCHIVE
   ACTIVE
 }
@@ -423,15 +423,15 @@ Ref: org_positions_hierarchy.superiorPositionId > org_positions.id [delete: Casc
 
 Ref: org_positions_hierarchy.subordinatePositionId > org_positions.id [delete: Cascade]
 
-Ref: competence_clusters.cycleId > feedback360_cycles.id [delete: No Action]
+Ref: library_clusters.cycleId > feedback360_cycles.id [delete: No Action]
 
-Ref: competence_clusters.competenceId > competence_competences.id [delete: No Action]
+Ref: library_clusters.competenceId > library_competences.id [delete: No Action]
 
-Ref: competence_questions.competenceId > competence_competences.id [delete: No Action]
+Ref: library_questions.competenceId > library_competences.id [delete: No Action]
 
-Ref: competence_question_positions.questionId > competence_questions.id [delete: No Action]
+Ref: library_question_position.questionId > library_questions.id [delete: No Action]
 
-Ref: competence_question_positions.positionId > org_positions.id [delete: No Action]
+Ref: library_question_position.positionId > org_positions.id [delete: No Action]
 
 Ref: feedback360_feedbacks.cycleId > feedback360_cycles.id [delete: No Action]
 
@@ -439,17 +439,17 @@ Ref: feedback360_feedbacks.positionId > org_positions.id [delete: No Action]
 
 Ref: feedback360_questions.cycleId > feedback360_cycles.id [delete: Set Null]
 
-Ref: feedback360_questions.questionId > competence_questions.id [delete: Set Null]
+Ref: feedback360_questions.questionId > library_questions.id [delete: Set Null]
 
-Ref: feedback360_questions.competenceId > competence_competences.id [delete: Set Null]
+Ref: feedback360_questions.competenceId > library_competences.id [delete: Set Null]
 
 Ref: feedback360_questions.positionId > org_positions.id [delete: Set Null]
 
 Ref: feedback360_questions_relations.feedback360Id > feedback360_feedbacks.id [delete: No Action]
 
-Ref: feedback360_questions_relations.questionId > competence_questions.id [delete: No Action]
+Ref: feedback360_questions_relations.questionId > library_questions.id [delete: No Action]
 
-Ref: feedback360_answers.questionId > competence_questions.id [delete: No Action]
+Ref: feedback360_answers.questionId > library_questions.id [delete: No Action]
 
 Ref: feedback360_answers.feedback360QuestionId > feedback360_questions.id [delete: Set Null]
 
@@ -457,7 +457,7 @@ Ref: feedback360_answers.feedback360Id > feedback360_feedbacks.id [delete: No Ac
 
 Ref: feedback360_cluster_scores.cycleId > feedback360_cycles.id [delete: No Action]
 
-Ref: feedback360_cluster_scores.clusterId > competence_clusters.id [delete: No Action]
+Ref: feedback360_cluster_scores.clusterId > library_clusters.id [delete: No Action]
 
 Ref: feedback360_cluster_scores.feedback360Id > feedback360_feedbacks.id [delete: No Action]
 

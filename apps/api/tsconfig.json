@@ -8,24 +8,11 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "src/*": [
-        "src/*"
-      ],
-      "@intra/database": [
-        "../../packages/database/src/generated"
-      ],
-      "@intra/database/*": [
-        "../../packages/database/src/generated/*"
-      ]
+      "src/*": ["src/*"],
+      "@intra/database": ["../../packages/database/src/generated"],
+      "@intra/database/*": ["../../packages/database/src/generated/*"]
     }
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "test",
-    "**/*spec.ts"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*spec.ts"]
 }

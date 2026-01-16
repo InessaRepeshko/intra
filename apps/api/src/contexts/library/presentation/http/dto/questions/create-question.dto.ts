@@ -1,11 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 import { ToOptionalBool, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { CompetenceQuestionAnswerType } from 'src/contexts/library/domain/competence-question-answer-type.enum';
-import { CompetenceQuestionStatus } from 'src/contexts/library/domain/competence-question-status.enum';
-import { CompetenceQuestionConstants } from 'src/common/validators/constants';
+import { AnswerType } from 'src/contexts/library/domain/answer-type.enum';
+import { QuestionStatus } from 'src/contexts/library/domain/question-status.enum';
+import { QuestionConstants } from 'src/common/validators/constants';
 
-export class CreateCompetenceQuestionDto {
+export class CreateQuestionDto {
   @ApiProperty({ description: 'Competence id the question belongs to', example: 2 })
   @ToOptionalInt({ min: 1 })
   @IsInt()
@@ -15,19 +15,19 @@ export class CreateCompetenceQuestionDto {
   @ApiProperty({
     description: 'Question text/title',
     example: 'Delivers features on time',
-    minLength: CompetenceQuestionConstants.TITLE_MIN_LENGTH,
-    maxLength: CompetenceQuestionConstants.TITLE_MAX_LENGTH,
+    minLength: QuestionConstants.TITLE_MIN_LENGTH,
+    maxLength: QuestionConstants.TITLE_MAX_LENGTH,
   })
   @ToOptionalTrimmedString()
   @IsString()
   @IsNotEmpty()
-  @MinLength(CompetenceQuestionConstants.TITLE_MIN_LENGTH)
-  @MaxLength(CompetenceQuestionConstants.TITLE_MAX_LENGTH)
+  @MinLength(QuestionConstants.TITLE_MIN_LENGTH)
+  @MaxLength(QuestionConstants.TITLE_MAX_LENGTH)
   title!: string;
 
-  @ApiProperty({ enum: CompetenceQuestionAnswerType, example: CompetenceQuestionAnswerType.NUMERICAL_SCALE })
-  @IsEnum(CompetenceQuestionAnswerType)
-  answerType!: CompetenceQuestionAnswerType;
+  @ApiProperty({ enum: AnswerType, example: AnswerType.NUMERICAL_SCALE })
+  @IsEnum(AnswerType)
+  answerType!: AnswerType;
 
   @ApiPropertyOptional({ description: 'Is this question for self assessment', example: false, default: false })
   @ToOptionalBool()
@@ -35,10 +35,10 @@ export class CreateCompetenceQuestionDto {
   @IsBoolean()
   isForSelfassessment?: boolean;
 
-  @ApiPropertyOptional({ enum: CompetenceQuestionStatus, example: CompetenceQuestionStatus.ACTIVE, default: CompetenceQuestionStatus.ACTIVE })
+  @ApiPropertyOptional({ enum: QuestionStatus, example: QuestionStatus.ACTIVE, default: QuestionStatus.ACTIVE })
   @IsOptional()
-  @IsEnum(CompetenceQuestionStatus)
-  questionStatus?: CompetenceQuestionStatus;
+  @IsEnum(QuestionStatus)
+  questionStatus?: QuestionStatus;
 
   @ApiPropertyOptional({ description: 'Positions this question is linked to', type: [Number], example: [1, 2] })
   @IsOptional()
