@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
-import { CompetenceSortField } from 'src/contexts/competence/application/ports/competence.repository.port';
+import { CompetenceSortField } from 'src/contexts/library/application/ports/competence.repository.port';
 
 export class CompetenceQueryDto {
   @ApiPropertyOptional({ description: 'Search by title or code', example: 'Engineering' })

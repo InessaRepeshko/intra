@@ -36,5 +36,5 @@ import { CompetenceQuestionsController } from './presentation/http/controllers/c
   ],
   exports: [CompetenceService, CompetenceClusterService, CompetenceQuestionService],
 })
-export class CompetenceModule {}
+export class LibraryModule { }
 

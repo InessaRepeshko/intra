@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 import { ToOptionalBool, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { CompetenceQuestionAnswerType } from 'src/contexts/competence/domain/competence-question-answer-type.enum';
-import { CompetenceQuestionStatus } from 'src/contexts/competence/domain/competence-question-status.enum';
+import { CompetenceQuestionAnswerType } from 'src/contexts/library/domain/competence-question-answer-type.enum';
+import { CompetenceQuestionStatus } from 'src/contexts/library/domain/competence-question-status.enum';
 import { CompetenceQuestionConstants } from 'src/common/validators/constants';
 
 export class CreateCompetenceQuestionDto {

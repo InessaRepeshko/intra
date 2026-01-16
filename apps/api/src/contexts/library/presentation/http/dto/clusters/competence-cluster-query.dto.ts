@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
 import { ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
-import { CompetenceClusterSortField } from 'src/contexts/competence/application/ports/competence-cluster.repository.port';
+import { CompetenceClusterSortField } from 'src/contexts/library/application/ports/competence-cluster.repository.port';
 
 export class CompetenceClusterQueryDto {
   @ApiPropertyOptional({ description: 'Filter by competence id', example: 2 })

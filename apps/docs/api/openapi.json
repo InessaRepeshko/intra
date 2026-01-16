@@ -1174,7 +1174,7 @@
         ]
       }
     },
-    "/competence/competences": {
+    "/library/competences": {
       "post": {
         "operationId": "CompetencesController_create",
         "parameters": [],
@@ -1214,7 +1214,7 @@
         },
         "summary": "Create a competence",
         "tags": [
-          "Competence / Competences"
+          "Library / Competences"
         ]
       },
       "get": {
@@ -1280,11 +1280,11 @@
         },
         "summary": "Search competences",
         "tags": [
-          "Competence / Competences"
+          "Library / Competences"
         ]
       }
     },
-    "/competence/competences/{id}": {
+    "/library/competences/{id}": {
       "get": {
         "operationId": "CompetencesController_getById",
         "parameters": [
@@ -1317,7 +1317,7 @@
         },
         "summary": "Get competence by id",
         "tags": [
-          "Competence / Competences"
+          "Library / Competences"
         ]
       },
       "patch": {
@@ -1368,7 +1368,7 @@
         },
         "summary": "Update competence",
         "tags": [
-          "Competence / Competences"
+          "Library / Competences"
         ]
       },
       "delete": {
@@ -1402,11 +1402,11 @@
         },
         "summary": "Delete competence",
         "tags": [
-          "Competence / Competences"
+          "Library / Competences"
         ]
       }
     },
-    "/competence/clusters": {
+    "/library/clusters": {
       "post": {
         "operationId": "CompetenceClustersController_create",
         "parameters": [],
@@ -1446,7 +1446,7 @@
         },
         "summary": "Create competence cluster",
         "tags": [
-          "Competence / Clusters"
+          "Library / Clusters"
         ]
       },
       "get": {
@@ -1521,11 +1521,11 @@
         },
         "summary": "Search competence clusters",
         "tags": [
-          "Competence / Clusters"
+          "Library / Clusters"
         ]
       }
     },
-    "/competence/clusters/{id}": {
+    "/library/clusters/{id}": {
       "get": {
         "operationId": "CompetenceClustersController_getById",
         "parameters": [
@@ -1558,7 +1558,7 @@
         },
         "summary": "Get competence cluster by id",
         "tags": [
-          "Competence / Clusters"
+          "Library / Clusters"
         ]
       },
       "patch": {
@@ -1609,7 +1609,7 @@
         },
         "summary": "Update competence cluster",
         "tags": [
-          "Competence / Clusters"
+          "Library / Clusters"
         ]
       },
       "delete": {
@@ -1643,11 +1643,11 @@
         },
         "summary": "Delete competence cluster",
         "tags": [
-          "Competence / Clusters"
+          "Library / Clusters"
         ]
       }
     },
-    "/competence/questions": {
+    "/library/questions": {
       "post": {
         "operationId": "CompetenceQuestionsController_create",
         "parameters": [],
@@ -1687,7 +1687,7 @@
         },
         "summary": "Create competence question",
         "tags": [
-          "Competence / Questions"
+          "Library / Questions"
         ]
       },
       "get": {
@@ -1811,11 +1811,11 @@
         },
         "summary": "Search competence questions",
         "tags": [
-          "Competence / Questions"
+          "Library / Questions"
         ]
       }
     },
-    "/competence/questions/{id}": {
+    "/library/questions/{id}": {
       "get": {
         "operationId": "CompetenceQuestionsController_getById",
         "parameters": [
@@ -1848,7 +1848,7 @@
         },
         "summary": "Get question by id",
         "tags": [
-          "Competence / Questions"
+          "Library / Questions"
         ]
       },
       "patch": {
@@ -1899,7 +1899,7 @@
         },
         "summary": "Update competence question",
         "tags": [
-          "Competence / Questions"
+          "Library / Questions"
         ]
       },
       "delete": {
@@ -1933,11 +1933,11 @@
         },
         "summary": "Delete question",
         "tags": [
-          "Competence / Questions"
+          "Library / Questions"
         ]
       }
     },
-    "/competence/questions/{id}/positions": {
+    "/library/questions/{id}/positions": {
       "post": {
         "operationId": "CompetenceQuestionsController_attachPosition",
         "parameters": [
@@ -1986,7 +1986,7 @@
         },
         "summary": "Attach question to position",
         "tags": [
-          "Competence / Questions"
+          "Library / Questions"
         ]
       },
       "get": {
@@ -2021,11 +2021,11 @@
         },
         "summary": "List linked positions for the question",
         "tags": [
-          "Competence / Questions"
+          "Library / Questions"
         ]
       }
     },
-    "/competence/questions/{id}/positions/{positionId}": {
+    "/library/questions/{id}/positions/{positionId}": {
       "delete": {
         "operationId": "CompetenceQuestionsController_detachPosition",
         "parameters": [
@@ -2065,7 +2065,7 @@
         },
         "summary": "Detach question from position",
         "tags": [
-          "Competence / Questions"
+          "Library / Questions"
         ]
       }
     }

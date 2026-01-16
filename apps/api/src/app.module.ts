@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { IdentityModule } from './contexts/identity/identity.module';
 import { OrgStructureModule } from './contexts/org-structure/org-structure.module';
-import { CompetenceModule } from './contexts/competence/competence.module';
+import { LibraryModule } from './contexts/library/library.module';
 import appConfig from './config/app';
 import databaseConfig from './config/database';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -24,7 +24,7 @@ import { DatabaseModule } from './database/database.module';
     DatabaseModule,
     IdentityModule,
     OrgStructureModule,
-    CompetenceModule,
+    LibraryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

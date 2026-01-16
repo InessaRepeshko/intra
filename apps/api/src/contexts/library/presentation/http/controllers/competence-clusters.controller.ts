@@ -27,8 +27,8 @@ import {
   ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
 
-@ApiTags('Competence / Clusters')
-@Controller('competence/clusters')
+@ApiTags('Library / Clusters')
+@Controller('library/clusters')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: CompetenceClusterResponse })
 export class CompetenceClustersController {

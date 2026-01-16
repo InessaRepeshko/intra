@@ -28,8 +28,8 @@ import {
   ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
 
-@ApiTags('Competence / Questions')
-@Controller('competence/questions')
+@ApiTags('Library / Questions')
+@Controller('library/questions')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: CompetenceQuestionResponse })
 export class CompetenceQuestionsController {

@@ -27,8 +27,8 @@ import {
   ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
 
-@ApiTags('Competence / Competences')
-@Controller('competence/competences')
+@ApiTags('Library / Competences')
+@Controller('library/competences')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: CompetenceResponse })
 export class CompetencesController {
