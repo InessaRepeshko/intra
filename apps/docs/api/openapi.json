@@ -1173,6 +1173,901 @@
           "Org Structure / Positions"
         ]
       }
+    },
+    "/competence/competences": {
+      "post": {
+        "operationId": "CompetencesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCompetenceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetenceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create a competence",
+        "tags": [
+          "Competence / Competences"
+        ]
+      },
+      "get": {
+        "operationId": "CompetencesController_search",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by title or code",
+            "schema": {
+              "example": "Engineering",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "title",
+              "type": "string",
+              "enum": [
+                "id",
+                "code",
+                "title",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompetenceResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Search competences",
+        "tags": [
+          "Competence / Competences"
+        ]
+      }
+    },
+    "/competence/competences/{id}": {
+      "get": {
+        "operationId": "CompetencesController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetenceResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get competence by id",
+        "tags": [
+          "Competence / Competences"
+        ]
+      },
+      "patch": {
+        "operationId": "CompetencesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCompetenceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetenceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update competence",
+        "tags": [
+          "Competence / Competences"
+        ]
+      },
+      "delete": {
+        "operationId": "CompetencesController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete competence",
+        "tags": [
+          "Competence / Competences"
+        ]
+      }
+    },
+    "/competence/clusters": {
+      "post": {
+        "operationId": "CompetenceClustersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCompetenceClusterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetenceClusterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create competence cluster",
+        "tags": [
+          "Competence / Clusters"
+        ]
+      },
+      "get": {
+        "operationId": "CompetenceClustersController_search",
+        "parameters": [
+          {
+            "name": "competenceId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by competence id",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by cycle id",
+            "schema": {
+              "$ref": "#/components/schemas/Object"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "createdAt",
+              "type": "string",
+              "enum": [
+                "id",
+                "lowerBound",
+                "upperBound",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompetenceClusterResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Search competence clusters",
+        "tags": [
+          "Competence / Clusters"
+        ]
+      }
+    },
+    "/competence/clusters/{id}": {
+      "get": {
+        "operationId": "CompetenceClustersController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetenceClusterResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get competence cluster by id",
+        "tags": [
+          "Competence / Clusters"
+        ]
+      },
+      "patch": {
+        "operationId": "CompetenceClustersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCompetenceClusterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetenceClusterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update competence cluster",
+        "tags": [
+          "Competence / Clusters"
+        ]
+      },
+      "delete": {
+        "operationId": "CompetenceClustersController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete competence cluster",
+        "tags": [
+          "Competence / Clusters"
+        ]
+      }
+    },
+    "/competence/questions": {
+      "post": {
+        "operationId": "CompetenceQuestionsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCompetenceQuestionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetenceQuestionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create competence question",
+        "tags": [
+          "Competence / Questions"
+        ]
+      },
+      "get": {
+        "operationId": "CompetenceQuestionsController_search",
+        "parameters": [
+          {
+            "name": "competenceId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by competence id",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by position id",
+            "schema": {
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "active",
+              "type": "string",
+              "enum": [
+                "archive",
+                "active"
+              ]
+            }
+          },
+          {
+            "name": "answerType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "text_field",
+              "type": "string",
+              "enum": [
+                "numerical_scale",
+                "text_field"
+              ]
+            }
+          },
+          {
+            "name": "isForSelfassessment",
+            "required": false,
+            "in": "query",
+            "description": "Filter self assessment questions",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search in title",
+            "schema": {
+              "maxLength": 1000,
+              "example": "features",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "title",
+              "type": "string",
+              "enum": [
+                "id",
+                "title",
+                "answerType",
+                "questionStatus",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "asc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompetenceQuestionResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Search competence questions",
+        "tags": [
+          "Competence / Questions"
+        ]
+      }
+    },
+    "/competence/questions/{id}": {
+      "get": {
+        "operationId": "CompetenceQuestionsController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetenceQuestionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get question by id",
+        "tags": [
+          "Competence / Questions"
+        ]
+      },
+      "patch": {
+        "operationId": "CompetenceQuestionsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCompetenceQuestionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetenceQuestionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update competence question",
+        "tags": [
+          "Competence / Questions"
+        ]
+      },
+      "delete": {
+        "operationId": "CompetenceQuestionsController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete question",
+        "tags": [
+          "Competence / Questions"
+        ]
+      }
+    },
+    "/competence/questions/{id}/positions": {
+      "post": {
+        "operationId": "CompetenceQuestionsController_attachPosition",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachQuestionPositionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetenceQuestionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Attach question to position",
+        "tags": [
+          "Competence / Questions"
+        ]
+      },
+      "get": {
+        "operationId": "CompetenceQuestionsController_listPositions",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List linked positions for the question",
+        "tags": [
+          "Competence / Questions"
+        ]
+      }
+    },
+    "/competence/questions/{id}/positions/{positionId}": {
+      "delete": {
+        "operationId": "CompetenceQuestionsController_detachPosition",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Detach question from position",
+        "tags": [
+          "Competence / Questions"
+        ]
+      }
     }
   },
   "info": {
@@ -1698,6 +2593,454 @@
         },
         "required": [
           "subordinateId"
+        ]
+      },
+      "CreateCompetenceDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "object",
+            "description": "Optional competence code",
+            "example": "ENG-001",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "title": {
+            "type": "string",
+            "description": "Competence title",
+            "example": "Engineering excellence",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "object",
+            "description": "Competence description",
+            "example": "Ability to deliver high-quality software",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "CompetenceResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "code": {
+            "type": "object",
+            "example": "ENG-001",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "example": "Engineering excellence"
+          },
+          "description": {
+            "type": "object",
+            "example": "Ability to deliver high-quality software",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T10:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-01-02T10:00:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateCompetenceDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "object",
+            "description": "Optional competence code",
+            "example": "ENG-001",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "title": {
+            "type": "string",
+            "description": "Competence title",
+            "example": "Engineering excellence",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "object",
+            "description": "Competence description",
+            "example": "Ability to deliver high-quality software",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        }
+      },
+      "CreateCompetenceClusterDto": {
+        "type": "object",
+        "properties": {
+          "competenceId": {
+            "type": "number",
+            "description": "Competence id",
+            "example": 2
+          },
+          "cycleId": {
+            "type": "object",
+            "description": "Feedback360 cycle id",
+            "example": 3,
+            "nullable": true
+          },
+          "lowerBound": {
+            "type": "number",
+            "description": "Lower bound of the cluster",
+            "example": 0
+          },
+          "upperBound": {
+            "type": "number",
+            "description": "Upper bound of the cluster",
+            "example": 10
+          },
+          "minScore": {
+            "type": "number",
+            "description": "Minimal score in the cluster",
+            "example": 2
+          },
+          "maxScore": {
+            "type": "number",
+            "description": "Max score in the cluster",
+            "example": 9.5
+          },
+          "averageScore": {
+            "type": "number",
+            "description": "Average score in the cluster",
+            "example": 6.2
+          },
+          "employeesCount": {
+            "type": "number",
+            "description": "Employees in cluster",
+            "example": 30
+          }
+        },
+        "required": [
+          "competenceId",
+          "lowerBound",
+          "upperBound",
+          "minScore",
+          "maxScore",
+          "averageScore",
+          "employeesCount"
+        ]
+      },
+      "CompetenceClusterResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "competenceId": {
+            "type": "number",
+            "example": 2
+          },
+          "cycleId": {
+            "type": "object",
+            "example": 5,
+            "nullable": true
+          },
+          "lowerBound": {
+            "type": "number",
+            "example": 0
+          },
+          "upperBound": {
+            "type": "number",
+            "example": 10
+          },
+          "minScore": {
+            "type": "number",
+            "example": 2
+          },
+          "maxScore": {
+            "type": "number",
+            "example": 9.5
+          },
+          "averageScore": {
+            "type": "number",
+            "example": 6.2
+          },
+          "employeesCount": {
+            "type": "number",
+            "example": 30
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T10:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-01-02T10:00:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "competenceId",
+          "lowerBound",
+          "upperBound",
+          "minScore",
+          "maxScore",
+          "averageScore",
+          "employeesCount",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Object": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateCompetenceClusterDto": {
+        "type": "object",
+        "properties": {
+          "competenceId": {
+            "type": "number",
+            "description": "Competence id",
+            "example": 2
+          },
+          "cycleId": {
+            "type": "object",
+            "description": "Feedback360 cycle id",
+            "example": 3,
+            "nullable": true
+          },
+          "lowerBound": {
+            "type": "number",
+            "description": "Lower bound of the cluster",
+            "example": 0
+          },
+          "upperBound": {
+            "type": "number",
+            "description": "Upper bound of the cluster",
+            "example": 10
+          },
+          "minScore": {
+            "type": "number",
+            "description": "Minimal score in the cluster",
+            "example": 2
+          },
+          "maxScore": {
+            "type": "number",
+            "description": "Max score in the cluster",
+            "example": 9.5
+          },
+          "averageScore": {
+            "type": "number",
+            "description": "Average score in the cluster",
+            "example": 6.2
+          },
+          "employeesCount": {
+            "type": "number",
+            "description": "Employees in cluster",
+            "example": 30
+          }
+        }
+      },
+      "CreateCompetenceQuestionDto": {
+        "type": "object",
+        "properties": {
+          "competenceId": {
+            "type": "number",
+            "description": "Competence id the question belongs to",
+            "example": 2
+          },
+          "title": {
+            "type": "string",
+            "description": "Question text/title",
+            "example": "Delivers features on time",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "answerType": {
+            "type": "string",
+            "enum": [
+              "numerical_scale",
+              "text_field"
+            ],
+            "example": "numerical_scale"
+          },
+          "isForSelfassessment": {
+            "type": "boolean",
+            "description": "Is this question for self assessment",
+            "example": false,
+            "default": false
+          },
+          "questionStatus": {
+            "type": "string",
+            "enum": [
+              "archive",
+              "active"
+            ],
+            "example": "active",
+            "default": "active"
+          },
+          "positionIds": {
+            "description": "Positions this question is linked to",
+            "example": [
+              1,
+              2
+            ],
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "competenceId",
+          "title",
+          "answerType"
+        ]
+      },
+      "CompetenceQuestionResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "competenceId": {
+            "type": "number",
+            "example": 2
+          },
+          "title": {
+            "type": "string",
+            "example": "Delivers features on time"
+          },
+          "answerType": {
+            "type": "string",
+            "enum": [
+              "numerical_scale",
+              "text_field"
+            ],
+            "example": "numerical_scale"
+          },
+          "isForSelfassessment": {
+            "type": "boolean",
+            "example": false
+          },
+          "questionStatus": {
+            "type": "string",
+            "enum": [
+              "archive",
+              "active"
+            ],
+            "example": "active"
+          },
+          "positionIds": {
+            "example": [
+              1,
+              2,
+              3
+            ],
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T10:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-01-02T10:00:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "competenceId",
+          "title",
+          "answerType",
+          "isForSelfassessment",
+          "questionStatus",
+          "positionIds"
+        ]
+      },
+      "UpdateCompetenceQuestionDto": {
+        "type": "object",
+        "properties": {
+          "competenceId": {
+            "type": "number",
+            "description": "Competence id the question belongs to",
+            "example": 2
+          },
+          "title": {
+            "type": "string",
+            "description": "Question text/title",
+            "example": "Delivers features on time",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "answerType": {
+            "type": "string",
+            "enum": [
+              "numerical_scale",
+              "text_field"
+            ],
+            "example": "numerical_scale"
+          },
+          "isForSelfassessment": {
+            "type": "boolean",
+            "description": "Is this question for self assessment",
+            "example": false,
+            "default": false
+          },
+          "questionStatus": {
+            "type": "string",
+            "enum": [
+              "archive",
+              "active"
+            ],
+            "example": "active",
+            "default": "active"
+          },
+          "positionIds": {
+            "description": "Positions this question is linked to",
+            "example": [
+              1,
+              2
+            ],
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "AttachQuestionPositionDto": {
+        "type": "object",
+        "properties": {
+          "positionId": {
+            "type": "number",
+            "description": "Position id to link",
+            "example": 5
+          }
+        },
+        "required": [
+          "positionId"
         ]
       }
     }
