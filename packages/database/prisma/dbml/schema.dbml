@@ -75,21 +75,21 @@ Table org_positions {
   updatedAt DateTime [default: `now()`, not null]
   feedback360s feedback360_feedbacks [not null]
   questionPositions competence_question_positions [not null]
-  parentLinks org_positions_hierarchy [not null]
-  childLinks org_positions_hierarchy [not null]
+  superiors org_positions_hierarchy [not null]
+  subordinates org_positions_hierarchy [not null]
   feedback360Questions feedback360_questions [not null]
 }
 
 Table org_positions_hierarchy {
   id Int [pk, increment]
-  parentPositionId Int [not null]
-  childPositionId Int [not null]
+  superiorPositionId Int [not null]
+  subordinatePositionId Int [not null]
   createdAt DateTime [default: `now()`, not null]
-  parent org_positions [not null]
-  child org_positions [not null]
+  superior org_positions [not null]
+  subordinate org_positions [not null]
 
   indexes {
-    (parentPositionId, childPositionId) [unique]
+    (superiorPositionId, subordinatePositionId) [unique]
   }
 }
 
@@ -419,9 +419,9 @@ Ref: identity_user_roles.roleCode > identity_roles.code [delete: No Action]
 
 Ref: org_team_memberships.teamId > org_teams.id [delete: Cascade]
 
-Ref: org_positions_hierarchy.parentPositionId > org_positions.id [delete: Cascade]
+Ref: org_positions_hierarchy.superiorPositionId > org_positions.id [delete: Cascade]
 
-Ref: org_positions_hierarchy.childPositionId > org_positions.id [delete: Cascade]
+Ref: org_positions_hierarchy.subordinatePositionId > org_positions.id [delete: Cascade]
 
 Ref: competence_clusters.cycleId > feedback360_cycles.id [delete: No Action]
 

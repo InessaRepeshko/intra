@@ -79,40 +79,40 @@ export class PositionsController {
     await this.positions.delete(Number(id));
   }
 
-  @Post(':id/children')
-  @ApiOperation({ summary: 'Add a child position' })
+  @Post(':id/subordinates')
+  @ApiOperation({ summary: 'Add a subordinate position' })
   @ApiResponse({ status: HttpStatus.CREATED, type: PositionResponse })
   @ApiCreateAndUpdateErrorResponses()
-  async linkChild(@Param('id') id: string, @Body() dto: CreatePositionLinkDto): Promise<PositionResponse> {
-    await this.hierarchy.link(Number(id), dto.childId);
-    const child = await this.positions.getById(dto.childId);
-    return PositionHttpMapper.toResponse(child);
+  async linkSubordinate(@Param('id') id: string, @Body() dto: CreatePositionLinkDto): Promise<PositionResponse> {
+    await this.hierarchy.link(Number(id), dto.subordinateId);
+    const subordinate = await this.positions.getById(dto.subordinateId);
+    return PositionHttpMapper.toResponse(subordinate);
   }
 
-  @Delete(':id/children/:childId')
+  @Delete(':id/subordinates/:subordinateId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a child position' })
+  @ApiOperation({ summary: 'Delete a subordinate position' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
-  async unlinkChild(@Param('id') id: string, @Param('childId') childId: string): Promise<void> {
-    await this.hierarchy.unlink(Number(id), Number(childId));
+  async unlinkSubordinate(@Param('id') id: string, @Param('subordinateId') subordinateId: string): Promise<void> {
+    await this.hierarchy.unlink(Number(id), Number(subordinateId));
   }
 
-  @Get(':id/children')
-  @ApiOperation({ summary: 'List child positions' })
+  @Get(':id/subordinates')
+  @ApiOperation({ summary: 'List subordinate positions' })
   @ApiResponse({ status: HttpStatus.OK, type: [PositionResponse] })
   @ApiListReadErrorResponses()
-  async listChildren(@Param('id') id: string): Promise<PositionResponse[]> {
-    const children = await this.hierarchy.listChildren(Number(id));
-    return children.map(PositionHttpMapper.toResponse);
+  async listSubordinates(@Param('id') id: string): Promise<PositionResponse[]> {
+    const subordinates = await this.hierarchy.listSubordinates(Number(id));
+    return subordinates.map(PositionHttpMapper.toResponse);
   }
 
-  @Get(':id/parents')
-  @ApiOperation({ summary: 'List parent positions' })
+  @Get(':id/superiors')
+  @ApiOperation({ summary: 'List superior positions' })
   @ApiResponse({ status: HttpStatus.OK, type: [PositionResponse] })
   @ApiListReadErrorResponses()
-  async listParents(@Param('id') id: string): Promise<PositionResponse[]> {
-    const parents = await this.hierarchy.listParents(Number(id));
-    return parents.map(PositionHttpMapper.toResponse);
+  async listSuperiors(@Param('id') id: string): Promise<PositionResponse[]> {
+    const superiors = await this.hierarchy.listSuperiors(Number(id));
+    return superiors.map(PositionHttpMapper.toResponse);
   }
 }

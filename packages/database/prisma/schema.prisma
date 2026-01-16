@@ -126,24 +126,24 @@ model Position {
 
   feedback360s      Feedback360[]
   questionPositions QuestionPositionRelation[]
-  parentLinks       PositionHierarchy[] @relation("position_parent")
-  childLinks        PositionHierarchy[] @relation("position_child")
+  superiors         PositionHierarchy[] @relation("position_superior")
+  subordinates      PositionHierarchy[] @relation("position_subordinate")
 
   @@map("org_positions")
   feedback360Questions Feedback360Question[] @relation(map: "feedback360_questions_ibfk_position")
 }
 
 model PositionHierarchy {
-  id                Int      @id @default(autoincrement())
-  parentPositionId  Int      @map("parent_position_id")
-  childPositionId   Int      @map("child_position_id")
-  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  id                      Int      @id @default(autoincrement())
+  superiorPositionId      Int      @map("superior_position_id")
+  subordinatePositionId   Int      @map("subordinate_position_id")
+  createdAt               DateTime @default(now()) @map("created_at") @db.Timestamp(0)
 
-  parent Position @relation("position_parent", fields: [parentPositionId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "org_positions_hierarchy_ibfk_1")
-  child  Position @relation("position_child", fields: [childPositionId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "org_positions_hierarchy_ibfk_2")
+  superior Position @relation("position_superior", fields: [superiorPositionId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "org_positions_hierarchy_ibfk_1")
+  subordinate  Position @relation("position_subordinate", fields: [subordinatePositionId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "org_positions_hierarchy_ibfk_2")
 
-  @@unique([parentPositionId, childPositionId], map: "org_unique_position_hierarchy")
-  @@index([childPositionId], map: "org_idx_child_position")
+  @@unique([superiorPositionId, subordinatePositionId], map: "org_unique_position_hierarchy")
+  @@index([subordinatePositionId], map: "org_idx_subordinate_position")
   @@map("org_positions_hierarchy")
 }
 

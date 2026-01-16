@@ -1005,9 +1005,9 @@
         ]
       }
     },
-    "/org/positions/{id}/children": {
+    "/org/positions/{id}/subordinates": {
       "post": {
-        "operationId": "PositionsController_linkChild",
+        "operationId": "PositionsController_linkSubordinate",
         "parameters": [
           {
             "name": "id",
@@ -1052,13 +1052,13 @@
             "description": "Conflict"
           }
         },
-        "summary": "Add a child position",
+        "summary": "Add a subordinate position",
         "tags": [
           "Org Structure / Positions"
         ]
       },
       "get": {
-        "operationId": "PositionsController_listChildren",
+        "operationId": "PositionsController_listSubordinates",
         "parameters": [
           {
             "name": "id",
@@ -1087,15 +1087,15 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "List child positions",
+        "summary": "List subordinate positions",
         "tags": [
           "Org Structure / Positions"
         ]
       }
     },
-    "/org/positions/{id}/children/{childId}": {
+    "/org/positions/{id}/subordinates/{subordinateId}": {
       "delete": {
-        "operationId": "PositionsController_unlinkChild",
+        "operationId": "PositionsController_unlinkSubordinate",
         "parameters": [
           {
             "name": "id",
@@ -1106,7 +1106,7 @@
             }
           },
           {
-            "name": "childId",
+            "name": "subordinateId",
             "required": true,
             "in": "path",
             "schema": {
@@ -1131,15 +1131,15 @@
             "description": "Not found"
           }
         },
-        "summary": "Delete a child position",
+        "summary": "Delete a subordinate position",
         "tags": [
           "Org Structure / Positions"
         ]
       }
     },
-    "/org/positions/{id}/parents": {
+    "/org/positions/{id}/superiors": {
       "get": {
-        "operationId": "PositionsController_listParents",
+        "operationId": "PositionsController_listSuperiors",
         "parameters": [
           {
             "name": "id",
@@ -1168,7 +1168,7 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "List parent positions",
+        "summary": "List superior positions",
         "tags": [
           "Org Structure / Positions"
         ]
@@ -1690,14 +1690,14 @@
       "CreatePositionLinkDto": {
         "type": "object",
         "properties": {
-          "childId": {
+          "subordinateId": {
             "type": "number",
-            "description": "Id of child position",
+            "description": "Id of subordinate position",
             "example": 5
           }
         },
         "required": [
-          "childId"
+          "subordinateId"
         ]
       }
     }

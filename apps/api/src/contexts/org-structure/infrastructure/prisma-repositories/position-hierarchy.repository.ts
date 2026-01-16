@@ -9,17 +9,17 @@ import type { PositionHierarchyDomain } from '../../domain/position-hierarchy.do
 export class PositionHierarchyRepository implements PositionHierarchyRepositoryPort {
   constructor(private readonly prisma: PrismaService) {}
 
-  async link(parentPositionId: number, childPositionId: number): Promise<PositionHierarchyDomain> {
+  async link(superiorPositionId: number, subordinatePositionId: number): Promise<PositionHierarchyDomain> {
     try {
       const created = await this.prisma.positionHierarchy.create({
-        data: { parentPositionId, childPositionId },
+        data: { superiorPositionId: superiorPositionId, subordinatePositionId: subordinatePositionId },
       });
       return OrgStructureMapper.toPositionHierarchyDomain(created);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const existing = await this.prisma.positionHierarchy.findUnique({
           where: {
-            parentPositionId_childPositionId: { parentPositionId, childPositionId },
+            superiorPositionId_subordinatePositionId: { superiorPositionId: superiorPositionId, subordinatePositionId: subordinatePositionId },
           },
         });
         if (existing) return OrgStructureMapper.toPositionHierarchyDomain(existing);
@@ -28,23 +28,23 @@ export class PositionHierarchyRepository implements PositionHierarchyRepositoryP
     }
   }
 
-  async unlink(parentPositionId: number, childPositionId: number): Promise<void> {
+  async unlink(superiorPositionId: number, subordinatePositionId: number): Promise<void> {
     await this.prisma.positionHierarchy.deleteMany({
-      where: { parentPositionId, childPositionId },
+      where: { superiorPositionId: superiorPositionId, subordinatePositionId: subordinatePositionId },
     });
   }
 
-  async listChildren(parentPositionId: number): Promise<PositionHierarchyDomain[]> {
+  async listSubordinates(superiorPositionId: number): Promise<PositionHierarchyDomain[]> {
     const relations = await this.prisma.positionHierarchy.findMany({
-      where: { parentPositionId },
+      where: { superiorPositionId: superiorPositionId },
       orderBy: { createdAt: 'desc' },
     });
     return relations.map(OrgStructureMapper.toPositionHierarchyDomain);
   }
 
-  async listParents(childPositionId: number): Promise<PositionHierarchyDomain[]> {
+  async listSuperiors(subordinatePositionId: number): Promise<PositionHierarchyDomain[]> {
     const relations = await this.prisma.positionHierarchy.findMany({
-      where: { childPositionId },
+      where: { subordinatePositionId: subordinatePositionId },
       orderBy: { createdAt: 'desc' },
     });
     return relations.map(OrgStructureMapper.toPositionHierarchyDomain);

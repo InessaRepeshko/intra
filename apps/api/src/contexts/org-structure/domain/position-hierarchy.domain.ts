@@ -1,20 +1,20 @@
 export type PositionHierarchyProps = {
   id?: number;
-  parentPositionId: number;
-  childPositionId: number;
+  superiorPositionId: number;
+  subordinatePositionId: number;
   createdAt?: Date;
 };
 
 export class PositionHierarchyDomain {
   readonly id?: number;
-  readonly parentPositionId: number;
-  readonly childPositionId: number;
+  readonly superiorPositionId: number;
+  readonly subordinatePositionId: number;
   readonly createdAt?: Date;
 
   private constructor(props: PositionHierarchyProps) {
     this.id = props.id;
-    this.parentPositionId = props.parentPositionId;
-    this.childPositionId = props.childPositionId;
+    this.superiorPositionId = props.superiorPositionId;
+    this.subordinatePositionId = props.subordinatePositionId;
     this.createdAt = props.createdAt;
   }
 

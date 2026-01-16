@@ -1,5 +1,6 @@
 import { PrismaClient } from '@intra/database';
 import seedPositions from './contexts/positions';
+import seedPositionHierarchy from './contexts/position-hierarchy';
 import seedTeams, { TEAM_SEED_DATA, type TeamMap } from './contexts/teams';
 import seedUsers from './contexts/identity';
 // import getDBConfig from '@intra/api/src/config/database';
@@ -42,6 +43,9 @@ async function main() {
 
   const positions = await seedPositions(prisma);
   console.log('💼 Seeded positions.');
+
+  await seedPositionHierarchy(prisma, positions);
+  console.log('🏗️ Seeded position hierarchy.');
 
   const teams = await seedTeams(prisma);
   console.log('👥 Seeded teams.');

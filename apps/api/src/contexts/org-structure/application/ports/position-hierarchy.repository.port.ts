@@ -3,8 +3,8 @@ import { PositionHierarchyDomain } from '../../domain/position-hierarchy.domain'
 export const ORG_POSITION_HIERARCHY_REPOSITORY = Symbol('ORG_STRUCTURE.POSITION_HIERARCHY_REPOSITORY');
 
 export interface PositionHierarchyRepositoryPort {
-  link(parentPositionId: number, childPositionId: number): Promise<PositionHierarchyDomain>;
-  unlink(parentPositionId: number, childPositionId: number): Promise<void>;
-  listChildren(parentPositionId: number): Promise<PositionHierarchyDomain[]>;
-  listParents(childPositionId: number): Promise<PositionHierarchyDomain[]>;
+  link(superiorPositionId: number, subordinatePositionId: number): Promise<PositionHierarchyDomain>;
+  unlink(superiorPositionId: number, subordinatePositionId: number): Promise<void>;
+  listSubordinates(superiorPositionId: number): Promise<PositionHierarchyDomain[]>;
+  listSuperiors(subordinatePositionId: number): Promise<PositionHierarchyDomain[]>;
 }

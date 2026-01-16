@@ -39,8 +39,8 @@ export class OrgStructureMapper {
   static toPositionHierarchyDomain(relation: PositionHierarchy): PositionHierarchyDomain {
     return PositionHierarchyDomain.create({
       id: relation.id,
-      parentPositionId: relation.parentPositionId,
-      childPositionId: relation.childPositionId,
+      superiorPositionId: relation.superiorPositionId,
+      subordinatePositionId: relation.subordinatePositionId,
       createdAt: relation.createdAt,
     });
   }

@@ -12,32 +12,32 @@ export class PositionHierarchyService {
     private readonly positions: PositionService,
   ) {}
 
-  async link(parentPositionId: number, childPositionId: number): Promise<PositionHierarchyDomain> {
-    if (parentPositionId === childPositionId) {
-      throw new BadRequestException('Position cannot be a child of itself');
+  async link(superiorPositionId: number, subordinatePositionId: number): Promise<PositionHierarchyDomain> {
+    if (superiorPositionId === subordinatePositionId) {
+      throw new BadRequestException('Position cannot be a subordinate of itself');
     }
 
-    await this.positions.getById(parentPositionId);
-    await this.positions.getById(childPositionId);
+    await this.positions.getById(superiorPositionId);
+    await this.positions.getById(subordinatePositionId);
 
-    return this.hierarchy.link(parentPositionId, childPositionId);
+    return this.hierarchy.link(superiorPositionId, subordinatePositionId);
   }
 
-  async unlink(parentPositionId: number, childPositionId: number): Promise<void> {
-    await this.positions.getById(parentPositionId);
-    await this.positions.getById(childPositionId);
-    await this.hierarchy.unlink(parentPositionId, childPositionId);
+  async unlink(superiorPositionId: number, subordinatePositionId: number): Promise<void> {
+    await this.positions.getById(superiorPositionId);
+    await this.positions.getById(subordinatePositionId);
+    await this.hierarchy.unlink(superiorPositionId, subordinatePositionId);
   }
 
-  async listChildren(parentPositionId: number): Promise<PositionDomain[]> {
-    await this.positions.getById(parentPositionId);
-    const relations = await this.hierarchy.listChildren(parentPositionId);
-    return Promise.all(relations.map((rel) => this.positions.getById(rel.childPositionId)));
+  async listSubordinates(superiorPositionId: number): Promise<PositionDomain[]> {
+    await this.positions.getById(superiorPositionId);
+    const relations = await this.hierarchy.listSubordinates(superiorPositionId);
+    return Promise.all(relations.map((rel) => this.positions.getById(rel.subordinatePositionId)));
   }
 
-  async listParents(childPositionId: number): Promise<PositionDomain[]> {
-    await this.positions.getById(childPositionId);
-    const relations = await this.hierarchy.listParents(childPositionId);
-    return Promise.all(relations.map((rel) => this.positions.getById(rel.parentPositionId)));
+  async listSuperiors(subordinatePositionId: number): Promise<PositionDomain[]> {
+    await this.positions.getById(subordinatePositionId);
+    const relations = await this.hierarchy.listSuperiors(subordinatePositionId);
+    return Promise.all(relations.map((rel) => this.positions.getById(rel.superiorPositionId)));
   }
 }
