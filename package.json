@@ -1,48 +1,81 @@
 {
-  "name": "intra-backend",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "intra",
+  "version": "1.0.0",
+  "description": "360° Feedback Service",
+  "author": "Inessa Repeshko",
   "private": true,
   "license": "MIT",
+  "packageManager": "pnpm@10.28.0",
   "scripts": {
-    "docker:up": "docker-compose --env-file .env.development.local up -d",
-    "docker:view": "docker ps -a",
-    "docker:stop": "docker-compose stop",
-    "docker:down": "docker-compose down -v",
+    "// --- Dev & Build ---": "",
+    "dev": "turbo run dev --parallel",
+    "dev:api": "turbo run dev --filter=@intra/api",
+    "dev:web": "turbo run dev --filter=@intra/web",
+    "build": "turbo run build --filter=!@intra/web",
+    "clean": "rm -rf node_modules **/node_modules dist **/dist",
+    "lint": "turbo run lint",
+    "format": "turbo run format --filter=@intra/api",
 
-    "migrate": "dotenv -e .env.development.local -- npx prisma migrate deploy",
-    "migrate:create": "dotenv -e .env.development.local -- npx prisma migrate dev",
-    "migrate:generate": "dotenv -e .env.development.local -- npx prisma generate",
-    "migrate:seed": "dotenv -e .env.development.local -- npx prisma db seed",
-    "migrate:reset": "npm run migrate && npm run migrate:generate && npm run build && dotenv -e .env.development.local -- npx prisma migrate reset --force",
-    "migrate:refresh": "npm run migrate:reset && npm run migrate:generate",
+    "// --- Docker Commands ---": "",
+    "docker:up": "dotenv -e .env.development.local -- docker-compose up -d",
+    "docker:view": "docker ps -a",
+    "docker:stop": "dotenv -e .env.development.local -- docker-compose stop",
+    "docker:down": "dotenv -e .env.development.local -- docker-compose down -v --remove-orphans",
     
-    "start": "nest start",
-    "start:dev": "dotenv -e .env.development.local -v NODE_ENV=development -- nest start --watch",
-    "start:debug": "dotenv -e .env.development.local -v NODE_ENV=development -- nest start --debug --watch",
-    "start:prod": "dotenv -e .env.production -v NODE_ENV=production -- node dist/src/main",
-    "refresh": "npm run migrate:refresh; npm run start:dev",
-    
-    "test": "npx jest --clearCache && npx jest",
-    "test:unit": "npx jest --watch --config jest-unit.config.ts",
-    "test:e2e": "npx jest --watch --config jest-e2e.config.ts",
-    "test:watch": "npx jest --watch",
-    "test:cov": "npx jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    
-    "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
+    "// --- Prisma Basic Commands ---": "",
+    "prisma:config": "turbo run prisma:config --filter=@intra/database",
+    "prisma:dev": "turbo run prisma:dev --filter=@intra/database",
+    "prisma:test": "turbo run prisma:test --filter=@intra/database",
+
+    "// --- Prisma Commands for DEV environment ---": "",
+    "db:deploy": "turbo run db:deploy --filter=@intra/database",
+    "db:create": "turbo run db:create --filter=@intra/database",
+    "db:generate": "turbo run db:generate --filter=@intra/database",
+    "db:seed": "turbo run db:seed --filter=@intra/database",
+    "db:reset": "turbo run db:reset --filter=@intra/database",
+    "db:refresh": "turbo run db:refresh --filter=@intra/database",
+
+    "// --- Prisma Commands for TEST environment ---": "",
+    "db:test:deploy": "turbo run db:test:deploy --filter=@intra/database",
+    "db:test:generate": "turbo run db:test:generate --filter=@intra/database",
+    "db:test:reset": "turbo run db:test:reset --filter=@intra/database",
+    "db:test:seed": "turbo run db:test:seed --filter=@intra/database",
+    "db:test:refresh": "turbo run db:test:refresh --filter=@intra/database",
+
+    "// --- Environment Commands ---": "",
+    "env:dev": "turbo run env:dev --filter=@intra/api",
+    "env:test": "turbo run env:test --filter=@intra/api",
+    "env:prod": "turbo run env:prod --filter=@intra/api",
+
+    "// --- Running Commands ---": "",
+    "start": "turbo run start --filter=@intra/api",
+    "start:dev": "turbo run start:dev --filter=@intra/api",
+    "start:test": "turbo run start:test --filter=@intra/api",
+    "start:debug": "turbo run start:debug --filter=@intra/api",
+    "start:prod": "turbo run start:prod --filter=@intra/api",
+    "refresh": "turbo run refresh --filter=@intra/api",
+    "refresh:test": "turbo run refresh:test --filter=@intra/api",
+
+    "// --- Testing Commands ---": "",
+    "test": "turbo run test",
+    "test:unit": "turbo run test:unit --filter=@intra/api",
+    "test:e2e": "turbo run test:e2e --filter=@intra/api",
+    "test:watch": "turbo run test:watch --filter=@intra/api",
+    "test:cov": "turbo run test:cov --filter=@intra/api",
+    "test:debug": "turbo run test:debug --filter=@intra/api"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
-    "@prisma/client": "^6.19.1",
-    "prisma": "^6.19.1",
+    "@nestjs/serve-static": "^5.0.4",
+    "@prisma/adapter-pg": "^7.2.0",
+    "pg": "^8.17.1",
+    "prisma-dbml-generator": "^0.12.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "swagger-ui-themes": "^3.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -52,12 +85,14 @@
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/swagger": "^11.1.1",
     "@nestjs/testing": "^11.0.1",
+    "@prisma/client": "^7.2.0",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
-    "@types/node": "^22.10.7",
+    "@types/node": "^22.19.6",
     "@types/supertest": "^6.0.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "dotenv": "^17.2.3",
     "dotenv-cli": "^7.4.4",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
@@ -65,6 +100,7 @@
     "globals": "^16.0.0",
     "jest": "^30.0.0",
     "prettier": "^3.4.2",
+    "prisma": "^7.2.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "swagger-ui-express": "^5.0.1",
@@ -72,6 +108,8 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
+    "turbo": "^2.7.4",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
   },
@@ -81,9 +119,9 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "apps/api",
     "moduleNameMapper": {
-      "^src/(.*)$": "<rootDir>/$1"
+      "^src/(.*)$": "<rootDir>/src/$1"
     },
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
@@ -92,7 +130,12 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
+    "coverageDirectory": "../../coverage",
     "testEnvironment": "node"
+  },
+  "overrides": {
+    "cross-spawn": "^7.0.5",
+    "tmp": "^0.2.3",
+    "hono": "^4.11.4"
   }
 }

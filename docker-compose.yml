@@ -1,17 +1,21 @@
-version: '3.8'
-
 services:
-  mysql:
-    image: mysql:8.0
+  postgres:
+    image: postgres:18
     container_name: intra
     environment:
-      MYSQL_ROOT_PASSWORD: "${DATABASE_ROOT_PASSWORD}"
-      MYSQL_DATABASE: "${DATABASE_NAME}"
+      POSTGRES_USER: "${DATABASE_USER}"
+      POSTGRES_PASSWORD: "${DATABASE_PASSWORD}"
+      POSTGRES_DB: "${DATABASE_NAME}"
     ports:
-      - "${DATABASE_PORT}:3306"
+      - "${DATABASE_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
     networks:
       - mynetwork
 
 networks:
   mynetwork:
     driver: bridge
+
+volumes:
+  postgres_data:
