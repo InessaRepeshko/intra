@@ -76,7 +76,7 @@ build/
 # --- Prisma ---
 # Generated client (if you use custom output in packages/database)
 packages/database/src/generated/*
-!packages/database/src/generated/index.ts
+# !packages/database/src/generated/index.ts
 # Configuration files of the environment with passwords to the database
 .env
 .env.*.local

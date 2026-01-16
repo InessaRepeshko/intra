@@ -1,5 +1,5 @@
 {
-  "name": "Intra",
+  "name": "intra",
   "version": "1.0.0",
   "description": "360° Feedback Service",
   "author": "Inessa Repeshko",
@@ -19,9 +19,9 @@
     "// --- Docker Commands ---": "",
     "docker:up": "dotenv -e .env.development.local -- docker-compose up -d",
     "docker:view": "docker ps -a",
-    "docker:stop": "docker-compose stop",
-    "docker:down": "docker-compose down -v --remove-orphans",
-
+    "docker:stop": "dotenv -e .env.development.local -- docker-compose stop",
+    "docker:down": "dotenv -e .env.development.local -- docker-compose down -v --remove-orphans",
+    
     "// --- Prisma Basic Commands ---": "",
     "prisma:config": "turbo run prisma:config --filter=@intra/database",
     "prisma:dev": "turbo run prisma:dev --filter=@intra/database",
