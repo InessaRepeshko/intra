@@ -1,10 +1,7 @@
-import {
-  PrismaClient,
-  IdentityRole as PrismaIdentityRole
-} from '@intra/database';
+import { PrismaClient, IdentityRole as PrismaIdentityRole } from '@intra/database';
 import { pbkdf2Sync, randomBytes } from 'crypto';
-import type { PositionMap } from './positions';
-import type { TeamMap } from './teams';
+import type { PositionMap } from '../org-structure/positions';
+import type { TeamMap } from '../org-structure/teams';
 import { IdentityRole } from '@intra/api/contexts/identity/domain/identity-role.enum';
 
 export type UserMap = Map<string, { id: number }>;

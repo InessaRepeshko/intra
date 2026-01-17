@@ -1,12 +1,15 @@
 import { PrismaClient } from '@intra/database';
-import seedPositions from './contexts/positions';
-import seedPositionHierarchy from './contexts/position-hierarchy';
-import seedTeams, { TEAM_SEED_DATA, type TeamMap } from './contexts/teams';
-import seedUsers from './contexts/identity';
+import seedPositions from './contexts/org-structure/positions';
+import seedPositionHierarchy from './contexts/org-structure/position-hierarchy';
+import seedTeams, { TEAM_SEED_DATA, type TeamMap } from './contexts/org-structure/teams';
+import seedUsers from './contexts/identity/identity';
 import getDBConfig from '@intra/api/config/database';
 import { PrismaPg } from '@prisma/adapter-pg'
-import type { UserMap } from './contexts/identity';
-import seedLibrary from './contexts/library/index';
+import type { UserMap } from './contexts/identity/identity';
+import { seedClusters } from './contexts/library/clusters';
+import { seedCompetences } from './contexts/library/competences';
+import { seedQuestions } from './contexts/library/questions';
+import { seedQuestionPositions } from './contexts/library/question-position';
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({
@@ -37,27 +40,38 @@ async function assignTeamHeads(
 }
 
 async function main() {
-  console.log('🌱 Start seeding database...');
-
+  /* Organizational structure */
+  console.log('\n🏢 Org structure seeding:');
   const positions = await seedPositions(prisma);
-  console.log('💼 Seeded positions.');
+  console.log('💼 Positions');
 
   await seedPositionHierarchy(prisma, positions);
-  console.log('🏗️ Seeded position hierarchy.');
+  console.log('🏰 Position hierarchy');
 
   const teams = await seedTeams(prisma);
-  console.log('👥 Seeded teams.');
+  console.log('👥 Teams');
 
+  /* Identity */
+  console.log('\n🆔 Identity seeding:');
   const users = await seedUsers(prisma, positions, teams);
-  console.log('👤 Seeded users.');
+  console.log('👤 Users');
 
   await assignTeamHeads(teams, users);
-  console.log('🎩 Assigned team heads.');
+  console.log('🎩 Assigned team heads');
 
-  await seedLibrary(prisma);
-  console.log('📚 Seeded library.');
+  /* Library */
+  console.log('\n🗂  Library seeding:');
+  await seedCompetences(prisma);
+  console.log('📚 Competences');
 
-  console.log('🌱 End seeding database.');
+  const questions = await seedQuestions(prisma);
+  console.log('❓ Questions');
+
+  await seedQuestionPositions(prisma, questions, positions);
+  console.log('🔗 Question-position relations');
+
+  await seedClusters(prisma);
+  console.log('📊 Clusters');
 }
 
 main()
