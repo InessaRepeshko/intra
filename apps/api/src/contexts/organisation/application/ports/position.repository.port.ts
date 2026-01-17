@@ -1,7 +1,7 @@
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import { PositionDomain } from '../../domain/position.domain';
 
-export const ORG_POSITION_REPOSITORY = Symbol('ORG_STRUCTURE.POSITION_REPOSITORY');
+export const ORGANISATION_POSITION_REPOSITORY = Symbol('ORGANISATION.POSITION_REPOSITORY');
 
 export enum PositionSortField {
   ID = 'id',

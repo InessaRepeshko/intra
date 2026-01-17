@@ -1,6 +1,6 @@
 import { PositionHierarchyDomain } from '../../domain/position-hierarchy.domain';
 
-export const ORG_POSITION_HIERARCHY_REPOSITORY = Symbol('ORG_STRUCTURE.POSITION_HIERARCHY_REPOSITORY');
+export const ORGANISATION_POSITION_HIERARCHY_REPOSITORY = Symbol('ORGANISATION.POSITION_HIERARCHY_REPOSITORY');
 
 export interface PositionHierarchyRepositoryPort {
   link(superiorPositionId: number, subordinatePositionId: number): Promise<PositionHierarchyDomain>;

@@ -7,9 +7,9 @@ import { PositionHierarchyService } from './application/services/position-hierar
 import { TeamRepository } from './infrastructure/prisma-repositories/team.repository';
 import { PositionRepository } from './infrastructure/prisma-repositories/position.repository';
 import { PositionHierarchyRepository } from './infrastructure/prisma-repositories/position-hierarchy.repository';
-import { ORG_TEAM_REPOSITORY } from './application/ports/team.repository.port';
-import { ORG_POSITION_REPOSITORY } from './application/ports/position.repository.port';
-import { ORG_POSITION_HIERARCHY_REPOSITORY } from './application/ports/position-hierarchy.repository.port';
+import { ORGANISATION_TEAM_REPOSITORY } from './application/ports/team.repository.port';
+import { ORGANISATION_POSITION_REPOSITORY } from './application/ports/position.repository.port';
+import { ORGANISATION_POSITION_HIERARCHY_REPOSITORY } from './application/ports/position-hierarchy.repository.port';
 import { TeamsController } from './presentation/http/controllers/teams.controller';
 import { PositionsController } from './presentation/http/controllers/positions.controller';
 
@@ -23,10 +23,10 @@ import { PositionsController } from './presentation/http/controllers/positions.c
     TeamRepository,
     PositionRepository,
     PositionHierarchyRepository,
-    { provide: ORG_TEAM_REPOSITORY, useExisting: TeamRepository },
-    { provide: ORG_POSITION_REPOSITORY, useExisting: PositionRepository },
-    { provide: ORG_POSITION_HIERARCHY_REPOSITORY, useExisting: PositionHierarchyRepository },
+    { provide: ORGANISATION_TEAM_REPOSITORY, useExisting: TeamRepository },
+    { provide: ORGANISATION_POSITION_REPOSITORY, useExisting: PositionRepository },
+    { provide: ORGANISATION_POSITION_HIERARCHY_REPOSITORY, useExisting: PositionHierarchyRepository },
   ],
   exports: [TeamService, PositionService, PositionHierarchyService],
 })
-export class OrgStructureModule {}
+export class OrganisationModule {}

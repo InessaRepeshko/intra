@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from 'src/database/database.module';
-import { OrgStructureModule } from '../org-structure/org-structure.module';
+import { OrganisationModule } from '../organisation/organisation.module';
 import { CompetenceService } from './application/services/competence.service';
 import { ClusterService } from './application/services/cluster.service';
 import { QuestionService } from './application/services/question.service';
@@ -17,7 +17,7 @@ import { ClustersController } from './presentation/http/controllers/clusters.con
 import { QuestionsController } from './presentation/http/controllers/questions.controller';
 
 @Module({
-  imports: [DatabaseModule, OrgStructureModule],
+  imports: [DatabaseModule, OrganisationModule],
   controllers: [CompetencesController, ClustersController, QuestionsController],
   providers: [
     CompetenceService,

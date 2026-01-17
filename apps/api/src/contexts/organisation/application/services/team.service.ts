@@ -4,7 +4,7 @@ import { TeamDomain } from '../../domain/team.domain';
 import { TeamMembershipDomain } from '../../domain/team-membership.domain';
 import type { TeamRepositoryPort } from '../ports/team.repository.port';
 import {
-  ORG_TEAM_REPOSITORY,
+  ORGANISATION_TEAM_REPOSITORY,
   TeamSearchQuery,
   TeamUpdatePayload,
 } from '../ports/team.repository.port';
@@ -25,7 +25,7 @@ export type AddTeamMemberCommand = {
 @Injectable()
 export class TeamService {
   constructor(
-    @Inject(ORG_TEAM_REPOSITORY) private readonly teams: TeamRepositoryPort,
+    @Inject(ORGANISATION_TEAM_REPOSITORY) private readonly teams: TeamRepositoryPort,
     private readonly identityUsers: IdentityUserService,
   ) {}
 

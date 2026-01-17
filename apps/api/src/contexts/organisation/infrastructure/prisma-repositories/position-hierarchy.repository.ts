@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@intra/database';
 import { PrismaService } from 'src/database/prisma.service';
 import { PositionHierarchyRepositoryPort } from '../../application/ports/position-hierarchy.repository.port';
-import { OrgStructureMapper } from './org-structure.mapper';
+import { OrganisationMapper } from './organisation.mapper';
 import type { PositionHierarchyDomain } from '../../domain/position-hierarchy.domain';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class PositionHierarchyRepository implements PositionHierarchyRepositoryP
       const created = await this.prisma.positionHierarchy.create({
         data: { superiorPositionId: superiorPositionId, subordinatePositionId: subordinatePositionId },
       });
-      return OrgStructureMapper.toPositionHierarchyDomain(created);
+      return OrganisationMapper.toPositionHierarchyDomain(created);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const existing = await this.prisma.positionHierarchy.findUnique({
@@ -22,7 +22,7 @@ export class PositionHierarchyRepository implements PositionHierarchyRepositoryP
             superiorPositionId_subordinatePositionId: { superiorPositionId: superiorPositionId, subordinatePositionId: subordinatePositionId },
           },
         });
-        if (existing) return OrgStructureMapper.toPositionHierarchyDomain(existing);
+        if (existing) return OrganisationMapper.toPositionHierarchyDomain(existing);
       }
       throw error;
     }
@@ -39,7 +39,7 @@ export class PositionHierarchyRepository implements PositionHierarchyRepositoryP
       where: { superiorPositionId: superiorPositionId },
       orderBy: { createdAt: 'desc' },
     });
-    return relations.map(OrgStructureMapper.toPositionHierarchyDomain);
+    return relations.map(OrganisationMapper.toPositionHierarchyDomain);
   }
 
   async listSuperiors(subordinatePositionId: number): Promise<PositionHierarchyDomain[]> {
@@ -47,6 +47,6 @@ export class PositionHierarchyRepository implements PositionHierarchyRepositoryP
       where: { subordinatePositionId: subordinatePositionId },
       orderBy: { createdAt: 'desc' },
     });
-    return relations.map(OrgStructureMapper.toPositionHierarchyDomain);
+    return relations.map(OrganisationMapper.toPositionHierarchyDomain);
   }
 }

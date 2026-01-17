@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import type { PositionRepositoryPort } from '../ports/position.repository.port';
 import {
-  ORG_POSITION_REPOSITORY,
+  ORGANISATION_POSITION_REPOSITORY,
   PositionSearchQuery,
   PositionUpdatePayload,
 } from '../ports/position.repository.port';
@@ -16,7 +16,7 @@ export type UpdatePositionCommand = Partial<CreatePositionCommand>;
 
 @Injectable()
 export class PositionService {
-  constructor(@Inject(ORG_POSITION_REPOSITORY) private readonly positions: PositionRepositoryPort) {}
+  constructor(@Inject(ORGANISATION_POSITION_REPOSITORY) private readonly positions: PositionRepositoryPort) {}
 
   async create(command: CreatePositionCommand): Promise<PositionDomain> {
     const position = PositionDomain.create({

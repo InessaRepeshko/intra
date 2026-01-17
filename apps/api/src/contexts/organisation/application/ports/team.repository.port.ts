@@ -2,7 +2,7 @@ import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import { TeamDomain } from '../../domain/team.domain';
 import { TeamMembershipDomain } from '../../domain/team-membership.domain';
 
-export const ORG_TEAM_REPOSITORY = Symbol('ORG_STRUCTURE.TEAM_REPOSITORY');
+export const ORGANISATION_TEAM_REPOSITORY = Symbol('ORGANISATION.TEAM_REPOSITORY');
 
 export enum TeamSortField {
   ID = 'id',

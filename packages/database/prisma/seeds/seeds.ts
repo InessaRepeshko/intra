@@ -1,7 +1,7 @@
 import { PrismaClient } from '@intra/database';
-import seedPositions from './contexts/org-structure/positions';
-import seedPositionHierarchy from './contexts/org-structure/position-hierarchy';
-import seedTeams, { TEAM_SEED_DATA, type TeamMap } from './contexts/org-structure/teams';
+import seedPositions from './contexts/organisation/positions';
+import seedPositionHierarchy from './contexts/organisation/position-hierarchy';
+import seedTeams, { TEAM_SEED_DATA, type TeamMap } from './contexts/organisation/teams';
 import seedUsers from './contexts/identity/identity';
 import getDBConfig from '@intra/api/config/database';
 import { PrismaPg } from '@prisma/adapter-pg'
@@ -40,8 +40,8 @@ async function assignTeamHeads(
 }
 
 async function main() {
-  /* Organizational structure */
-  console.log('\n🏢 Org structure seeding:');
+  /* Organisation */
+  console.log('\n🏢 Organisation seeding:');
   const positions = await seedPositions(prisma);
   console.log('💼 Positions');
 

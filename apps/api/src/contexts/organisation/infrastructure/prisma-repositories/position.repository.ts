@@ -6,7 +6,7 @@ import {
   PositionSortField,
   PositionUpdatePayload,
 } from '../../application/ports/position.repository.port';
-import { OrgStructureMapper } from './org-structure.mapper';
+import { OrganisationMapper } from './organisation.mapper';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import { Prisma } from '@intra/database';
 import { PositionDomain } from '../../domain/position.domain';
@@ -22,12 +22,12 @@ export class PositionRepository implements PositionRepositoryPort {
         description: position.description,
       },
     });
-    return OrgStructureMapper.toPositionDomain(created);
+    return OrganisationMapper.toPositionDomain(created);
   }
 
   async findById(id: number): Promise<PositionDomain | null> {
     const found = await this.prisma.position.findUnique({ where: { id } });
-    return found ? OrgStructureMapper.toPositionDomain(found) : null;
+    return found ? OrganisationMapper.toPositionDomain(found) : null;
   }
 
   async search(query: PositionSearchQuery): Promise<PositionDomain[]> {
@@ -39,7 +39,7 @@ export class PositionRepository implements PositionRepositoryPort {
       orderBy,
     });
 
-    return items.map(OrgStructureMapper.toPositionDomain);
+    return items.map(OrganisationMapper.toPositionDomain);
   }
 
   async updateById(id: number, patch: PositionUpdatePayload): Promise<PositionDomain> {
@@ -47,7 +47,7 @@ export class PositionRepository implements PositionRepositoryPort {
       where: { id },
       data: patch,
     });
-    return OrgStructureMapper.toPositionDomain(updated);
+    return OrganisationMapper.toPositionDomain(updated);
   }
 
   async deleteById(id: number): Promise<void> {

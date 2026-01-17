@@ -386,7 +386,7 @@
         ]
       }
     },
-    "/org/teams": {
+    "/organisation/teams": {
       "post": {
         "operationId": "TeamsController_create",
         "parameters": [],
@@ -426,7 +426,7 @@
         },
         "summary": "Create a team",
         "tags": [
-          "Org Structure / Teams"
+          "Organisation / Teams"
         ]
       },
       "get": {
@@ -509,11 +509,11 @@
         },
         "summary": "Search teams",
         "tags": [
-          "Org Structure / Teams"
+          "Organisation / Teams"
         ]
       }
     },
-    "/org/teams/{id}": {
+    "/organisation/teams/{id}": {
       "get": {
         "operationId": "TeamsController_getById",
         "parameters": [
@@ -546,7 +546,7 @@
         },
         "summary": "Get a team by id",
         "tags": [
-          "Org Structure / Teams"
+          "Organisation / Teams"
         ]
       },
       "patch": {
@@ -597,7 +597,7 @@
         },
         "summary": "Update a team",
         "tags": [
-          "Org Structure / Teams"
+          "Organisation / Teams"
         ]
       },
       "delete": {
@@ -631,11 +631,11 @@
         },
         "summary": "Delete a team",
         "tags": [
-          "Org Structure / Teams"
+          "Organisation / Teams"
         ]
       }
     },
-    "/org/teams/{id}/members": {
+    "/organisation/teams/{id}/members": {
       "post": {
         "operationId": "TeamsController_addMember",
         "parameters": [
@@ -684,7 +684,7 @@
         },
         "summary": "Add a member to a team",
         "tags": [
-          "Org Structure / Teams"
+          "Organisation / Teams"
         ]
       },
       "get": {
@@ -719,11 +719,11 @@
         },
         "summary": "Get the team members",
         "tags": [
-          "Org Structure / Teams"
+          "Organisation / Teams"
         ]
       }
     },
-    "/org/teams/{id}/members/{userId}": {
+    "/organisation/teams/{id}/members/{userId}": {
       "delete": {
         "operationId": "TeamsController_removeMember",
         "parameters": [
@@ -763,11 +763,11 @@
         },
         "summary": "Delete a member from a team",
         "tags": [
-          "Org Structure / Teams"
+          "Organisation / Teams"
         ]
       }
     },
-    "/org/positions": {
+    "/organisation/positions": {
       "post": {
         "operationId": "PositionsController_create",
         "parameters": [],
@@ -807,7 +807,7 @@
         },
         "summary": "Create a position",
         "tags": [
-          "Org Structure / Positions"
+          "Organisation / Positions"
         ]
       },
       "get": {
@@ -879,11 +879,11 @@
         },
         "summary": "Search positions",
         "tags": [
-          "Org Structure / Positions"
+          "Organisation / Positions"
         ]
       }
     },
-    "/org/positions/{id}": {
+    "/organisation/positions/{id}": {
       "get": {
         "operationId": "PositionsController_getById",
         "parameters": [
@@ -916,7 +916,7 @@
         },
         "summary": "Get a position by id",
         "tags": [
-          "Org Structure / Positions"
+          "Organisation / Positions"
         ]
       },
       "patch": {
@@ -967,7 +967,7 @@
         },
         "summary": "Update a position",
         "tags": [
-          "Org Structure / Positions"
+          "Organisation / Positions"
         ]
       },
       "delete": {
@@ -1001,11 +1001,11 @@
         },
         "summary": "Delete a position",
         "tags": [
-          "Org Structure / Positions"
+          "Organisation / Positions"
         ]
       }
     },
-    "/org/positions/{id}/subordinates": {
+    "/organisation/positions/{id}/subordinates": {
       "post": {
         "operationId": "PositionsController_linkSubordinate",
         "parameters": [
@@ -1054,7 +1054,7 @@
         },
         "summary": "Add a subordinate position",
         "tags": [
-          "Org Structure / Positions"
+          "Organisation / Positions"
         ]
       },
       "get": {
@@ -1089,11 +1089,11 @@
         },
         "summary": "List subordinate positions",
         "tags": [
-          "Org Structure / Positions"
+          "Organisation / Positions"
         ]
       }
     },
-    "/org/positions/{id}/subordinates/{subordinateId}": {
+    "/organisation/positions/{id}/subordinates/{subordinateId}": {
       "delete": {
         "operationId": "PositionsController_unlinkSubordinate",
         "parameters": [
@@ -1133,11 +1133,11 @@
         },
         "summary": "Delete a subordinate position",
         "tags": [
-          "Org Structure / Positions"
+          "Organisation / Positions"
         ]
       }
     },
-    "/org/positions/{id}/superiors": {
+    "/organisation/positions/{id}/superiors": {
       "get": {
         "operationId": "PositionsController_listSuperiors",
         "parameters": [
@@ -1170,7 +1170,7 @@
         },
         "summary": "List superior positions",
         "tags": [
-          "Org Structure / Positions"
+          "Organisation / Positions"
         ]
       }
     },

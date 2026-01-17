@@ -1,6 +1,6 @@
 import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import type { PositionHierarchyRepositoryPort } from '../ports/position-hierarchy.repository.port';
-import { ORG_POSITION_HIERARCHY_REPOSITORY } from '../ports/position-hierarchy.repository.port';
+import { ORGANISATION_POSITION_HIERARCHY_REPOSITORY } from '../ports/position-hierarchy.repository.port';
 import { PositionService } from './position.service';
 import { PositionDomain } from '../../domain/position.domain';
 import { PositionHierarchyDomain } from '../../domain/position-hierarchy.domain';
@@ -8,7 +8,7 @@ import { PositionHierarchyDomain } from '../../domain/position-hierarchy.domain'
 @Injectable()
 export class PositionHierarchyService {
   constructor(
-    @Inject(ORG_POSITION_HIERARCHY_REPOSITORY) private readonly hierarchy: PositionHierarchyRepositoryPort,
+    @Inject(ORGANISATION_POSITION_HIERARCHY_REPOSITORY) private readonly hierarchy: PositionHierarchyRepositoryPort,
     private readonly positions: PositionService,
   ) {}
 

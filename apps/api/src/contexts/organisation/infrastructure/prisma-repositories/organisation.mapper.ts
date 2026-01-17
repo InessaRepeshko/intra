@@ -4,7 +4,7 @@ import { TeamMembershipDomain } from '../../domain/team-membership.domain';
 import { PositionDomain } from '../../domain/position.domain';
 import { PositionHierarchyDomain } from '../../domain/position-hierarchy.domain';
 
-export class OrgStructureMapper {
+export class OrganisationMapper {
   static toTeamDomain(team: Team): TeamDomain {
     return TeamDomain.create({
       id: team.id,

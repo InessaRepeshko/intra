@@ -24,8 +24,8 @@ import { AddTeamMemberDto } from '../dto/teams/add-team-member.dto';
 import { TeamMemberResponse } from '../models/team-member.response';
 import { ApiCreateAndUpdateErrorResponses, ApiDeletionErrorResponses, ApiListReadErrorResponses, ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 
-@ApiTags('Org Structure / Teams')
-@Controller('org/teams')
+@ApiTags('Organisation / Teams')
+@Controller('organisation/teams')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: TeamResponse })
 export class TeamsController {

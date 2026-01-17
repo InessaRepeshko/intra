@@ -86,7 +86,7 @@ model UserRole {
   @@map("identity_user_roles")
 }
 
-// ==================== OrgStructure ====================
+// ==================== Organisation ====================
 
 model Team {
   id          Int      @id @default(autoincrement())

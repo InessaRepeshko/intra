@@ -24,8 +24,8 @@ import { PositionQueryDto } from '../dto/positions/position-query.dto';
 import { CreatePositionLinkDto } from '../dto/positions/create-position-link.dto';
 import { ApiCreateAndUpdateErrorResponses, ApiDeletionErrorResponses, ApiListReadErrorResponses, ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 
-@ApiTags('Org Structure / Positions')
-@Controller('org/positions')
+@ApiTags('Organisation / Positions')
+@Controller('organisation/positions')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: PositionResponse })
 export class PositionsController {

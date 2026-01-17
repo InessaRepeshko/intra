@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { IdentityModule } from './contexts/identity/identity.module';
-import { OrgStructureModule } from './contexts/org-structure/org-structure.module';
+import { OrganisationModule } from './contexts/organisation/organisation.module';
 import { LibraryModule } from './contexts/library/library.module';
 import appConfig from './config/app';
 import databaseConfig from './config/database';
@@ -23,7 +23,7 @@ import { DatabaseModule } from './database/database.module';
     }),
     DatabaseModule,
     IdentityModule,
-    OrgStructureModule,
+    OrganisationModule,
     LibraryModule,
   ],
   controllers: [AppController],

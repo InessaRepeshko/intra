@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@intra/database';
-import type { PositionMap } from '../org-structure/positions';
+import type { PositionMap } from '../organisation/positions';
 import type { QuestionMap } from './questions';
 
 type PositionQuestionSeed = {

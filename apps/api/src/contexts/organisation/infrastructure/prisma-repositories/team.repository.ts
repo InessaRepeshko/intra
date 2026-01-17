@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@intra/database';
 import { PrismaService } from 'src/database/prisma.service';
-import { OrgStructureMapper } from './org-structure.mapper';
+import { OrganisationMapper } from './organisation.mapper';
 import { TeamRepositoryPort, TeamSearchQuery, TeamSortField, TeamUpdatePayload } from '../../application/ports/team.repository.port';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import type { TeamDomain } from '../../domain/team.domain';
@@ -19,12 +19,12 @@ export class TeamRepository implements TeamRepositoryPort {
         headId: team.headId,
       },
     });
-    return OrgStructureMapper.toTeamDomain(created);
+    return OrganisationMapper.toTeamDomain(created);
   }
 
   async findById(id: number): Promise<TeamDomain | null> {
     const found = await this.prisma.team.findUnique({ where: { id } });
-    return found ? OrgStructureMapper.toTeamDomain(found) : null;
+    return found ? OrganisationMapper.toTeamDomain(found) : null;
   }
 
   async search(query: TeamSearchQuery): Promise<TeamDomain[]> {
@@ -36,7 +36,7 @@ export class TeamRepository implements TeamRepositoryPort {
       orderBy,
     });
 
-    return items.map(OrgStructureMapper.toTeamDomain);
+    return items.map(OrganisationMapper.toTeamDomain);
   }
 
   async updateById(id: number, patch: TeamUpdatePayload): Promise<TeamDomain> {
@@ -44,7 +44,7 @@ export class TeamRepository implements TeamRepositoryPort {
       where: { id },
       data: patch,
     });
-    return OrgStructureMapper.toTeamDomain(updated);
+    return OrganisationMapper.toTeamDomain(updated);
   }
 
   async deleteById(id: number): Promise<void> {
@@ -60,7 +60,7 @@ export class TeamRepository implements TeamRepositoryPort {
           isPrimary: isPrimary ?? false,
         },
       });
-      return OrgStructureMapper.toTeamMembershipDomain(created);
+      return OrganisationMapper.toTeamMembershipDomain(created);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const existing = await this.prisma.teamMembership.findUnique({
@@ -72,7 +72,7 @@ export class TeamRepository implements TeamRepositoryPort {
             },
           },
         });
-        if (existing) return OrgStructureMapper.toTeamMembershipDomain(existing);
+        if (existing) return OrganisationMapper.toTeamMembershipDomain(existing);
       }
       throw error;
     }
@@ -87,7 +87,7 @@ export class TeamRepository implements TeamRepositoryPort {
       where: { teamId },
       orderBy: { createdAt: 'desc' },
     });
-    return memberships.map(OrgStructureMapper.toTeamMembershipDomain);
+    return memberships.map(OrganisationMapper.toTeamMembershipDomain);
   }
 
   private buildWhere(query: TeamSearchQuery): Prisma.TeamWhereInput {

@@ -13,7 +13,7 @@ import {
   QUESTION_POSITION_REPOSITORY,
   QuestionPositionRepositoryPort,
 } from '../ports/question-position.repository.port';
-import { PositionService } from 'src/contexts/org-structure/application/services/position.service';
+import { PositionService } from 'src/contexts/organisation/application/services/position.service';
 
 export type CreateQuestionCommand = {
   competenceId: number;
