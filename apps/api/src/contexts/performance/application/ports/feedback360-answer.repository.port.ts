@@ -1,5 +1,5 @@
 import { Feedback360AnswerDomain } from '../../domain/feedback360-answer.domain';
-import { RespondentCategory } from '../../domain/respondent-category.enum';
+import { RespondentCategory } from '../../domain/enum/respondent-category.enum';
 
 export const FEEDBACK360_ANSWER_REPOSITORY = Symbol('PERFORMANCE.FEEDBACK360_ANSWER_REPOSITORY');
 

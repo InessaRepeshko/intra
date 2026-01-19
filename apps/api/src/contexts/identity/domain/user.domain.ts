@@ -1,5 +1,5 @@
-import { IdentityRole } from './identity-role.enum';
-import { IdentityUserStatus } from './identity-user-status.enum';
+import { IdentityRole } from './enums/identity-role.enum';
+import { IdentityUserStatus } from './enums/identity-user-status.enum';
 
 export type UserProps = {
   id?: number;

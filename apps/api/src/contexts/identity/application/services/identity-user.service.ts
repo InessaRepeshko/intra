@@ -7,8 +7,8 @@ import {
   UserSearchQuery,
   UserUpdatePayload,
 } from '../ports/user.repository.port';
-import { IdentityUserStatus } from '../../domain/identity-user-status.enum';
-import { IdentityRole } from '../../domain/identity-role.enum';
+import { IdentityUserStatus } from '../../domain/enums/identity-user-status.enum';
+import { IdentityRole } from '../../domain/enums/identity-role.enum';
 import { UserDomain } from '../../domain/user.domain';
 
 export type CreateUserCommand = {
@@ -32,7 +32,7 @@ export class IdentityUserService {
   constructor(
     @Inject(IDENTITY_USER_REPOSITORY) private readonly users: UserRepositoryPort,
     @Inject(IDENTITY_ROLE_REPOSITORY) private readonly roles: RoleRepositoryPort,
-  ) {}
+  ) { }
 
   async create(command: CreateUserCommand): Promise<UserDomain> {
     const user = UserDomain.create({
@@ -67,10 +67,10 @@ export class IdentityUserService {
 
     const fullName = shouldUpdateFullName
       ? this.buildFullName(
-          patch.firstName ?? current.firstName,
-          patch.secondName ?? current.secondName,
-          patch.lastName ?? current.lastName,
-        )
+        patch.firstName ?? current.firstName,
+        patch.secondName ?? current.secondName,
+        patch.lastName ?? current.lastName,
+      )
       : undefined;
 
     const payload: UserUpdatePayload = {

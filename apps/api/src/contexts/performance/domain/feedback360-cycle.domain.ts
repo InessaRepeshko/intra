@@ -1,4 +1,4 @@
-import { CycleStage } from './cycle-stage.enum';
+import { CycleStage } from './enum/cycle-stage.enum';
 
 export type Feedback360CycleProps = {
   id?: number;

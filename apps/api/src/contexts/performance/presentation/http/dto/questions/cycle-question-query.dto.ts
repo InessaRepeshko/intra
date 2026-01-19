@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsInt, IsOptional } from 'class-validator';
 import { ToOptionalBool, ToOptionalEnum, ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
-import { AnswerType } from 'src/contexts/library/domain/answer-type.enum';
+import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
 import { Feedback360QuestionSortField } from 'src/contexts/performance/application/ports/feedback360-question.repository.port';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 

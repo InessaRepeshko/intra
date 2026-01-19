@@ -7,8 +7,8 @@ import {
 } from '../ports/question.repository.port';
 import { CompetenceService } from './competence.service';
 import { QuestionDomain } from '../../domain/question.domain';
-import { AnswerType } from '../../domain/answer-type.enum';
-import { QuestionStatus } from '../../domain/question-status.enum';
+import { AnswerType } from '../../domain/enums/answer-type.enum';
+import { QuestionStatus } from '../../domain/enums/question-status.enum';
 import {
   QUESTION_POSITION_REPOSITORY,
   QuestionPositionRepositoryPort,

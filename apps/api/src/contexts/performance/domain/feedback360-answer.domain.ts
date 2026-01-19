@@ -1,5 +1,5 @@
-import { AnswerType } from 'src/contexts/library/domain/answer-type.enum';
-import { RespondentCategory } from './respondent-category.enum';
+import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
+import { RespondentCategory } from './enum/respondent-category.enum';
 
 export type Feedback360AnswerProps = {
   id?: number;

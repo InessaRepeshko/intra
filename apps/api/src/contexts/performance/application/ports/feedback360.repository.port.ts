@@ -1,5 +1,5 @@
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
-import { Feedback360Stage } from '../../domain/feedback360-stage.enum';
+import { Feedback360Stage } from '../../domain/enum/feedback360-stage.enum';
 import { Feedback360Domain } from '../../domain/feedback360.domain';
 
 export const FEEDBACK360_REPOSITORY = Symbol('PERFORMANCE.FEEDBACK360_REPOSITORY');

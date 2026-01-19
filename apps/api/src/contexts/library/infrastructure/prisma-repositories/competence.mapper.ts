@@ -9,8 +9,8 @@ import {
 import { CompetenceDomain } from '../../domain/competence.domain';
 import { ClusterDomain } from '../../domain/cluster.domain';
 import { QuestionDomain } from '../../domain/question.domain';
-import { AnswerType } from '../../domain/answer-type.enum';
-import { QuestionStatus } from '../../domain/question-status.enum';
+import { AnswerType } from '../../domain/enums/answer-type.enum';
+import { QuestionStatus } from '../../domain/enums/question-status.enum';
 import { QuestionPositionDomain } from '../../domain/question-position.domain';
 
 type QuestionWithPositions = Question & { questionPositions?: { positionId: number }[] };

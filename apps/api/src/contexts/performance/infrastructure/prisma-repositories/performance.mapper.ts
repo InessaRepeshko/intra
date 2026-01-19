@@ -14,16 +14,16 @@ import {
   AnswerType as PrismaAnswerType,
 } from '@intra/database';
 import { Feedback360CycleDomain } from '../../domain/feedback360-cycle.domain';
-import { CycleStage } from '../../domain/cycle-stage.enum';
+import { CycleStage } from '../../domain/enum/cycle-stage.enum';
 import { Feedback360Domain } from '../../domain/feedback360.domain';
-import { Feedback360Stage } from '../../domain/feedback360-stage.enum';
+import { Feedback360Stage } from '../../domain/enum/feedback360-stage.enum';
 import { Feedback360QuestionDomain } from '../../domain/feedback360-question.domain';
-import { AnswerType } from 'src/contexts/library/domain/answer-type.enum';
+import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
 import { Feedback360QuestionRelationDomain } from '../../domain/feedback360-question-relation.domain';
 import { Feedback360AnswerDomain } from '../../domain/feedback360-answer.domain';
-import { RespondentCategory } from '../../domain/respondent-category.enum';
+import { RespondentCategory } from '../../domain/enum/respondent-category.enum';
 import { Feedback360RespondentRelationDomain } from '../../domain/feedback360-respondent-relation.domain';
-import { Feedback360Status } from '../../domain/feedback360-status.enum';
+import { Feedback360Status } from '../../domain/enum/feedback360-status.enum';
 import { Feedback360ReviewerRelationDomain } from '../../domain/feedback360-reviewer-relation.domain';
 import { Feedback360ClusterScoreDomain } from '../../domain/feedback360-cluster-score.domain';
 

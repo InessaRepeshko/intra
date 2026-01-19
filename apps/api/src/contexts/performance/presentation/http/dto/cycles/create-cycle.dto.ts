@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsDate, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 import { ToOptionalBool, ToOptionalDate, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { CycleStage } from 'src/contexts/performance/domain/cycle-stage.enum';
+import { CycleStage } from 'src/contexts/performance/domain/enum/cycle-stage.enum';
 
 export class CreateCycleDto {
   @ApiProperty({ example: 'Q1 2025', description: 'Cycle name' })

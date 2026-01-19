@@ -6,7 +6,7 @@ import {
   Feedback360CycleUpdatePayload,
 } from '../ports/feedback360-cycle.repository.port';
 import { Feedback360CycleDomain } from '../../domain/feedback360-cycle.domain';
-import { CycleStage } from '../../domain/cycle-stage.enum';
+import { CycleStage } from '../../domain/enum/cycle-stage.enum';
 
 export type CreateFeedback360CycleCommand = {
   title: string;
@@ -26,9 +26,9 @@ export type UpdateFeedback360CycleCommand = Partial<CreateFeedback360CycleComman
 @Injectable()
 export class Feedback360CycleService {
   constructor(
-    @Inject(FEEDBACK360_CYCLE_REPOSITORY) 
+    @Inject(FEEDBACK360_CYCLE_REPOSITORY)
     private readonly cycles: Feedback360CycleRepositoryPort
-  ) {}
+  ) { }
 
   async create(command: CreateFeedback360CycleCommand): Promise<Feedback360CycleDomain> {
     const cycle = Feedback360CycleDomain.create({

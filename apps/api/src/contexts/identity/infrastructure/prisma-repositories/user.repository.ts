@@ -5,11 +5,11 @@ import { UserRepositoryPort, UserSearchQuery, UserSortField, UserUpdatePayload }
 import { UserDomain } from '../../domain/user.domain';
 import { IdentityMapper, UserWithRoles } from './identity.mapper';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
-import { IdentityRole } from '../../domain/identity-role.enum';
+import { IdentityRole } from '../../domain/enums/identity-role.enum';
 
 @Injectable()
 export class UserRepository implements UserRepositoryPort {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(user: UserDomain): Promise<UserDomain> {
     const created = await this.prisma.user.create({
@@ -26,12 +26,12 @@ export class UserRepository implements UserRepositoryPort {
         managerId: user.managerId,
         ...(user.roles.length
           ? {
-              userRoles: {
-                createMany: {
-                  data: user.roles.map((roleCode) => ({ roleCode })),
-                },
+            userRoles: {
+              createMany: {
+                data: user.roles.map((roleCode) => ({ roleCode })),
               },
-            }
+            },
+          }
           : {}),
       },
       include: this.withRolesInclude(true),
@@ -114,13 +114,13 @@ export class UserRepository implements UserRepositoryPort {
       ...(managerId ? { managerId } : {}),
       ...(search
         ? {
-            OR: [
-              { firstName: { contains: search } },
-              { lastName: { contains: search } },
-              { email: { contains: search } },
-              { fullName: { contains: search } },
-            ],
-          }
+          OR: [
+            { firstName: { contains: search } },
+            { lastName: { contains: search } },
+            { email: { contains: search } },
+            { fullName: { contains: search } },
+          ],
+        }
         : {}),
     };
   }

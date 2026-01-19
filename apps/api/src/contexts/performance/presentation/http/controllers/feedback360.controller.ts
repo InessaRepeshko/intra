@@ -36,7 +36,7 @@ import { FeedbackRespondentResponse } from '../models/feedback-respondent.respon
 import { UpdateRespondentDto } from '../dto/respondents/update-respondent.dto';
 import { CreateReviewerDto } from '../dto/reviewers/create-reviewer.dto';
 import { FeedbackReviewerResponse } from '../models/feedback-reviewer.response';
-import { RespondentCategory } from '../../../domain/respondent-category.enum';
+import { RespondentCategory } from '../../../domain/enum/respondent-category.enum';
 
 @ApiTags('Performance / Feedback360')
 @Controller('performance/feedbacks')

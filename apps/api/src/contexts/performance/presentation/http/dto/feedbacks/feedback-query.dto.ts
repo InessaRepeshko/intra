@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional } from 'class-validator';
 import { ToOptionalEnum, ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
-import { Feedback360Stage } from 'src/contexts/performance/domain/feedback360-stage.enum';
+import { Feedback360Stage } from 'src/contexts/performance/domain/enum/feedback360-stage.enum';
 import { Feedback360SortField } from 'src/contexts/performance/application/ports/feedback360.repository.port';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 

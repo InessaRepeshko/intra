@@ -2,8 +2,8 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 import { ToOptionalBool, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
-import { AnswerType } from 'src/contexts/library/domain/answer-type.enum';
-import { QuestionStatus } from 'src/contexts/library/domain/question-status.enum';
+import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
+import { QuestionStatus } from 'src/contexts/library/domain/enums/question-status.enum';
 import { QuestionSortField } from 'src/contexts/library/application/ports/question.repository.port';
 import { QuestionConstants } from 'src/common/validators/constants';
 

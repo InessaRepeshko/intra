@@ -1,5 +1,5 @@
-import { IdentityRole } from '../../domain/identity-role.enum';
-import { IdentityUserStatus } from '../../domain/identity-user-status.enum';
+import { IdentityRole } from '../../domain/enums/identity-role.enum';
+import { IdentityUserStatus } from '../../domain/enums/identity-user-status.enum';
 import { UserDomain } from '../../domain/user.domain';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 

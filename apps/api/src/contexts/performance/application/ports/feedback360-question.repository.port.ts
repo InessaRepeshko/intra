@@ -1,6 +1,6 @@
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import { Feedback360QuestionDomain } from '../../domain/feedback360-question.domain';
-import { AnswerType } from 'src/contexts/library/domain/answer-type.enum';
+import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
 
 export const FEEDBACK360_QUESTION_REPOSITORY = Symbol('PERFORMANCE.FEEDBACK360_QUESTION_REPOSITORY');
 

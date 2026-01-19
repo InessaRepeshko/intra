@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { RespondentCategory } from '../../../domain/respondent-category.enum';
-import { Feedback360Status } from '../../../domain/feedback360-status.enum';
+import { RespondentCategory } from '../../../domain/enum/respondent-category.enum';
+import { Feedback360Status } from '../../../domain/enum/feedback360-status.enum';
 
 export class FeedbackRespondentResponse {
   @ApiProperty({ example: 1 })

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { Feedback360Stage } from '../../../domain/feedback360-stage.enum';
+import { Feedback360Stage } from '../../../domain/enum/feedback360-stage.enum';
 
 export class FeedbackResponse {
   @ApiProperty({ example: 1 })

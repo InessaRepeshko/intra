@@ -4,7 +4,7 @@ import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/comm
 import { IsEmail } from 'src/common/validators/email.validator';
 import { IsEnglishName } from 'src/common/validators/name.validator';
 import { UserConstants } from 'src/common/validators/constants';
-import { IdentityUserStatus } from '../../../domain/identity-user-status.enum';
+import { IdentityUserStatus } from '../../../domain/enums/identity-user-status.enum';
 
 export class CreateUserDto {
   @ApiProperty({ description: `User's first name`, minLength: UserConstants.NAME_MIN_LENGTH, maxLength: UserConstants.NAME_MAX_LENGTH, example: 'Valerii' })

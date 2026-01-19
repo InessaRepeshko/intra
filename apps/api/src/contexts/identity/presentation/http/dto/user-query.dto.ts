@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail } from 'src/common/validators/email.validator';
 import { IsEnum, IsInt, IsOptional, IsPositive, IsString, MaxLength, MinLength } from 'class-validator';
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { IdentityUserStatus } from '../../../domain/identity-user-status.enum';
+import { IdentityUserStatus } from '../../../domain/enums/identity-user-status.enum';
 import { UserSortField } from '../../../application/ports/user.repository.port';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import { UserConstants } from 'src/common/validators/constants';

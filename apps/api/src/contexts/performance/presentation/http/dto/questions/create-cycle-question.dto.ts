@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 import { ToOptionalBool, ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { AnswerType } from 'src/contexts/library/domain/answer-type.enum';
+import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
 
 export class CreateCycleQuestionDto {
   @ApiPropertyOptional({ example: 1, description: 'Cycle to which the question belongs' })

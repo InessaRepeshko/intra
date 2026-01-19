@@ -1,4 +1,4 @@
-import { IdentityRole } from './identity-role.enum';
+import { IdentityRole } from './enums/identity-role.enum';
 
 export class RoleDomain {
   readonly id?: number;

@@ -1,5 +1,5 @@
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
-import { CycleStage } from '../../domain/cycle-stage.enum';
+import { CycleStage } from '../../domain/enum/cycle-stage.enum';
 import { Feedback360CycleDomain } from '../../domain/feedback360-cycle.domain';
 
 export const FEEDBACK360_CYCLE_REPOSITORY = Symbol('PERFORMANCE.FEEDBACK360_CYCLE_REPOSITORY');

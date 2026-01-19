@@ -1,4 +1,4 @@
-import { Feedback360Stage } from './feedback360-stage.enum';
+import { Feedback360Stage } from './enum/feedback360-stage.enum';
 
 export type Feedback360Props = {
   id?: number;

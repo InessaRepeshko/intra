@@ -1,5 +1,5 @@
-import { AnswerType } from './answer-type.enum';
-import { QuestionStatus } from './question-status.enum';
+import { AnswerType } from './enums/answer-type.enum';
+import { QuestionStatus } from './enums/question-status.enum';
 
 export type QuestionProps = {
   id?: number;

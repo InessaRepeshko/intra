@@ -1,6 +1,6 @@
 import { Feedback360RespondentRelationDomain } from '../../domain/feedback360-respondent-relation.domain';
-import { Feedback360Status } from '../../domain/feedback360-status.enum';
-import { RespondentCategory } from '../../domain/respondent-category.enum';
+import { Feedback360Status } from '../../domain/enum/feedback360-status.enum';
+import { RespondentCategory } from '../../domain/enum/respondent-category.enum';
 
 export const FEEDBACK360_RESPONDENT_REPOSITORY = Symbol('PERFORMANCE.FEEDBACK360_RESPONDENT_REPOSITORY');
 

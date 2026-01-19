@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 import { ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { Feedback360Stage } from 'src/contexts/performance/domain/feedback360-stage.enum';
+import { Feedback360Stage } from 'src/contexts/performance/domain/enum/feedback360-stage.enum';
 
 export class CreateFeedbackDto {
   @ApiProperty({ example: 10, description: 'Who we are evaluating' })

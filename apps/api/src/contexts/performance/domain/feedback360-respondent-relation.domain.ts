@@ -1,5 +1,5 @@
-import { Feedback360Status } from './feedback360-status.enum';
-import { RespondentCategory } from './respondent-category.enum';
+import { Feedback360Status } from './enum/feedback360-status.enum';
+import { RespondentCategory } from './enum/respondent-category.enum';
 
 export type Feedback360RespondentRelationProps = {
   id?: number;

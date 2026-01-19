@@ -1,4 +1,4 @@
-import { IdentityRole } from '../../domain/identity-role.enum';
+import { IdentityRole } from '../../domain/enums/identity-role.enum';
 import { RoleDomain } from '../../domain/role.domain';
 
 export const IDENTITY_ROLE_REPOSITORY = Symbol('IDENTITY.ROLE_REPOSITORY');
