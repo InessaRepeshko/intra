@@ -16,7 +16,7 @@ export class QuestionRepository implements QuestionRepositoryPort {
   constructor(private readonly prisma: PrismaService) { }
 
   async create(question: QuestionDomain): Promise<QuestionDomain> {
-    const created = await this.prisma.question.create({
+    const created = await this.prisma.libraryQuestion.create({
       data: {
         title: question.title,
         answerType: question.answerType,
@@ -30,9 +30,9 @@ export class QuestionRepository implements QuestionRepositoryPort {
   }
 
   async findById(id: number): Promise<QuestionDomain | null> {
-    const question = await this.prisma.question.findUnique({
+    const question = await this.prisma.libraryQuestion.findUnique({
       where: { id },
-      include: { questionPositions: { select: { positionId: true } } },
+      include: { libraryQuestionPositions: { select: { positionId: true } } },
     });
 
     return question ? CompetenceMapper.toQuestionDomain(question) : null;
@@ -42,39 +42,39 @@ export class QuestionRepository implements QuestionRepositoryPort {
     const where = this.buildWhere(query);
     const orderBy = this.buildOrder(query);
 
-    const items = await this.prisma.question.findMany({
+    const items = await this.prisma.libraryQuestion.findMany({
       where,
       orderBy,
-      include: { questionPositions: { select: { positionId: true } } },
+      include: { libraryQuestionPositions: { select: { positionId: true } } },
     });
 
     return items.map(CompetenceMapper.toQuestionDomain);
   }
 
   async updateById(id: number, patch: QuestionUpdatePayload): Promise<QuestionDomain> {
-    const updated = await this.prisma.question.update({
+    const updated = await this.prisma.libraryQuestion.update({
       where: { id },
       data: {
         ...patch,
       },
-      include: { questionPositions: { select: { positionId: true } } },
+      include: { libraryQuestionPositions: { select: { positionId: true } } },
     });
 
     return CompetenceMapper.toQuestionDomain(updated);
   }
 
   async deleteById(id: number): Promise<void> {
-    await this.prisma.question.delete({ where: { id } });
+    await this.prisma.libraryQuestion.delete({ where: { id } });
   }
 
-  private buildWhere(query: QuestionSearchQuery): Prisma.QuestionWhereInput {
+  private buildWhere(query: QuestionSearchQuery): Prisma.LibraryQuestionWhereInput {
     const { competenceId, positionId, status, answerType, isForSelfassessment, search } = query;
 
     return {
       ...(competenceId ? { competenceId } : {}),
       ...(positionId
         ? {
-          questionPositions: {
+          libraryQuestionPositions: {
             some: { positionId },
           },
         }
@@ -90,7 +90,7 @@ export class QuestionRepository implements QuestionRepositoryPort {
     };
   }
 
-  private buildOrder(query: QuestionSearchQuery): Prisma.QuestionOrderByWithRelationInput[] {
+  private buildOrder(query: QuestionSearchQuery): Prisma.LibraryQuestionOrderByWithRelationInput[] {
     const field = query.sortBy ?? QuestionSortField.ID;
     const direction = query.sortDirection ?? SortDirection.ASC;
     return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];

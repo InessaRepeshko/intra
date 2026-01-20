@@ -3,8 +3,8 @@ import { IsEnum, IsInt, IsOptional, IsPositive, IsString, MaxLength } from 'clas
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { IsEmail } from 'src/common/validators/email.validator';
 import { IsEnglishName } from 'src/common/validators/name.validator';
-import { UserConstants } from 'src/common/validators/constants';
-import { IdentityUserStatus } from '../../../domain/enums/identity-user-status.enum';
+import { UserConstants } from 'src/common/constants/index';
+import { IdentityStatus } from '../../../domain/enums/identity-status.enum';
 
 export class CreateUserDto {
   @ApiProperty({ description: `User's first name`, minLength: UserConstants.NAME_MIN_LENGTH, maxLength: UserConstants.NAME_MAX_LENGTH, example: 'Valerii' })
@@ -34,11 +34,11 @@ export class CreateUserDto {
   @MaxLength(UserConstants.PASSWORD_HASH_MAX_LENGTH)
   passwordHash?: string;
 
-  @ApiPropertyOptional({ description: `User's status`, enum: IdentityUserStatus, default: IdentityUserStatus.ACTIVE, example: IdentityUserStatus.ACTIVE })
+  @ApiPropertyOptional({ description: `User's status`, enum: IdentityStatus, default: IdentityStatus.ACTIVE, example: IdentityStatus.ACTIVE })
   @IsOptional()
-  @ToOptionalEnum(IdentityUserStatus)
-  @IsEnum(IdentityUserStatus)
-  status?: IdentityUserStatus;
+  @ToOptionalEnum(IdentityStatus)
+  @IsEnum(IdentityStatus)
+  status?: IdentityStatus;
 
   @ApiPropertyOptional({ description: `Position ID`, type: Number, example: 1 })
   @IsOptional()

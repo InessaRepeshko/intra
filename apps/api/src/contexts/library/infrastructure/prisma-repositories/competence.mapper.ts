@@ -3,8 +3,8 @@ import {
   Cluster,
   AnswerType as PrismaAnswerType,
   QuestionStatus as PrismaQuestionStatus,
-  Question,
-  QuestionPositionRelation,
+  LibraryQuestion as PrismaLibraryQuestion,
+  LibraryQuestionPosition as PrismaLibraryQuestionPosition,
 } from '@intra/database';
 import { CompetenceDomain } from '../../domain/competence.domain';
 import { ClusterDomain } from '../../domain/cluster.domain';
@@ -13,7 +13,7 @@ import { AnswerType } from '../../domain/enums/answer-type.enum';
 import { QuestionStatus } from '../../domain/enums/question-status.enum';
 import { QuestionPositionDomain } from '../../domain/question-position.domain';
 
-type QuestionWithPositions = Question & { questionPositions?: { positionId: number }[] };
+type QuestionWithPositions = PrismaLibraryQuestion & { libraryQuestionPositions?: { positionId: number }[] };
 
 export class CompetenceMapper {
   static toCompetenceDomain(competence: Competence): CompetenceDomain {
@@ -53,11 +53,11 @@ export class CompetenceMapper {
       questionStatus: question.questionStatus as QuestionStatus,
       createdAt: question.createdAt,
       updatedAt: question.updatedAt,
-      positionIds: question.questionPositions?.map((q) => q.positionId) ?? [],
+      positionIds: question.libraryQuestionPositions?.map((q) => q.positionId) ?? [],
     });
   }
 
-  static toQuestionPositionDomain(relation: QuestionPositionRelation): QuestionPositionDomain {
+  static toQuestionPositionDomain(relation: PrismaLibraryQuestionPosition): QuestionPositionDomain {
     return QuestionPositionDomain.create({
       id: relation.id,
       questionId: relation.questionId,

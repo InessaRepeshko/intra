@@ -1,6 +1,6 @@
 import { type PrismaClient, AnswerType as PrismaAnswerType, QuestionStatus as PrismaQuestionStatus } from '@intra/database';
-import { AnswerType } from '@intra/api/contexts/library/domain/answer-type.enum';
-import { QuestionStatus } from '@intra/api/contexts/library/domain/question-status.enum';
+import { AnswerType } from '@intra/api/contexts/library/domain/enums/answer-type.enum';
+import { QuestionStatus } from '@intra/api/contexts/library/domain/enums/question-status.enum';
 
 export type QuestionMap = Map<string, { id: number }>;
 
@@ -121,7 +121,7 @@ export async function seedQuestions(prisma: PrismaClient): Promise<QuestionMap> 
     }
 
     for (const q of group.questions) {
-      const existingQuestion = await prisma.question.findFirst({
+      const existingQuestion = await prisma.libraryQuestion.findFirst({
         where: {
           competenceId: competence.id,
           title: q.title,
@@ -129,25 +129,25 @@ export async function seedQuestions(prisma: PrismaClient): Promise<QuestionMap> 
       });
 
       const record = existingQuestion
-        ? await prisma.question.update({
-            where: { id: existingQuestion.id },
-            data: {
-              competenceId: competence.id,
-              title: q.title,
-              answerType: q.answerType.toString().toUpperCase() as unknown as PrismaAnswerType,
-              isForSelfassessment: q.isForSelfassessment,
-              questionStatus: QuestionStatus.ACTIVE.toString().toUpperCase() as unknown as PrismaQuestionStatus,
-            },
-          })
-        : await prisma.question.create({
-            data: {
-              competenceId: competence.id,
-              title: q.title,
-              answerType: q.answerType.toString().toUpperCase() as unknown as PrismaAnswerType,
-              isForSelfassessment: q.isForSelfassessment,
-              questionStatus: QuestionStatus.ACTIVE.toString().toUpperCase() as unknown as PrismaQuestionStatus,
-            },
-          });
+        ? await prisma.libraryQuestion.update({
+          where: { id: existingQuestion.id },
+          data: {
+            competenceId: competence.id,
+            title: q.title,
+            answerType: q.answerType.toString().toUpperCase() as unknown as PrismaAnswerType,
+            isForSelfassessment: q.isForSelfassessment,
+            questionStatus: QuestionStatus.ACTIVE.toString().toUpperCase() as unknown as PrismaQuestionStatus,
+          },
+        })
+        : await prisma.libraryQuestion.create({
+          data: {
+            competenceId: competence.id,
+            title: q.title,
+            answerType: q.answerType.toString().toUpperCase() as unknown as PrismaAnswerType,
+            isForSelfassessment: q.isForSelfassessment,
+            questionStatus: QuestionStatus.ACTIVE.toString().toUpperCase() as unknown as PrismaQuestionStatus,
+          },
+        });
 
       questionMap.set(q.title, { id: record.id });
     }

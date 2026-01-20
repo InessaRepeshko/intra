@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { TeamConstants } from 'src/common/validators/constants';
+import { TeamConstants } from 'src/common/constants/index';
 
 export class CreateTeamDto {
   @ApiProperty({ description: 'Team title', example: 'Engineering Team', maxLength: TeamConstants.TITLE_MAX_LENGTH, minLength: TeamConstants.TITLE_MIN_LENGTH })

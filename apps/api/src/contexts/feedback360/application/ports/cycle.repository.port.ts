@@ -1,0 +1,48 @@
+import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { CycleStage } from '../../domain/enums/cycle-stage.enum';
+import { CycleDomain } from '../../domain/cycle.domain';
+
+export const CYCLE_REPOSITORY = Symbol('FEEDBACK360.CYCLE_REPOSITORY');
+
+export enum CycleSortField {
+  ID = 'id',
+  TITLE = 'title',
+  STAGE = 'stage',
+  MIN_RESPONDENTS_THRESHOLD = 'minRespondentsThreshold',
+  START_DATE = 'startDate',
+  END_DATE = 'endDate',
+  CREATED_AT = 'createdAt',
+  UPDATED_AT = 'updatedAt',
+}
+
+export type CycleSearchQuery = {
+  hrId?: number;
+  minRespondentsThreshold?: number;
+  stage?: CycleStage;
+  isActive?: boolean;
+  search?: string;
+  sortBy?: CycleSortField;
+  sortDirection?: SortDirection;
+};
+
+export type CycleUpdatePayload = Partial<{
+  title: string;
+  description: string | null;
+  hrId: number;
+  minRespondentsThreshold: number;
+  stage: CycleStage;
+  isActive: boolean | null;
+  startDate: Date;
+  reviewDeadline: Date | null;
+  approvalDeadline: Date | null;
+  surveyDeadline: Date | null;
+  endDate: Date;
+}>;
+
+export interface CycleRepositoryPort {
+  create(cycle: CycleDomain): Promise<CycleDomain>;
+  findById(id: number): Promise<CycleDomain | null>;
+  search(query: CycleSearchQuery): Promise<CycleDomain[]>;
+  updateById(id: number, patch: CycleUpdatePayload): Promise<CycleDomain>;
+  deleteById(id: number): Promise<void>;
+}

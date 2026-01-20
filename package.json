@@ -12,7 +12,7 @@
     "dev:api": "turbo run dev --filter=@intra/api",
     "dev:web": "turbo run dev --filter=@intra/web",
     "build": "turbo run build --filter=!@intra/web",
-    "clean": "rm -rf node_modules **/node_modules dist **/dist",
+    "clean": "rm -rf node_modules **/node_modules dist **/dist .turbo **/.turbo",
     "lint": "turbo run lint",
     "format": "turbo run format --filter=@intra/api",
 

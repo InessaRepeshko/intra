@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { IsNotEmpty, IsOptional, IsString, Length, Matches, ValidateIf } from 'class-validator';
-import { UserConstants } from './constants';
+import { UserConstants } from '../constants/index';
 
 export function IsName(
     isOptional: boolean,
@@ -29,8 +29,8 @@ export function IsName(
 export function IsEnglishName(isOptional: boolean, allowNull: boolean = false) {
     const baseDecorators = [
         IsString(),
-        allowNull ? IsOptional() : IsNotEmpty(), 
-        Length(UserConstants.NAME_MIN_LENGTH, UserConstants.NAME_MAX_LENGTH), 
+        allowNull ? IsOptional() : IsNotEmpty(),
+        Length(UserConstants.NAME_MIN_LENGTH, UserConstants.NAME_MAX_LENGTH),
         Matches(UserConstants.PATTERN),
     ];
 

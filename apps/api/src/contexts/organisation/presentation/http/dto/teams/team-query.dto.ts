@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
-import { TeamConstants } from 'src/common/validators/constants';
+import { TeamConstants } from 'src/common/constants/index';
 import { TeamSortField } from '../../../../application/ports/team.repository.port';
 
 export class TeamQueryDto {
@@ -29,6 +29,6 @@ export class TeamQueryDto {
   @ApiPropertyOptional({ description: 'Sorting direction', enum: SortDirection, default: SortDirection.ASC, example: SortDirection.DESC })
   @IsOptional()
   @ToOptionalEnum(SortDirection)
-  @IsEnum(SortDirection)  
+  @IsEnum(SortDirection)
   sortDirection?: SortDirection;
 }

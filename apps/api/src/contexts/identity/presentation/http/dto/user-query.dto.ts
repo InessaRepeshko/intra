@@ -2,10 +2,10 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail } from 'src/common/validators/email.validator';
 import { IsEnum, IsInt, IsOptional, IsPositive, IsString, MaxLength, MinLength } from 'class-validator';
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { IdentityUserStatus } from '../../../domain/enums/identity-user-status.enum';
+import { IdentityStatus } from '../../../domain/enums/identity-status.enum';
 import { UserSortField } from '../../../application/ports/user.repository.port';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
-import { UserConstants } from 'src/common/validators/constants';
+import { UserConstants } from 'src/common/constants/index';
 
 export class UserQueryDto {
   @ApiPropertyOptional({ description: `Search by first name or last name or email`, minLength: UserConstants.NAME_MIN_LENGTH, maxLength: UserConstants.NAME_MAX_LENGTH, example: 'Valerii' })
@@ -16,11 +16,11 @@ export class UserQueryDto {
   @MaxLength(UserConstants.NAME_MAX_LENGTH)
   search?: string;
 
-  @ApiPropertyOptional({ description: `User's status`, enum: IdentityUserStatus, default: IdentityUserStatus.ACTIVE, example: IdentityUserStatus.ACTIVE })
+  @ApiPropertyOptional({ description: `User's status`, enum: IdentityStatus, default: IdentityStatus.ACTIVE, example: IdentityStatus.ACTIVE })
   @IsOptional()
-  @ToOptionalEnum(IdentityUserStatus)
-  @IsEnum(IdentityUserStatus)
-  status?: IdentityUserStatus;
+  @ToOptionalEnum(IdentityStatus)
+  @IsEnum(IdentityStatus)
+  status?: IdentityStatus;
 
   @ApiPropertyOptional({ description: `Team ID`, type: Number, example: 1 })
   @IsOptional()

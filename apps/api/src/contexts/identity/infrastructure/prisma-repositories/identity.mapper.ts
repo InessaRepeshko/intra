@@ -1,12 +1,12 @@
 import {
   IdentityRole as PrismaIdentityRole,
-  IdentityUsersStatus as PrismaIdentityUserStatus,
+  IdentityStatus as PrismaIdentityUserStatus,
   Role,
   User,
   UserRole,
 } from '@intra/database';
 import { IdentityRole } from '../../domain/enums/identity-role.enum';
-import { IdentityUserStatus } from '../../domain/enums/identity-user-status.enum';
+import { IdentityStatus } from '../../domain/enums/identity-status.enum';
 import { UserDomain } from '../../domain/user.domain';
 import { RoleDomain } from '../../domain/role.domain';
 
@@ -24,7 +24,7 @@ export class IdentityMapper {
       fullName: user.fullName,
       email: user.email,
       passwordHash: user.passwordHash,
-      status: user.status as IdentityUserStatus,
+      status: user.status as IdentityStatus,
       positionId: user.positionId,
       teamId: user.teamId,
       managerId: user.managerId,
@@ -45,7 +45,7 @@ export class IdentityMapper {
     });
   }
 
-  static fromStatus(status?: IdentityUserStatus): PrismaIdentityUserStatus | undefined {
+  static fromStatus(status?: IdentityStatus): PrismaIdentityUserStatus | undefined {
     return status as PrismaIdentityUserStatus | undefined;
   }
 

@@ -1,5 +1,5 @@
 import { IdentityRole } from '../../domain/enums/identity-role.enum';
-import { IdentityUserStatus } from '../../domain/enums/identity-user-status.enum';
+import { IdentityStatus } from '../../domain/enums/identity-status.enum';
 import { UserDomain } from '../../domain/user.domain';
 import { SortDirection } from 'src/common/enums/sort-direction.enum';
 
@@ -22,7 +22,7 @@ export enum UserSortField {
 export type UserSearchQuery = {
   search?: string;
   email?: string;
-  status?: IdentityUserStatus;
+  status?: IdentityStatus;
   teamId?: number;
   positionId?: number;
   managerId?: number;
@@ -36,7 +36,7 @@ export type UserUpdatePayload = Partial<{
   lastName: string;
   fullName: string | null;
   passwordHash: string;
-  status: IdentityUserStatus;
+  status: IdentityStatus;
   positionId: number | null;
   teamId: number | null;
   managerId: number | null;

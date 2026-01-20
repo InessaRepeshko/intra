@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IdentityRole } from '../../../domain/enums/identity-role.enum';
-import { IdentityUserStatus } from '../../../domain/enums/identity-user-status.enum';
+import { IdentityStatus } from '../../../domain/enums/identity-status.enum';
 
 export class UserResponse {
   @ApiProperty({ example: 1 })
@@ -28,9 +28,9 @@ export class UserResponse {
   @Expose()
   email!: string;
 
-  @ApiProperty({ enum: IdentityUserStatus, example: IdentityUserStatus.ACTIVE })
+  @ApiProperty({ enum: IdentityStatus, example: IdentityStatus.ACTIVE })
   @Expose()
-  status!: IdentityUserStatus;
+  status!: IdentityStatus;
 
   @ApiProperty({ type: Number, example: 1, nullable: true })
   @Expose()

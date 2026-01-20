@@ -10,7 +10,7 @@ import databaseConfig from './config/database';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { DatabaseModule } from './database/database.module';
-import { PerformanceModule } from './contexts/performance/performance.module';
+import { Feedback360Module } from './contexts/feedback360/feedback360.module';
 
 @Module({
   imports: [
@@ -26,7 +26,7 @@ import { PerformanceModule } from './contexts/performance/performance.module';
     IdentityModule,
     OrganisationModule,
     LibraryModule,
-    PerformanceModule,
+    Feedback360Module,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -635,13 +635,13 @@ export async function seedQuestionPositions(
         continue;
       }
 
-      const existing = await prisma.questionPositionRelation.findFirst({
+      const existing = await prisma.libraryQuestionPosition.findFirst({
         where: { positionId: position.id, questionId: question.id },
       });
 
       if (existing) continue;
 
-      await prisma.questionPositionRelation.create({
+      await prisma.libraryQuestionPosition.create({
         data: {
           positionId: position.id,
           questionId: question.id,

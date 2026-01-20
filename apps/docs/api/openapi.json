@@ -2068,6 +2068,1417 @@
           "Library / Questions"
         ]
       }
+    },
+    "/feedback360/cycles": {
+      "post": {
+        "operationId": "CyclesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCycleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CycleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create 360-Feedback cycle",
+        "tags": [
+          "Feedback360 / Cycles"
+        ]
+      },
+      "get": {
+        "operationId": "CyclesController_search",
+        "parameters": [
+          {
+            "name": "hrId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "name": "minRespondentsThreshold",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 3,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "name": "stage",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "active",
+              "type": "string",
+              "enum": [
+                "canceled",
+                "new",
+                "active",
+                "finished",
+                "archived"
+              ]
+            }
+          },
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by name/description",
+            "schema": {
+              "example": "Q1",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "startDate",
+              "type": "string",
+              "enum": [
+                "id",
+                "title",
+                "stage",
+                "minRespondentsThreshold",
+                "startDate",
+                "endDate",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CycleResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List 360-Feedback cycles",
+        "tags": [
+          "Feedback360 / Cycles"
+        ]
+      }
+    },
+    "/feedback360/cycles/{id}": {
+      "get": {
+        "operationId": "CyclesController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CycleResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get 360-Feedback cycle by id",
+        "tags": [
+          "Feedback360 / Cycles"
+        ]
+      },
+      "patch": {
+        "operationId": "CyclesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCycleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CycleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update 360-Feedback cycle",
+        "tags": [
+          "Feedback360 / Cycles"
+        ]
+      },
+      "delete": {
+        "operationId": "CyclesController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete 360-Feedback cycle",
+        "tags": [
+          "Feedback360 / Cycles"
+        ]
+      }
+    },
+    "/feedback360/reviews": {
+      "post": {
+        "operationId": "ReviewController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      },
+      "get": {
+        "operationId": "ReviewController_search",
+        "parameters": [
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "rateeId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "name": "hrId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 3,
+              "type": "number"
+            }
+          },
+          {
+            "name": "stage",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "canceled",
+                "verification_by_hr",
+                "verification_by_user",
+                "rejected",
+                "self_assessment",
+                "waiting_to_start",
+                "in_progress",
+                "research",
+                "finished"
+              ]
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "createdAt",
+              "type": "string",
+              "enum": [
+                "id",
+                "stage",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List Reviews",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      }
+    },
+    "/feedback360/reviews/{id}": {
+      "get": {
+        "operationId": "ReviewController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get Review by id",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      },
+      "patch": {
+        "operationId": "ReviewController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      },
+      "delete": {
+        "operationId": "ReviewController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      }
+    },
+    "/feedback360/reviews/{id}/questions": {
+      "post": {
+        "operationId": "ReviewController_attachQuestion",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachQuestionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewQuestionRelationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Add question from library to Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      },
+      "get": {
+        "operationId": "ReviewController_listQuestions",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewQuestionRelationResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List questions in Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      }
+    },
+    "/feedback360/reviews/{id}/questions/{questionId}": {
+      "delete": {
+        "operationId": "ReviewController_detachQuestion",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "questionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete question from Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      }
+    },
+    "/feedback360/reviews/{id}/answers": {
+      "post": {
+        "operationId": "ReviewController_addAnswer",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAnswerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Add answer to Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      },
+      "get": {
+        "operationId": "ReviewController_listAnswers",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "respondentCategory",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "self_assessment",
+                "team",
+                "other"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AnswerResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List answers to Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      }
+    },
+    "/feedback360/reviews/{id}/respondents": {
+      "post": {
+        "operationId": "ReviewController_addRespondent",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRespondentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespondentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Add respondent to Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      },
+      "get": {
+        "operationId": "ReviewController_listRespondents",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RespondentResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List respondents to Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      }
+    },
+    "/feedback360/reviews/respondents/{relationId}": {
+      "patch": {
+        "operationId": "ReviewController_updateRespondent",
+        "parameters": [
+          {
+            "name": "relationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRespondentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespondentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update respondent status",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      },
+      "delete": {
+        "operationId": "ReviewController_deleteRespondent",
+        "parameters": [
+          {
+            "name": "relationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete respondent from Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      }
+    },
+    "/feedback360/reviews/{id}/reviewers": {
+      "post": {
+        "operationId": "ReviewController_addReviewer",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReviewerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Add reviewer to Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      },
+      "get": {
+        "operationId": "ReviewController_listReviewers",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewerResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List reviewers to Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      }
+    },
+    "/feedback360/reviews/reviewers/{relationId}": {
+      "delete": {
+        "operationId": "ReviewController_deleteReviewer",
+        "parameters": [
+          {
+            "name": "relationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete reviewer from Review",
+        "tags": [
+          "Feedback360 / Review"
+        ]
+      }
+    },
+    "/feedback360/questions": {
+      "post": {
+        "operationId": "QuestionsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateQuestionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create review question",
+        "tags": [
+          "Feedback360 / Questions"
+        ]
+      },
+      "get": {
+        "operationId": "QuestionsController_search",
+        "parameters": [
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 3,
+              "type": "number"
+            }
+          },
+          {
+            "name": "competenceId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "name": "answerType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "numerical_scale",
+                "text_field"
+              ]
+            }
+          },
+          {
+            "name": "isForSelfassessment",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "createdAt",
+              "type": "string",
+              "enum": [
+                "id",
+                "createdAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List review questions",
+        "tags": [
+          "Feedback360 / Questions"
+        ]
+      }
+    },
+    "/feedback360/questions/{id}": {
+      "delete": {
+        "operationId": "QuestionsController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete review question",
+        "tags": [
+          "Feedback360 / Questions"
+        ]
+      }
+    },
+    "/feedback360/cluster-scores": {
+      "post": {
+        "operationId": "ClusterScoresController_upsert",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertClusterScoreDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClusterScoreResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Save or update cluster score",
+        "tags": [
+          "Feedback360 / Cluster Scores"
+        ]
+      },
+      "get": {
+        "operationId": "ClusterScoresController_list",
+        "parameters": [
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "clusterId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 3,
+              "type": "number"
+            }
+          },
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 7,
+              "type": "number"
+            }
+          },
+          {
+            "name": "reviewId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClusterScoreResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List cluster scores",
+        "tags": [
+          "Feedback360 / Cluster Scores"
+        ]
+      }
+    },
+    "/feedback360/cluster-scores/{id}": {
+      "delete": {
+        "operationId": "ClusterScoresController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete cluster score",
+        "tags": [
+          "Feedback360 / Cluster Scores"
+        ]
+      }
     }
   },
   "info": {
@@ -2861,17 +4272,20 @@
       "CreateQuestionDto": {
         "type": "object",
         "properties": {
-          "competenceId": {
+          "cycleId": {
             "type": "number",
-            "description": "Competence id the question belongs to",
-            "example": 2
+            "example": 1,
+            "description": "Cycle to which the question belongs"
+          },
+          "libraryQuestionId": {
+            "type": "number",
+            "example": 10,
+            "description": "Base question from library (optional)"
           },
           "title": {
             "type": "string",
-            "description": "Question text/title",
-            "example": "Delivers features on time",
-            "minLength": 1,
-            "maxLength": 1000
+            "example": "How do you plan your work?",
+            "description": "Question text"
           },
           "answerType": {
             "type": "string",
@@ -2881,35 +4295,22 @@
             ],
             "example": "numerical_scale"
           },
+          "competenceId": {
+            "type": "number",
+            "example": 3,
+            "description": "Competence to which the question is linked"
+          },
+          "positionId": {
+            "type": "number",
+            "example": 4,
+            "description": "Position to which the question is linked"
+          },
           "isForSelfassessment": {
             "type": "boolean",
-            "description": "Is this question for self assessment",
-            "example": false,
-            "default": false
-          },
-          "questionStatus": {
-            "type": "string",
-            "enum": [
-              "archive",
-              "active"
-            ],
-            "example": "active",
-            "default": "active"
-          },
-          "positionIds": {
-            "description": "Positions this question is linked to",
-            "example": [
-              1,
-              2
-            ],
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
+            "example": false
           }
         },
         "required": [
-          "competenceId",
           "title",
           "answerType"
         ]
@@ -2919,15 +4320,19 @@
         "properties": {
           "id": {
             "type": "number",
+            "example": 5
+          },
+          "cycleId": {
+            "type": "object",
             "example": 1
           },
-          "competenceId": {
-            "type": "number",
-            "example": 2
+          "libraryQuestionId": {
+            "type": "object",
+            "example": 12
           },
           "title": {
             "type": "string",
-            "example": "Delivers features on time"
+            "example": "How do you plan your work?"
           },
           "answerType": {
             "type": "string",
@@ -2935,48 +4340,29 @@
               "numerical_scale",
               "text_field"
             ],
-            "example": "numerical_scale"
+            "example": "text_field"
+          },
+          "competenceId": {
+            "type": "object",
+            "example": 3
+          },
+          "positionId": {
+            "type": "object",
+            "example": 4
           },
           "isForSelfassessment": {
             "type": "boolean",
             "example": false
           },
-          "questionStatus": {
-            "type": "string",
-            "enum": [
-              "archive",
-              "active"
-            ],
-            "example": "active"
-          },
-          "positionIds": {
-            "example": [
-              1,
-              2,
-              3
-            ],
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
-          },
           "createdAt": {
-            "type": "string",
-            "example": "2024-01-01T10:00:00.000Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "example": "2024-01-02T10:00:00.000Z"
+            "type": "string"
           }
         },
         "required": [
           "id",
-          "competenceId",
           "title",
           "answerType",
-          "isForSelfassessment",
-          "questionStatus",
-          "positionIds"
+          "isForSelfassessment"
         ]
       },
       "UpdateQuestionDto": {
@@ -3041,6 +4427,789 @@
         },
         "required": [
           "positionId"
+        ]
+      },
+      "CreateCycleDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Q1 2025",
+            "description": "Cycle name"
+          },
+          "description": {
+            "type": "string",
+            "example": "First 360 cycle for the team",
+            "description": "Description"
+          },
+          "hrId": {
+            "type": "number",
+            "example": 2,
+            "description": "HR responsible for the cycle"
+          },
+          "minRespondentsThreshold": {
+            "type": "number",
+            "example": 5,
+            "default": 3
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "canceled",
+              "new",
+              "active",
+              "finished",
+              "archived"
+            ],
+            "example": "new",
+            "default": "new"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true,
+            "default": true
+          },
+          "startDate": {
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z"
+          },
+          "reviewDeadline": {
+            "type": "string",
+            "example": "2025-01-10T00:00:00.000Z"
+          },
+          "approvalDeadline": {
+            "type": "string",
+            "example": "2025-01-15T00:00:00.000Z"
+          },
+          "responseDeadline": {
+            "type": "string",
+            "example": "2025-01-20T00:00:00.000Z"
+          },
+          "endDate": {
+            "type": "string",
+            "example": "2025-02-01T00:00:00.000Z"
+          }
+        },
+        "required": [
+          "title",
+          "hrId",
+          "startDate",
+          "endDate"
+        ]
+      },
+      "CycleResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "example": "Q1 2025"
+          },
+          "description": {
+            "type": "object",
+            "example": "First cycle"
+          },
+          "hrId": {
+            "type": "number",
+            "example": 2
+          },
+          "minRespondentsThreshold": {
+            "type": "number",
+            "example": 5,
+            "default": 3
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "canceled",
+              "new",
+              "active",
+              "finished",
+              "archived"
+            ],
+            "example": "new"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "reviewDeadline": {
+            "type": "string"
+          },
+          "approvalDeadline": {
+            "type": "string"
+          },
+          "responseDeadline": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "hrId",
+          "minRespondentsThreshold",
+          "stage",
+          "isActive",
+          "startDate",
+          "endDate"
+        ]
+      },
+      "UpdateCycleDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Q1 2025",
+            "description": "Cycle name"
+          },
+          "description": {
+            "type": "string",
+            "example": "First 360 cycle for the team",
+            "description": "Description"
+          },
+          "hrId": {
+            "type": "number",
+            "example": 2,
+            "description": "HR responsible for the cycle"
+          },
+          "minRespondentsThreshold": {
+            "type": "number",
+            "example": 5,
+            "default": 3
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "canceled",
+              "new",
+              "active",
+              "finished",
+              "archived"
+            ],
+            "example": "new",
+            "default": "new"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true,
+            "default": true
+          },
+          "startDate": {
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z"
+          },
+          "reviewDeadline": {
+            "type": "string",
+            "example": "2025-01-10T00:00:00.000Z"
+          },
+          "approvalDeadline": {
+            "type": "string",
+            "example": "2025-01-15T00:00:00.000Z"
+          },
+          "responseDeadline": {
+            "type": "string",
+            "example": "2025-01-20T00:00:00.000Z"
+          },
+          "endDate": {
+            "type": "string",
+            "example": "2025-02-01T00:00:00.000Z"
+          }
+        }
+      },
+      "CreateReviewDto": {
+        "type": "object",
+        "properties": {
+          "rateeId": {
+            "type": "number",
+            "example": 10,
+            "description": "Who we are evaluating"
+          },
+          "rateeNote": {
+            "type": "string",
+            "description": "Comment of the evaluated"
+          },
+          "positionId": {
+            "type": "number",
+            "example": 3,
+            "description": "Position of the evaluated"
+          },
+          "hrId": {
+            "type": "number",
+            "example": 2,
+            "description": "HR, responsible for the process"
+          },
+          "hrNote": {
+            "type": "string",
+            "description": "HR comment"
+          },
+          "cycleId": {
+            "type": "number",
+            "example": 1,
+            "description": "Attached cycle"
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "canceled",
+              "verification_by_hr",
+              "verification_by_user",
+              "rejected",
+              "self_assessment",
+              "waiting_to_start",
+              "in_progress",
+              "research",
+              "finished"
+            ],
+            "example": "verification_by_hr"
+          }
+        },
+        "required": [
+          "rateeId",
+          "positionId",
+          "hrId"
+        ]
+      },
+      "ReviewResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "rateeId": {
+            "type": "number",
+            "example": 10
+          },
+          "rateeNote": {
+            "type": "object",
+            "example": "Comment of the evaluated"
+          },
+          "positionId": {
+            "type": "number",
+            "example": 3
+          },
+          "hrId": {
+            "type": "number",
+            "example": 2
+          },
+          "hrNote": {
+            "type": "object",
+            "example": "HR comment"
+          },
+          "cycleId": {
+            "type": "object",
+            "example": 1
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "canceled",
+              "verification_by_hr",
+              "verification_by_user",
+              "rejected",
+              "self_assessment",
+              "waiting_to_start",
+              "in_progress",
+              "research",
+              "finished"
+            ],
+            "example": "verification_by_hr"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "rateeId",
+          "positionId",
+          "hrId",
+          "stage"
+        ]
+      },
+      "UpdateReviewDto": {
+        "type": "object",
+        "properties": {
+          "rateeId": {
+            "type": "number",
+            "example": 10,
+            "description": "Who we are evaluating"
+          },
+          "rateeNote": {
+            "type": "string",
+            "description": "Comment of the evaluated"
+          },
+          "positionId": {
+            "type": "number",
+            "example": 3,
+            "description": "Position of the evaluated"
+          },
+          "hrId": {
+            "type": "number",
+            "example": 2,
+            "description": "HR, responsible for the process"
+          },
+          "hrNote": {
+            "type": "string",
+            "description": "HR comment"
+          },
+          "cycleId": {
+            "type": "number",
+            "example": 1,
+            "description": "Attached cycle"
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "canceled",
+              "verification_by_hr",
+              "verification_by_user",
+              "rejected",
+              "self_assessment",
+              "waiting_to_start",
+              "in_progress",
+              "research",
+              "finished"
+            ],
+            "example": "verification_by_hr"
+          }
+        }
+      },
+      "AttachQuestionDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "number",
+            "example": 10,
+            "description": "ID of the question from the library"
+          }
+        },
+        "required": [
+          "questionId"
+        ]
+      },
+      "ReviewQuestionRelationResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "reviewId": {
+            "type": "number",
+            "example": 2
+          },
+          "libraryQuestionId": {
+            "type": "number",
+            "example": 10
+          },
+          "questionTitle": {
+            "type": "string",
+            "example": "Delivers features on time"
+          },
+          "answerType": {
+            "type": "string",
+            "enum": [
+              "numerical_scale",
+              "text_field"
+            ],
+            "example": "numerical_scale"
+          },
+          "competenceId": {
+            "type": "number",
+            "example": 3
+          },
+          "isForSelfassessment": {
+            "type": "boolean",
+            "example": false
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "reviewId",
+          "libraryQuestionId",
+          "questionTitle",
+          "answerType",
+          "competenceId",
+          "isForSelfassessment"
+        ]
+      },
+      "CreateAnswerDto": {
+        "type": "object",
+        "properties": {
+          "libraryQuestionId": {
+            "type": "number",
+            "example": 12,
+            "description": "Question from library"
+          },
+          "reviewQuestionId": {
+            "type": "number",
+            "example": 5,
+            "description": "Question from custom cycle list"
+          },
+          "respondentCategory": {
+            "type": "string",
+            "enum": [
+              "self_assessment",
+              "team",
+              "other"
+            ],
+            "example": "team"
+          },
+          "answerType": {
+            "type": "string",
+            "enum": [
+              "numerical_scale",
+              "text_field"
+            ],
+            "example": "numerical_scale"
+          },
+          "numericalValue": {
+            "type": "number",
+            "example": 4,
+            "description": "Numerical score"
+          },
+          "textValue": {
+            "type": "string",
+            "example": "Good progress",
+            "description": "Text answer"
+          }
+        },
+        "required": [
+          "libraryQuestionId",
+          "respondentCategory",
+          "answerType"
+        ]
+      },
+      "AnswerResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "reviewId": {
+            "type": "number",
+            "example": 2
+          },
+          "libraryQuestionId": {
+            "type": "number",
+            "example": 10
+          },
+          "reviewQuestionId": {
+            "type": "object",
+            "example": 5
+          },
+          "respondentCategory": {
+            "type": "string",
+            "enum": [
+              "self_assessment",
+              "team",
+              "other"
+            ]
+          },
+          "answerType": {
+            "type": "string",
+            "enum": [
+              "numerical_scale",
+              "text_field"
+            ]
+          },
+          "numericalValue": {
+            "type": "object",
+            "example": 4
+          },
+          "textValue": {
+            "type": "object",
+            "example": "Comment"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "reviewId",
+          "libraryQuestionId",
+          "respondentCategory",
+          "answerType"
+        ]
+      },
+      "CreateRespondentDto": {
+        "type": "object",
+        "properties": {
+          "respondentId": {
+            "type": "number",
+            "example": 7,
+            "description": "Respondent"
+          },
+          "respondentCategory": {
+            "type": "string",
+            "enum": [
+              "self_assessment",
+              "team",
+              "other"
+            ],
+            "example": "team"
+          },
+          "responseStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "in_progress",
+              "completed",
+              "canceled"
+            ],
+            "example": "pending"
+          },
+          "respondentNote": {
+            "type": "string",
+            "example": "Ask to respond by Friday"
+          },
+          "invitedAt": {
+            "type": "string",
+            "example": "2025-01-05T00:00:00.000Z"
+          },
+          "respondedAt": {
+            "type": "string",
+            "example": "2025-01-10T00:00:00.000Z"
+          }
+        },
+        "required": [
+          "respondentId",
+          "respondentCategory"
+        ]
+      },
+      "RespondentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "reviewId": {
+            "type": "number",
+            "example": 2
+          },
+          "respondentId": {
+            "type": "number",
+            "example": 7
+          },
+          "respondentCategory": {
+            "type": "string",
+            "enum": [
+              "self_assessment",
+              "team",
+              "other"
+            ]
+          },
+          "responseStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "in_progress",
+              "completed",
+              "canceled"
+            ]
+          },
+          "respondentNote": {
+            "type": "object",
+            "example": "Comment"
+          },
+          "invitedAt": {
+            "type": "string"
+          },
+          "respondedAt": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "reviewId",
+          "respondentId",
+          "respondentCategory",
+          "responseStatus"
+        ]
+      },
+      "UpdateRespondentDto": {
+        "type": "object",
+        "properties": {
+          "respondentId": {
+            "type": "number",
+            "example": 7,
+            "description": "Respondent"
+          },
+          "respondentCategory": {
+            "type": "string",
+            "enum": [
+              "self_assessment",
+              "team",
+              "other"
+            ],
+            "example": "team"
+          },
+          "responseStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "in_progress",
+              "completed",
+              "canceled"
+            ],
+            "example": "pending"
+          },
+          "respondentNote": {
+            "type": "string",
+            "example": "Ask to respond by Friday"
+          },
+          "invitedAt": {
+            "type": "string",
+            "example": "2025-01-05T00:00:00.000Z"
+          },
+          "respondedAt": {
+            "type": "string",
+            "example": "2025-01-10T00:00:00.000Z"
+          }
+        }
+      },
+      "CreateReviewerDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "number",
+            "example": 4,
+            "description": "User reviewer"
+          }
+        },
+        "required": [
+          "userId"
+        ]
+      },
+      "ReviewerResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "reviewId": {
+            "type": "number",
+            "example": 2
+          },
+          "userId": {
+            "type": "number",
+            "example": 4
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "reviewId",
+          "userId"
+        ]
+      },
+      "UpsertClusterScoreDto": {
+        "type": "object",
+        "properties": {
+          "cycleId": {
+            "type": "number",
+            "example": 1,
+            "description": "Cycle (optional)"
+          },
+          "clusterId": {
+            "type": "number",
+            "example": 3,
+            "description": "Cluster"
+          },
+          "userId": {
+            "type": "number",
+            "example": 7,
+            "description": "User"
+          },
+          "reviewId": {
+            "type": "number",
+            "example": 5,
+            "description": "Review (optional)"
+          },
+          "score": {
+            "type": "number",
+            "example": 4.5
+          }
+        },
+        "required": [
+          "clusterId",
+          "userId",
+          "score"
+        ]
+      },
+      "ClusterScoreResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "cycleId": {
+            "type": "object",
+            "example": 1
+          },
+          "clusterId": {
+            "type": "number",
+            "example": 3
+          },
+          "userId": {
+            "type": "number",
+            "example": 7
+          },
+          "reviewId": {
+            "type": "object",
+            "example": 2
+          },
+          "score": {
+            "type": "number",
+            "example": 4.3
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "clusterId",
+          "userId",
+          "score"
         ]
       }
     }

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { PositionConstants } from 'src/common/validators/constants';
+import { PositionConstants } from 'src/common/constants/index';
 
 export class CreatePositionDto {
   @ApiProperty({ description: 'Position title', example: 'Senior Backend Engineer', maxLength: PositionConstants.TITLE_MAX_LENGTH, minLength: PositionConstants.TITLE_MIN_LENGTH })

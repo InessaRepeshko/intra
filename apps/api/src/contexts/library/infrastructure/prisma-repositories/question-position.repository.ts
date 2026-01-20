@@ -11,13 +11,13 @@ export class QuestionPositionRepository implements QuestionPositionRepositoryPor
 
   async link(questionId: number, positionId: number): Promise<QuestionPositionDomain> {
     try {
-      const relation = await this.prisma.questionPositionRelation.create({
+      const relation = await this.prisma.libraryQuestionPosition.create({
         data: { questionId, positionId },
       });
       return CompetenceMapper.toQuestionPositionDomain(relation);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        const existing = await this.prisma.questionPositionRelation.findUnique({
+        const existing = await this.prisma.libraryQuestionPosition.findUnique({
           where: { questionId_positionId: { questionId, positionId } },
         });
         if (existing) return CompetenceMapper.toQuestionPositionDomain(existing);
@@ -27,13 +27,13 @@ export class QuestionPositionRepository implements QuestionPositionRepositoryPor
   }
 
   async unlink(questionId: number, positionId: number): Promise<void> {
-    await this.prisma.questionPositionRelation.deleteMany({
+    await this.prisma.libraryQuestionPosition.deleteMany({
       where: { questionId, positionId },
     });
   }
 
   async listByQuestion(questionId: number): Promise<QuestionPositionDomain[]> {
-    const relations = await this.prisma.questionPositionRelation.findMany({
+    const relations = await this.prisma.libraryQuestionPosition.findMany({
       where: { questionId },
       orderBy: { createdAt: 'desc' },
     });
@@ -47,10 +47,10 @@ export class QuestionPositionRepository implements QuestionPositionRepositoryPor
     await this.prisma.$transaction(async (tx) => {
       const deleteFilter =
         unique.length > 0 ? { questionId, NOT: { positionId: { in: unique } } } : { questionId };
-      await tx.questionPositionRelation.deleteMany({ where: deleteFilter });
+      await tx.libraryQuestionPosition.deleteMany({ where: deleteFilter });
 
       if (unique.length) {
-        await tx.questionPositionRelation.createMany({
+        await tx.libraryQuestionPosition.createMany({
           data: unique.map((positionId) => ({ questionId, positionId })),
           skipDuplicates: true,
         });

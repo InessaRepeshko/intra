@@ -5,7 +5,7 @@ import { SortDirection } from 'src/common/enums/sort-direction.enum';
 import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
 import { QuestionStatus } from 'src/contexts/library/domain/enums/question-status.enum';
 import { QuestionSortField } from 'src/contexts/library/application/ports/question.repository.port';
-import { QuestionConstants } from 'src/common/validators/constants';
+import { QUESTION_CONSTANTS } from 'src/common/constants/index';
 
 export class QuestionQueryDto {
   @ApiPropertyOptional({ description: 'Filter by competence id', example: 2 })
@@ -41,12 +41,12 @@ export class QuestionQueryDto {
   @ApiPropertyOptional({
     description: 'Search in title',
     example: 'features',
-    maxLength: QuestionConstants.TITLE_MAX_LENGTH,
+    maxLength: QUESTION_CONSTANTS.TITLE.MAX_LENGTH,
   })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()
-  @MaxLength(QuestionConstants.TITLE_MAX_LENGTH)
+  @MaxLength(QUESTION_CONSTANTS.TITLE.MAX_LENGTH)
   search?: string;
 
   @ApiPropertyOptional({ enum: QuestionSortField, example: QuestionSortField.TITLE })

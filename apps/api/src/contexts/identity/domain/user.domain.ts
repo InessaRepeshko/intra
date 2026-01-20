@@ -1,5 +1,5 @@
 import { IdentityRole } from './enums/identity-role.enum';
-import { IdentityUserStatus } from './enums/identity-user-status.enum';
+import { IdentityStatus } from './enums/identity-status.enum';
 
 export type UserProps = {
   id?: number;
@@ -9,7 +9,7 @@ export type UserProps = {
   fullName?: string | null;
   email: string;
   passwordHash: string;
-  status?: IdentityUserStatus;
+  status?: IdentityStatus;
   positionId?: number | null;
   teamId?: number | null;
   managerId?: number | null;
@@ -26,7 +26,7 @@ export class UserDomain {
   readonly fullName: string | null;
   readonly email: string;
   readonly passwordHash: string;
-  readonly status: IdentityUserStatus;
+  readonly status: IdentityStatus;
   readonly positionId: number | null;
   readonly teamId: number | null;
   readonly managerId: number | null;
@@ -42,7 +42,7 @@ export class UserDomain {
     this.fullName = props.fullName ?? UserDomain.buildFullName(props.firstName, props.secondName, props.lastName);
     this.email = props.email;
     this.passwordHash = props.passwordHash;
-    this.status = props.status ?? IdentityUserStatus.ACTIVE;
+    this.status = props.status ?? IdentityStatus.ACTIVE;
     this.positionId = props.positionId ?? null;
     this.teamId = props.teamId ?? null;
     this.managerId = props.managerId ?? null;

@@ -7,7 +7,7 @@ import {
   UserSearchQuery,
   UserUpdatePayload,
 } from '../ports/user.repository.port';
-import { IdentityUserStatus } from '../../domain/enums/identity-user-status.enum';
+import { IdentityStatus } from '../../domain/enums/identity-status.enum';
 import { IdentityRole } from '../../domain/enums/identity-role.enum';
 import { UserDomain } from '../../domain/user.domain';
 
@@ -17,7 +17,7 @@ export type CreateUserCommand = {
   lastName: string;
   email: string;
   passwordHash?: string;
-  status?: IdentityUserStatus;
+  status?: IdentityStatus;
   positionId?: number | null;
   teamId?: number | null;
   managerId?: number | null;
@@ -41,7 +41,7 @@ export class IdentityUserService {
       lastName: command.lastName,
       email: command.email,
       passwordHash: command.passwordHash ?? PASSWORD_PLACEHOLDER,
-      status: command.status ?? IdentityUserStatus.ACTIVE,
+      status: command.status ?? IdentityStatus.ACTIVE,
       positionId: command.positionId ?? null,
       teamId: command.teamId ?? null,
       managerId: command.managerId ?? null,

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { CompetenceConstants } from 'src/common/validators/constants';
+import { CompetenceConstants } from 'src/common/constants/index';
 
 export class CreateCompetenceDto {
   @ApiPropertyOptional({
