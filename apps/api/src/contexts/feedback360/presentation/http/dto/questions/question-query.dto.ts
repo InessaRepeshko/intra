@@ -3,7 +3,7 @@ import { IsBoolean, IsEnum, IsInt, IsOptional } from 'class-validator';
 import { ToOptionalBool, ToOptionalEnum, ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
 import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
 import { QuestionSortField } from 'src/contexts/feedback360/application/ports/question.repository.port';
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 
 export class QuestionQueryDto {
   @ApiPropertyOptional({ example: 1 })

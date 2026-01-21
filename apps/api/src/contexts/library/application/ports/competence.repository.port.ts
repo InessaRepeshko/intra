@@ -1,4 +1,4 @@
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 import { CompetenceDomain } from '../../domain/competence.domain';
 
 export const COMPETENCE_REPOSITORY = Symbol('LIBRARY.COMPETENCE_REPOSITORY');

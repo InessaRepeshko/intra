@@ -1,14 +1,32 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "src/*": ["src/*"],
-      "@intra/database": ["src/generated"],
-      "@intra/database/*": ["src/generated/*"],
-      "@intra/api": ["../../apps/api/src"],
-      "@intra/api/*": ["../../apps/api/src/*"]
-    }
-  },
-  "exclude": ["node_modules"]
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "src/*": [
+                "src/*"
+            ],
+            "@intra/database": [
+                "src/generated"
+            ],
+            "@intra/database/*": [
+                "src/generated/*"
+            ],
+            "@intra/api": [
+                "../../apps/api/src"
+            ],
+            "@intra/api/*": [
+                "../../apps/api/src/*"
+            ],
+            "@intra/shared-kernel": [
+                "../shared-kernel/src"
+            ],
+            "@intra/shared-kernel/*": [
+                "../shared-kernel/src/*"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules"
+    ]
 }

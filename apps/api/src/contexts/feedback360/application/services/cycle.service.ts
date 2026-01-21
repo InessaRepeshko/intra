@@ -7,7 +7,7 @@ import {
 } from '../ports/cycle.repository.port';
 import { CycleDomain } from '../../domain/cycle.domain';
 import { CycleStage } from '../../domain/enums/cycle-stage.enum';
-import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constants';
+import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constraints';
 
 export type CreateCycleCommand = {
   title: string;

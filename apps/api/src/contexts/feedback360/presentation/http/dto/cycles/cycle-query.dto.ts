@@ -1,10 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsInt, IsOptional } from 'class-validator';
-import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constants';
+import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constraints';
 import { ToOptionalBool, ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { CycleStage } from 'src/contexts/feedback360/domain/enums/cycle-stage.enum';
 import { CycleSortField } from 'src/contexts/feedback360/application/ports/cycle.repository.port';
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 
 export class CycleQueryDto {
   @ApiPropertyOptional({ example: 2 })

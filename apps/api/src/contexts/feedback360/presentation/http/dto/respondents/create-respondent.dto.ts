@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
-import { REVIEW_CONSTANTS } from 'src/common/constants/review.constants';
+import { REVIEW_CONSTANTS } from 'src/common/constants/review.constraints';
 import { ToOptionalDate, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { RespondentCategory } from 'src/contexts/feedback360/domain/enums/respondent-category.enum';
 import { ResponseStatus } from 'src/contexts/feedback360/domain/enums/response-status.enum';

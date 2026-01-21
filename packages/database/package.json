@@ -1,35 +1,51 @@
 {
-  "name": "@intra/database",
-  "private": true,
-  "version": "1.0.0",
-  "description": "Shared Prisma schema + migrations for Intra monorepo",
-  "license": "MIT",
-  "main": "./src/generated/index.js",
-  "types": "./src/generated/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./src/generated/index.d.ts",
-      "import": "./src/generated/index.js",
-      "default": "./src/generated/index.js",
-      "require": "./src/generated/index.js"
+    "name": "@intra/database",
+    "version": "1.0.0",
+    "description": "Shared Prisma schema, migrations and seeders for Intra monorepo",
+    "private": true,
+    "license": "MIT",
+    "author": "Inessa Repeshko",
+    "main": "./src/generated/index.js",
+    "types": "./src/generated/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./src/generated/index.d.ts",
+            "import": "./src/generated/index.js",
+            "default": "./src/generated/index.js",
+            "require": "./src/generated/index.js"
+        }
+    },
+    "scripts": {
+        "prisma:config": "prisma --config ./prisma.config.ts",
+        "prisma:dev": "dotenv -e ../../.env.development.local -- pnpm prisma:config",
+        "prisma:test": "dotenv -e ../../.env.test -- pnpm prisma:config",
+        "db:deploy": "pnpm prisma:dev -- migrate deploy",
+        "db:create": "pnpm prisma:dev -- migrate dev",
+        "db:generate": "pnpm prisma:dev -- generate",
+        "db:seed": "pnpm prisma:dev -- db seed",
+        "db:reset": "pnpm prisma:dev -- migrate reset --force",
+        "db:refresh": "pnpm db:reset && pnpm db:generate && pnpm db:seed",
+        "db:test:deploy": "pnpm prisma:test -- migrate deploy",
+        "db:test:generate": "pnpm prisma:test -- generate",
+        "db:test:reset": "pnpm prisma:test -- migrate reset --force",
+        "db:test:seed": "pnpm prisma:test -- db seed",
+        "db:test:refresh": "pnpm db:test:reset && pnpm db:test:generate && pnpm db:test:seed",
+        "migrate": "pnpm db:create",
+        "db:migrate": "pnpm db:create"
+    },
+    "dependencies": {
+        "@intra/shared-kernel": "workspace:*",
+        "@prisma/client": "^7.2.0",
+        "dotenv": "^17.2.3",
+        "dotenv-cli": "^7.4.4",
+        "prisma": "^7.2.0"
+    },
+    "devDependencies": {
+        "@prisma/client": "^7.2.0",
+        "@prisma/generator-dbml": "^0.12.0",
+        "@types/node": "^22.19.6",
+        "dotenv": "^17.2.3",
+        "dotenv-cli": "^7.4.4",
+        "prisma": "^7.2.0"
     }
-  },
-  "scripts": {
-    "prisma:config": "prisma --config ./prisma.config.ts",
-    "prisma:dev": "dotenv -e ../../.env.development.local -- pnpm prisma:config",
-    "prisma:test": "dotenv -e ../../.env.test -- pnpm prisma:config",
-    "db:deploy": "pnpm prisma:dev -- migrate deploy",
-    "db:create": "pnpm prisma:dev -- migrate dev",
-    "db:generate": "pnpm prisma:dev -- generate",
-    "db:seed": "pnpm prisma:dev -- db seed",
-    "db:reset": "pnpm prisma:dev -- migrate reset --force",
-    "db:refresh": "pnpm db:reset && pnpm db:generate && pnpm db:seed",
-    "db:test:deploy": "pnpm prisma:test -- migrate deploy",
-    "db:test:generate": "pnpm prisma:test -- generate",
-    "db:test:reset": "pnpm prisma:test -- migrate reset --force",
-    "db:test:seed": "pnpm prisma:test -- db seed",
-    "db:test:refresh": "pnpm db:test:reset && pnpm db:test:generate && pnpm db:test:seed",
-    "migrate": "pnpm db:create",
-    "db:migrate": "pnpm db:create"
-  }
 }

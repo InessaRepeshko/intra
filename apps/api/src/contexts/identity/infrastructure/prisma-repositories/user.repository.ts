@@ -4,7 +4,7 @@ import { PrismaService } from 'src/database/prisma.service';
 import { UserRepositoryPort, UserSearchQuery, UserSortField, UserUpdatePayload } from '../../application/ports/user.repository.port';
 import { UserDomain } from '../../domain/user.domain';
 import { IdentityMapper, UserWithRoles } from './identity.mapper';
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 import { IdentityRole } from '../../domain/enums/identity-role.enum';
 
 @Injectable()

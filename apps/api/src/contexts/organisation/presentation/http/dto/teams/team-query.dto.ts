@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 import { TeamConstants } from 'src/common/constants/index';
 import { TeamSortField } from '../../../../application/ports/team.repository.port';
 

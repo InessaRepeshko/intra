@@ -1,4 +1,4 @@
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 import { QuestionDomain } from '../../domain/question.domain';
 import { AnswerType } from '../../domain/enums/answer-type.enum';
 import { QuestionStatus } from '../../domain/enums/question-status.enum';

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsDate, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min } from 'class-validator';
-import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constants';
+import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constraints';
 import { ToOptionalBool, ToOptionalDate, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { CycleStage } from 'src/contexts/feedback360/domain/enums/cycle-stage.enum';
 

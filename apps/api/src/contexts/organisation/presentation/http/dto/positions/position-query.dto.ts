@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { ToOptionalEnum, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { PositionConstants } from 'src/common/constants/index';
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 import { PositionSortField } from '../../../../application/ports/position.repository.port';
 
 export class PositionQueryDto {

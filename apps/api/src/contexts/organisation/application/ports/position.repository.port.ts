@@ -1,4 +1,4 @@
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 import { PositionDomain } from '../../domain/position.domain';
 
 export const ORGANISATION_POSITION_REPOSITORY = Symbol('ORGANISATION.POSITION_REPOSITORY');

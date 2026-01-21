@@ -3,13 +3,13 @@ import { Prisma } from '@intra/database';
 import { PrismaService } from 'src/database/prisma.service';
 import { OrganisationMapper } from './organisation.mapper';
 import { TeamRepositoryPort, TeamSearchQuery, TeamSortField, TeamUpdatePayload } from '../../application/ports/team.repository.port';
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 import type { TeamDomain } from '../../domain/team.domain';
 import type { TeamMembershipDomain } from '../../domain/team-membership.domain';
 
 @Injectable()
 export class TeamRepository implements TeamRepositoryPort {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(team: TeamDomain): Promise<TeamDomain> {
     const created = await this.prisma.team.create({
@@ -96,11 +96,11 @@ export class TeamRepository implements TeamRepositoryPort {
       ...(headId !== undefined ? { headId } : {}),
       ...(search
         ? {
-            OR: [
-              { title: { contains: search } },
-              { description: { contains: search } },
-            ],
-          }
+          OR: [
+            { title: { contains: search } },
+            { description: { contains: search } },
+          ],
+        }
         : {}),
     };
   }

@@ -1,4 +1,4 @@
-import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constants';
+import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constraints';
 import { CycleStage } from './enums/cycle-stage.enum';
 
 export type CycleProps = {

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
-import { QUESTION_CONSTANTS } from 'src/common/constants/question.constants';
+import { QUESTION_CONSTANTS } from 'src/common/constants/question.constraints';
 import { ToOptionalBool, ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
 

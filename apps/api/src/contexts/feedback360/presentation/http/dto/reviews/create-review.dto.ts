@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 import { ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { REVIEW_CONSTANTS } from 'src/common/constants/review.constants';
+import { REVIEW_CONSTANTS } from 'src/common/constants/review.constraints';
 import { ReviewStage } from 'src/contexts/feedback360/domain/enums/review-stage.enum';
 
 export class CreateReviewDto {

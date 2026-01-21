@@ -1,0 +1,32 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "src/*": [
+                "src/*"
+            ],
+            "@intra/shared-kernel": [
+                "src"
+            ],
+            "@intra/shared-kernel/*": [
+                "src/*"
+            ],
+            "@intra/database": [
+                "../database/src/generated"
+            ],
+            "@intra/database/*": [
+                "../database/src/generated/*"
+            ],
+            "@intra/api": [
+                "../../apps/api/src"
+            ],
+            "@intra/api/*": [
+                "../../apps/api/src/*"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

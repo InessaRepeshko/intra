@@ -4,7 +4,7 @@ import { IsEnum, IsInt, IsOptional, IsPositive, IsString, MaxLength, MinLength }
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { IdentityStatus } from '../../../domain/enums/identity-status.enum';
 import { UserSortField } from '../../../application/ports/user.repository.port';
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 import { UserConstants } from 'src/common/constants/index';
 
 export class UserQueryDto {

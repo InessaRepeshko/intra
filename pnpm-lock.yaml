@@ -150,10 +150,19 @@ importers:
       '@intra/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@intra/shared-kernel':
+        specifier: workspace:*
+        version: link:../../packages/shared-kernel
 
   apps/web: {}
 
   packages/database: {}
+
+  packages/shared-kernel:
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
 
 packages:
 

@@ -9,11 +9,11 @@ import {
 } from '../../application/ports/competence.repository.port';
 import { CompetenceDomain } from '../../domain/competence.domain';
 import { CompetenceMapper } from './competence.mapper';
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 
 @Injectable()
 export class CompetenceRepository implements CompetenceRepositoryPort {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(competence: CompetenceDomain): Promise<CompetenceDomain> {
     const created = await this.prisma.competence.create({
@@ -58,8 +58,8 @@ export class CompetenceRepository implements CompetenceRepositoryPort {
     return {
       ...(search
         ? {
-            OR: [{ title: { contains: search, mode: 'insensitive' } }, { code: { contains: search, mode: 'insensitive' } }],
-          }
+          OR: [{ title: { contains: search, mode: 'insensitive' } }, { code: { contains: search, mode: 'insensitive' } }],
+        }
         : {}),
     };
   }

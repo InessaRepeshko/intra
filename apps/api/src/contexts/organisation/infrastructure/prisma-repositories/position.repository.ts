@@ -7,13 +7,13 @@ import {
   PositionUpdatePayload,
 } from '../../application/ports/position.repository.port';
 import { OrganisationMapper } from './organisation.mapper';
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 import { Prisma } from '@intra/database';
 import { PositionDomain } from '../../domain/position.domain';
 
 @Injectable()
 export class PositionRepository implements PositionRepositoryPort {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(position: PositionDomain): Promise<PositionDomain> {
     const created = await this.prisma.position.create({
@@ -58,11 +58,11 @@ export class PositionRepository implements PositionRepositoryPort {
     const { search } = query;
     return search
       ? {
-          OR: [
-            { title: { contains: search } },
-            { description: { contains: search } },
-          ],
-        }
+        OR: [
+          { title: { contains: search } },
+          { description: { contains: search } },
+        ],
+      }
       : {};
   }
 

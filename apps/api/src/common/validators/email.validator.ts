@@ -1,12 +1,12 @@
 import { applyDecorators } from '@nestjs/common';
 import { IsEmail as ClassValidatorIsEmail, IsNotEmpty, Length, IsOptional, IsString, ValidateIf } from 'class-validator';
-import { UserConstants } from '../constants/index';
+import { USER_CONSTRAINTS } from '@intra/shared-kernel/index';
 
 export function IsEmail(isOptional: boolean, allowNull: boolean = false) {
     const baseDecorators = [
         IsString(),
         allowNull ? IsOptional() : IsNotEmpty(),
-        Length(UserConstants.EMAIL_MIN_LENGTH, UserConstants.EMAIL_MAX_LENGTH),
+        Length(USER_CONSTRAINTS.EMAIL.LENGTH.MIN, USER_CONSTRAINTS.EMAIL.LENGTH.MAX),
         ClassValidatorIsEmail(),
     ];
 

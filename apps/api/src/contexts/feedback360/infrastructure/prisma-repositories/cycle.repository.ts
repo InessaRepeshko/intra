@@ -10,7 +10,7 @@ import {
 } from '../../application/ports/cycle.repository.port';
 import { CycleDomain } from '../../domain/cycle.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
-import { SortDirection } from 'src/common/enums/sort-direction.enum';
+import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
 
 @Injectable()
 export class CycleRepository implements CycleRepositoryPort {
