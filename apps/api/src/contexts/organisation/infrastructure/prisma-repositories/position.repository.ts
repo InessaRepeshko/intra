@@ -7,7 +7,7 @@ import {
   PositionUpdatePayload,
 } from '../../application/ports/position.repository.port';
 import { OrganisationMapper } from './organisation.mapper';
-import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 import { Prisma } from '@intra/database';
 import { PositionDomain } from '../../domain/position.domain';
 

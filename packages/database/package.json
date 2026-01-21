@@ -16,6 +16,7 @@
         }
     },
     "scripts": {
+        "build": "tsc && prisma generate",
         "prisma:config": "prisma --config ./prisma.config.ts",
         "prisma:dev": "dotenv -e ../../.env.development.local -- pnpm prisma:config",
         "prisma:test": "dotenv -e ../../.env.test -- pnpm prisma:config",
@@ -36,16 +37,14 @@
     "dependencies": {
         "@intra/shared-kernel": "workspace:*",
         "@prisma/client": "^7.2.0",
-        "dotenv": "^17.2.3",
-        "dotenv-cli": "^7.4.4",
-        "prisma": "^7.2.0"
+        "@prisma/adapter-pg": "^7.2.0"
     },
     "devDependencies": {
-        "@prisma/client": "^7.2.0",
-        "@prisma/generator-dbml": "^0.12.0",
         "@types/node": "^22.19.6",
         "dotenv": "^17.2.3",
         "dotenv-cli": "^7.4.4",
-        "prisma": "^7.2.0"
+        "prisma": "^7.2.0",
+        "tsx": "^4.21.0",
+        "typescript": "^5.7.3"
     }
 }

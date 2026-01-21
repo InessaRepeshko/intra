@@ -9,7 +9,7 @@ import {
 } from '../../application/ports/cluster.repository.port';
 import { ClusterDomain } from '../../domain/cluster.domain';
 import { CompetenceMapper } from './competence.mapper';
-import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 
 @Injectable()
 export class ClusterRepository implements ClusterRepositoryPort {

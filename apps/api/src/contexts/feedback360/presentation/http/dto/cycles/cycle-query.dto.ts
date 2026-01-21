@@ -1,10 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsInt, IsOptional } from 'class-validator';
-import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constraints';
+import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
 import { ToOptionalBool, ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { CycleStage } from 'src/contexts/feedback360/domain/enums/cycle-stage.enum';
 import { CycleSortField } from 'src/contexts/feedback360/application/ports/cycle.repository.port';
-import { SortDirection } from '../../../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 
 export class CycleQueryDto {
   @ApiPropertyOptional({ example: 2 })
@@ -13,8 +13,8 @@ export class CycleQueryDto {
   @IsInt()
   hrId?: number;
 
-  @ApiPropertyOptional({ example: 5, default: CYCLE_CONSTANTS.ANONYMITY_THRESHOLD.MIN })
-  @ToOptionalInt({ min: CYCLE_CONSTANTS.ANONYMITY_THRESHOLD.MIN })
+  @ApiPropertyOptional({ example: 5, default: CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN })
+  @ToOptionalInt({ min: CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN })
   @IsOptional()
   @IsInt()
   minRespondentsThreshold?: number;

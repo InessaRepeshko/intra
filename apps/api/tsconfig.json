@@ -5,41 +5,43 @@
         "moduleResolution": "node",
         "resolvePackageJsonExports": false,
         "resolveJsonModule": true,
-        "rootDir": "./src",
         "outDir": "./dist",
+        "rootDir": "./",
         "baseUrl": ".",
+        "declaration": true,
+        "sourceMap": true,
         "paths": {
             "src/*": [
                 "src/*"
             ],
             "@intra/api": [
-                "src"
+                "src/contexts"
             ],
             "@intra/api/*": [
-                "src/*"
+                "src/contexts/*"
             ],
-            "@intra/api/common": [
-                "src/common"
-            ],
-            "@intra/api/common/*": [
-                "src/common/*"
-            ],
-            "@intra/database": [
-                "../../packages/database/src/generated"
-            ],
-            "@intra/database/*": [
-                "../../packages/database/src/generated/*"
-            ],
-            "@intra/shared-kernel": [
-                "../../packages/shared-kernel/src"
-            ],
-            "@intra/shared-kernel/*": [
-                "../../packages/shared-kernel/src/*"
-            ]
+            // "@intra/api/common": [
+            //     "src/common"
+            // ],
+            // "@intra/api/common/*": [
+            //     "src/common/*"
+            // ],
+            // "@intra/database": [
+            //     "../../packages/database/src/generated"
+            // ],
+            // "@intra/database/*": [
+            //     "../../packages/database/src/generated/*"
+            // ],
+            // "@intra/shared-kernel": [
+            //     "../../packages/shared-kernel/src/index.ts"
+            // ],
+            // "@intra/shared-kernel/*": [
+            //     "../../packages/shared-kernel/src/*"
+            // ]
         }
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
     ],
     "exclude": [
         "node_modules",

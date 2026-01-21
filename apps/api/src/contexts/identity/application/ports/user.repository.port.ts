@@ -1,7 +1,7 @@
 import { IdentityRole } from '../../domain/enums/identity-role.enum';
 import { IdentityStatus } from '../../domain/enums/identity-status.enum';
 import { UserDomain } from '../../domain/user.domain';
-import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 
 export const IDENTITY_USER_REPOSITORY = Symbol('IDENTITY.USER_REPOSITORY');
 

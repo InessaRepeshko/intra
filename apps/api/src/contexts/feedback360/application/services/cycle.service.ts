@@ -7,7 +7,7 @@ import {
 } from '../ports/cycle.repository.port';
 import { CycleDomain } from '../../domain/cycle.domain';
 import { CycleStage } from '../../domain/enums/cycle-stage.enum';
-import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constraints';
+import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
 
 export type CreateCycleCommand = {
   title: string;
@@ -38,7 +38,7 @@ export class CycleService {
       description: command.description,
       hrId: command.hrId,
       stage: command.stage ?? CycleStage.NEW,
-      minRespondentsThreshold: command.minRespondentsThreshold ?? CYCLE_CONSTANTS.ANONYMITY_THRESHOLD.MIN,
+      minRespondentsThreshold: command.minRespondentsThreshold ?? CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN,
       isActive: command.isActive ?? true,
       startDate: command.startDate,
       reviewDeadline: command.reviewDeadline,

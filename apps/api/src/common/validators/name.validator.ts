@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { IsNotEmpty, IsOptional, IsString, Length, Matches, ValidateIf } from 'class-validator';
-import { USER_CONSTRAINTS } from '@intra/shared-kernel/index';
+import { USER_CONSTRAINTS } from '@intra/shared-kernel';
 
 export function IsName(
     isOptional: boolean,

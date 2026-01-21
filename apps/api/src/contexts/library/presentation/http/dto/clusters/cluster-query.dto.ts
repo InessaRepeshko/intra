@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
 import { ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
-import { SortDirection } from '../../../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 import { ClusterSortField } from 'src/contexts/library/application/ports/cluster.repository.port';
 
 export class ClusterQueryDto {

@@ -1,17 +1,17 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { SortDirection } from '../../../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
-import { TeamConstants } from 'src/common/constants/index';
+import { SortDirection } from '@intra/shared-kernel';
+import { TEAM_CONSTRAINTS } from '@intra/shared-kernel';
 import { TeamSortField } from '../../../../application/ports/team.repository.port';
 
 export class TeamQueryDto {
-  @ApiPropertyOptional({ description: 'Search by title or description', minLength: TeamConstants.TITLE_MIN_LENGTH, maxLength: TeamConstants.TITLE_MAX_LENGTH, example: 'Engineering Team' })
+  @ApiPropertyOptional({ description: 'Search by title or description', minLength: TEAM_CONSTRAINTS.TITLE.LENGTH.MIN, maxLength: TEAM_CONSTRAINTS.TITLE.LENGTH.MAX, example: 'Engineering Team' })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()
-  @MinLength(TeamConstants.TITLE_MIN_LENGTH)
-  @MaxLength(TeamConstants.TITLE_MAX_LENGTH)
+  @MinLength(TEAM_CONSTRAINTS.TITLE.LENGTH.MIN)
+  @MaxLength(TEAM_CONSTRAINTS.TITLE.LENGTH.MAX)
   search?: string;
 
   @ApiPropertyOptional({ description: 'Id of team leader', type: Number, example: 12 })

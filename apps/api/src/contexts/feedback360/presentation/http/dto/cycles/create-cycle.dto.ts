@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsDate, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min } from 'class-validator';
-import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constraints';
+import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
 import { ToOptionalBool, ToOptionalDate, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { CycleStage } from 'src/contexts/feedback360/domain/enums/cycle-stage.enum';
 
@@ -24,10 +24,10 @@ export class CreateCycleDto {
   @Min(1)
   hrId!: number;
 
-  @ApiPropertyOptional({ example: 5, default: CYCLE_CONSTANTS.ANONYMITY_THRESHOLD.MIN })
-  @ToOptionalInt({ min: CYCLE_CONSTANTS.ANONYMITY_THRESHOLD.MIN })
+  @ApiPropertyOptional({ example: 5, default: CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN })
+  @ToOptionalInt({ min: CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN })
   @IsInt()
-  @Min(CYCLE_CONSTANTS.ANONYMITY_THRESHOLD.MIN)
+  @Min(CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN)
   minRespondentsThreshold?: number;
 
   @ApiPropertyOptional({ enum: CycleStage, example: CycleStage.NEW, default: CycleStage.NEW })

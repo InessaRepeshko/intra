@@ -10,7 +10,7 @@ import {
 } from '../../application/ports/review.repository.port';
 import { ReviewDomain } from '../../domain/review.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
-import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 
 @Injectable()
 export class ReviewRepository implements ReviewRepositoryPort {

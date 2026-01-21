@@ -9,7 +9,7 @@ import {
 } from '../../application/ports/question.repository.port';
 import { QuestionDomain } from '../../domain/question.domain';
 import { CompetenceMapper } from './competence.mapper';
-import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 
 @Injectable()
 export class QuestionRepository implements QuestionRepositoryPort {

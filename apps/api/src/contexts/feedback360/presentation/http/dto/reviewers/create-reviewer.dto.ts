@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, Min } from 'class-validator';
-import { REVIEW_CONSTANTS } from 'src/common/constants/review.constraints';
 import { ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
 
 export class CreateReviewerDto {

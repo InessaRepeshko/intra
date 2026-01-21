@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constraints';
+import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
 import { CycleStage } from '../../../domain/enums/cycle-stage.enum';
 
 export class CycleResponse {
@@ -20,7 +20,7 @@ export class CycleResponse {
   @Expose()
   hrId!: number;
 
-  @ApiProperty({ example: 5, default: CYCLE_CONSTANTS.ANONYMITY_THRESHOLD.MIN })
+  @ApiProperty({ example: 5, default: CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN })
   @Expose()
   minRespondentsThreshold!: number;
 

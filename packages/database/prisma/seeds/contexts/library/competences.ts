@@ -13,7 +13,7 @@ export const COMPETENCES_SEED_DATA = [
   { code: 'STRAT', title: 'Strategic Thinking', description: 'Connects daily work to long-term, market-aware strategy.' },
 ];
 
-export async function seedCompetences(prisma: PrismaClient) {
+export default async function seedCompetences(prisma: PrismaClient) {
     for (const c of COMPETENCES_SEED_DATA) {
         await prisma.competence.upsert({
             where: { title: c.title },

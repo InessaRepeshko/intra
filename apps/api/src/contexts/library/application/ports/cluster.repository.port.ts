@@ -1,4 +1,4 @@
-import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 import { ClusterDomain } from '../../domain/cluster.domain';
 
 export const CLUSTER_REPOSITORY = Symbol('LIBRARY.CLUSTER_REPOSITORY');

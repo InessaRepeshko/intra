@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
-import { QUESTION_CONSTANTS } from 'src/common/constants/question.constraints';
+import { QUESTION_CONSTRAINTS } from '@intra/shared-kernel';
 import { ToOptionalBool, ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
 
@@ -22,8 +22,8 @@ export class CreateQuestionDto {
   @ToOptionalTrimmedString()
   @IsString()
   @IsNotEmpty()
-  @MaxLength(QUESTION_CONSTANTS.TITLE.MAX_LENGTH)
-  @MinLength(QUESTION_CONSTANTS.TITLE.MIN_LENGTH)
+  @MaxLength(QUESTION_CONSTRAINTS.TITLE.LENGTH.MAX)
+  @MinLength(QUESTION_CONSTRAINTS.TITLE.LENGTH.MIN)
   title!: string;
 
   @ApiProperty({ enum: AnswerType, example: AnswerType.NUMERICAL_SCALE })

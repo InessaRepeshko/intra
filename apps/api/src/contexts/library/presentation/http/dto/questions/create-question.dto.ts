@@ -3,7 +3,7 @@ import { IsArray, IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Ma
 import { ToOptionalBool, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
 import { QuestionStatus } from 'src/contexts/library/domain/enums/question-status.enum';
-import { QUESTION_CONSTANTS } from 'src/common/constants/index';
+import { QUESTION_CONSTRAINTS } from '@intra/shared-kernel';
 
 export class CreateQuestionDto {
   @ApiProperty({ description: 'Competence id the question belongs to', example: 2 })
@@ -15,14 +15,14 @@ export class CreateQuestionDto {
   @ApiProperty({
     description: 'Question text/title',
     example: 'Delivers features on time',
-    minLength: QUESTION_CONSTANTS.TITLE.MIN_LENGTH,
-    maxLength: QUESTION_CONSTANTS.TITLE.MAX_LENGTH,
+    minLength: QUESTION_CONSTRAINTS.TITLE.LENGTH.MIN,
+    maxLength: QUESTION_CONSTRAINTS.TITLE.LENGTH.MAX,
   })
   @ToOptionalTrimmedString()
   @IsString()
   @IsNotEmpty()
-  @MinLength(QUESTION_CONSTANTS.TITLE.MIN_LENGTH)
-  @MaxLength(QUESTION_CONSTANTS.TITLE.MAX_LENGTH)
+  @MinLength(QUESTION_CONSTRAINTS.TITLE.LENGTH.MIN)
+  @MaxLength(QUESTION_CONSTRAINTS.TITLE.LENGTH.MAX)
   title!: string;
 
   @ApiProperty({ enum: AnswerType, example: AnswerType.NUMERICAL_SCALE })

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 import { ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { REVIEW_CONSTANTS } from 'src/common/constants/review.constraints';
+import { REVIEW_CONSTRAINTS } from '@intra/shared-kernel';
 import { ReviewStage } from 'src/contexts/feedback360/domain/enums/review-stage.enum';
 
 export class CreateReviewDto {
@@ -15,8 +15,8 @@ export class CreateReviewDto {
   @ToOptionalTrimmedString()
   @IsOptional()
   @IsString()
-  @MinLength(REVIEW_CONSTANTS.NOTE.MIN_LENGTH)
-  @MaxLength(REVIEW_CONSTANTS.NOTE.MAX_LENGTH)
+  @MinLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MIN)
+  @MaxLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MAX)
   rateeNote?: string;
 
   @ApiProperty({ example: 3, description: 'Position of the evaluated' })
@@ -35,8 +35,8 @@ export class CreateReviewDto {
   @ToOptionalTrimmedString()
   @IsOptional()
   @IsString()
-  @MinLength(REVIEW_CONSTANTS.NOTE.MIN_LENGTH)
-  @MaxLength(REVIEW_CONSTANTS.NOTE.MAX_LENGTH)
+  @MinLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MIN)
+  @MaxLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MAX)
   hrNote?: string;
 
   @ApiPropertyOptional({ example: 1, description: 'Attached cycle' })

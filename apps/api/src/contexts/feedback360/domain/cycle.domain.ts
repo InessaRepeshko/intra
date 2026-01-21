@@ -1,4 +1,4 @@
-import { CYCLE_CONSTANTS } from 'src/common/constants/cycle.constraints';
+import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
 import { CycleStage } from './enums/cycle-stage.enum';
 
 export type CycleProps = {
@@ -39,7 +39,7 @@ export class CycleDomain {
     this.title = props.title;
     this.description = props.description ?? null;
     this.hrId = props.hrId;
-    this.minRespondentsThreshold = props.minRespondentsThreshold ?? CYCLE_CONSTANTS.ANONYMITY_THRESHOLD.MIN;
+    this.minRespondentsThreshold = props.minRespondentsThreshold ?? CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN;
     this.stage = props.stage ?? CycleStage.NEW;
     this.isActive = props.isActive ?? true;
     this.startDate = props.startDate;

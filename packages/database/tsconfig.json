@@ -1,7 +1,11 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
+        "outDir": "./dist",
+        "rootDir": "./",
         "baseUrl": ".",
+        "declaration": true,
+        "sourceMap": true,
         "paths": {
             "src/*": [
                 "src/*"
@@ -12,21 +16,22 @@
             "@intra/database/*": [
                 "src/generated/*"
             ],
-            "@intra/api": [
-                "../../apps/api/src"
-            ],
-            "@intra/api/*": [
-                "../../apps/api/src/*"
-            ],
-            "@intra/shared-kernel": [
-                "../shared-kernel/src"
-            ],
-            "@intra/shared-kernel/*": [
-                "../shared-kernel/src/*"
-            ]
+            // "@intra/api": [
+            //     "../../apps/api/src"
+            // ],
+            // "@intra/api/*": [
+            //     "../../apps/api/src/*"
+            // ],
+            // "@intra/shared-kernel": [
+            //     "../shared-kernel/src/index.ts"
+            // ],
+            // "@intra/shared-kernel/*": [
+            //     "../shared-kernel/src/*"
+            // ]
         }
     },
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "dist"
     ]
 }

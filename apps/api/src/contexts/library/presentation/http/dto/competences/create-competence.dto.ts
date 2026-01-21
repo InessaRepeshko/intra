@@ -1,48 +1,48 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { CompetenceConstants } from 'src/common/constants/index';
+import { COMPETENCE_CONSTRAINTS } from '@intra/shared-kernel';
 
 export class CreateCompetenceDto {
   @ApiPropertyOptional({
     description: 'Optional competence code',
     example: 'ENG-001',
     nullable: true,
-    minLength: CompetenceConstants.CODE_MIN_LENGTH,
-    maxLength: CompetenceConstants.CODE_MAX_LENGTH,
+    minLength: COMPETENCE_CONSTRAINTS.CODE.LENGTH.MIN,
+    maxLength: COMPETENCE_CONSTRAINTS.CODE.LENGTH.MAX,
   })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()
-  @MinLength(CompetenceConstants.CODE_MIN_LENGTH)
-  @MaxLength(CompetenceConstants.CODE_MAX_LENGTH)
+  @MinLength(COMPETENCE_CONSTRAINTS.CODE.LENGTH.MIN)
+  @MaxLength(COMPETENCE_CONSTRAINTS.CODE.LENGTH.MAX)
   code?: string | null;
 
   @ApiProperty({
     description: 'Competence title',
     example: 'Engineering excellence',
-    minLength: CompetenceConstants.TITLE_MIN_LENGTH,
-    maxLength: CompetenceConstants.TITLE_MAX_LENGTH,
+    minLength: COMPETENCE_CONSTRAINTS.TITLE.LENGTH.MIN,
+    maxLength: COMPETENCE_CONSTRAINTS.TITLE.LENGTH.MAX,
   })
   @ToOptionalTrimmedString()
   @IsString()
   @IsNotEmpty()
-  @MinLength(CompetenceConstants.TITLE_MIN_LENGTH)
-  @MaxLength(CompetenceConstants.TITLE_MAX_LENGTH)
+  @MinLength(COMPETENCE_CONSTRAINTS.TITLE.LENGTH.MIN)
+  @MaxLength(COMPETENCE_CONSTRAINTS.TITLE.LENGTH.MAX)
   title!: string;
 
   @ApiPropertyOptional({
     description: 'Competence description',
     example: 'Ability to deliver high-quality software',
     nullable: true,
-    minLength: CompetenceConstants.DESCRIPTION_MIN_LENGTH,
-    maxLength: CompetenceConstants.DESCRIPTION_MAX_LENGTH,
+    minLength: COMPETENCE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN,
+    maxLength: COMPETENCE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX,
   })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()
-  @MinLength(CompetenceConstants.DESCRIPTION_MIN_LENGTH)
-  @MaxLength(CompetenceConstants.DESCRIPTION_MAX_LENGTH)
+  @MinLength(COMPETENCE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN)
+  @MaxLength(COMPETENCE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX)
   description?: string | null;
 }
 

@@ -1,11 +1,11 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 import { ToOptionalBool, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { SortDirection } from '../../../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
 import { QuestionStatus } from 'src/contexts/library/domain/enums/question-status.enum';
 import { QuestionSortField } from 'src/contexts/library/application/ports/question.repository.port';
-import { QUESTION_CONSTANTS } from 'src/common/constants/index';
+import { QUESTION_CONSTRAINTS } from '@intra/shared-kernel';
 
 export class QuestionQueryDto {
   @ApiPropertyOptional({ description: 'Filter by competence id', example: 2 })
@@ -41,12 +41,12 @@ export class QuestionQueryDto {
   @ApiPropertyOptional({
     description: 'Search in title',
     example: 'features',
-    maxLength: QUESTION_CONSTANTS.TITLE.MAX_LENGTH,
+    maxLength: QUESTION_CONSTRAINTS.TITLE.LENGTH.MAX,
   })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()
-  @MaxLength(QUESTION_CONSTANTS.TITLE.MAX_LENGTH)
+  @MaxLength(QUESTION_CONSTRAINTS.TITLE.LENGTH.MAX)
   search?: string;
 
   @ApiPropertyOptional({ enum: QuestionSortField, example: QuestionSortField.TITLE })

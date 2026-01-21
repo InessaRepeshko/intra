@@ -25,7 +25,7 @@ export const CLUSTERS_SEED_DATA = [
     { competenceCode: 'TECH', clusters: clusterLevels(7) },
 ];
 
-export async function seedClusters(prisma: PrismaClient) {
+export default async function seedClusters(prisma: PrismaClient) {
     for (const group of CLUSTERS_SEED_DATA) {
         const competence = await prisma.competence.findUnique({ where: { code: group.competenceCode } });
         if (!competence) {

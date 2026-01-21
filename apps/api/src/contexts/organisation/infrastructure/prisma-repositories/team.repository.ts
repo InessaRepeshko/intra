@@ -3,7 +3,7 @@ import { Prisma } from '@intra/database';
 import { PrismaService } from 'src/database/prisma.service';
 import { OrganisationMapper } from './organisation.mapper';
 import { TeamRepositoryPort, TeamSearchQuery, TeamSortField, TeamUpdatePayload } from '../../application/ports/team.repository.port';
-import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 import type { TeamDomain } from '../../domain/team.domain';
 import type { TeamMembershipDomain } from '../../domain/team-membership.domain';
 

@@ -1,4 +1,4 @@
-import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 import { CycleStage } from '../../domain/enums/cycle-stage.enum';
 import { CycleDomain } from '../../domain/cycle.domain';
 

@@ -1,17 +1,17 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { ToOptionalEnum, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { PositionConstants } from 'src/common/constants/index';
-import { SortDirection } from '../../../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { POSITION_CONSTRAINTS } from '@intra/shared-kernel';
+import { SortDirection } from '@intra/shared-kernel';
 import { PositionSortField } from '../../../../application/ports/position.repository.port';
 
 export class PositionQueryDto {
-  @ApiPropertyOptional({ description: 'Search by title or description', minLength: PositionConstants.TITLE_MIN_LENGTH, maxLength: PositionConstants.TITLE_MAX_LENGTH, example: 'Senior Backend Engineer' })
+  @ApiPropertyOptional({ description: 'Search by title or description', minLength: POSITION_CONSTRAINTS.TITLE.LENGTH.MIN, maxLength: POSITION_CONSTRAINTS.TITLE.LENGTH.MAX, example: 'Senior Backend Engineer' })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()
-  @MinLength(PositionConstants.TITLE_MIN_LENGTH)
-  @MaxLength(PositionConstants.TITLE_MAX_LENGTH)
+  @MinLength(POSITION_CONSTRAINTS.TITLE.LENGTH.MIN)
+  @MaxLength(POSITION_CONSTRAINTS.TITLE.LENGTH.MAX)
   search?: string;
 
   @ApiPropertyOptional({ description: 'Sorting field', enum: PositionSortField, default: PositionSortField.ID, example: PositionSortField.TITLE })

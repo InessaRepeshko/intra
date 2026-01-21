@@ -3,35 +3,35 @@ import { IsEnum, IsInt, IsOptional, IsPositive, IsString, MaxLength } from 'clas
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { IsEmail } from 'src/common/validators/email.validator';
 import { IsEnglishName } from 'src/common/validators/name.validator';
-import { UserConstants } from 'src/common/constants/index';
+import { USER_CONSTRAINTS } from '@intra/shared-kernel';
 import { IdentityStatus } from '../../../domain/enums/identity-status.enum';
 
 export class CreateUserDto {
-  @ApiProperty({ description: `User's first name`, minLength: UserConstants.NAME_MIN_LENGTH, maxLength: UserConstants.NAME_MAX_LENGTH, example: 'Valerii' })
+  @ApiProperty({ description: `User's first name`, minLength: USER_CONSTRAINTS.NAME.LENGTH.MIN, maxLength: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Valerii' })
   @ToOptionalTrimmedString()
   @IsEnglishName(false)
   firstName!: string;
 
-  @ApiPropertyOptional({ description: `User's second name`, minLength: UserConstants.NAME_MIN_LENGTH, maxLength: UserConstants.NAME_MAX_LENGTH, example: 'Velychko' })
+  @ApiPropertyOptional({ description: `User's second name`, minLength: USER_CONSTRAINTS.NAME.LENGTH.MIN, maxLength: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Velychko' })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsEnglishName(true, true)
   secondName?: string | null;
 
-  @ApiProperty({ description: `User's last name`, minLength: UserConstants.NAME_MIN_LENGTH, maxLength: UserConstants.NAME_MAX_LENGTH, example: 'Valeriiovych' })
+  @ApiProperty({ description: `User's last name`, minLength: USER_CONSTRAINTS.NAME.LENGTH.MIN, maxLength: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Valeriiovych' })
   @ToOptionalTrimmedString()
   @IsEnglishName(false)
   lastName!: string;
 
-  @ApiProperty({ description: `User's email`, minLength: UserConstants.EMAIL_MIN_LENGTH, maxLength: UserConstants.EMAIL_MAX_LENGTH, example: 'valerii.velychko@example.com' })
+  @ApiProperty({ description: `User's email`, minLength: USER_CONSTRAINTS.EMAIL.LENGTH.MIN, maxLength: USER_CONSTRAINTS.EMAIL.LENGTH.MAX, example: 'valerii.velychko@example.com' })
   @ToOptionalTrimmedString()
   @IsEmail(false)
   email!: string;
 
-  @ApiPropertyOptional({ description: `Precomputed password hash or placeholder for external authentication`, example: '__external_auth__', maxLength: UserConstants.PASSWORD_HASH_MAX_LENGTH })
+  @ApiPropertyOptional({ description: `Precomputed password hash or placeholder for external authentication`, example: '__external_auth__', maxLength: USER_CONSTRAINTS.PASSWORD_HASH.LENGTH.MAX })
   @IsOptional()
   @IsString()
-  @MaxLength(UserConstants.PASSWORD_HASH_MAX_LENGTH)
+  @MaxLength(USER_CONSTRAINTS.PASSWORD_HASH.LENGTH.MAX)
   passwordHash?: string;
 
   @ApiPropertyOptional({ description: `User's status`, enum: IdentityStatus, default: IdentityStatus.ACTIVE, example: IdentityStatus.ACTIVE })

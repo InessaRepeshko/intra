@@ -3,7 +3,7 @@ import { IsEnum, IsInt, IsOptional } from 'class-validator';
 import { ToOptionalEnum, ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
 import { ReviewStage } from 'src/contexts/feedback360/domain/enums/review-stage.enum';
 import { ReviewSortField } from 'src/contexts/feedback360/application/ports/review.repository.port';
-import { SortDirection } from '../../../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 
 export class ReviewQueryDto {
   @ApiPropertyOptional({ example: 1 })

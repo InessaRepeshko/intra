@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { SortDirection } from '../../../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 import { CompetenceSortField } from 'src/contexts/library/application/ports/competence.repository.port';
 
 export class CompetenceQueryDto {

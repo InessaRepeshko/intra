@@ -1,4 +1,4 @@
-import { SortDirection } from '../../../../../../../packages/shared-kernel/src/common/enums/sort-direction.enum';
+import { SortDirection } from '@intra/shared-kernel';
 import { ReviewStage } from '../../domain/enums/review-stage.enum';
 import { ReviewDomain } from '../../domain/review.domain';
 
