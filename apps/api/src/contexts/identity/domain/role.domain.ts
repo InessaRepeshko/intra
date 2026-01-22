@@ -1,4 +1,4 @@
-import { IdentityRole } from './enums/identity-role.enum';
+import { IdentityRole } from '@intra/shared-kernel';
 
 export class RoleDomain {
   readonly id?: number;

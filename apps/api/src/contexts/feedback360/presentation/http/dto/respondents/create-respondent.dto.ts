@@ -2,8 +2,8 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 import { REVIEW_CONSTRAINTS } from '@intra/shared-kernel';
 import { ToOptionalDate, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { RespondentCategory } from 'src/contexts/feedback360/domain/enums/respondent-category.enum';
-import { ResponseStatus } from 'src/contexts/feedback360/domain/enums/response-status.enum';
+import { RespondentCategory } from '@intra/shared-kernel';
+import { ResponseStatus } from '@intra/shared-kernel';
 
 export class CreateRespondentDto {
   @ApiProperty({ example: 7, description: 'Respondent' })

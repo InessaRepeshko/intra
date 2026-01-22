@@ -36,7 +36,7 @@ import { RespondentResponse } from '../models/respondent.response';
 import { UpdateRespondentDto } from '../dto/respondents/update-respondent.dto';
 import { CreateReviewerDto } from '../dto/reviewers/create-reviewer.dto';
 import { ReviewerResponse } from '../models/reviewer.response';
-import { RespondentCategory } from '../../../domain/enums/respondent-category.enum';
+import { RespondentCategory } from '@intra/shared-kernel';
 
 @ApiTags('Feedback360 / Reviews')
 @Controller('feedback360/reviews')

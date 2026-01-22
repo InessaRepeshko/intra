@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsInt, IsOptional } from 'class-validator';
 import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
 import { ToOptionalBool, ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { CycleStage } from 'src/contexts/feedback360/domain/enums/cycle-stage.enum';
+import { CycleStage } from '@intra/shared-kernel';
 import { CycleSortField } from 'src/contexts/feedback360/application/ports/cycle.repository.port';
 import { SortDirection } from '@intra/shared-kernel';
 

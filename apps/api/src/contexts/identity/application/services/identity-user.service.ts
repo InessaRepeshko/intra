@@ -7,8 +7,8 @@ import {
   UserSearchQuery,
   UserUpdatePayload,
 } from '../ports/user.repository.port';
-import { IdentityStatus } from '../../domain/enums/identity-status.enum';
-import { IdentityRole } from '../../domain/enums/identity-role.enum';
+import { IdentityStatus } from '@intra/shared-kernel';
+import { IdentityRole } from '@intra/shared-kernel';
 import { UserDomain } from '../../domain/user.domain';
 
 export type CreateUserCommand = {

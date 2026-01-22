@@ -1,5 +1,5 @@
-import { IdentityRole } from './enums/identity-role.enum';
-import { IdentityStatus } from './enums/identity-status.enum';
+import { IdentityRole } from '@intra/shared-kernel';
+import { IdentityStatus } from '@intra/shared-kernel';
 
 export type UserProps = {
   id?: number;

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IdentityRole } from '../../../domain/enums/identity-role.enum';
-import { IdentityStatus } from '../../../domain/enums/identity-status.enum';
+import { IdentityRole } from '@intra/shared-kernel';
+import { IdentityStatus } from '@intra/shared-kernel';
 
 export class UserResponse {
   @ApiProperty({ example: 1 })

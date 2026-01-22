@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 import { ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { REVIEW_CONSTRAINTS } from '@intra/shared-kernel';
-import { ReviewStage } from 'src/contexts/feedback360/domain/enums/review-stage.enum';
+import { ReviewStage } from '@intra/shared-kernel';
 
 export class CreateReviewDto {
   @ApiProperty({ example: 10, description: 'Who we are evaluating' })

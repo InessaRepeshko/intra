@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Max, MaxLength, Min, ValidateIf } from 'class-validator';
 import { ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { RespondentCategory } from 'src/contexts/feedback360/domain/enums/respondent-category.enum';
-import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
+import { RespondentCategory } from '@intra/shared-kernel';
+import { AnswerType } from '@intra/shared-kernel';
 
 export class CreateAnswerDto {
   @ApiProperty({ example: 12, description: 'Question from library' })

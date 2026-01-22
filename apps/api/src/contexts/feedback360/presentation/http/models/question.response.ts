@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
+import { AnswerType } from '@intra/shared-kernel';
 
 export class QuestionResponse {
   @ApiProperty({ example: 5 })

@@ -5,14 +5,14 @@
     "description": "Pure TypeScript business rules, constraints and enums for Intra monorepo",
     "license": "MIT",
     "author": "Inessa Repeshko",
-    "main": "./src/index.js",
-    "types": "./src/index.d.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
         ".": {
-            "types": "./src/index.d.ts",
-            "import": "./src/index.js",
-            "default": "./src/index.js",
-            "require": "./src/index.js"
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js",
+            "require": "./dist/index.js"
         }
     },
     "scripts": {

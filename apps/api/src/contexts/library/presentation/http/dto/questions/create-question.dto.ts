@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 import { ToOptionalBool, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
-import { QuestionStatus } from 'src/contexts/library/domain/enums/question-status.enum';
+import { AnswerType } from '@intra/shared-kernel';
+import { QuestionStatus } from '@intra/shared-kernel';
 import { QUESTION_CONSTRAINTS } from '@intra/shared-kernel';
 
 export class CreateQuestionDto {

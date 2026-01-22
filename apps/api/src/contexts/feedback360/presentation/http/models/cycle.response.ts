@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
-import { CycleStage } from '../../../domain/enums/cycle-stage.enum';
+import { CycleStage } from '@intra/shared-kernel';
 
 export class CycleResponse {
   @ApiProperty({ example: 1 })

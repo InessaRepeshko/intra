@@ -5,19 +5,18 @@
     "private": true,
     "license": "MIT",
     "author": "Inessa Repeshko",
-    "main": "./src/generated/index.js",
-    "types": "./src/generated/index.d.ts",
+    "main": "./dist/generated/index.js",
+    "types": "./dist/generated/index.d.ts",
     "exports": {
         ".": {
-            "types": "./src/generated/index.d.ts",
-            "import": "./src/generated/index.js",
-            "default": "./src/generated/index.js",
-            "require": "./src/generated/index.js"
+            "types": "./dist/generated/index.d.ts",
+            "import": "./dist/generated/index.js",
+            "default": "./dist/generated/index.js",
+            "require": "./dist/generated/index.js"
         }
     },
     "scripts": {
-        "build": "tsc && prisma generate",
-        "prisma:config": "prisma --config ./prisma.config.ts",
+        "prisma:config": "prisma --config ./src/prisma/prisma.config.ts",
         "prisma:dev": "dotenv -e ../../.env.development.local -- pnpm prisma:config",
         "prisma:test": "dotenv -e ../../.env.test -- pnpm prisma:config",
         "db:deploy": "pnpm prisma:dev -- migrate deploy",
@@ -32,7 +31,8 @@
         "db:test:seed": "pnpm prisma:test -- db seed",
         "db:test:refresh": "pnpm db:test:reset && pnpm db:test:generate && pnpm db:test:seed",
         "migrate": "pnpm db:create",
-        "db:migrate": "pnpm db:create"
+        "db:migrate": "pnpm db:create",
+        "build": "pnpm tsc && pnpm prisma:config -- generate"
     },
     "dependencies": {
         "@intra/shared-kernel": "workspace:*",

@@ -6,7 +6,7 @@ import {
   CycleUpdatePayload,
 } from '../ports/cycle.repository.port';
 import { CycleDomain } from '../../domain/cycle.domain';
-import { CycleStage } from '../../domain/enums/cycle-stage.enum';
+import { CycleStage } from '@intra/shared-kernel';
 import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
 
 export type CreateCycleCommand = {

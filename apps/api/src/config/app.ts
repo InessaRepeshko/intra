@@ -1,10 +1,9 @@
 import { getEnvVarAsStr, getEnvVarAsInt } from './env-utils';
 import { VERSION, DOCUMENTATION_PREFIX, LOGO_FILENAME, PUBLIC_DIR_PATH } from './constants';
-import { version } from '../../../../package.json';
 
 export const getAppName = () => getEnvVarAsStr('APP_NAME');
 
-export const getApiVersion = () => VERSION ?? version;
+export const getApiVersion = () => VERSION ?? process.env.npm_package_version;
 
 export default () => {
     const frontendProtocol = getEnvVarAsStr('APP_FRONTEND_PROTOCOL');

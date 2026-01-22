@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
+import { AnswerType } from '@intra/shared-kernel';
 import { QuestionService as LibraryQuestionService } from 'src/contexts/library/application/services/question.service';
 import {
   REVIEW_REPOSITORY,
@@ -36,13 +36,13 @@ import {
   ClusterScoreSearchQuery,
 } from '../ports/cluster-score.repository.port';
 import { ReviewDomain } from '../../domain/review.domain';
-import { ReviewStage } from '../../domain/enums/review-stage.enum';
+import { ReviewStage } from '@intra/shared-kernel';
 import { QuestionDomain as ReviewQuestionDomain } from '../../domain/question.domain';
 import { ReviewQuestionRelationDomain } from '../../domain/review-question-relation.domain';
 import { AnswerDomain } from '../../domain/answer.domain';
-import { RespondentCategory } from '../../domain/enums/respondent-category.enum';
+import { RespondentCategory } from '@intra/shared-kernel';
 import { RespondentDomain } from '../../domain/respondent.domain';
-import { ResponseStatus } from '../../domain/enums/response-status.enum';
+import { ResponseStatus } from '@intra/shared-kernel';
 import { ReviewerDomain } from '../../domain/reviewer.domain';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
 import { CycleService } from './cycle.service';

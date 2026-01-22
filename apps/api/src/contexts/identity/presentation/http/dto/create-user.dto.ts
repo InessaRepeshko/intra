@@ -4,7 +4,7 @@ import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/comm
 import { IsEmail } from 'src/common/validators/email.validator';
 import { IsEnglishName } from 'src/common/validators/name.validator';
 import { USER_CONSTRAINTS } from '@intra/shared-kernel';
-import { IdentityStatus } from '../../../domain/enums/identity-status.enum';
+import { IdentityStatus } from '@intra/shared-kernel';
 
 export class CreateUserDto {
   @ApiProperty({ description: `User's first name`, minLength: USER_CONSTRAINTS.NAME.LENGTH.MIN, maxLength: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Valerii' })

@@ -14,16 +14,16 @@ import {
   AnswerType as PrismaAnswerType,
 } from '@intra/database';
 import { CycleDomain } from '../../domain/cycle.domain';
-import { CycleStage } from '../../domain/enums/cycle-stage.enum';
+import { CycleStage } from '@intra/shared-kernel';
 import { ReviewDomain } from '../../domain/review.domain';
-import { ReviewStage } from '../../domain/enums/review-stage.enum';
+import { ReviewStage } from '@intra/shared-kernel';
 import { QuestionDomain } from '../../domain/question.domain';
-import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
+import { AnswerType } from '@intra/shared-kernel';
 import { ReviewQuestionRelationDomain } from '../../domain/review-question-relation.domain';
 import { AnswerDomain } from '../../domain/answer.domain';
-import { RespondentCategory } from '../../domain/enums/respondent-category.enum';
+import { RespondentCategory } from '@intra/shared-kernel';
 import { RespondentDomain } from '../../domain/respondent.domain';
-import { ResponseStatus } from '../../domain/enums/response-status.enum';
+import { ResponseStatus } from '@intra/shared-kernel';
 import { ReviewerDomain } from '../../domain/reviewer.domain';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
 

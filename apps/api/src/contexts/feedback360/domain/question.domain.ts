@@ -1,4 +1,4 @@
-import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
+import { AnswerType } from  '@intra/shared-kernel';
 
 export type QuestionProps = {
   id?: number;

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { RespondentCategory } from '../../../domain/enums/respondent-category.enum';
-import { ResponseStatus } from '../../../domain/enums/response-status.enum';
+import { RespondentCategory } from '@intra/shared-kernel';
+import { ResponseStatus } from '@intra/shared-kernel';
 
 export class RespondentResponse {
   @ApiProperty({ example: 1 })

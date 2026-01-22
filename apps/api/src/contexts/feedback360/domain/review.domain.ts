@@ -1,4 +1,4 @@
-import { ReviewStage } from './enums/review-stage.enum';
+import { ReviewStage } from '@intra/shared-kernel';
 
 export type ReviewProps = {
   id?: number;

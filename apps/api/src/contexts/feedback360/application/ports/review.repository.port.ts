@@ -1,5 +1,5 @@
 import { SortDirection } from '@intra/shared-kernel';
-import { ReviewStage } from '../../domain/enums/review-stage.enum';
+import { ReviewStage } from '@intra/shared-kernel';
 import { ReviewDomain } from '../../domain/review.domain';
 
 export const REVIEW_REPOSITORY = Symbol('FEEDBACK360.REVIEW_REPOSITORY');

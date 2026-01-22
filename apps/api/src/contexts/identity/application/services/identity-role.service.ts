@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { RoleRepositoryPort } from '../ports/role.repository.port';
 import { IDENTITY_ROLE_REPOSITORY } from '../ports/role.repository.port';
 import { RoleDomain } from '../../domain/role.domain';
-import { IdentityRole } from '../../domain/enums/identity-role.enum';
+import { IdentityRole } from '@intra/shared-kernel';
 
 @Injectable()
 export class IdentityRoleService {

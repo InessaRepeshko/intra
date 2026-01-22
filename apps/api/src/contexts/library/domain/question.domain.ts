@@ -1,5 +1,5 @@
-import { AnswerType } from './enums/answer-type.enum';
-import { QuestionStatus } from './enums/question-status.enum';
+import { AnswerType } from '@intra/shared-kernel';
+import { QuestionStatus } from '@intra/shared-kernel';
 
 export type QuestionProps = {
   id?: number;

@@ -1,7 +1,7 @@
 import { SortDirection } from '@intra/shared-kernel';
 import { QuestionDomain } from '../../domain/question.domain';
-import { AnswerType } from '../../domain/enums/answer-type.enum';
-import { QuestionStatus } from '../../domain/enums/question-status.enum';
+import { AnswerType } from '@intra/shared-kernel';
+import { QuestionStatus } from '@intra/shared-kernel';
 
 export const QUESTION_REPOSITORY = Symbol('LIBRARY.QUESTION_REPOSITORY');
 

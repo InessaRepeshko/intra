@@ -1,6 +1,6 @@
 import { SortDirection } from '@intra/shared-kernel';
 import { QuestionDomain } from '../../domain/question.domain';
-import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
+import { AnswerType } from '@intra/shared-kernel';
 
 export const QUESTION_REPOSITORY = Symbol('FEEDBACK360.QUESTION_REPOSITORY');
 

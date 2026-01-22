@@ -1,5 +1,5 @@
 import { SortDirection } from '@intra/shared-kernel';
-import { CycleStage } from '../../domain/enums/cycle-stage.enum';
+import { CycleStage } from '@intra/shared-kernel';
 import { CycleDomain } from '../../domain/cycle.domain';
 
 export const CYCLE_REPOSITORY = Symbol('FEEDBACK360.CYCLE_REPOSITORY');

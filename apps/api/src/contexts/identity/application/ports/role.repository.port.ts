@@ -1,4 +1,4 @@
-import { IdentityRole } from '../../domain/enums/identity-role.enum';
+import { IdentityRole } from '@intra/shared-kernel';
 import { RoleDomain } from '../../domain/role.domain';
 
 export const IDENTITY_ROLE_REPOSITORY = Symbol('IDENTITY.ROLE_REPOSITORY');

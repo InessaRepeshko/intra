@@ -19,25 +19,7 @@
             ],
             "@intra/api/*": [
                 "src/contexts/*"
-            ],
-            // "@intra/api/common": [
-            //     "src/common"
-            // ],
-            // "@intra/api/common/*": [
-            //     "src/common/*"
-            // ],
-            // "@intra/database": [
-            //     "../../packages/database/src/generated"
-            // ],
-            // "@intra/database/*": [
-            //     "../../packages/database/src/generated/*"
-            // ],
-            // "@intra/shared-kernel": [
-            //     "../../packages/shared-kernel/src/index.ts"
-            // ],
-            // "@intra/shared-kernel/*": [
-            //     "../../packages/shared-kernel/src/*"
-            // ]
+            ]
         }
     },
     "include": [

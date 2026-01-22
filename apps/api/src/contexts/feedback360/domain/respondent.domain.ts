@@ -1,5 +1,5 @@
-import { ResponseStatus } from './enums/response-status.enum';
-import { RespondentCategory } from './enums/respondent-category.enum';
+import { ResponseStatus } from '@intra/shared-kernel';
+import { RespondentCategory } from '@intra/shared-kernel';
 
 export type RespondentProps = {
   id?: number;

@@ -2388,7 +2388,7 @@
         },
         "summary": "Create Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       },
       "get": {
@@ -2498,7 +2498,7 @@
         },
         "summary": "List Reviews",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       }
     },
@@ -2535,7 +2535,7 @@
         },
         "summary": "Get Review by id",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       },
       "patch": {
@@ -2586,7 +2586,7 @@
         },
         "summary": "Update Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       },
       "delete": {
@@ -2620,7 +2620,7 @@
         },
         "summary": "Delete Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       }
     },
@@ -2673,7 +2673,7 @@
         },
         "summary": "Add question from library to Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       },
       "get": {
@@ -2708,7 +2708,7 @@
         },
         "summary": "List questions in Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       }
     },
@@ -2752,7 +2752,7 @@
         },
         "summary": "Delete question from Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       }
     },
@@ -2805,7 +2805,7 @@
         },
         "summary": "Add answer to Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       },
       "get": {
@@ -2853,7 +2853,7 @@
         },
         "summary": "List answers to Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       }
     },
@@ -2906,7 +2906,7 @@
         },
         "summary": "Add respondent to Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       },
       "get": {
@@ -2941,7 +2941,7 @@
         },
         "summary": "List respondents to Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       }
     },
@@ -2994,7 +2994,7 @@
         },
         "summary": "Update respondent status",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       },
       "delete": {
@@ -3028,7 +3028,7 @@
         },
         "summary": "Delete respondent from Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       }
     },
@@ -3081,7 +3081,7 @@
         },
         "summary": "Add reviewer to Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       },
       "get": {
@@ -3116,7 +3116,7 @@
         },
         "summary": "List reviewers to Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       }
     },
@@ -3152,7 +3152,7 @@
         },
         "summary": "Delete reviewer from Review",
         "tags": [
-          "Feedback360 / Review"
+          "Feedback360 / Reviews"
         ]
       }
     },
@@ -4030,7 +4030,7 @@
             "example": "Ability to deliver high-quality software",
             "nullable": true,
             "minLength": 1,
-            "maxLength": 2000
+            "maxLength": 1000
           }
         },
         "required": [
@@ -4098,7 +4098,7 @@
             "example": "Ability to deliver high-quality software",
             "nullable": true,
             "minLength": 1,
-            "maxLength": 2000
+            "maxLength": 1000
           }
         }
       },

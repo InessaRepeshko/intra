@@ -1,5 +1,5 @@
 import { AnswerDomain } from '../../domain/answer.domain';
-import { RespondentCategory } from '../../domain/enums/respondent-category.enum';
+import { RespondentCategory } from '@intra/shared-kernel';
 
 export const ANSWER_REPOSITORY = Symbol('FEEDBACK360.ANSWER_REPOSITORY');
 

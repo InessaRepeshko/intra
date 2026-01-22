@@ -1,6 +1,6 @@
 import { RespondentDomain } from '../../domain/respondent.domain';
-import { ResponseStatus } from '../../domain/enums/response-status.enum';
-import { RespondentCategory } from '../../domain/enums/respondent-category.enum';
+import { ResponseStatus } from '@intra/shared-kernel';
+import { RespondentCategory } from '@intra/shared-kernel';
 
 export const RESPONDENT_REPOSITORY = Symbol('FEEDBACK360.RESPONDENT_REPOSITORY');
 

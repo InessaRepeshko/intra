@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IdentityRole } from '../../../domain/enums/identity-role.enum';
+import { IdentityRole } from '@intra/shared-kernel';
 
 export class RoleResponse {
   @ApiProperty({ enum: IdentityRole, example: IdentityRole.MANAGER })

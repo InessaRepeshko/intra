@@ -3,8 +3,8 @@ import {
     AnswerType as PrismaAnswerType,
     QuestionStatus as PrismaQuestionStatus
 } from '@intra/database';
-import { AnswerType } from '@intra/api/contexts/library/domain/enums/answer-type.enum';
-import { QuestionStatus } from '@intra/api/contexts/library/domain/enums/question-status.enum';
+import { AnswerType } from '@intra/shared-kernel';
+import { QuestionStatus } from '@intra/shared-kernel';
 
 export type QuestionMap = Map<string, { id: number }>;
 

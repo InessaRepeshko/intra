@@ -70,12 +70,15 @@ node_modules/
 # Output files of NestJS and other applications
 dist/
 build/
+**/dist
+**/build
 # Local cache of Turborepo tasks - never push it
 .turbo/
 
 # --- Prisma ---
 # Generated client (if you use custom output in packages/database)
 packages/database/src/generated/*
+packages/database/dist/generated/*
 # !packages/database/src/generated/index.ts
 # Configuration files of the environment with passwords to the database
 .env

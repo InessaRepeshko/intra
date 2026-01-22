@@ -1,5 +1,5 @@
-import { AnswerType } from 'src/contexts/library/domain/enums/answer-type.enum';
-import { RespondentCategory } from './enums/respondent-category.enum';
+import { AnswerType } from '@intra/shared-kernel';
+import { RespondentCategory } from '@intra/shared-kernel';
 
 export type AnswerProps = {
   id?: number;

@@ -5,7 +5,7 @@ import { UserRepositoryPort, UserSearchQuery, UserSortField, UserUpdatePayload }
 import { UserDomain } from '../../domain/user.domain';
 import { IdentityMapper, UserWithRoles } from './identity.mapper';
 import { SortDirection } from '@intra/shared-kernel';
-import { IdentityRole } from '../../domain/enums/identity-role.enum';
+import { IdentityRole } from '@intra/shared-kernel';
 
 @Injectable()
 export class UserRepository implements UserRepositoryPort {

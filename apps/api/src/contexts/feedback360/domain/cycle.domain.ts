@@ -1,5 +1,5 @@
 import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
-import { CycleStage } from './enums/cycle-stage.enum';
+import { CycleStage } from '@intra/shared-kernel';
 
 export type CycleProps = {
   id?: number;
