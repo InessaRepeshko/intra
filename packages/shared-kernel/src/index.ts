@@ -14,7 +14,7 @@ export { IdentityStatus, IDENTITY_STATUSES } from './identity/enums/identity-sta
 export { COMPETENCE_CONSTRAINTS } from './library/constraints/competence.constraints';
 export { QUESTION_CONSTRAINTS } from './library/constraints/question.constraints';
 export { AnswerType, ANSWER_TYPES } from './library/enums/answer-type.enum';
-export { QuestionStatus, QUESTION_STATUSES } from './library/enums/question-status.enum';
+export { QuestionTemplateStatus, QUESTION_TEMPLATE_STATUSES } from './library/enums/question-template-status.enum';
 
 /* Feedback360 */
 export { CYCLE_CONSTRAINTS } from './feedback360/constraints/cycle.constraints';

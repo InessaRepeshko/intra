@@ -14,13 +14,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { QuestionService } from '../../../application/services/question.service';
-import { CreateQuestionDto } from '../dto/questions/create-question.dto';
-import { QuestionResponse } from '../models/question.response';
-import { QuestionHttpMapper } from '../mappers/question.http.mapper';
-import { QuestionQueryDto } from '../dto/questions/question-query.dto';
-import { UpdateQuestionDto } from '../dto/questions/update-question.dto';
-import { AttachQuestionPositionDto } from '../dto/questions/attach-question-position.dto';
+import { QuestionTemplateService } from '../../../application/services/question-template.service';
+import { CreateQuestionTemplateDto } from '../dto/questions/create-question-template.dto';
+import { QuestionTemplateResponse } from '../models/question-template.response';
+import { QuestionTemplateHttpMapper } from '../mappers/question-template.http.mapper';
+import { QuestionTemplateQueryDto } from '../dto/questions/question-template-query.dto';
+import { UpdateQuestionTemplateDto } from '../dto/questions/update-question-template.dto';
+import { AttachQuestionTemplatePositionDto } from '../dto/questions/attach-question-template-position.dto';
 import {
   ApiCreateAndUpdateErrorResponses,
   ApiDeletionErrorResponses,
@@ -28,59 +28,59 @@ import {
   ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
 
-@ApiTags('Library / Questions')
-@Controller('library/questions')
+@ApiTags('Library / Question Templates')
+@Controller('library/question-templates')
 @UseInterceptors(ClassSerializerInterceptor)
-@SerializeOptions({ type: QuestionResponse })
-export class QuestionsController {
-  constructor(private readonly service: QuestionService) { }
+@SerializeOptions({ type: QuestionTemplateResponse })
+export class QuestionTemplatesController {
+  constructor(private readonly service: QuestionTemplateService) { }
 
   @Post()
-  @ApiOperation({ summary: 'Create question' })
-  @ApiResponse({ status: HttpStatus.CREATED, type: QuestionResponse })
+  @ApiOperation({ summary: 'Create question template' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: QuestionTemplateResponse })
   @ApiCreateAndUpdateErrorResponses()
-  async create(@Body() dto: CreateQuestionDto): Promise<QuestionResponse> {
+  async create(@Body() dto: CreateQuestionTemplateDto): Promise<QuestionTemplateResponse> {
     const created = await this.service.create({
       competenceId: dto.competenceId,
       title: dto.title,
       answerType: dto.answerType,
       isForSelfassessment: dto.isForSelfassessment,
-      questionStatus: dto.questionStatus,
+      status: dto.status,
       positionIds: dto.positionIds,
     });
-    return QuestionHttpMapper.toResponse(created);
+    return QuestionTemplateHttpMapper.toResponse(created);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Search questions' })
-  @ApiResponse({ status: HttpStatus.OK, type: QuestionResponse, isArray: true })
+  @ApiOperation({ summary: 'Search question templates' })
+  @ApiResponse({ status: HttpStatus.OK, type: QuestionTemplateResponse, isArray: true })
   @ApiListReadErrorResponses()
-  async search(@Query() query: QuestionQueryDto): Promise<QuestionResponse[]> {
+  async search(@Query() query: QuestionTemplateQueryDto): Promise<QuestionTemplateResponse[]> {
     const questions = await this.service.search(query);
-    return questions.map(QuestionHttpMapper.toResponse);
+    return questions.map(QuestionTemplateHttpMapper.toResponse);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get question by id' })
-  @ApiResponse({ status: HttpStatus.OK, type: QuestionResponse })
+  @ApiOperation({ summary: 'Get question template by id' })
+  @ApiResponse({ status: HttpStatus.OK, type: QuestionTemplateResponse })
   @ApiReadErrorResponses()
-  async getById(@Param('id') id: string): Promise<QuestionResponse> {
+  async getById(@Param('id') id: string): Promise<QuestionTemplateResponse> {
     const question = await this.service.getById(Number(id));
-    return QuestionHttpMapper.toResponse(question);
+    return QuestionTemplateHttpMapper.toResponse(question);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update question' })
-  @ApiResponse({ status: HttpStatus.OK, type: QuestionResponse })
+  @ApiOperation({ summary: 'Update question template' })
+  @ApiResponse({ status: HttpStatus.OK, type: QuestionTemplateResponse })
   @ApiCreateAndUpdateErrorResponses()
-  async update(@Param('id') id: string, @Body() dto: UpdateQuestionDto): Promise<QuestionResponse> {
+  async update(@Param('id') id: string, @Body() dto: UpdateQuestionTemplateDto): Promise<QuestionTemplateResponse> {
     const updated = await this.service.update(Number(id), dto);
-    return QuestionHttpMapper.toResponse(updated);
+    return QuestionTemplateHttpMapper.toResponse(updated);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete question' })
+  @ApiOperation({ summary: 'Delete question template' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async delete(@Param('id') id: string): Promise<void> {
@@ -88,20 +88,20 @@ export class QuestionsController {
   }
 
   @Post(':id/positions')
-  @ApiOperation({ summary: 'Attach question to position' })
-  @ApiResponse({ status: HttpStatus.CREATED, type: QuestionResponse })
+  @ApiOperation({ summary: 'Attach question template to position' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: QuestionTemplateResponse })
   @ApiCreateAndUpdateErrorResponses()
   async attachPosition(
     @Param('id') id: string,
-    @Body() dto: AttachQuestionPositionDto,
-  ): Promise<QuestionResponse> {
+    @Body() dto: AttachQuestionTemplatePositionDto,
+  ): Promise<QuestionTemplateResponse> {
     const updated = await this.service.attachPosition(Number(id), dto.positionId);
-    return QuestionHttpMapper.toResponse(updated);
+    return QuestionTemplateHttpMapper.toResponse(updated);
   }
 
   @Delete(':id/positions/:positionId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Detach question from position' })
+  @ApiOperation({ summary: 'Detach question template from position' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async detachPosition(@Param('id') id: string, @Param('positionId') positionId: string): Promise<void> {
@@ -109,7 +109,7 @@ export class QuestionsController {
   }
 
   @Get(':id/positions')
-  @ApiOperation({ summary: 'List linked positions for the question' })
+  @ApiOperation({ summary: 'List linked positions for the question template' })
   @ApiResponse({ status: HttpStatus.OK, type: Number, isArray: true })
   @ApiListReadErrorResponses()
   async listPositions(@Param('id') id: string): Promise<number[]> {

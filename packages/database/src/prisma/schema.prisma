@@ -50,23 +50,24 @@ model User {
   updatedAt    DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
   // --- Identity ---
-  userRoles    UserRole[]
-  manager      User?      @relation("user_hierarchy", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subordinates User[]     @relation("user_hierarchy")
+  userRoles UserRole[]
 
   // --- Organisation ---
-  teamHead    Team[]           @relation("team_head")
-  memberships TeamMembership[] @relation("team_memberships")
+  teamHead     Team[]           @relation("team_head")
+  memberships  TeamMembership[] @relation("team_memberships")
+  manager      User?            @relation("user_hierarchy", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subordinates User[]           @relation("user_hierarchy")
 
   // --- Feedback360 (HR/Admin side) ---
   managedCycles  Cycle[]  @relation("managed_cycles")
   managedReviews Review[] @relation("managed_reviews")
 
   // --- Feedback360 (Participant side) ---
-  reviewsAsRatee  Review[]       @relation("reviews_as_ratee")
-  responses       Respondent[]   @relation("user_responses")
-  assignedReviews Reviewer[]     @relation("assigned_reviews")
-  clusterScores   ClusterScore[] @relation("cluster_ratee_scores")
+  reviewsAsRatee    Review[]       @relation("reviews_as_ratee")
+  responses         Respondent[]   @relation("user_responses")
+  reviewsAsReviewer Reviewer[]     @relation("reviews_as_reviewer")
+  reviewsAsManager  Review[]       @relation("review_as_manager")
+  clusterScores     ClusterScore[] @relation("cluster_ratee_scores")
 
   @@index([managerId])
   @@index([positionId])
@@ -118,6 +119,7 @@ model Team {
 
   memberships TeamMembership[]
   head        User?            @relation("team_head", fields: [headId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reviews     Review[]
 
   @@index([headId])
   @@map("org_teams")
@@ -126,16 +128,16 @@ model Team {
 model TeamMembership {
   id        Int      @id @default(autoincrement())
   teamId    Int      @map("team_id")
-  userId    Int      @map("user_id")
+  memberId  Int      @map("member_id")
   isPrimary Boolean? @default(false) @map("is_primary")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
 
-  team Team @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user User @relation("team_memberships", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  team   Team @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  member User @relation("team_memberships", fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([teamId, userId, isPrimary])
+  @@unique([teamId, memberId, isPrimary])
   @@index([teamId])
-  @@index([userId])
+  @@index([memberId])
   @@map("org_team_memberships")
 }
 
@@ -146,11 +148,11 @@ model Position {
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  reviews           Review[]
-  questionPositions LibraryQuestionPosition[]
-  superiors         PositionHierarchy[]       @relation("superior_position")
-  subordinates      PositionHierarchy[]       @relation("subordinate_position")
-  reviewQuestions   ReviewQuestion[]          @relation()
+  reviews                   Review[]
+  questionTemplateRelations QuestionTemplatePositionRelation[]
+  superiors                 PositionHierarchy[]                @relation("superior_position")
+  subordinates              PositionHierarchy[]                @relation("subordinate_position")
+  respondents               Respondent[]
 
   @@map("org_positions")
 }
@@ -180,11 +182,11 @@ enum AnswerType {
   @@map("library_answer_type")
 }
 
-enum QuestionStatus {
+enum QuestionTemplateStatus {
   ARCHIVE @map("archive")
   ACTIVE  @map("active")
 
-  @@map("library_question_status")
+  @@map("question_template_status")
 }
 
 model Competence {
@@ -195,9 +197,10 @@ model Competence {
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  clusters         Cluster[]
-  libraryQuestions LibraryQuestion[]
-  reviewQuestions  ReviewQuestion[]
+  clusters                Cluster[]
+  questionTemplates       QuestionTemplate[]
+  reviewQuestions         Question[]
+  reviewQuestionRelations ReviewQuestionRelation[]
 
   @@map("library_competences")
 }
@@ -225,38 +228,36 @@ model Cluster {
   @@map("library_clusters")
 }
 
-model LibraryQuestion {
-  id                  Int            @id @default(autoincrement())
-  title               String         @db.Text
-  answerType          AnswerType     @map("answer_type")
-  competenceId        Int            @map("competence_id")
-  isForSelfassessment Boolean?       @default(false) @map("is_for_selfassessment")
-  questionStatus      QuestionStatus @default(ACTIVE) @map("question_status")
-  createdAt           DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt           DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+model QuestionTemplate {
+  id                  Int                    @id @default(autoincrement())
+  title               String                 @db.Text
+  answerType          AnswerType             @map("answer_type")
+  competenceId        Int                    @map("competence_id")
+  isForSelfassessment Boolean?               @default(false) @map("is_for_selfassessment")
+  status              QuestionTemplateStatus @default(ACTIVE) @map("status")
+  createdAt           DateTime               @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt           DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  answers                  Answer[]
-  reviewsQuestions         ReviewQuestionRelation[]
-  competence               Competence                @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  libraryQuestionPositions LibraryQuestionPosition[]
-  reviewQuestions          ReviewQuestion[]
+  competence        Competence                         @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  positionRelations QuestionTemplatePositionRelation[]
+  reviewQuestions   Question[]
 
   @@index([competenceId])
-  @@map("library_questions")
+  @@map("library_question_templates")
 }
 
-model LibraryQuestionPosition {
-  id         Int      @id @default(autoincrement())
-  questionId Int      @map("question_id")
-  positionId Int      @map("position_id")
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+model QuestionTemplatePositionRelation {
+  id                 Int      @id @default(autoincrement())
+  questionTemplateId Int      @map("question_template_id")
+  positionId         Int      @map("position_id")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamp(0)
 
-  question LibraryQuestion @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  position Position        @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  questionTemplate QuestionTemplate @relation(fields: [questionTemplateId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  position         Position         @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([questionId, positionId])
+  @@unique([questionTemplateId, positionId])
   @@index([positionId])
-  @@map("library_question_positions")
+  @@map("library_question_template_position_relations")
 }
 
 /**
@@ -320,12 +321,12 @@ model Cycle {
   createdAt               DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt               DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  hr              User             @relation("managed_cycles", fields: [hrId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  hr              User           @relation("managed_cycles", fields: [hrId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   clusterScores   ClusterScore[]
   clusters        Cluster[]
   reviews         Review[]
   reports         Report[]
-  reviewQuestions ReviewQuestion[]
+  reviewQuestions Question[]
 
   @@index([hrId])
   @@index([stage])
@@ -333,100 +334,105 @@ model Cycle {
 }
 
 model Review {
-  id         Int         @id @default(autoincrement())
-  rateeId    Int         @map("ratee_id")
-  rateeNote  String?     @map("ratee_note") @db.Text
-  positionId Int         @map("position_id")
-  hrId       Int         @map("hr_id")
-  hrNote     String?     @map("hr_note") @db.Text
-  cycleId    Int?        @map("cycle_id")
-  reportId   Int?        @map("report_id")
-  stage      ReviewStage @default(VERIFICATION_BY_HR)
-  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+  id                 Int         @id @default(autoincrement())
+  rateeId            Int         @map("ratee_id")
+  rateePositionId    Int         @map("ratee_position_id")
+  rateePositionTitle String      @map("ratee_position_title") @db.Text
+  hrId               Int         @map("hr_id")
+  hrNote             String?     @map("hr_note") @db.Text
+  teamId             Int?        @map("team_id")
+  teamTitle          String?     @map("team_title") @db.Text
+  managerId          Int?        @map("manager_id")
+  cycleId            Int?        @map("cycle_id")
+  reportId           Int?        @map("report_id")
+  stage              ReviewStage @default(VERIFICATION_BY_HR)
+  createdAt          DateTime    @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt          DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
   ratee    User     @relation("reviews_as_ratee", fields: [rateeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   hr       User     @relation("managed_reviews", fields: [hrId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cycle    Cycle?   @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  position Position @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  position Position @relation(fields: [rateePositionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  team     Team?    @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  manager  User?    @relation("review_as_manager", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  answers                Answer[]
-  reviewQuestionRelation ReviewQuestionRelation[]
-  report                 Report?
-  respondents            Respondent[]
-  reviewers              Reviewer[]
-  clusterScores          ClusterScore[]
+  answers                 Answer[]
+  reviewQuestionRelations ReviewQuestionRelation[]
+  report                  Report?
+  respondents             Respondent[]
+  reviewers               Reviewer[]
+  clusterScores           ClusterScore[]
 
   @@index([cycleId])
   @@index([hrId])
-  @@index([positionId])
+  @@index([rateePositionId])
+  @@index([teamId])
+  @@index([managerId])
   @@index([rateeId])
   @@index([stage])
   @@index([createdAt])
   @@map("feedback360_reviews")
 }
 
-model ReviewQuestion {
+model Question {
   id                  Int        @id @default(autoincrement())
   cycleId             Int?       @map("cycle_id")
-  libraryQuestionId   Int?       @map("library_question_id")
+  questionTemplateId  Int?       @map("question_template_id")
   title               String     @db.Text
   answerType          AnswerType @map("answer_type")
   competenceId        Int?       @map("competence_id")
-  positionId          Int?       @map("position_id")
   isForSelfassessment Boolean?   @default(false) @map("is_for_selfassessment")
   createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
 
-  cycle           Cycle?           @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  libraryQuestion LibraryQuestion? @relation(fields: [libraryQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  competence      Competence?      @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  position        Position?        @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  answers         Answer[]
+  cycle                   Cycle?                   @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  questionTemplate        QuestionTemplate?        @relation(fields: [questionTemplateId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  competence              Competence?              @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  answers                 Answer[]
+  reviewQuestionRelations ReviewQuestionRelation[]
 
   @@index([cycleId])
-  @@index([libraryQuestionId])
+  @@index([questionTemplateId])
   @@index([competenceId])
-  @@index([positionId])
   @@map("feedback360_questions")
 }
 
 model ReviewQuestionRelation {
   id                  Int        @id @default(autoincrement())
   reviewId            Int        @map("review_id")
-  libraryQuestionId   Int        @map("library_question_id")
+  questionId          Int        @map("question_id")
   questionTitle       String     @map("question_title") @db.Text
   answerType          AnswerType @map("answer_type")
   competenceId        Int        @map("competence_id")
+  competenceTitle     String     @map("competence_title") @db.Text
   isForSelfassessment Boolean?   @default(false) @map("is_for_selfassessment")
   createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
 
-  review          Review          @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  libraryQuestion LibraryQuestion @relation(fields: [libraryQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  review     Review     @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question   Question   @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  competence Competence @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([reviewId, libraryQuestionId])
+  @@unique([reviewId, questionId])
   @@index([reviewId])
-  @@index([libraryQuestionId])
+  @@index([questionId])
+  @@index([competenceId])
   @@map("feedback360_review_question_relations")
 }
 
 model Answer {
   id                 Int                @id @default(autoincrement())
   reviewId           Int                @map("review_id")
-  libraryQuestionId  Int                @map("library_question_id")
-  reviewQuestionId   Int?               @map("review_question_id")
+  questionId         Int                @map("review_question_id")
   respondentCategory RespondentCategory @map("respondent_category")
   answerType         AnswerType         @default(NUMERICAL_SCALE) @map("answer_type")
   numericalValue     Int?               @map("numerical_value") @db.SmallInt
   textValue          String?            @map("text_value") @db.Text
   createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamp(0)
 
-  libraryQuestion LibraryQuestion @relation(fields: [libraryQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  reviewQuestion  ReviewQuestion? @relation(fields: [reviewQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  review          Review          @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question Question @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  review   Review   @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([reviewId])
-  @@index([libraryQuestionId])
-  @@index([reviewQuestionId])
+  @@index([questionId])
   @@index([respondentCategory])
   @@index([createdAt])
   @@map("feedback360_answers")
@@ -436,60 +442,68 @@ model ClusterScore {
   id        Int      @id @default(autoincrement())
   cycleId   Int?     @map("cycle_id")
   clusterId Int      @map("cluster_id")
-  userId    Int      @map("user_id")
+  rateeId   Int      @map("user_id")
   reviewId  Int?     @map("review_id")
   score     Float
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  ratee   User    @relation("cluster_ratee_scores", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ratee   User    @relation("cluster_ratee_scores", fields: [rateeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cycle   Cycle?  @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cluster Cluster @relation(fields: [clusterId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   review  Review? @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([clusterId, userId])
+  @@unique([clusterId, rateeId])
   @@index([cycleId])
   @@index([clusterId])
-  @@index([userId])
+  @@index([rateeId])
   @@index([reviewId])
   @@map("feedback360_clusters_scores")
 }
 
 model Respondent {
-  id                 Int                @id @default(autoincrement())
-  reviewId           Int                @map("review_id")
-  respondentId       Int                @map("respondent_id")
-  respondentCategory RespondentCategory @map("respondent_category")
-  responseStatus     ResponseStatus     @default(PENDING) @map("response_status")
-  respondentNote     String?            @map("respondent_note") @db.Text
-  invitedAt          DateTime?          @map("invited_at") @db.Timestamp(0)
-  respondedAt        DateTime?          @map("responded_at") @db.Timestamp(0)
-  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt          DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+  id             Int                @id @default(autoincrement())
+  reviewId       Int                @map("review_id")
+  respondentId   Int                @map("respondent_id")
+  category       RespondentCategory @map("category")
+  responseStatus ResponseStatus     @default(PENDING) @map("response_status")
+  respondentNote String?            @map("respondent_note") @db.Text
+  hrNote         String?            @map("hr_note") @db.Text
+  positionId     Int                @map("position_id")
+  positionTitle  String             @map("position_title") @db.Text
+  invitedAt      DateTime?          @map("invited_at") @db.Timestamp(0)
+  canceledAt     DateTime?          @map("canceled_at") @db.Timestamp(0)
+  respondedAt    DateTime?          @map("responded_at") @db.Timestamp(0)
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt      DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  user   User   @relation("user_responses", fields: [respondentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  review Review @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user               User      @relation("user_responses", fields: [respondentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  review             Review    @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  respondentPosition Position? @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([respondentId, reviewId])
   @@index([reviewId])
   @@index([responseStatus])
   @@index([respondentId])
+  @@index([positionId])
   @@index([respondentId, responseStatus])
   @@map("feedback360_respondents")
 }
 
 model Reviewer {
-  id        Int      @id @default(autoincrement())
-  reviewId  Int      @map("review_id")
-  userId    Int      @map("user_id")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  id            Int      @id @default(autoincrement())
+  reviewId      Int      @map("review_id")
+  reviewerId    Int      @map("reviewer_id")
+  positionId    Int      @map("position_id")
+  positionTitle String   @map("position_title") @db.Text
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamp(0)
 
-  user   User   @relation("assigned_reviews", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user   User   @relation("reviews_as_reviewer", fields: [reviewerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   review Review @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([reviewId, userId])
+  @@unique([reviewId, reviewerId])
   @@index([reviewId])
-  @@index([userId])
+  @@index([reviewerId])
   @@map("feedback360_reviewers")
 }
 

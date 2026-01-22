@@ -1,94 +1,94 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
-  QUESTION_REPOSITORY,
-  QuestionRepositoryPort,
-  QuestionSearchQuery,
-  QuestionUpdatePayload,
-} from '../ports/question.repository.port';
+  QUESTION_TEMPLATE_REPOSITORY,
+  QuestionTemplateRepositoryPort,
+  QuestionTemplateSearchQuery,
+  QuestionTemplateUpdatePayload,
+} from '../ports/question-template.repository.port';
 import { CompetenceService } from './competence.service';
-import { QuestionDomain } from '../../domain/question.domain';
+import { QuestionTemplateDomain } from '../../domain/question-template.domain';
 import { AnswerType } from '@intra/shared-kernel';
-import { QuestionStatus } from '@intra/shared-kernel';
+import { QuestionTemplateStatus } from '@intra/shared-kernel';
 import {
-  QUESTION_POSITION_REPOSITORY,
-  QuestionPositionRepositoryPort,
-} from '../ports/question-position.repository.port';
+  QUESTION_TEMPLATE_POSITION_RELATION_REPOSITORY,
+  QuestionTemplatePositionRelationRepositoryPort,
+} from '../ports/question-template-position-relation.repository.port';
 import { PositionService } from 'src/contexts/organisation/application/services/position.service';
 
-export type CreateQuestionCommand = {
+export type CreateQuestionTemplateCommand = {
   competenceId: number;
   title: string;
   answerType: AnswerType;
   isForSelfassessment?: boolean;
-  questionStatus?: QuestionStatus;
+  status?: QuestionTemplateStatus;
   positionIds?: number[];
 };
 
-export type UpdateQuestionCommand = Partial<CreateQuestionCommand>;
+export type UpdateQuestionTemplateCommand = Partial<CreateQuestionTemplateCommand>;
 
 @Injectable()
-export class QuestionService {
+export class QuestionTemplateService {
   constructor(
-    @Inject(QUESTION_REPOSITORY) private readonly questions: QuestionRepositoryPort,
-    @Inject(QUESTION_POSITION_REPOSITORY)
-    private readonly questionPositions: QuestionPositionRepositoryPort,
+    @Inject(QUESTION_TEMPLATE_REPOSITORY) private readonly questionTemplates: QuestionTemplateRepositoryPort,
+    @Inject(QUESTION_TEMPLATE_POSITION_RELATION_REPOSITORY)
+    private readonly questionTemplatePositionRelations: QuestionTemplatePositionRelationRepositoryPort,
     private readonly competences: CompetenceService,
     private readonly positions: PositionService,
   ) { }
 
-  async create(command: CreateQuestionCommand): Promise<QuestionDomain> {
+  async create(command: CreateQuestionTemplateCommand): Promise<QuestionTemplateDomain> {
     await this.competences.getById(command.competenceId);
 
-    const question = QuestionDomain.create({
+    const question = QuestionTemplateDomain.create({
       competenceId: command.competenceId,
       title: command.title,
       answerType: command.answerType,
       isForSelfassessment: command.isForSelfassessment ?? false,
-      questionStatus: command.questionStatus ?? QuestionStatus.ACTIVE,
+      status: command.status ?? QuestionTemplateStatus.ACTIVE,
     });
 
-    const created = await this.questions.create(question);
+    const created = await this.questionTemplates.create(question);
 
     const positionIds = command.positionIds ? Array.from(new Set(command.positionIds)) : [];
     if (positionIds.length) {
       await this.ensurePositionsExist(positionIds);
-      await this.questionPositions.replace(created.id!, positionIds);
+      await this.questionTemplatePositionRelations.replace(created.id!, positionIds);
     }
 
     return this.getById(created.id!);
   }
 
-  async search(query: QuestionSearchQuery): Promise<QuestionDomain[]> {
-    return this.questions.search(query);
+  async search(query: QuestionTemplateSearchQuery): Promise<QuestionTemplateDomain[]> {
+    return this.questionTemplates.search(query);
   }
 
-  async getById(id: number): Promise<QuestionDomain> {
-    const question = await this.questions.findById(id);
-    if (!question) throw new NotFoundException('Question not found');
+  async getById(id: number): Promise<QuestionTemplateDomain> {
+    const question = await this.questionTemplates.findById(id);
+    if (!question) throw new NotFoundException('Question template not found');
     return question;
   }
 
-  async update(id: number, patch: UpdateQuestionCommand): Promise<QuestionDomain> {
+  async update(id: number, patch: UpdateQuestionTemplateCommand): Promise<QuestionTemplateDomain> {
     const current = await this.getById(id);
 
     if (patch.competenceId && patch.competenceId !== current.competenceId) {
       await this.competences.getById(patch.competenceId);
     }
 
-    const payload: QuestionUpdatePayload = {
+    const payload: QuestionTemplateUpdatePayload = {
       ...(patch.competenceId !== undefined ? { competenceId: patch.competenceId } : {}),
       ...(patch.title !== undefined ? { title: patch.title } : {}),
       ...(patch.answerType !== undefined ? { answerType: patch.answerType } : {}),
       ...(patch.isForSelfassessment !== undefined ? { isForSelfassessment: patch.isForSelfassessment } : {}),
-      ...(patch.questionStatus !== undefined ? { questionStatus: patch.questionStatus } : {}),
+      ...(patch.status !== undefined ? { status: patch.status } : {}),
     };
 
-    await this.questions.updateById(id, payload);
+    await this.questionTemplates.updateById(id, payload);
 
     if (patch.positionIds) {
       const uniquePositions = Array.from(new Set(patch.positionIds));
       await this.ensurePositionsExist(uniquePositions);
-      await this.questionPositions.replace(id, uniquePositions);
+      await this.questionTemplatePositionRelations.replace(id, uniquePositions);
     }
 
     return this.getById(id);
@@ -96,25 +96,25 @@ export class QuestionService {
 
   async delete(id: number): Promise<void> {
     await this.getById(id);
-    await this.questions.deleteById(id);
+    await this.questionTemplates.deleteById(id);
   }
 
-  async attachPosition(questionId: number, positionId: number): Promise<QuestionDomain> {
+  async attachPosition(questionId: number, positionId: number): Promise<QuestionTemplateDomain> {
     await this.getById(questionId);
     await this.positions.getById(positionId);
 
-    await this.questionPositions.link(questionId, positionId);
+    await this.questionTemplatePositionRelations.link(questionId, positionId);
     return this.getById(questionId);
   }
 
   async detachPosition(questionId: number, positionId: number): Promise<void> {
     await this.getById(questionId);
-    await this.questionPositions.unlink(questionId, positionId);
+    await this.questionTemplatePositionRelations.unlink(questionId, positionId);
   }
 
   async listPositions(questionId: number): Promise<number[]> {
     await this.getById(questionId);
-    const relations = await this.questionPositions.listByQuestion(questionId);
+    const relations = await this.questionTemplatePositionRelations.listByQuestion(questionId);
     return relations.map((r) => r.positionId);
   }
 

@@ -2,43 +2,43 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@intra/database';
 import { PrismaService } from 'src/database/prisma.service';
 import {
-  QuestionRepositoryPort,
-  QuestionSearchQuery,
-  QuestionSortField,
-  QuestionUpdatePayload,
-} from '../../application/ports/question.repository.port';
-import { QuestionDomain } from '../../domain/question.domain';
-import { CompetenceMapper } from './competence.mapper';
+  QuestionTemplateRepositoryPort,
+  QuestionTemplateSearchQuery,
+  QuestionTemplateSortField,
+  QuestionTemplateUpdatePayload,
+} from '../../application/ports/question-template.repository.port';
+import { QuestionTemplateDomain } from '../../domain/question-template.domain';
+import { LibraryMapper } from './library.mapper';
 import { SortDirection } from '@intra/shared-kernel';
 
 @Injectable()
-export class QuestionRepository implements QuestionRepositoryPort {
+export class QuestionTemplateRepository implements QuestionTemplateRepositoryPort {
   constructor(private readonly prisma: PrismaService) { }
 
-  async create(question: QuestionDomain): Promise<QuestionDomain> {
+  async create(question: QuestionTemplateDomain): Promise<QuestionTemplateDomain> {
     const created = await this.prisma.libraryQuestion.create({
       data: {
         title: question.title,
         answerType: question.answerType,
         competenceId: question.competenceId,
         isForSelfassessment: question.isForSelfassessment,
-        questionStatus: question.questionStatus,
+        questionStatus: question.status,
       },
     });
 
-    return CompetenceMapper.toQuestionDomain(created);
+    return LibraryMapper.toQuestionTemplateDomain(created);
   }
 
-  async findById(id: number): Promise<QuestionDomain | null> {
+  async findById(id: number): Promise<QuestionTemplateDomain | null> {
     const question = await this.prisma.libraryQuestion.findUnique({
       where: { id },
       include: { libraryQuestionPositions: { select: { positionId: true } } },
     });
 
-    return question ? CompetenceMapper.toQuestionDomain(question) : null;
+    return question ? LibraryMapper.toQuestionTemplateDomain(question) : null;
   }
 
-  async search(query: QuestionSearchQuery): Promise<QuestionDomain[]> {
+  async search(query: QuestionTemplateSearchQuery): Promise<QuestionTemplateDomain[]> {
     const where = this.buildWhere(query);
     const orderBy = this.buildOrder(query);
 
@@ -48,10 +48,10 @@ export class QuestionRepository implements QuestionRepositoryPort {
       include: { libraryQuestionPositions: { select: { positionId: true } } },
     });
 
-    return items.map(CompetenceMapper.toQuestionDomain);
+    return items.map(LibraryMapper.toQuestionTemplateDomain);
   }
 
-  async updateById(id: number, patch: QuestionUpdatePayload): Promise<QuestionDomain> {
+  async updateById(id: number, patch: QuestionTemplateUpdatePayload): Promise<QuestionTemplateDomain> {
     const updated = await this.prisma.libraryQuestion.update({
       where: { id },
       data: {
@@ -60,15 +60,15 @@ export class QuestionRepository implements QuestionRepositoryPort {
       include: { libraryQuestionPositions: { select: { positionId: true } } },
     });
 
-    return CompetenceMapper.toQuestionDomain(updated);
+    return LibraryMapper.toQuestionTemplateDomain(updated);
   }
 
   async deleteById(id: number): Promise<void> {
     await this.prisma.libraryQuestion.delete({ where: { id } });
   }
 
-  private buildWhere(query: QuestionSearchQuery): Prisma.LibraryQuestionWhereInput {
-    const { competenceId, positionId, status, answerType, isForSelfassessment, search } = query;
+  private buildWhere(query: QuestionTemplateSearchQuery): Prisma.LibraryQuestionWhereInput {
+    const { competenceId, positionId, status: status, answerType, isForSelfassessment, search } = query;
 
     return {
       ...(competenceId ? { competenceId } : {}),
@@ -90,8 +90,8 @@ export class QuestionRepository implements QuestionRepositoryPort {
     };
   }
 
-  private buildOrder(query: QuestionSearchQuery): Prisma.LibraryQuestionOrderByWithRelationInput[] {
-    const field = query.sortBy ?? QuestionSortField.ID;
+  private buildOrder(query: QuestionTemplateSearchQuery): Prisma.LibraryQuestionOrderByWithRelationInput[] {
+    const field = query.sortBy ?? QuestionTemplateSortField.ID;
     const direction = query.sortDirection ?? SortDirection.ASC;
     return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
   }

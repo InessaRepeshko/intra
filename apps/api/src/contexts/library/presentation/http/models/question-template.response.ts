@@ -1,9 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { AnswerType } from '@intra/shared-kernel';
-import { QuestionStatus } from '@intra/shared-kernel';
+import { QuestionTemplateStatus } from '@intra/shared-kernel';
 
-export class QuestionResponse {
+export class QuestionTemplateResponse {
   @ApiProperty({ example: 1 })
   @Expose()
   id!: number;
@@ -24,9 +24,9 @@ export class QuestionResponse {
   @Expose()
   isForSelfassessment!: boolean;
 
-  @ApiProperty({ enum: QuestionStatus, example: QuestionStatus.ACTIVE })
+  @ApiProperty({ enum: QuestionTemplateStatus, example: QuestionTemplateStatus.ACTIVE })
   @Expose()
-  questionStatus!: QuestionStatus;
+  status!: QuestionTemplateStatus;
 
   @ApiProperty({ example: [1, 2, 3], isArray: true, type: Number })
   @Expose()

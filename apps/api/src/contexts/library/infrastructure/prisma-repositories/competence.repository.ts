@@ -8,7 +8,7 @@ import {
   CompetenceUpdatePayload,
 } from '../../application/ports/competence.repository.port';
 import { CompetenceDomain } from '../../domain/competence.domain';
-import { CompetenceMapper } from './competence.mapper';
+import { LibraryMapper } from './library.mapper';
 import { SortDirection } from '@intra/shared-kernel';
 
 @Injectable()
@@ -24,12 +24,12 @@ export class CompetenceRepository implements CompetenceRepositoryPort {
       },
     });
 
-    return CompetenceMapper.toCompetenceDomain(created);
+    return LibraryMapper.toCompetenceDomain(created);
   }
 
   async findById(id: number): Promise<CompetenceDomain | null> {
     const competence = await this.prisma.competence.findUnique({ where: { id } });
-    return competence ? CompetenceMapper.toCompetenceDomain(competence) : null;
+    return competence ? LibraryMapper.toCompetenceDomain(competence) : null;
   }
 
   async search(query: CompetenceSearchQuery): Promise<CompetenceDomain[]> {
@@ -37,7 +37,7 @@ export class CompetenceRepository implements CompetenceRepositoryPort {
     const orderBy = this.buildOrder(query);
 
     const items = await this.prisma.competence.findMany({ where, orderBy });
-    return items.map(CompetenceMapper.toCompetenceDomain);
+    return items.map(LibraryMapper.toCompetenceDomain);
   }
 
   async updateById(id: number, patch: CompetenceUpdatePayload): Promise<CompetenceDomain> {
@@ -46,7 +46,7 @@ export class CompetenceRepository implements CompetenceRepositoryPort {
       data: patch,
     });
 
-    return CompetenceMapper.toCompetenceDomain(updated);
+    return LibraryMapper.toCompetenceDomain(updated);
   }
 
   async deleteById(id: number): Promise<void> {

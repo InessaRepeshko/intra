@@ -2,18 +2,18 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 import { ToOptionalBool, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { AnswerType } from '@intra/shared-kernel';
-import { QuestionStatus } from '@intra/shared-kernel';
+import { QuestionTemplateStatus } from '@intra/shared-kernel';
 import { QUESTION_CONSTRAINTS } from '@intra/shared-kernel';
 
-export class CreateQuestionDto {
-  @ApiProperty({ description: 'Competence id the question belongs to', example: 2 })
+export class CreateQuestionTemplateDto {
+  @ApiProperty({ description: 'Competence id the question template belongs to', example: 2 })
   @ToOptionalInt({ min: 1 })
   @IsInt()
   @Min(1)
   competenceId!: number;
 
   @ApiProperty({
-    description: 'Question text/title',
+    description: 'Question template text/title',
     example: 'Delivers features on time',
     minLength: QUESTION_CONSTRAINTS.TITLE.LENGTH.MIN,
     maxLength: QUESTION_CONSTRAINTS.TITLE.LENGTH.MAX,
@@ -29,18 +29,18 @@ export class CreateQuestionDto {
   @IsEnum(AnswerType)
   answerType!: AnswerType;
 
-  @ApiPropertyOptional({ description: 'Is this question for self assessment', example: false, default: false })
+  @ApiPropertyOptional({ description: 'Is this question template for self assessment', example: false, default: false })
   @ToOptionalBool()
   @IsOptional()
   @IsBoolean()
   isForSelfassessment?: boolean;
 
-  @ApiPropertyOptional({ enum: QuestionStatus, example: QuestionStatus.ACTIVE, default: QuestionStatus.ACTIVE })
+  @ApiPropertyOptional({ enum: QuestionTemplateStatus, example: QuestionTemplateStatus.ACTIVE, default: QuestionTemplateStatus.ACTIVE })
   @IsOptional()
-  @IsEnum(QuestionStatus)
-  questionStatus?: QuestionStatus;
+  @IsEnum(QuestionTemplateStatus)
+  status?: QuestionTemplateStatus;
 
-  @ApiPropertyOptional({ description: 'Positions this question is linked to', type: [Number], example: [1, 2] })
+  @ApiPropertyOptional({ description: 'Positions this question template is linked to', type: [Number], example: [1, 2] })
   @IsOptional()
   @IsArray()
   @IsInt({ each: true })

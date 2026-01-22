@@ -8,14 +8,14 @@ import {
 } from '@intra/database';
 import { CompetenceDomain } from '../../domain/competence.domain';
 import { ClusterDomain } from '../../domain/cluster.domain';
-import { QuestionDomain } from '../../domain/question.domain';
+import { QuestionTemplateDomain } from '../../domain/question-template.domain';
 import { AnswerType } from '@intra/shared-kernel';
 import { QuestionStatus } from '@intra/shared-kernel';
-import { QuestionPositionDomain } from '../../domain/question-position.domain';
+import { QuestionTemplatePositionRelationDomain } from '../../domain/question-template-position-relation.domain';
 
 type QuestionWithPositions = PrismaLibraryQuestion & { libraryQuestionPositions?: { positionId: number }[] };
 
-export class CompetenceMapper {
+export class LibraryMapper {
   static toCompetenceDomain(competence: Competence): CompetenceDomain {
     return CompetenceDomain.create({
       id: competence.id,
@@ -43,24 +43,24 @@ export class CompetenceMapper {
     });
   }
 
-  static toQuestionDomain(question: QuestionWithPositions): QuestionDomain {
-    return QuestionDomain.create({
+  static toQuestionTemplateDomain(question: QuestionWithPositions): QuestionTemplateDomain {
+    return QuestionTemplateDomain.create({
       id: question.id,
       title: question.title,
       answerType: question.answerType as AnswerType,
       competenceId: question.competenceId,
       isForSelfassessment: question.isForSelfassessment ?? false,
-      questionStatus: question.questionStatus as QuestionStatus,
+      status: question.questionStatus as QuestionStatus,
       createdAt: question.createdAt,
       updatedAt: question.updatedAt,
       positionIds: question.libraryQuestionPositions?.map((q) => q.positionId) ?? [],
     });
   }
 
-  static toQuestionPositionDomain(relation: PrismaLibraryQuestionPosition): QuestionPositionDomain {
-    return QuestionPositionDomain.create({
+  static toQuestionTemplatePositionRelationDomain(relation: PrismaLibraryQuestionPosition): QuestionTemplatePositionRelationDomain {
+    return QuestionTemplatePositionRelationDomain.create({
       id: relation.id,
-      questionId: relation.questionId,
+      questionTemplateId: relation.questionId,
       positionId: relation.positionId,
       createdAt: relation.createdAt,
     });

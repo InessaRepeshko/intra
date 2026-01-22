@@ -8,7 +8,7 @@ import {
   ClusterUpdatePayload,
 } from '../../application/ports/cluster.repository.port';
 import { ClusterDomain } from '../../domain/cluster.domain';
-import { CompetenceMapper } from './competence.mapper';
+import { LibraryMapper } from './library.mapper';
 import { SortDirection } from '@intra/shared-kernel';
 
 @Injectable()
@@ -29,12 +29,12 @@ export class ClusterRepository implements ClusterRepositoryPort {
       },
     });
 
-    return CompetenceMapper.toClusterDomain(created);
+    return LibraryMapper.toClusterDomain(created);
   }
 
   async findById(id: number): Promise<ClusterDomain | null> {
     const cluster = await this.prisma.cluster.findUnique({ where: { id } });
-    return cluster ? CompetenceMapper.toClusterDomain(cluster) : null;
+    return cluster ? LibraryMapper.toClusterDomain(cluster) : null;
   }
 
   async search(query: ClusterSearchQuery): Promise<ClusterDomain[]> {
@@ -42,7 +42,7 @@ export class ClusterRepository implements ClusterRepositoryPort {
     const orderBy = this.buildOrder(query);
 
     const items = await this.prisma.cluster.findMany({ where, orderBy });
-    return items.map(CompetenceMapper.toClusterDomain);
+    return items.map(LibraryMapper.toClusterDomain);
   }
 
   async updateById(id: number, patch: ClusterUpdatePayload): Promise<ClusterDomain> {
@@ -51,7 +51,7 @@ export class ClusterRepository implements ClusterRepositoryPort {
       data: patch,
     });
 
-    return CompetenceMapper.toClusterDomain(updated);
+    return LibraryMapper.toClusterDomain(updated);
   }
 
   async deleteById(id: number): Promise<void> {

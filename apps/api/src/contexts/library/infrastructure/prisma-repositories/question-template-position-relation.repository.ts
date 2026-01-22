@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@intra/database';
 import { PrismaService } from 'src/database/prisma.service';
-import { QuestionPositionRepositoryPort } from '../../application/ports/question-position.repository.port';
-import { QuestionPositionDomain } from '../../domain/question-position.domain';
-import { CompetenceMapper } from './competence.mapper';
+import { QuestionTemplatePositionRelationRepositoryPort } from '../../application/ports/question-template-position-relation.repository.port';
+import { QuestionTemplatePositionRelationDomain } from '../../domain/question-template-position-relation.domain';
+import { LibraryMapper } from './library.mapper';
 
 @Injectable()
-export class QuestionPositionRepository implements QuestionPositionRepositoryPort {
+export class QuestionTemplatePositionRelationRepository implements QuestionTemplatePositionRelationRepositoryPort {
   constructor(private readonly prisma: PrismaService) { }
 
-  async link(questionId: number, positionId: number): Promise<QuestionPositionDomain> {
+  async link(questionId: number, positionId: number): Promise<QuestionTemplatePositionRelationDomain> {
     try {
       const relation = await this.prisma.libraryQuestionPosition.create({
         data: { questionId, positionId },
       });
-      return CompetenceMapper.toQuestionPositionDomain(relation);
+      return LibraryMapper.toQuestionTemplatePositionRelationDomain(relation);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const existing = await this.prisma.libraryQuestionPosition.findUnique({
           where: { questionId_positionId: { questionId, positionId } },
         });
-        if (existing) return CompetenceMapper.toQuestionPositionDomain(existing);
+        if (existing) return LibraryMapper.toQuestionTemplatePositionRelationDomain(existing);
       }
       throw error;
     }
@@ -32,16 +32,16 @@ export class QuestionPositionRepository implements QuestionPositionRepositoryPor
     });
   }
 
-  async listByQuestion(questionId: number): Promise<QuestionPositionDomain[]> {
+  async listByQuestion(questionId: number): Promise<QuestionTemplatePositionRelationDomain[]> {
     const relations = await this.prisma.libraryQuestionPosition.findMany({
       where: { questionId },
       orderBy: { createdAt: 'desc' },
     });
 
-    return relations.map(CompetenceMapper.toQuestionPositionDomain);
+    return relations.map(LibraryMapper.toQuestionTemplatePositionRelationDomain);
   }
 
-  async replace(questionId: number, positionIds: number[]): Promise<QuestionPositionDomain[]> {
+  async replace(questionId: number, positionIds: number[]): Promise<QuestionTemplatePositionRelationDomain[]> {
     const unique = Array.from(new Set(positionIds));
 
     await this.prisma.$transaction(async (tx) => {

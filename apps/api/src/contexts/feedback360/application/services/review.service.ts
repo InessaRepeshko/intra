@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { AnswerType } from '@intra/shared-kernel';
-import { QuestionService as LibraryQuestionService } from 'src/contexts/library/application/services/question.service';
+import { QuestionTemplateService as LibraryQuestionService } from 'src/contexts/library/application/services/question-template.service';
 import {
   REVIEW_REPOSITORY,
   ReviewRepositoryPort,
