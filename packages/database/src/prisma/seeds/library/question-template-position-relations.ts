@@ -1,16 +1,16 @@
 import type { PrismaClient } from '@intra/database';
 import type { PositionMap } from '../organisation/positions';
-import type { QuestionMap } from './questions';
+import type { QuestionTemplateMap } from './question-templates';
 
-type PositionQuestionSeed = {
+type PositionQuestionTemplateSeed = {
     positionTitle: string;
-    questionTitles: string[];
+    questionTemplateTitles: string[];
 };
 
-const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
+const POSITION_QUESTION_TEMPLATES_SEED_DATA: PositionQuestionTemplateSeed[] = [
     {
         positionTitle: 'CEO',
-        questionTitles: [
+        questionTemplateTitles: [
             'Sets a clear vision aligned with company strategy.',
             'Makes decisive calls when information is incomplete.',
             'Builds trust through transparent decisions.',
@@ -37,7 +37,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'CTO',
-        questionTitles: [
+        questionTemplateTitles: [
             'Sets a clear vision aligned with company strategy.',
             'Makes decisive calls when information is incomplete.',
             'Builds trust through transparent decisions.',
@@ -66,7 +66,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'COO',
-        questionTitles: [
+        questionTemplateTitles: [
             'Sets a clear vision aligned with company strategy.',
             'Builds trust through transparent decisions.',
             'Handles conflicts calmly and fairly.',
@@ -92,7 +92,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'CFO',
-        questionTitles: [
+        questionTemplateTitles: [
             'Sets a clear vision aligned with company strategy.',
             'Makes decisive calls when information is incomplete.',
             'Builds trust through transparent decisions.',
@@ -118,7 +118,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'CMO',
-        questionTitles: [
+        questionTemplateTitles: [
             'Sets a clear vision aligned with company strategy.',
             'Acts as a role model for company values.',
             'Delegates effectively while staying accountable.',
@@ -145,7 +145,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'HR Director',
-        questionTitles: [
+        questionTemplateTitles: [
             'Sets a clear vision aligned with company strategy.',
             'Builds trust through transparent decisions.',
             'Acts as a role model for company values.',
@@ -171,7 +171,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'HR Manager',
-        questionTitles: [
+        questionTemplateTitles: [
             'Builds trust through transparent decisions.',
             'Acts as a role model for company values.',
             'Handles conflicts calmly and fairly.',
@@ -196,7 +196,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'HR Specialist',
-        questionTitles: [
+        questionTemplateTitles: [
             'Tailors messaging to different audiences.',
             'Keeps stakeholders informed on progress and risks.',
             'Gives direct feedback with empathy.',
@@ -221,7 +221,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Team Lead',
-        questionTitles: [
+        questionTemplateTitles: [
             'Sets a clear vision aligned with company strategy.',
             'Makes decisive calls when information is incomplete.',
             'Builds trust through transparent decisions.',
@@ -254,7 +254,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Tech Lead',
-        questionTitles: [
+        questionTemplateTitles: [
             'Sets a clear vision aligned with company strategy.',
             'Makes decisive calls when information is incomplete.',
             'Delegates effectively while staying accountable.',
@@ -287,7 +287,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Senior Software Engineer',
-        questionTitles: [
+        questionTemplateTitles: [
             'Produces maintainable code that follows standards.',
             'Designs systems with scalability in mind.',
             'Reviews code thoroughly and constructively.',
@@ -313,7 +313,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Middle Software Engineer',
-        questionTitles: [
+        questionTemplateTitles: [
             'Produces maintainable code that follows standards.',
             'Designs systems with scalability in mind.',
             'Reviews code thoroughly and constructively.',
@@ -338,7 +338,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Junior Software Engineer',
-        questionTitles: [
+        questionTemplateTitles: [
             'Produces maintainable code that follows standards.',
             'Reviews code thoroughly and constructively.',
             'Debugs production issues systematically.',
@@ -363,7 +363,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Senior QA Engineer',
-        questionTitles: [
+        questionTemplateTitles: [
             'Breaks work into milestones with realistic estimates.',
             'Keeps delivery risks visible and mitigated.',
             'Runs efficient planning and retrospectives.',
@@ -389,7 +389,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Middle QA Engineer',
-        questionTitles: [
+        questionTemplateTitles: [
             'Breaks work into milestones with realistic estimates.',
             'Keeps delivery risks visible and mitigated.',
             'Runs efficient planning and retrospectives.',
@@ -414,7 +414,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Junior QA Engineer',
-        questionTitles: [
+        questionTemplateTitles: [
             'Breaks work into milestones with realistic estimates.',
             'Keeps delivery risks visible and mitigated.',
             'Runs efficient planning and retrospectives.',
@@ -439,7 +439,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Senior Designer',
-        questionTitles: [
+        questionTemplateTitles: [
             'Tailors messaging to different audiences.',
             'Keeps stakeholders informed on progress and risks.',
             'Listens actively before responding.',
@@ -465,7 +465,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Middle Designer',
-        questionTitles: [
+        questionTemplateTitles: [
             'Tailors messaging to different audiences.',
             'Keeps stakeholders informed on progress and risks.',
             'Listens actively before responding.',
@@ -490,7 +490,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Junior Designer',
-        questionTitles: [
+        questionTemplateTitles: [
             'Tailors messaging to different audiences.',
             'Keeps stakeholders informed on progress and risks.',
             'Listens actively before responding.',
@@ -515,7 +515,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Sales Specialist',
-        questionTitles: [
+        questionTemplateTitles: [
             'Tailors messaging to different audiences.',
             'Keeps stakeholders informed on progress and risks.',
             'Gives direct feedback with empathy.',
@@ -540,7 +540,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Marketing Specialist',
-        questionTitles: [
+        questionTemplateTitles: [
             'Tailors messaging to different audiences.',
             'Keeps stakeholders informed on progress and risks.',
             'Gives direct feedback with empathy.',
@@ -566,7 +566,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Support Specialist',
-        questionTitles: [
+        questionTemplateTitles: [
             'Tailors messaging to different audiences.',
             'Keeps stakeholders informed on progress and risks.',
             'Gives direct feedback with empathy.',
@@ -591,7 +591,7 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
     {
         positionTitle: 'Finance Specialist',
-        questionTitles: [
+        questionTemplateTitles: [
             'Builds trust through transparent decisions.',
             'Delegates effectively while staying accountable.',
             'Tailors messaging to different audiences.',
@@ -616,22 +616,22 @@ const QUESTION_POSITION_SEED_DATA: PositionQuestionSeed[] = [
     },
 ];
 
-export default async function seedQuestionPositions(
+export default async function seedQuestionTemplatePositionRelations(
     prisma: PrismaClient,
-    questionMap: QuestionMap,
+    questionTemplateMap: QuestionTemplateMap,
     positionMap: PositionMap,
 ) {
-    for (const item of QUESTION_POSITION_SEED_DATA) {
+    for (const item of POSITION_QUESTION_TEMPLATES_SEED_DATA) {
         const position = positionMap.get(item.positionTitle);
         if (!position) {
             console.warn(`⚠️ Position ${item.positionTitle} not found, skip question links`);
             continue;
         }
 
-        for (const title of item.questionTitles) {
-            const question = questionMap.get(title);
+        for (const title of item.questionTemplateTitles) {
+            const question = questionTemplateMap.get(title);
             if (!question) {
-                console.warn(`⚠️ Question "${title}" not found, skip link for ${item.positionTitle}`);
+                console.warn(`⚠️ Question template "${title}" not found, skip link for ${item.positionTitle}`);
                 continue;
             }
 

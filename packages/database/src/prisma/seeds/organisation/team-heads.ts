@@ -1,5 +1,5 @@
 import { PrismaClient } from '@intra/database';
-import { UserMap } from '../identity/identity';
+import { UserMap } from '../identity/users';
 import { TeamMap, TEAM_SEED_DATA } from './teams';
 
 export type TeamHeadsMap = Map<string, { headId: number }>;

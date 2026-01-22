@@ -6,9 +6,9 @@ import {
 import { AnswerType } from '@intra/shared-kernel';
 import { QuestionTemplateStatus } from '@intra/shared-kernel';
 
-export type QuestionMap = Map<string, { id: number }>;
+export type QuestionTemplateMap = Map<string, { id: number }>;
 
-export const QUESTIONS_SEED_DATA = [
+export const QUESTION_TEMPLATES_SEED_DATA = [
     {
         competenceCode: 'LEAD',
         questions: [
@@ -114,10 +114,10 @@ export const QUESTIONS_SEED_DATA = [
     },
 ];
 
-export default async function seedQuestions(prisma: PrismaClient): Promise<QuestionMap> {
-    const questionMap: QuestionMap = new Map();
+export default async function seedQuestionTemplates(prisma: PrismaClient): Promise<QuestionTemplateMap> {
+    const questionTemplateMap: QuestionTemplateMap = new Map();
 
-    for (const group of QUESTIONS_SEED_DATA) {
+    for (const group of QUESTION_TEMPLATES_SEED_DATA) {
         const competence = await prisma.competence.findUnique({ where: { code: group.competenceCode } });
         if (!competence) {
             console.warn(`⚠️ Competence ${group.competenceCode} not found, skipping its questions`);
@@ -153,9 +153,9 @@ export default async function seedQuestions(prisma: PrismaClient): Promise<Quest
                     },
                 });
 
-            questionMap.set(q.title, { id: record.id });
+            questionTemplateMap.set(q.title, { id: record.id });
         }
     }
 
-    return questionMap;
+    return questionTemplateMap;
 }
