@@ -16,7 +16,7 @@ export class QuestionQueryDto {
   @ToOptionalInt({ min: 1 })
   @IsOptional()
   @IsInt()
-  positionId?: number;
+  questionTemplateId?: number;
 
   @ApiPropertyOptional({ example: 2 })
   @ToOptionalInt({ min: 1 })

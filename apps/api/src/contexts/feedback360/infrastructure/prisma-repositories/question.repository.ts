@@ -18,14 +18,13 @@ export class QuestionRepository implements QuestionRepositoryPort {
   constructor(private readonly prisma: PrismaService) { }
 
   async create(question: QuestionDomain): Promise<QuestionDomain> {
-    const created = await this.prisma.reviewQuestion.create({
+    const created = await this.prisma.question.create({
       data: {
         cycleId: question.cycleId,
-        libraryQuestionId: question.libraryQuestionId,
+        questionTemplateId: question.questionTemplateId,
         title: question.title,
         answerType: Feedback360Mapper.toPrismaAnswerType(question.answerType),
         competenceId: question.competenceId,
-        positionId: question.positionId,
         isForSelfassessment: question.isForSelfassessment,
       },
     });
@@ -34,33 +33,33 @@ export class QuestionRepository implements QuestionRepositoryPort {
   }
 
   async findById(id: number): Promise<QuestionDomain | null> {
-    const question = await this.prisma.reviewQuestion.findUnique({ where: { id } });
+    const question = await this.prisma.question.findUnique({ where: { id } });
     return question ? Feedback360Mapper.toQuestionDomain(question) : null;
   }
 
   async search(query: QuestionSearchQuery): Promise<QuestionDomain[]> {
     const where = this.buildWhere(query);
     const orderBy = this.buildOrder(query);
-    const items = await this.prisma.reviewQuestion.findMany({ where, orderBy });
+    const items = await this.prisma.question.findMany({ where, orderBy });
     return items.map(Feedback360Mapper.toQuestionDomain);
   }
 
   async deleteById(id: number): Promise<void> {
-    await this.prisma.reviewQuestion.delete({ where: { id } });
+    await this.prisma.question.delete({ where: { id } });
   }
 
-  private buildWhere(query: QuestionSearchQuery): Prisma.ReviewQuestionWhereInput {
-    const { cycleId, positionId, competenceId, answerType, isForSelfassessment } = query;
+  private buildWhere(query: QuestionSearchQuery): Prisma.QuestionWhereInput {
+    const { cycleId, questionTemplateId, competenceId, answerType, isForSelfassessment } = query;
     return {
       ...(cycleId ? { cycleId } : {}),
-      ...(positionId ? { positionId } : {}),
+      ...(questionTemplateId ? { questionTemplateId } : {}),
       ...(competenceId ? { competenceId } : {}),
       ...(answerType ? { answerType: Feedback360Mapper.toPrismaAnswerType(answerType) } : {}),
       ...(isForSelfassessment !== undefined ? { isForSelfassessment } : {}),
     };
   }
 
-  private buildOrder(query: QuestionSearchQuery): Prisma.ReviewQuestionOrderByWithRelationInput[] {
+  private buildOrder(query: QuestionSearchQuery): Prisma.QuestionOrderByWithRelationInput[] {
     const field = query.sortBy ?? QuestionSortField.ID;
     const direction = query.sortDirection ?? SortDirection.ASC;
     return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];

@@ -20,10 +20,14 @@ export class RespondentRepository implements RespondentRepositoryPort {
       data: {
         reviewId: relation.reviewId,
         respondentId: relation.respondentId,
-        respondentCategory: Feedback360Mapper.toPrismaRespondentCategory(relation.respondentCategory),
+        category: Feedback360Mapper.toPrismaRespondentCategory(relation.category),
         responseStatus: Feedback360Mapper.toPrismaResponseStatus(relation.responseStatus),
         respondentNote: relation.respondentNote,
+        hrNote: relation.hrNote,
+        positionId: relation.positionId,
+        positionTitle: relation.positionTitle,
         invitedAt: relation.invitedAt,
+        canceledAt: relation.canceledAt,
         respondedAt: relation.respondedAt,
       },
     });
@@ -37,7 +41,7 @@ export class RespondentRepository implements RespondentRepositoryPort {
         ...(query.reviewId ? { reviewId: query.reviewId } : {}),
         ...(query.respondentId ? { respondentId: query.respondentId } : {}),
         ...(query.category
-          ? { respondentCategory: Feedback360Mapper.toPrismaRespondentCategory(query.category) }
+          ? { category: Feedback360Mapper.toPrismaRespondentCategory(query.category) }
           : {}),
         ...(query.status ? { responseStatus: Feedback360Mapper.toPrismaResponseStatus(query.status) } : {}),
       },

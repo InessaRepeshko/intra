@@ -28,7 +28,19 @@ export class ReviewQueryDto {
   @ToOptionalInt({ min: 1 })
   @IsOptional()
   @IsInt()
-  positionId?: number;
+  rateePositionId?: number;
+
+  @ApiPropertyOptional({ example: 4 })
+  @ToOptionalInt({ min: 1 })
+  @IsOptional()
+  @IsInt()
+  teamId?: number;
+
+  @ApiPropertyOptional({ example: 7 })
+  @ToOptionalInt({ min: 1 })
+  @IsOptional()
+  @IsInt()
+  managerId?: number;
 
   @ApiPropertyOptional({ enum: ReviewStage })
   @IsOptional()

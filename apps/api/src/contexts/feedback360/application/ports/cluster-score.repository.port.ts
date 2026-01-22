@@ -5,7 +5,7 @@ export const CLUSTER_SCORE_REPOSITORY = Symbol('FEEDBACK360.CLUSTER_SCORE_REPOSI
 export type ClusterScoreSearchQuery = {
   cycleId?: number;
   clusterId?: number;
-  userId?: number;
+  rateeId?: number;
   reviewId?: number;
 };
 

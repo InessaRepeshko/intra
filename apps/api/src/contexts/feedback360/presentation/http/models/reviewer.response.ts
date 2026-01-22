@@ -12,7 +12,15 @@ export class ReviewerResponse {
 
   @ApiProperty({ example: 4 })
   @Expose()
-  userId!: number;
+  reviewerId!: number;
+
+  @ApiProperty({ example: 3 })
+  @Expose()
+  positionId!: number;
+
+  @ApiProperty({ example: 'Tech Lead' })
+  @Expose()
+  positionTitle!: string;
 
   @ApiPropertyOptional({ type: String })
   @Expose()

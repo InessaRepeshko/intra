@@ -11,13 +11,13 @@ export class ReviewResponse {
   @Expose()
   rateeId!: number;
 
-  @ApiPropertyOptional({ example: 'Comment of the evaluated' })
-  @Expose()
-  rateeNote?: string | null;
-
   @ApiProperty({ example: 3 })
   @Expose()
-  positionId!: number;
+  rateePositionId!: number;
+
+  @ApiProperty({ example: 'Senior Engineer' })
+  @Expose()
+  rateePositionTitle!: string;
 
   @ApiProperty({ example: 2 })
   @Expose()
@@ -30,6 +30,18 @@ export class ReviewResponse {
   @ApiPropertyOptional({ example: 1 })
   @Expose()
   cycleId?: number | null;
+
+  @ApiPropertyOptional({ example: 2 })
+  @Expose()
+  teamId?: number | null;
+
+  @ApiPropertyOptional({ example: 'Platform team' })
+  @Expose()
+  teamTitle?: string | null;
+
+  @ApiPropertyOptional({ example: 5 })
+  @Expose()
+  managerId?: number | null;
 
   @ApiProperty({ enum: ReviewStage, example: ReviewStage.VERIFICATION_BY_HR })
   @Expose()

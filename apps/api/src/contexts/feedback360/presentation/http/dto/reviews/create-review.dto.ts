@@ -11,19 +11,18 @@ export class CreateReviewDto {
   @Min(1)
   rateeId!: number;
 
-  @ApiPropertyOptional({ description: 'Comment of the evaluated' })
-  @ToOptionalTrimmedString()
-  @IsOptional()
-  @IsString()
-  @MinLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MIN)
-  @MaxLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MAX)
-  rateeNote?: string;
-
   @ApiProperty({ example: 3, description: 'Position of the evaluated' })
   @ToOptionalInt({ min: 1 })
   @IsInt()
   @Min(1)
-  positionId!: number;
+  rateePositionId!: number;
+
+  @ApiProperty({ example: 'Senior Engineer', description: 'Назва посади оцінюваного' })
+  @ToOptionalTrimmedString()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MAX)
+  rateePositionTitle!: string;
 
   @ApiProperty({ example: 2, description: 'HR, responsible for the process' })
   @ToOptionalInt({ min: 1 })
@@ -38,6 +37,24 @@ export class CreateReviewDto {
   @MinLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MIN)
   @MaxLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MAX)
   hrNote?: string;
+
+  @ApiPropertyOptional({ example: 5, description: 'ІД команди' })
+  @ToOptionalInt({ min: 1 })
+  @IsOptional()
+  @IsInt()
+  teamId?: number;
+
+  @ApiPropertyOptional({ example: 'Platform', description: 'Назва команди' })
+  @ToOptionalTrimmedString()
+  @IsOptional()
+  @IsString()
+  teamTitle?: string;
+
+  @ApiPropertyOptional({ example: 12, description: 'Менеджер оцінюваного' })
+  @ToOptionalInt({ min: 1 })
+  @IsOptional()
+  @IsInt()
+  managerId?: number;
 
   @ApiPropertyOptional({ example: 1, description: 'Attached cycle' })
   @ToOptionalInt({ min: 1 })

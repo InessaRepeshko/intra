@@ -19,7 +19,7 @@ export class ClusterScoreQueryDto {
   @ToOptionalInt({ min: 1 })
   @IsOptional()
   @IsInt()
-  userId?: number;
+  rateeId?: number;
 
   @ApiPropertyOptional({ example: 2 })
   @ToOptionalInt({ min: 1 })

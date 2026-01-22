@@ -27,7 +27,7 @@ export class TeamService {
   constructor(
     @Inject(ORGANISATION_TEAM_REPOSITORY) private readonly teams: TeamRepositoryPort,
     private readonly identityUsers: IdentityUserService,
-  ) {}
+  ) { }
 
   async create(command: CreateTeamCommand): Promise<TeamDomain> {
     if (command.headId !== undefined && command.headId !== null) {
@@ -97,7 +97,7 @@ export class TeamService {
     const withUsers = await Promise.all(
       memberships.map(async (membership) => {
         try {
-          const user = await this.identityUsers.getById(membership.userId);
+          const user = await this.identityUsers.getById(membership.memberId);
           return membership.withUser(user);
         } catch {
           return membership;

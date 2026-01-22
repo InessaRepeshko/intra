@@ -22,10 +22,13 @@ export class ReviewRepository implements ReviewRepositoryPort {
     const created = await this.prisma.review.create({
       data: {
         rateeId: review.rateeId,
-        rateeNote: review.rateeNote,
-        positionId: review.positionId,
+        rateePositionId: review.rateePositionId,
+        rateePositionTitle: review.rateePositionTitle,
         hrId: review.hrId,
         hrNote: review.hrNote,
+        teamId: review.teamId,
+        teamTitle: review.teamTitle,
+        managerId: review.managerId,
         cycleId: review.cycleId,
         stage: Feedback360Mapper.toPrismaReviewStage(review.stage),
       },
@@ -62,12 +65,14 @@ export class ReviewRepository implements ReviewRepositoryPort {
   }
 
   private buildWhere(query: ReviewSearchQuery): Prisma.ReviewWhereInput {
-    const { cycleId, rateeId, hrId, positionId, stage } = query;
+    const { cycleId, rateeId, hrId, rateePositionId, teamId, managerId, stage } = query;
     return {
       ...(cycleId ? { cycleId } : {}),
       ...(rateeId ? { rateeId } : {}),
       ...(hrId ? { hrId } : {}),
-      ...(positionId ? { positionId } : {}),
+      ...(rateePositionId ? { rateePositionId } : {}),
+      ...(teamId ? { teamId } : {}),
+      ...(managerId ? { managerId } : {}),
       ...(stage ? { stage: Feedback360Mapper.toPrismaReviewStage(stage) } : {}),
     };
   }

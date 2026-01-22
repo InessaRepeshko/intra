@@ -20,7 +20,7 @@ export class TeamHttpMapper {
     const view = new TeamMemberResponse();
     view.id = domain.id!;
     view.teamId = domain.teamId;
-    view.userId = domain.userId;
+    view.userId = domain.memberId;
     view.isPrimary = domain.isPrimary;
     view.createdAt = domain.createdAt;
     if (domain.user) {

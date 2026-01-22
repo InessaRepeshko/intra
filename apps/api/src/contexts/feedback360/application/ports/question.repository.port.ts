@@ -11,7 +11,7 @@ export enum QuestionSortField {
 
 export type QuestionSearchQuery = {
   cycleId?: number;
-  positionId?: number;
+  questionTemplateId?: number;
   competenceId?: number;
   answerType?: AnswerType;
   isForSelfassessment?: boolean;

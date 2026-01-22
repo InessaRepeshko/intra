@@ -18,7 +18,7 @@ export class RespondentResponse {
 
   @ApiProperty({ enum: RespondentCategory })
   @Expose()
-  respondentCategory!: RespondentCategory;
+  category!: RespondentCategory;
 
   @ApiProperty({ enum: ResponseStatus })
   @Expose()
@@ -28,9 +28,25 @@ export class RespondentResponse {
   @Expose()
   respondentNote?: string | null;
 
+  @ApiPropertyOptional({ example: 'HR comment' })
+  @Expose()
+  hrNote?: string | null;
+
+  @ApiProperty({ example: 3 })
+  @Expose()
+  positionId!: number;
+
+  @ApiProperty({ example: 'Senior Engineer' })
+  @Expose()
+  positionTitle!: string;
+
   @ApiPropertyOptional({ type: String })
   @Expose()
   invitedAt?: Date | null;
+
+  @ApiPropertyOptional({ type: String })
+  @Expose()
+  canceledAt?: Date | null;
 
   @ApiPropertyOptional({ type: String })
   @Expose()

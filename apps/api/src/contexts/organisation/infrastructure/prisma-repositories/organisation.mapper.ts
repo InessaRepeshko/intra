@@ -20,7 +20,7 @@ export class OrganisationMapper {
     return TeamMembershipDomain.create({
       id: membership.id,
       teamId: membership.teamId,
-      userId: membership.userId,
+      memberId: membership.memberId,
       isPrimary: membership.isPrimary,
       createdAt: membership.createdAt,
     });

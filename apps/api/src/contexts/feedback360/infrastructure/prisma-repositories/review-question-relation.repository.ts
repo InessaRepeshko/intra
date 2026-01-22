@@ -16,23 +16,25 @@ export class ReviewQuestionRelationRepository implements ReviewQuestionRelationR
   async link(relation: ReviewQuestionRelationDomain): Promise<ReviewQuestionRelationDomain> {
     const created = await this.prisma.reviewQuestionRelation.upsert({
       where: {
-        reviewId_libraryQuestionId: {
+        reviewId_questionId: {
           reviewId: relation.reviewId,
-          libraryQuestionId: relation.libraryQuestionId,
+          questionId: relation.questionId,
         },
       },
       create: {
         reviewId: relation.reviewId,
-        libraryQuestionId: relation.libraryQuestionId,
+        questionId: relation.questionId,
         questionTitle: relation.questionTitle,
         answerType: Feedback360Mapper.toPrismaAnswerType(relation.answerType),
         competenceId: relation.competenceId,
+        competenceTitle: relation.competenceTitle,
         isForSelfassessment: relation.isForSelfassessment,
       },
       update: {
         questionTitle: relation.questionTitle,
         answerType: Feedback360Mapper.toPrismaAnswerType(relation.answerType),
         competenceId: relation.competenceId,
+        competenceTitle: relation.competenceTitle,
         isForSelfassessment: relation.isForSelfassessment,
       },
     });
@@ -50,9 +52,9 @@ export class ReviewQuestionRelationRepository implements ReviewQuestionRelationR
   async unlink(reviewId: number, questionId: number): Promise<void> {
     await this.prisma.reviewQuestionRelation.delete({
       where: {
-        reviewId_libraryQuestionId: {
+        reviewId_questionId: {
           reviewId,
-          libraryQuestionId: questionId,
+          questionId,
         },
       },
     });

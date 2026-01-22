@@ -18,8 +18,7 @@ export class AnswerRepository implements AnswerRepositoryPort {
     const created = await this.prisma.answer.create({
       data: {
         reviewId: answer.reviewId,
-        libraryQuestionId: answer.libraryQuestionId,
-        reviewQuestionId: answer.reviewQuestionId,
+        questionId: answer.questionId,
         respondentCategory: Feedback360Mapper.toPrismaRespondentCategory(answer.respondentCategory),
         answerType: Feedback360Mapper.toPrismaAnswerType(answer.answerType),
         numericalValue: answer.numericalValue,

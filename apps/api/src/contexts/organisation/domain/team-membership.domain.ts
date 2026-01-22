@@ -3,7 +3,7 @@ import { UserDomain } from '../../identity/domain/user.domain';
 export type TeamMembershipProps = {
   id?: number;
   teamId: number;
-  userId: number;
+  memberId: number;
   isPrimary?: boolean | null;
   createdAt?: Date;
   user?: UserDomain;
@@ -12,7 +12,7 @@ export type TeamMembershipProps = {
 export class TeamMembershipDomain {
   readonly id?: number;
   readonly teamId: number;
-  readonly userId: number;
+  readonly memberId: number;
   readonly isPrimary: boolean;
   readonly createdAt?: Date;
   readonly user?: UserDomain;
@@ -20,7 +20,7 @@ export class TeamMembershipDomain {
   private constructor(props: TeamMembershipProps) {
     this.id = props.id;
     this.teamId = props.teamId;
-    this.userId = props.userId;
+    this.memberId = props.memberId;
     this.isPrimary = props.isPrimary ?? false;
     this.createdAt = props.createdAt;
     this.user = props.user;

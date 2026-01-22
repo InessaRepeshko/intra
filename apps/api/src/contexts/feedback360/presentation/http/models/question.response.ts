@@ -13,7 +13,7 @@ export class QuestionResponse {
 
   @ApiPropertyOptional({ example: 12 })
   @Expose()
-  libraryQuestionId?: number | null;
+  questionTemplateId?: number | null;
 
   @ApiProperty({ example: 'How do you plan your work?' })
   @Expose()
@@ -26,10 +26,6 @@ export class QuestionResponse {
   @ApiPropertyOptional({ example: 3 })
   @Expose()
   competenceId?: number | null;
-
-  @ApiPropertyOptional({ example: 4 })
-  @Expose()
-  positionId?: number | null;
 
   @ApiProperty({ example: false })
   @Expose()

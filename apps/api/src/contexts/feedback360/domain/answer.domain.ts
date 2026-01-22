@@ -4,8 +4,7 @@ import { RespondentCategory } from '@intra/shared-kernel';
 export type AnswerProps = {
   id?: number;
   reviewId: number;
-  libraryQuestionId: number;
-  reviewQuestionId?: number | null;
+  questionId: number;
   respondentCategory: RespondentCategory;
   answerType: AnswerType;
   numericalValue?: number | null;
@@ -16,8 +15,7 @@ export type AnswerProps = {
 export class AnswerDomain {
   readonly id?: number;
   readonly reviewId: number;
-  readonly libraryQuestionId: number;
-  readonly reviewQuestionId?: number | null;
+  readonly questionId: number;
   readonly respondentCategory: RespondentCategory;
   readonly answerType: AnswerType;
   readonly numericalValue?: number | null;
@@ -27,8 +25,7 @@ export class AnswerDomain {
   private constructor(props: AnswerProps) {
     this.id = props.id;
     this.reviewId = props.reviewId;
-    this.libraryQuestionId = props.libraryQuestionId;
-    this.reviewQuestionId = props.reviewQuestionId ?? null;
+    this.questionId = props.questionId;
     this.respondentCategory = props.respondentCategory;
     this.answerType = props.answerType;
     this.numericalValue = props.numericalValue ?? null;

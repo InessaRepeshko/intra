@@ -2,18 +2,18 @@ import {
   Competence,
   Cluster,
   AnswerType as PrismaAnswerType,
-  QuestionStatus as PrismaQuestionStatus,
-  LibraryQuestion as PrismaLibraryQuestion,
-  LibraryQuestionPosition as PrismaLibraryQuestionPosition,
+  QuestionTemplateStatus as PrismaQuestionTemplateStatus,
+  QuestionTemplate as PrismaQuestionTemplate,
+  QuestionTemplatePositionRelation as PrismaQuestionTemplatePositionRelation,
 } from '@intra/database';
 import { CompetenceDomain } from '../../domain/competence.domain';
 import { ClusterDomain } from '../../domain/cluster.domain';
 import { QuestionTemplateDomain } from '../../domain/question-template.domain';
 import { AnswerType } from '@intra/shared-kernel';
-import { QuestionStatus } from '@intra/shared-kernel';
+import { QuestionTemplateStatus } from '@intra/shared-kernel';
 import { QuestionTemplatePositionRelationDomain } from '../../domain/question-template-position-relation.domain';
 
-type QuestionWithPositions = PrismaLibraryQuestion & { libraryQuestionPositions?: { positionId: number }[] };
+type QuestionWithPositions = PrismaQuestionTemplate & { positionRelations?: { positionId: number }[] };
 
 export class LibraryMapper {
   static toCompetenceDomain(competence: Competence): CompetenceDomain {
@@ -50,17 +50,17 @@ export class LibraryMapper {
       answerType: question.answerType as AnswerType,
       competenceId: question.competenceId,
       isForSelfassessment: question.isForSelfassessment ?? false,
-      status: question.questionStatus as QuestionStatus,
+      status: question.status as QuestionTemplateStatus,
       createdAt: question.createdAt,
       updatedAt: question.updatedAt,
-      positionIds: question.libraryQuestionPositions?.map((q) => q.positionId) ?? [],
+      positionIds: question.positionRelations?.map((q) => q.positionId) ?? [],
     });
   }
 
-  static toQuestionTemplatePositionRelationDomain(relation: PrismaLibraryQuestionPosition): QuestionTemplatePositionRelationDomain {
+  static toQuestionTemplatePositionRelationDomain(relation: PrismaQuestionTemplatePositionRelation): QuestionTemplatePositionRelationDomain {
     return QuestionTemplatePositionRelationDomain.create({
       id: relation.id,
-      questionTemplateId: relation.questionId,
+      questionTemplateId: relation.questionTemplateId,
       positionId: relation.positionId,
       createdAt: relation.createdAt,
     });
@@ -70,8 +70,8 @@ export class LibraryMapper {
     return answerType as PrismaAnswerType;
   }
 
-  static toPrismaStatus(status: QuestionStatus): PrismaQuestionStatus {
-    return status as PrismaQuestionStatus;
+  static toPrismaStatus(status: QuestionTemplateStatus): PrismaQuestionTemplateStatus {
+    return status as PrismaQuestionTemplateStatus;
   }
 }
 

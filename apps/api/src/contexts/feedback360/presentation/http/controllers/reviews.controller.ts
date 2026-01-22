@@ -130,8 +130,7 @@ export class ReviewController {
   async addAnswer(@Param('id') id: string, @Body() dto: CreateAnswerDto): Promise<AnswerResponse> {
     const created = await this.reviews.addAnswer({
       reviewId: Number(id),
-      questionId: dto.libraryQuestionId,
-      reviewQuestionId: dto.reviewQuestionId,
+      questionId: dto.questionId,
       respondentCategory: dto.respondentCategory,
       answerType: dto.answerType,
       numericalValue: dto.numericalValue,
@@ -157,10 +156,14 @@ export class ReviewController {
     const relation = await this.reviews.addRespondent({
       reviewId: Number(id),
       respondentId: dto.respondentId,
-      respondentCategory: dto.respondentCategory,
+      category: dto.category,
       responseStatus: dto.responseStatus,
       respondentNote: dto.respondentNote,
+      hrNote: dto.hrNote,
+      positionId: dto.positionId,
+      positionTitle: dto.positionTitle,
       invitedAt: dto.invitedAt,
+      canceledAt: dto.canceledAt,
       respondedAt: dto.respondedAt,
     });
     return Feedback360HttpMapper.toRespondentResponse(relation);
@@ -203,7 +206,9 @@ export class ReviewController {
   async addReviewer(@Param('id') id: string, @Body() dto: CreateReviewerDto): Promise<ReviewerResponse> {
     const created = await this.reviews.addReviewer({
       reviewId: Number(id),
-      userId: dto.userId,
+      reviewerId: dto.reviewerId,
+      positionId: dto.positionId,
+      positionTitle: dto.positionTitle,
     });
     return Feedback360HttpMapper.toReviewerResponse(created);
   }

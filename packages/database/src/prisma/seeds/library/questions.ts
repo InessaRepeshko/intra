@@ -1,10 +1,10 @@
 import {
     type PrismaClient,
     AnswerType as PrismaAnswerType,
-    QuestionStatus as PrismaQuestionStatus
+    QuestionTemplateStatus as PrismaQuestionTemplateStatus
 } from '@intra/database';
 import { AnswerType } from '@intra/shared-kernel';
-import { QuestionStatus } from '@intra/shared-kernel';
+import { QuestionTemplateStatus } from '@intra/shared-kernel';
 
 export type QuestionMap = Map<string, { id: number }>;
 
@@ -125,7 +125,7 @@ export default async function seedQuestions(prisma: PrismaClient): Promise<Quest
         }
 
         for (const q of group.questions) {
-            const existingQuestion = await prisma.libraryQuestion.findFirst({
+            const existingQuestion = await prisma.questionTemplate.findFirst({
                 where: {
                     competenceId: competence.id,
                     title: q.title,
@@ -133,23 +133,23 @@ export default async function seedQuestions(prisma: PrismaClient): Promise<Quest
             });
 
             const record = existingQuestion
-                ? await prisma.libraryQuestion.update({
+                ? await prisma.questionTemplate.update({
                     where: { id: existingQuestion.id },
                     data: {
                         competenceId: competence.id,
                         title: q.title,
                         answerType: q.answerType.toString().toUpperCase() as unknown as PrismaAnswerType,
                         isForSelfassessment: q.isForSelfassessment,
-                        questionStatus: QuestionStatus.ACTIVE.toString().toUpperCase() as unknown as PrismaQuestionStatus,
+                        status: QuestionTemplateStatus.ACTIVE.toString().toUpperCase() as unknown as PrismaQuestionTemplateStatus,
                     },
                 })
-                : await prisma.libraryQuestion.create({
+                : await prisma.questionTemplate.create({
                     data: {
                         competenceId: competence.id,
                         title: q.title,
                         answerType: q.answerType.toString().toUpperCase() as unknown as PrismaAnswerType,
                         isForSelfassessment: q.isForSelfassessment,
-                        questionStatus: QuestionStatus.ACTIVE.toString().toUpperCase() as unknown as PrismaQuestionStatus,
+                        status: QuestionTemplateStatus.ACTIVE.toString().toUpperCase() as unknown as PrismaQuestionTemplateStatus,
                     },
                 });
 

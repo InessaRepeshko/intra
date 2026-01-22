@@ -17,7 +17,9 @@ export class ReviewerRepository implements ReviewerRepositoryPort {
     const created = await this.prisma.reviewer.create({
       data: {
         reviewId: relation.reviewId,
-        userId: relation.userId,
+        reviewerId: relation.reviewerId,
+        positionId: relation.positionId,
+        positionTitle: relation.positionTitle,
       },
     });
     return Feedback360Mapper.toReviewerDomain(created);

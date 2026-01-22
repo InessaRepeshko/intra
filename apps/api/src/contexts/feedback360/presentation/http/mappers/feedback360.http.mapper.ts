@@ -39,10 +39,13 @@ export class Feedback360HttpMapper {
     const view = new ReviewResponse();
     view.id = domain.id!;
     view.rateeId = domain.rateeId;
-    view.rateeNote = domain.rateeNote ?? null;
-    view.positionId = domain.positionId;
+    view.rateePositionId = domain.rateePositionId;
+    view.rateePositionTitle = domain.rateePositionTitle;
     view.hrId = domain.hrId;
     view.hrNote = domain.hrNote ?? null;
+    view.teamId = domain.teamId ?? null;
+    view.teamTitle = domain.teamTitle ?? null;
+    view.managerId = domain.managerId ?? null;
     view.cycleId = domain.cycleId ?? null;
     view.stage = domain.stage;
     view.createdAt = domain.createdAt;
@@ -54,11 +57,10 @@ export class Feedback360HttpMapper {
     const view = new QuestionResponse();
     view.id = domain.id!;
     view.cycleId = domain.cycleId ?? null;
-    view.libraryQuestionId = domain.libraryQuestionId ?? null;
+    view.questionTemplateId = domain.questionTemplateId ?? null;
     view.title = domain.title;
     view.answerType = domain.answerType;
     view.competenceId = domain.competenceId ?? null;
-    view.positionId = domain.positionId ?? null;
     view.isForSelfassessment = domain.isForSelfassessment;
     view.createdAt = domain.createdAt;
     return view;
@@ -68,10 +70,11 @@ export class Feedback360HttpMapper {
     const view = new ReviewQuestionRelationResponse();
     view.id = domain.id!;
     view.reviewId = domain.reviewId;
-    view.libraryQuestionId = domain.libraryQuestionId;
+    view.questionId = domain.questionId;
     view.questionTitle = domain.questionTitle;
     view.answerType = domain.answerType;
     view.competenceId = domain.competenceId;
+    view.competenceTitle = domain.competenceTitle;
     view.isForSelfassessment = domain.isForSelfassessment;
     view.createdAt = domain.createdAt;
     return view;
@@ -81,8 +84,7 @@ export class Feedback360HttpMapper {
     const view = new AnswerResponse();
     view.id = domain.id!;
     view.reviewId = domain.reviewId;
-    view.libraryQuestionId = domain.libraryQuestionId;
-    view.reviewQuestionId = domain.reviewQuestionId ?? null;
+    view.questionId = domain.questionId;
     view.respondentCategory = domain.respondentCategory;
     view.answerType = domain.answerType;
     view.numericalValue = domain.numericalValue ?? null;
@@ -96,10 +98,14 @@ export class Feedback360HttpMapper {
     view.id = domain.id!;
     view.reviewId = domain.reviewId;
     view.respondentId = domain.respondentId;
-    view.respondentCategory = domain.respondentCategory;
+    view.category = domain.category;
     view.responseStatus = domain.responseStatus;
     view.respondentNote = domain.respondentNote ?? null;
+    view.hrNote = domain.hrNote ?? null;
+    view.positionId = domain.positionId;
+    view.positionTitle = domain.positionTitle;
     view.invitedAt = domain.invitedAt ?? null;
+    view.canceledAt = domain.canceledAt ?? null;
     view.respondedAt = domain.respondedAt ?? null;
     view.createdAt = domain.createdAt;
     view.updatedAt = domain.updatedAt;
@@ -110,7 +116,9 @@ export class Feedback360HttpMapper {
     const view = new ReviewerResponse();
     view.id = domain.id!;
     view.reviewId = domain.reviewId;
-    view.userId = domain.userId;
+    view.reviewerId = domain.reviewerId;
+    view.positionId = domain.positionId;
+    view.positionTitle = domain.positionTitle;
     view.createdAt = domain.createdAt;
     return view;
   }
@@ -120,7 +128,7 @@ export class Feedback360HttpMapper {
     view.id = domain.id!;
     view.cycleId = domain.cycleId ?? null;
     view.clusterId = domain.clusterId;
-    view.userId = domain.userId;
+    view.rateeId = domain.rateeId;
     view.reviewId = domain.reviewId ?? null;
     view.score = domain.score;
     view.createdAt = domain.createdAt;

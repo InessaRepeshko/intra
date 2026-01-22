@@ -15,7 +15,9 @@ export type ReviewSearchQuery = {
   cycleId?: number;
   rateeId?: number;
   hrId?: number;
-  positionId?: number;
+  rateePositionId?: number;
+  teamId?: number;
+  managerId?: number;
   stage?: ReviewStage;
   sortBy?: ReviewSortField;
   sortDirection?: SortDirection;
@@ -23,10 +25,13 @@ export type ReviewSearchQuery = {
 
 export type ReviewUpdatePayload = Partial<{
   rateeId: number;
-  rateeNote: string | null;
-  positionId: number;
+  rateePositionId: number;
+  rateePositionTitle: string;
   hrId: number;
   hrNote: string | null;
+  teamId: number | null;
+  teamTitle: string | null;
+  managerId: number | null;
   cycleId: number | null;
   stage: ReviewStage;
 }>;

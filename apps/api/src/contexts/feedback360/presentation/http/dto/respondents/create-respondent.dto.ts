@@ -14,7 +14,7 @@ export class CreateRespondentDto {
 
   @ApiProperty({ enum: RespondentCategory, example: RespondentCategory.TEAM })
   @IsEnum(RespondentCategory)
-  respondentCategory!: RespondentCategory;
+  category!: RespondentCategory;
 
   @ApiPropertyOptional({ enum: ResponseStatus, example: ResponseStatus.PENDING })
   @IsOptional()
@@ -29,10 +29,36 @@ export class CreateRespondentDto {
   @MaxLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MAX)
   respondentNote?: string;
 
+  @ApiPropertyOptional({ example: 'Коментар HR' })
+  @ToOptionalTrimmedString()
+  @IsOptional()
+  @IsString()
+  @MinLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MIN)
+  @MaxLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MAX)
+  hrNote?: string;
+
+  @ApiProperty({ example: 3, description: 'Посада респондента' })
+  @ToOptionalInt({ min: 1 })
+  @IsInt()
+  @Min(1)
+  positionId!: number;
+
+  @ApiProperty({ example: 'Senior Engineer', description: 'Назва посади' })
+  @ToOptionalTrimmedString()
+  @IsString()
+  @MinLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MIN)
+  @MaxLength(REVIEW_CONSTRAINTS.NOTE.LENGTH.MAX)
+  positionTitle!: string;
+
   @ApiPropertyOptional({ type: String, example: '2025-01-05T00:00:00.000Z' })
   @ToOptionalDate()
   @IsOptional()
   invitedAt?: Date;
+
+  @ApiPropertyOptional({ type: String, example: '2025-01-07T00:00:00.000Z' })
+  @ToOptionalDate()
+  @IsOptional()
+  canceledAt?: Date;
 
   @ApiPropertyOptional({ type: String, example: '2025-01-10T00:00:00.000Z' })
   @ToOptionalDate()

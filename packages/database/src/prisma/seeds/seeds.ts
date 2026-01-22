@@ -1,14 +1,14 @@
 import { PrismaClient } from '@intra/database';
 import { PrismaPg } from '@prisma/adapter-pg';
-import seedPositions from './contexts/organisation/positions';
-import seedPositionHierarchy from './contexts/organisation/position-hierarchy';
-import seedTeams from './contexts/organisation/teams';
-import seedUsers from './contexts/identity/identity';
-import seedTeamHeads from './contexts/organisation/team-heads';
-import seedClusters from './contexts/library/clusters';
-import seedCompetences from './contexts/library/competences';
-import seedQuestions from './contexts/library/questions';
-import seedQuestionPositions from './contexts/library/question-position';
+import seedPositions from './organisation/positions';
+import seedPositionHierarchy from './organisation/position-hierarchy';
+import seedTeams from './organisation/teams';
+import seedUsers from './identity/identity';
+import seedTeamHeads from './organisation/team-heads';
+import seedClusters from './library/clusters';
+import seedCompetences from './library/competences';
+import seedQuestions from './library/questions';
+import seedQuestionPositions from './library/question-position';
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({

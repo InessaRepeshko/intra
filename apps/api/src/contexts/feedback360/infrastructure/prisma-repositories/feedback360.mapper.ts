@@ -1,7 +1,7 @@
 import {
   Review as PrismaReview,
   Cycle as PrismaCycle,
-  ReviewQuestion as PrismaReviewQuestion,
+  Question as PrismaQuestion,
   ReviewQuestionRelation as PrismaReviewQuestionRelation,
   Answer as PrismaAnswer,
   Respondent as PrismaRespondent,
@@ -51,10 +51,13 @@ export class Feedback360Mapper {
     return ReviewDomain.create({
       id: review.id,
       rateeId: review.rateeId,
-      rateeNote: review.rateeNote,
-      positionId: review.positionId,
+      rateePositionId: review.rateePositionId,
+      rateePositionTitle: review.rateePositionTitle,
       hrId: review.hrId,
       hrNote: review.hrNote,
+      teamId: review.teamId,
+      teamTitle: review.teamTitle,
+      managerId: review.managerId,
       cycleId: review.cycleId,
       stage: review.stage as ReviewStage,
       createdAt: review.createdAt,
@@ -62,15 +65,14 @@ export class Feedback360Mapper {
     });
   }
 
-  static toQuestionDomain(question: PrismaReviewQuestion): QuestionDomain {
+  static toQuestionDomain(question: PrismaQuestion): QuestionDomain {
     return QuestionDomain.create({
       id: question.id,
       cycleId: question.cycleId,
-      libraryQuestionId: question.libraryQuestionId,
+      questionTemplateId: question.questionTemplateId,
       title: question.title,
       answerType: question.answerType as AnswerType,
       competenceId: question.competenceId,
-      positionId: question.positionId,
       isForSelfassessment: question.isForSelfassessment ?? false,
       createdAt: question.createdAt,
     });
@@ -80,10 +82,11 @@ export class Feedback360Mapper {
     return ReviewQuestionRelationDomain.create({
       id: relation.id,
       reviewId: relation.reviewId,
-      libraryQuestionId: relation.libraryQuestionId,
+      questionId: relation.questionId,
       questionTitle: relation.questionTitle,
       answerType: relation.answerType as AnswerType,
       competenceId: relation.competenceId,
+      competenceTitle: relation.competenceTitle,
       isForSelfassessment: relation.isForSelfassessment ?? false,
       createdAt: relation.createdAt,
     });
@@ -93,8 +96,7 @@ export class Feedback360Mapper {
     return AnswerDomain.create({
       id: answer.id,
       reviewId: answer.reviewId,
-      libraryQuestionId: answer.libraryQuestionId,
-      reviewQuestionId: answer.reviewQuestionId,
+      questionId: answer.questionId,
       respondentCategory: answer.respondentCategory as RespondentCategory,
       answerType: answer.answerType as AnswerType,
       numericalValue: answer.numericalValue,
@@ -107,10 +109,14 @@ export class Feedback360Mapper {
       id: relation.id,
       reviewId: relation.reviewId,
       respondentId: relation.respondentId,
-      respondentCategory: relation.respondentCategory as RespondentCategory,
+      category: relation.category as RespondentCategory,
       responseStatus: relation.responseStatus as ResponseStatus,
       respondentNote: relation.respondentNote,
+      hrNote: relation.hrNote,
+      positionId: relation.positionId,
+      positionTitle: relation.positionTitle,
       invitedAt: relation.invitedAt,
+      canceledAt: relation.canceledAt,
       respondedAt: relation.respondedAt,
       createdAt: relation.createdAt,
       updatedAt: relation.updatedAt,
@@ -121,7 +127,9 @@ export class Feedback360Mapper {
     return ReviewerDomain.create({
       id: relation.id,
       reviewId: relation.reviewId,
-      userId: relation.userId,
+      reviewerId: relation.reviewerId,
+      positionId: relation.positionId,
+      positionTitle: relation.positionTitle,
       createdAt: relation.createdAt,
     });
   }
@@ -131,7 +139,7 @@ export class Feedback360Mapper {
       id: score.id,
       cycleId: score.cycleId,
       clusterId: score.clusterId,
-      userId: score.userId,
+      rateeId: score.rateeId,
       reviewId: score.reviewId,
       score: score.score,
       createdAt: score.createdAt,

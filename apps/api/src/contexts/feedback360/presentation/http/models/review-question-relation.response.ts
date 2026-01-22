@@ -13,7 +13,7 @@ export class ReviewQuestionRelationResponse {
 
   @ApiProperty({ example: 10 })
   @Expose()
-  libraryQuestionId!: number;
+  questionId!: number;
 
   @ApiProperty({ example: 'Delivers features on time' })
   @Expose()
@@ -26,6 +26,10 @@ export class ReviewQuestionRelationResponse {
   @ApiProperty({ example: 3 })
   @Expose()
   competenceId!: number;
+
+  @ApiProperty({ example: 'Teamwork' })
+  @Expose()
+  competenceTitle!: string;
 
   @ApiProperty({ example: false })
   @Expose()

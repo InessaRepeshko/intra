@@ -15,11 +15,11 @@ export class UpsertClusterScoreDto {
   @Min(1)
   clusterId!: number;
 
-  @ApiProperty({ example: 7, description: 'User' })
+  @ApiProperty({ example: 7, description: 'Оцінюваний' })
   @ToOptionalInt({ min: 1 })
   @IsInt()
   @Min(1)
-  userId!: number;
+  rateeId!: number;
 
   @ApiPropertyOptional({ example: 5, description: 'Review (optional)' })
   @ToOptionalInt({ min: 1 })

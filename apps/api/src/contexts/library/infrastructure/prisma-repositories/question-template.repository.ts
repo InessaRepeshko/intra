@@ -16,13 +16,13 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
   constructor(private readonly prisma: PrismaService) { }
 
   async create(question: QuestionTemplateDomain): Promise<QuestionTemplateDomain> {
-    const created = await this.prisma.libraryQuestion.create({
+    const created = await this.prisma.questionTemplate.create({
       data: {
         title: question.title,
         answerType: question.answerType,
         competenceId: question.competenceId,
         isForSelfassessment: question.isForSelfassessment,
-        questionStatus: question.status,
+        status: question.status,
       },
     });
 
@@ -30,9 +30,9 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
   }
 
   async findById(id: number): Promise<QuestionTemplateDomain | null> {
-    const question = await this.prisma.libraryQuestion.findUnique({
+    const question = await this.prisma.questionTemplate.findUnique({
       where: { id },
-      include: { libraryQuestionPositions: { select: { positionId: true } } },
+      include: { positionRelations: { select: { positionId: true } } },
     });
 
     return question ? LibraryMapper.toQuestionTemplateDomain(question) : null;
@@ -42,44 +42,44 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
     const where = this.buildWhere(query);
     const orderBy = this.buildOrder(query);
 
-    const items = await this.prisma.libraryQuestion.findMany({
+    const items = await this.prisma.questionTemplate.findMany({
       where,
       orderBy,
-      include: { libraryQuestionPositions: { select: { positionId: true } } },
+      include: { positionRelations: { select: { positionId: true } } },
     });
 
     return items.map(LibraryMapper.toQuestionTemplateDomain);
   }
 
   async updateById(id: number, patch: QuestionTemplateUpdatePayload): Promise<QuestionTemplateDomain> {
-    const updated = await this.prisma.libraryQuestion.update({
+    const updated = await this.prisma.questionTemplate.update({
       where: { id },
       data: {
         ...patch,
       },
-      include: { libraryQuestionPositions: { select: { positionId: true } } },
+      include: { positionRelations: { select: { positionId: true } } },
     });
 
     return LibraryMapper.toQuestionTemplateDomain(updated);
   }
 
   async deleteById(id: number): Promise<void> {
-    await this.prisma.libraryQuestion.delete({ where: { id } });
+    await this.prisma.questionTemplate.delete({ where: { id } });
   }
 
-  private buildWhere(query: QuestionTemplateSearchQuery): Prisma.LibraryQuestionWhereInput {
+  private buildWhere(query: QuestionTemplateSearchQuery): Prisma.QuestionTemplateWhereInput {
     const { competenceId, positionId, status: status, answerType, isForSelfassessment, search } = query;
 
     return {
       ...(competenceId ? { competenceId } : {}),
       ...(positionId
         ? {
-          libraryQuestionPositions: {
+          positionRelations: {
             some: { positionId },
           },
         }
         : {}),
-      ...(status ? { questionStatus: status } : {}),
+      ...(status ? { status } : {}),
       ...(answerType ? { answerType } : {}),
       ...(isForSelfassessment !== undefined ? { isForSelfassessment } : {}),
       ...(search
@@ -90,7 +90,7 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
     };
   }
 
-  private buildOrder(query: QuestionTemplateSearchQuery): Prisma.LibraryQuestionOrderByWithRelationInput[] {
+  private buildOrder(query: QuestionTemplateSearchQuery): Prisma.QuestionTemplateOrderByWithRelationInput[] {
     const field = query.sortBy ?? QuestionTemplateSortField.ID;
     const direction = query.sortDirection ?? SortDirection.ASC;
     return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];

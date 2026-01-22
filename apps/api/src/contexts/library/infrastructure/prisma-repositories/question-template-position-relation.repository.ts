@@ -11,14 +11,14 @@ export class QuestionTemplatePositionRelationRepository implements QuestionTempl
 
   async link(questionId: number, positionId: number): Promise<QuestionTemplatePositionRelationDomain> {
     try {
-      const relation = await this.prisma.libraryQuestionPosition.create({
-        data: { questionId, positionId },
+      const relation = await this.prisma.questionTemplatePositionRelation.create({
+        data: { questionTemplateId: questionId, positionId },
       });
       return LibraryMapper.toQuestionTemplatePositionRelationDomain(relation);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        const existing = await this.prisma.libraryQuestionPosition.findUnique({
-          where: { questionId_positionId: { questionId, positionId } },
+        const existing = await this.prisma.questionTemplatePositionRelation.findUnique({
+          where: { questionTemplateId_positionId: { questionTemplateId: questionId, positionId } },
         });
         if (existing) return LibraryMapper.toQuestionTemplatePositionRelationDomain(existing);
       }
@@ -27,14 +27,14 @@ export class QuestionTemplatePositionRelationRepository implements QuestionTempl
   }
 
   async unlink(questionId: number, positionId: number): Promise<void> {
-    await this.prisma.libraryQuestionPosition.deleteMany({
-      where: { questionId, positionId },
+    await this.prisma.questionTemplatePositionRelation.deleteMany({
+      where: { questionTemplateId: questionId, positionId },
     });
   }
 
   async listByQuestion(questionId: number): Promise<QuestionTemplatePositionRelationDomain[]> {
-    const relations = await this.prisma.libraryQuestionPosition.findMany({
-      where: { questionId },
+    const relations = await this.prisma.questionTemplatePositionRelation.findMany({
+      where: { questionTemplateId: questionId },
       orderBy: { createdAt: 'desc' },
     });
 
@@ -46,12 +46,12 @@ export class QuestionTemplatePositionRelationRepository implements QuestionTempl
 
     await this.prisma.$transaction(async (tx) => {
       const deleteFilter =
-        unique.length > 0 ? { questionId, NOT: { positionId: { in: unique } } } : { questionId };
-      await tx.libraryQuestionPosition.deleteMany({ where: deleteFilter });
+        unique.length > 0 ? { questionTemplateId: questionId, NOT: { positionId: { in: unique } } } : { questionTemplateId: questionId };
+      await tx.questionTemplatePositionRelation.deleteMany({ where: deleteFilter });
 
       if (unique.length) {
-        await tx.libraryQuestionPosition.createMany({
-          data: unique.map((positionId) => ({ questionId, positionId })),
+        await tx.questionTemplatePositionRelation.createMany({
+          data: unique.map((positionId) => ({ questionTemplateId: questionId, positionId })),
           skipDuplicates: true,
         });
       }

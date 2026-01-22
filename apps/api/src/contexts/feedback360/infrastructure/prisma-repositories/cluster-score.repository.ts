@@ -17,15 +17,15 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
   async upsert(score: ClusterScoreDomain): Promise<ClusterScoreDomain> {
     const saved = await this.prisma.clusterScore.upsert({
       where: {
-        clusterId_userId: {
+        clusterId_rateeId: {
           clusterId: score.clusterId,
-          userId: score.userId,
+          rateeId: score.rateeId,
         },
       },
       create: {
         cycleId: score.cycleId,
         clusterId: score.clusterId,
-        userId: score.userId,
+        rateeId: score.rateeId,
         reviewId: score.reviewId,
         score: score.score,
       },
@@ -44,7 +44,7 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
       where: {
         ...(query.cycleId ? { cycleId: query.cycleId } : {}),
         ...(query.clusterId ? { clusterId: query.clusterId } : {}),
-        ...(query.userId ? { userId: query.userId } : {}),
+        ...(query.rateeId ? { rateeId: query.rateeId } : {}),
         ...(query.reviewId ? { reviewId: query.reviewId } : {}),
       },
     });

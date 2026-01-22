@@ -17,15 +17,16 @@ Table identity_users {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   userRoles identity_users_roles [not null]
-  manager identity_users
-  subordinates identity_users [not null]
   teamHead org_teams [not null]
   memberships org_team_memberships [not null]
+  manager identity_users
+  subordinates identity_users [not null]
   managedCycles feedback360_cycles [not null]
   managedReviews feedback360_reviews [not null]
   reviewsAsRatee feedback360_reviews [not null]
   responses feedback360_respondents [not null]
-  assignedReviews feedback360_reviewers [not null]
+  reviewsAsReviewer feedback360_reviewers [not null]
+  reviewsAsManager feedback360_reviews [not null]
   clusterScores feedback360_clusters_scores [not null]
 }
 
@@ -61,19 +62,20 @@ Table org_teams {
   updatedAt DateTime [default: `now()`, not null]
   memberships org_team_memberships [not null]
   head identity_users
+  reviews feedback360_reviews [not null]
 }
 
 Table org_team_memberships {
   id Int [pk, increment]
   teamId Int [not null]
-  userId Int [not null]
+  memberId Int [not null]
   isPrimary Boolean [default: false]
   createdAt DateTime [default: `now()`, not null]
   team org_teams [not null]
-  user identity_users [not null]
+  member identity_users [not null]
 
   indexes {
-    (teamId, userId, isPrimary) [unique]
+    (teamId, memberId, isPrimary) [unique]
   }
 }
 
@@ -84,10 +86,10 @@ Table org_positions {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   reviews feedback360_reviews [not null]
-  questionPositions library_question_positions [not null]
+  questionTemplateRelations library_question_template_position_relations [not null]
   superiors org_position_hierarchies [not null]
   subordinates org_position_hierarchies [not null]
-  reviewQuestions feedback360_questions [not null]
+  respondents feedback360_respondents [not null]
 }
 
 Table org_position_hierarchies {
@@ -111,8 +113,9 @@ Table library_competences {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   clusters library_clusters [not null]
-  libraryQuestions library_questions [not null]
+  questionTemplates library_question_templates [not null]
   reviewQuestions feedback360_questions [not null]
+  reviewQuestionRelations feedback360_review_question_relations [not null]
 }
 
 Table library_clusters {
@@ -136,32 +139,30 @@ Table library_clusters {
   }
 }
 
-Table library_questions {
+Table library_question_templates {
   id Int [pk, increment]
   title String [not null]
   answerType AnswerType [not null]
   competenceId Int [not null]
   isForSelfassessment Boolean [default: false]
-  questionStatus QuestionStatus [not null, default: 'ACTIVE']
+  status QuestionTemplateStatus [not null, default: 'ACTIVE']
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
-  answers feedback360_answers [not null]
-  reviewsQuestions feedback360_review_question_relations [not null]
   competence library_competences [not null]
-  libraryQuestionPositions library_question_positions [not null]
+  positionRelations library_question_template_position_relations [not null]
   reviewQuestions feedback360_questions [not null]
 }
 
-Table library_question_positions {
+Table library_question_template_position_relations {
   id Int [pk, increment]
-  questionId Int [not null]
+  questionTemplateId Int [not null]
   positionId Int [not null]
   createdAt DateTime [default: `now()`, not null]
-  question library_questions [not null]
+  questionTemplate library_question_templates [not null]
   position org_positions [not null]
 
   indexes {
-    (questionId, positionId) [unique]
+    (questionTemplateId, positionId) [unique]
   }
 }
 
@@ -191,10 +192,13 @@ Table feedback360_cycles {
 Table feedback360_reviews {
   id Int [pk, increment]
   rateeId Int [not null]
-  rateeNote String
-  positionId Int [not null]
+  rateePositionId Int [not null]
+  rateePositionTitle String [not null]
   hrId Int [not null]
   hrNote String
+  teamId Int
+  teamTitle String
+  managerId Int
   cycleId Int
   reportId Int
   stage ReviewStage [not null, default: 'VERIFICATION_BY_HR']
@@ -204,8 +208,10 @@ Table feedback360_reviews {
   hr identity_users [not null]
   cycle feedback360_cycles
   position org_positions [not null]
+  team org_teams
+  manager identity_users
   answers feedback360_answers [not null]
-  reviewQuestionRelation feedback360_review_question_relations [not null]
+  reviewQuestionRelations feedback360_review_question_relations [not null]
   report reporting_reports
   respondents feedback360_respondents [not null]
   reviewers feedback360_reviewers [not null]
@@ -215,49 +221,48 @@ Table feedback360_reviews {
 Table feedback360_questions {
   id Int [pk, increment]
   cycleId Int
-  libraryQuestionId Int
+  questionTemplateId Int
   title String [not null]
   answerType AnswerType [not null]
   competenceId Int
-  positionId Int
   isForSelfassessment Boolean [default: false]
   createdAt DateTime [default: `now()`, not null]
   cycle feedback360_cycles
-  libraryQuestion library_questions
+  questionTemplate library_question_templates
   competence library_competences
-  position org_positions
   answers feedback360_answers [not null]
+  reviewQuestionRelations feedback360_review_question_relations [not null]
 }
 
 Table feedback360_review_question_relations {
   id Int [pk, increment]
   reviewId Int [not null]
-  libraryQuestionId Int [not null]
+  questionId Int [not null]
   questionTitle String [not null]
   answerType AnswerType [not null]
   competenceId Int [not null]
+  competenceTitle String [not null]
   isForSelfassessment Boolean [default: false]
   createdAt DateTime [default: `now()`, not null]
   review feedback360_reviews [not null]
-  libraryQuestion library_questions [not null]
+  question feedback360_questions [not null]
+  competence library_competences [not null]
 
   indexes {
-    (reviewId, libraryQuestionId) [unique]
+    (reviewId, questionId) [unique]
   }
 }
 
 Table feedback360_answers {
   id Int [pk, increment]
   reviewId Int [not null]
-  libraryQuestionId Int [not null]
-  reviewQuestionId Int
+  questionId Int [not null]
   respondentCategory RespondentCategory [not null]
   answerType AnswerType [not null, default: 'NUMERICAL_SCALE']
   numericalValue Int
   textValue String
   createdAt DateTime [default: `now()`, not null]
-  libraryQuestion library_questions [not null]
-  reviewQuestion feedback360_questions
+  question feedback360_questions [not null]
   review feedback360_reviews [not null]
 }
 
@@ -265,7 +270,7 @@ Table feedback360_clusters_scores {
   id Int [pk, increment]
   cycleId Int
   clusterId Int [not null]
-  userId Int [not null]
+  rateeId Int [not null]
   reviewId Int
   score Float [not null]
   createdAt DateTime [default: `now()`, not null]
@@ -276,7 +281,7 @@ Table feedback360_clusters_scores {
   review feedback360_reviews
 
   indexes {
-    (clusterId, userId) [unique]
+    (clusterId, rateeId) [unique]
   }
 }
 
@@ -284,15 +289,20 @@ Table feedback360_respondents {
   id Int [pk, increment]
   reviewId Int [not null]
   respondentId Int [not null]
-  respondentCategory RespondentCategory [not null]
+  category RespondentCategory [not null]
   responseStatus ResponseStatus [not null, default: 'PENDING']
   respondentNote String
+  hrNote String
+  positionId Int [not null]
+  positionTitle String [not null]
   invitedAt DateTime
+  canceledAt DateTime
   respondedAt DateTime
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   user identity_users [not null]
   review feedback360_reviews [not null]
+  respondentPosition org_positions
 
   indexes {
     (respondentId, reviewId) [unique]
@@ -302,13 +312,15 @@ Table feedback360_respondents {
 Table feedback360_reviewers {
   id Int [pk, increment]
   reviewId Int [not null]
-  userId Int [not null]
+  reviewerId Int [not null]
+  positionId Int [not null]
+  positionTitle String [not null]
   createdAt DateTime [default: `now()`, not null]
   user identity_users [not null]
   review feedback360_reviews [not null]
 
   indexes {
-    (reviewId, userId) [unique]
+    (reviewId, reviewerId) [unique]
   }
 }
 
@@ -380,7 +392,7 @@ Enum AnswerType {
   TEXT_FIELD
 }
 
-Enum QuestionStatus {
+Enum QuestionTemplateStatus {
   ARCHIVE
   ACTIVE
 }
@@ -438,7 +450,7 @@ Ref: org_teams.headId > identity_users.id [delete: No Action]
 
 Ref: org_team_memberships.teamId > org_teams.id [delete: No Action]
 
-Ref: org_team_memberships.userId > identity_users.id [delete: No Action]
+Ref: org_team_memberships.memberId > identity_users.id [delete: No Action]
 
 Ref: org_position_hierarchies.superiorPositionId > org_positions.id [delete: No Action]
 
@@ -448,11 +460,11 @@ Ref: library_clusters.cycleId > feedback360_cycles.id [delete: No Action]
 
 Ref: library_clusters.competenceId > library_competences.id [delete: No Action]
 
-Ref: library_questions.competenceId > library_competences.id [delete: No Action]
+Ref: library_question_templates.competenceId > library_competences.id [delete: No Action]
 
-Ref: library_question_positions.questionId > library_questions.id [delete: No Action]
+Ref: library_question_template_position_relations.questionTemplateId > library_question_templates.id [delete: No Action]
 
-Ref: library_question_positions.positionId > org_positions.id [delete: No Action]
+Ref: library_question_template_position_relations.positionId > org_positions.id [delete: No Action]
 
 Ref: feedback360_cycles.hrId > identity_users.id [delete: No Action]
 
@@ -462,27 +474,29 @@ Ref: feedback360_reviews.hrId > identity_users.id [delete: No Action]
 
 Ref: feedback360_reviews.cycleId > feedback360_cycles.id [delete: No Action]
 
-Ref: feedback360_reviews.positionId > org_positions.id [delete: No Action]
+Ref: feedback360_reviews.rateePositionId > org_positions.id [delete: No Action]
+
+Ref: feedback360_reviews.teamId > org_teams.id [delete: No Action]
+
+Ref: feedback360_reviews.managerId > identity_users.id [delete: No Action]
 
 Ref: feedback360_questions.cycleId > feedback360_cycles.id [delete: No Action]
 
-Ref: feedback360_questions.libraryQuestionId > library_questions.id [delete: No Action]
+Ref: feedback360_questions.questionTemplateId > library_question_templates.id [delete: No Action]
 
 Ref: feedback360_questions.competenceId > library_competences.id [delete: No Action]
 
-Ref: feedback360_questions.positionId > org_positions.id [delete: No Action]
-
 Ref: feedback360_review_question_relations.reviewId > feedback360_reviews.id [delete: No Action]
 
-Ref: feedback360_review_question_relations.libraryQuestionId > library_questions.id [delete: No Action]
+Ref: feedback360_review_question_relations.questionId > feedback360_questions.id [delete: No Action]
 
-Ref: feedback360_answers.libraryQuestionId > library_questions.id [delete: No Action]
+Ref: feedback360_review_question_relations.competenceId > library_competences.id [delete: No Action]
 
-Ref: feedback360_answers.reviewQuestionId > feedback360_questions.id [delete: No Action]
+Ref: feedback360_answers.questionId > feedback360_questions.id [delete: No Action]
 
 Ref: feedback360_answers.reviewId > feedback360_reviews.id [delete: No Action]
 
-Ref: feedback360_clusters_scores.userId > identity_users.id [delete: No Action]
+Ref: feedback360_clusters_scores.rateeId > identity_users.id [delete: No Action]
 
 Ref: feedback360_clusters_scores.cycleId > feedback360_cycles.id [delete: No Action]
 
@@ -494,7 +508,9 @@ Ref: feedback360_respondents.respondentId > identity_users.id [delete: No Action
 
 Ref: feedback360_respondents.reviewId > feedback360_reviews.id [delete: No Action]
 
-Ref: feedback360_reviewers.userId > identity_users.id [delete: No Action]
+Ref: feedback360_respondents.positionId > org_positions.id [delete: No Action]
+
+Ref: feedback360_reviewers.reviewerId > identity_users.id [delete: No Action]
 
 Ref: feedback360_reviewers.reviewId > feedback360_reviews.id [delete: No Action]
 

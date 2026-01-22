@@ -49,10 +49,13 @@ import { CycleService } from './cycle.service';
 
 export type CreateReviewCommand = {
   rateeId: number;
-  rateeNote?: string;
-  positionId: number;
+  rateePositionId: number;
+  rateePositionTitle: string;
   hrId: number;
   hrNote?: string;
+  teamId?: number | null;
+  teamTitle?: string | null;
+  managerId?: number | null;
   cycleId?: number | null;
   stage?: ReviewStage;
 };
@@ -61,11 +64,10 @@ export type UpdateReviewCommand = Partial<CreateReviewCommand>;
 
 export type CreateQuestionCommand = {
   cycleId?: number | null;
-  questionId?: number | null;
+  questionTemplateId?: number | null;
   title?: string;
   answerType?: AnswerType;
   competenceId?: number | null;
-  positionId?: number | null;
   isForSelfassessment?: boolean | null;
 };
 
@@ -77,7 +79,6 @@ export type AddQuestionToReviewCommand = {
 export type AddAnswerCommand = {
   reviewId: number;
   questionId: number;
-  reviewQuestionId?: number | null;
   respondentCategory: RespondentCategory;
   answerType: AnswerType;
   numericalValue?: number | null;
@@ -87,22 +88,28 @@ export type AddAnswerCommand = {
 export type AddRespondentCommand = {
   reviewId: number;
   respondentId: number;
-  respondentCategory: RespondentCategory;
+  category: RespondentCategory;
   responseStatus?: ResponseStatus;
   respondentNote?: string | null;
+  hrNote?: string | null;
+  positionId: number;
+  positionTitle: string;
   invitedAt?: Date | null;
+  canceledAt?: Date | null;
   respondedAt?: Date | null;
 };
 
 export type AddReviewerCommand = {
   reviewId: number;
-  userId: number;
+  reviewerId: number;
+  positionId: number;
+  positionTitle: string;
 };
 
 export type UpsertClusterScoreCommand = {
   cycleId?: number | null;
   clusterId: number;
-  userId: number;
+  rateeId: number;
   reviewId?: number | null;
   score: number;
 };
@@ -133,10 +140,13 @@ export class ReviewService {
 
     const review = ReviewDomain.create({
       rateeId: command.rateeId,
-      rateeNote: command.rateeNote,
-      positionId: command.positionId,
+      rateePositionId: command.rateePositionId,
+      rateePositionTitle: command.rateePositionTitle,
       hrId: command.hrId,
       hrNote: command.hrNote,
+      teamId: command.teamId ?? null,
+      teamTitle: command.teamTitle ?? null,
+      managerId: command.managerId ?? null,
       cycleId: command.cycleId ?? null,
       stage: command.stage ?? ReviewStage.VERIFICATION_BY_HR,
     });
@@ -164,10 +174,13 @@ export class ReviewService {
 
     const payload: ReviewUpdatePayload = {
       ...(patch.rateeId !== undefined ? { rateeId: patch.rateeId } : {}),
-      ...(patch.rateeNote !== undefined ? { rateeNote: patch.rateeNote } : {}),
-      ...(patch.positionId !== undefined ? { positionId: patch.positionId } : {}),
+      ...(patch.rateePositionId !== undefined ? { rateePositionId: patch.rateePositionId } : {}),
+      ...(patch.rateePositionTitle !== undefined ? { rateePositionTitle: patch.rateePositionTitle } : {}),
       ...(patch.hrId !== undefined ? { hrId: patch.hrId } : {}),
       ...(patch.hrNote !== undefined ? { hrNote: patch.hrNote } : {}),
+      ...(patch.teamId !== undefined ? { teamId: patch.teamId } : {}),
+      ...(patch.teamTitle !== undefined ? { teamTitle: patch.teamTitle } : {}),
+      ...(patch.managerId !== undefined ? { managerId: patch.managerId } : {}),
       ...(patch.cycleId !== undefined ? { cycleId: patch.cycleId } : {}),
       ...(patch.stage !== undefined ? { stage: patch.stage } : {}),
     };
@@ -186,7 +199,7 @@ export class ReviewService {
       await this.cycles.getById(command.cycleId);
     }
 
-    const baseQuestion = command.questionId ? await this.libraryQuestions.getById(command.questionId) : null;
+    const baseQuestion = command.questionTemplateId ? await this.libraryQuestions.getById(command.questionTemplateId) : null;
 
     const title = command.title ?? baseQuestion?.title;
     const answerType = command.answerType ?? baseQuestion?.answerType;
@@ -197,11 +210,10 @@ export class ReviewService {
 
     const question = ReviewQuestionDomain.create({
       cycleId: command.cycleId ?? null,
-      libraryQuestionId: command.questionId ?? null,
+      questionTemplateId: command.questionTemplateId ?? null,
       title,
       answerType,
       competenceId: command.competenceId ?? baseQuestion?.competenceId ?? null,
-      positionId: command.positionId ?? baseQuestion?.positionIds?.[0] ?? null,
       isForSelfassessment: command.isForSelfassessment ?? baseQuestion?.isForSelfassessment ?? false,
     });
 
@@ -222,10 +234,11 @@ export class ReviewService {
 
     const relation = ReviewQuestionRelationDomain.create({
       reviewId: command.reviewId,
-      libraryQuestionId: question.id!,
+      questionId: question.id!,
       questionTitle: question.title,
       answerType: question.answerType,
       competenceId: question.competenceId,
+      competenceTitle: question.title,
       isForSelfassessment: question.isForSelfassessment,
     });
 
@@ -247,8 +260,7 @@ export class ReviewService {
 
     const answer = AnswerDomain.create({
       reviewId: command.reviewId,
-      libraryQuestionId: command.questionId,
-      reviewQuestionId: command.reviewQuestionId ?? null,
+      questionId: command.questionId,
       respondentCategory: command.respondentCategory,
       answerType: command.answerType,
       numericalValue: command.numericalValue ?? null,
@@ -269,10 +281,14 @@ export class ReviewService {
     const relation = RespondentDomain.create({
       reviewId: command.reviewId,
       respondentId: command.respondentId,
-      respondentCategory: command.respondentCategory,
+      category: command.category,
       responseStatus: command.responseStatus,
       respondentNote: command.respondentNote,
+      hrNote: command.hrNote,
+      positionId: command.positionId,
+      positionTitle: command.positionTitle,
       invitedAt: command.invitedAt,
+      canceledAt: command.canceledAt,
       respondedAt: command.respondedAt,
     });
 
@@ -295,7 +311,9 @@ export class ReviewService {
     await this.getById(command.reviewId);
     const relation = ReviewerDomain.create({
       reviewId: command.reviewId,
-      userId: command.userId,
+      reviewerId: command.reviewerId,
+      positionId: command.positionId,
+      positionTitle: command.positionTitle,
     });
     return this.reviewers.create(relation);
   }
@@ -317,7 +335,7 @@ export class ReviewService {
     const score = ClusterScoreDomain.create({
       cycleId: command.cycleId ?? null,
       clusterId: command.clusterId,
-      userId: command.userId,
+      rateeId: command.rateeId,
       reviewId: command.reviewId ?? null,
       score: command.score,
     });

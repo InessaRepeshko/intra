@@ -16,7 +16,7 @@ export class ClusterScoreResponse {
 
   @ApiProperty({ example: 7 })
   @Expose()
-  userId!: number;
+  rateeId!: number;
 
   @ApiPropertyOptional({ example: 2 })
   @Expose()

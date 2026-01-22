@@ -56,7 +56,7 @@ export class TeamRepository implements TeamRepositoryPort {
       const created = await this.prisma.teamMembership.create({
         data: {
           teamId,
-          userId,
+          memberId: userId,
           isPrimary: isPrimary ?? false,
         },
       });
@@ -65,9 +65,9 @@ export class TeamRepository implements TeamRepositoryPort {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const existing = await this.prisma.teamMembership.findUnique({
           where: {
-            teamId_userId_isPrimary: {
+            teamId_memberId_isPrimary: {
               teamId,
-              userId,
+              memberId: userId,
               isPrimary: isPrimary ?? false,
             },
           },
@@ -79,7 +79,7 @@ export class TeamRepository implements TeamRepositoryPort {
   }
 
   async removeMember(teamId: number, userId: number): Promise<void> {
-    await this.prisma.teamMembership.deleteMany({ where: { teamId, userId } });
+    await this.prisma.teamMembership.deleteMany({ where: { teamId, memberId: userId } });
   }
 
   async listMembers(teamId: number): Promise<TeamMembershipDomain[]> {

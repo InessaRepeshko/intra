@@ -14,7 +14,11 @@ export type RespondentSearchQuery = {
 export type RespondentUpdatePayload = Partial<{
   responseStatus: ResponseStatus;
   respondentNote: string | null;
+  hrNote: string | null;
+  positionId: number;
+  positionTitle: string;
   invitedAt: Date | null;
+  canceledAt: Date | null;
   respondedAt: Date | null;
 }>;
 

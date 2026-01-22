@@ -14,11 +14,7 @@ export class AnswerResponse {
 
   @ApiProperty({ example: 10 })
   @Expose()
-  libraryQuestionId!: number;
-
-  @ApiPropertyOptional({ example: 5 })
-  @Expose()
-  reviewQuestionId?: number | null;
+  questionId!: number;
 
   @ApiProperty({ enum: RespondentCategory })
   @Expose()

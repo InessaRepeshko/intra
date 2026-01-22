@@ -5,17 +5,11 @@ import { RespondentCategory } from '@intra/shared-kernel';
 import { AnswerType } from '@intra/shared-kernel';
 
 export class CreateAnswerDto {
-  @ApiProperty({ example: 12, description: 'Question from library' })
+  @ApiProperty({ example: 12, description: 'Питання з відгуку' })
   @ToOptionalInt({ min: 1 })
   @IsInt()
   @Min(1)
-  libraryQuestionId!: number;
-
-  @ApiPropertyOptional({ example: 5, description: 'Question from custom cycle list' })
-  @ToOptionalInt({ min: 1 })
-  @IsOptional()
-  @IsInt()
-  reviewQuestionId?: number;
+  questionId!: number;
 
   @ApiProperty({ enum: RespondentCategory, example: RespondentCategory.TEAM })
   @IsEnum(RespondentCategory)

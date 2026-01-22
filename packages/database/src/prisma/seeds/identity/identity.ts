@@ -297,11 +297,11 @@ export function hashPassword(password: string): string {
 }
 
 async function seedRoles(prisma: PrismaClient) {
-  const data = Object.values(IdentityRole).map((role) => {
-    const code = role.toString().toUpperCase() as unknown as PrismaIdentityRole;
+  const data = Object.values(IdentityRole).map((val) => {
+    const role = val as PrismaIdentityRole;
     return {
-      code,
-      title: role,
+      code: role,
+      title: role.toString(),
       description: `Role ${role}`,
     };
   });
@@ -368,16 +368,16 @@ export default async function seedUsers(
       const isPrimary = user.isPrimaryMember ?? true;
       await prisma.teamMembership.upsert({
         where: {
-          teamId_userId_isPrimary: {
+          teamId_memberId_isPrimary: {
             teamId,
-            userId: record.id,
+            memberId: record.id,
             isPrimary,
           },
         },
         update: {},
         create: {
           teamId,
-          userId: record.id,
+          memberId: record.id,
           isPrimary,
         },
       });

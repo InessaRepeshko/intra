@@ -16,7 +16,7 @@ export class CreateQuestionDto {
   @ToOptionalInt({ min: 1 })
   @IsOptional()
   @IsInt()
-  libraryQuestionId?: number;
+  questionTemplateId?: number;
 
   @ApiProperty({ example: 'How do you plan your work?', description: 'Question text' })
   @ToOptionalTrimmedString()
@@ -36,12 +36,6 @@ export class CreateQuestionDto {
   @IsOptional()
   @IsInt()
   competenceId?: number;
-
-  @ApiPropertyOptional({ example: 4, description: 'Position to which the question is linked' })
-  @ToOptionalInt({ min: 1 })
-  @IsOptional()
-  @IsInt()
-  positionId?: number;
 
   @ApiPropertyOptional({ example: false })
   @ToOptionalBool()
