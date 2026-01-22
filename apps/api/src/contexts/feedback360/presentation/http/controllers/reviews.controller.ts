@@ -98,7 +98,7 @@ export class ReviewController {
     @Param('id') id: string,
     @Body() dto: AttachQuestionDto,
   ): Promise<ReviewQuestionRelationResponse> {
-    const relation = await this.reviews.attachQuestionToReview({
+    const relation = await this.reviews.attachQuestion({
       reviewId: Number(id),
       questionId: dto.questionId,
     });

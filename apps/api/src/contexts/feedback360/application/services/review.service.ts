@@ -1,6 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { AnswerType } from '@intra/shared-kernel';
-import { QuestionTemplateService as LibraryQuestionService } from 'src/contexts/library/application/services/question-template.service';
+import { QuestionTemplateService } from 'src/contexts/library/application/services/question-template.service';
+import { CompetenceService } from 'src/contexts/library/application/services/competence.service';
 import {
   REVIEW_REPOSITORY,
   ReviewRepositoryPort,
@@ -9,8 +10,8 @@ import {
 } from '../ports/review.repository.port';
 import {
   QUESTION_REPOSITORY as REVIEW_QUESTION_REPOSITORY,
-  QuestionRepositoryPort as ReviewQuestionRepositoryPort,
-  QuestionSearchQuery as ReviewQuestionSearchQuery,
+  QuestionRepositoryPort,
+  QuestionSearchQuery,
 } from '../ports/question.repository.port';
 import {
   REVIEW_QUESTION_RELATION_REPOSITORY,
@@ -37,7 +38,7 @@ import {
 } from '../ports/cluster-score.repository.port';
 import { ReviewDomain } from '../../domain/review.domain';
 import { ReviewStage } from '@intra/shared-kernel';
-import { QuestionDomain as ReviewQuestionDomain } from '../../domain/question.domain';
+import { QuestionDomain } from '../../domain/question.domain';
 import { ReviewQuestionRelationDomain } from '../../domain/review-question-relation.domain';
 import { AnswerDomain } from '../../domain/answer.domain';
 import { RespondentCategory } from '@intra/shared-kernel';
@@ -119,7 +120,7 @@ export class ReviewService {
   constructor(
     @Inject(REVIEW_REPOSITORY) private readonly reviews: ReviewRepositoryPort,
     @Inject(REVIEW_QUESTION_REPOSITORY)
-    private readonly cycleQuestions: ReviewQuestionRepositoryPort,
+    private readonly questions: QuestionRepositoryPort,
     @Inject(REVIEW_QUESTION_RELATION_REPOSITORY)
     private readonly questionRelations: ReviewQuestionRelationRepositoryPort,
     @Inject(ANSWER_REPOSITORY) private readonly answers: AnswerRepositoryPort,
@@ -129,7 +130,8 @@ export class ReviewService {
     private readonly reviewers: ReviewerRepositoryPort,
     @Inject(CLUSTER_SCORE_REPOSITORY)
     private readonly clusterScores: ClusterScoreRepositoryPort,
-    private readonly libraryQuestions: LibraryQuestionService,
+    private readonly questionTemplates: QuestionTemplateService,
+    private readonly competences: CompetenceService,
     private readonly cycles: CycleService,
   ) { }
 
@@ -194,12 +196,12 @@ export class ReviewService {
     await this.reviews.deleteById(id);
   }
 
-  async createReviewQuestion(command: CreateQuestionCommand): Promise<ReviewQuestionDomain> {
+  async createQuestion(command: CreateQuestionCommand): Promise<QuestionDomain> {
     if (command.cycleId) {
       await this.cycles.getById(command.cycleId);
     }
 
-    const baseQuestion = command.questionTemplateId ? await this.libraryQuestions.getById(command.questionTemplateId) : null;
+    const baseQuestion = command.questionTemplateId ? await this.questionTemplates.getById(command.questionTemplateId) : null;
 
     const title = command.title ?? baseQuestion?.title;
     const answerType = command.answerType ?? baseQuestion?.answerType;
@@ -208,7 +210,7 @@ export class ReviewService {
       throw new NotFoundException('Base question data is required to create review question');
     }
 
-    const question = ReviewQuestionDomain.create({
+    const question = QuestionDomain.create({
       cycleId: command.cycleId ?? null,
       questionTemplateId: command.questionTemplateId ?? null,
       title,
@@ -217,20 +219,21 @@ export class ReviewService {
       isForSelfassessment: command.isForSelfassessment ?? baseQuestion?.isForSelfassessment ?? false,
     });
 
-    return this.cycleQuestions.create(question);
+    return this.questions.create(question);
   }
 
-  async listReviewQuestions(query: ReviewQuestionSearchQuery): Promise<ReviewQuestionDomain[]> {
-    return this.cycleQuestions.search(query);
+  async listQuestions(query: QuestionSearchQuery): Promise<QuestionDomain[]> {
+    return this.questions.search(query);
   }
 
-  async deleteReviewQuestion(id: number): Promise<void> {
-    await this.cycleQuestions.deleteById(id);
+  async deleteQuestion(id: number): Promise<void> {
+    await this.questions.deleteById(id);
   }
 
-  async attachQuestionToReview(command: AddQuestionToReviewCommand): Promise<ReviewQuestionRelationDomain> {
+  async attachQuestion(command: AddQuestionToReviewCommand): Promise<ReviewQuestionRelationDomain> {
     await this.getById(command.reviewId);
-    const question = await this.libraryQuestions.getById(command.questionId);
+    const question = await this.questionTemplates.getById(command.questionId);
+    const competence = await this.competences.getById(question.competenceId);
 
     const relation = ReviewQuestionRelationDomain.create({
       reviewId: command.reviewId,
@@ -238,7 +241,7 @@ export class ReviewService {
       questionTitle: question.title,
       answerType: question.answerType,
       competenceId: question.competenceId,
-      competenceTitle: question.title,
+      competenceTitle: competence.title,
       isForSelfassessment: question.isForSelfassessment,
     });
 

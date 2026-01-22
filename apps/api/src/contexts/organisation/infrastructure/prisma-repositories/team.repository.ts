@@ -51,12 +51,12 @@ export class TeamRepository implements TeamRepositoryPort {
     await this.prisma.team.delete({ where: { id } });
   }
 
-  async addMember(teamId: number, userId: number, isPrimary?: boolean | null): Promise<TeamMembershipDomain> {
+  async addMember(teamId: number, memberId: number, isPrimary?: boolean | null): Promise<TeamMembershipDomain> {
     try {
       const created = await this.prisma.teamMembership.create({
         data: {
           teamId,
-          memberId: userId,
+          memberId: memberId,
           isPrimary: isPrimary ?? false,
         },
       });
@@ -67,7 +67,7 @@ export class TeamRepository implements TeamRepositoryPort {
           where: {
             teamId_memberId_isPrimary: {
               teamId,
-              memberId: userId,
+              memberId: memberId,
               isPrimary: isPrimary ?? false,
             },
           },
@@ -78,8 +78,8 @@ export class TeamRepository implements TeamRepositoryPort {
     }
   }
 
-  async removeMember(teamId: number, userId: number): Promise<void> {
-    await this.prisma.teamMembership.deleteMany({ where: { teamId, memberId: userId } });
+  async removeMember(teamId: number, memberId: number): Promise<void> {
+    await this.prisma.teamMembership.deleteMany({ where: { teamId, memberId: memberId } });
   }
 
   async listMembers(teamId: number): Promise<TeamMembershipDomain[]> {

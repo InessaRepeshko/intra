@@ -85,7 +85,7 @@ export class TeamsController {
   @ApiResponse({ status: HttpStatus.CREATED, type: TeamMemberResponse })
   @ApiCreateAndUpdateErrorResponses()
   async addMember(@Param('id') id: string, @Body() dto: AddTeamMemberDto): Promise<TeamMemberResponse> {
-    const membership = await this.service.addMember(Number(id), { userId: dto.userId, isPrimary: dto.isPrimary }, { withUser: true });
+    const membership = await this.service.addMember(Number(id), { memberId: dto.memberId, isPrimary: dto.isPrimary }, { withUser: true });
     return TeamHttpMapper.toMemberResponse(membership);
   }
 
@@ -98,12 +98,12 @@ export class TeamsController {
     return members.map(TeamHttpMapper.toMemberResponse);
   }
 
-  @Delete(':id/members/:userId')
+  @Delete(':id/members/:memberId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a member from a team' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
-  async removeMember(@Param('id') id: string, @Param('userId') userId: string): Promise<void> {
-    await this.service.removeMember(Number(id), Number(userId));
+  async removeMember(@Param('id') id: string, @Param('memberId') memberId: string): Promise<void> {
+    await this.service.removeMember(Number(id), Number(memberId));
   }
 }

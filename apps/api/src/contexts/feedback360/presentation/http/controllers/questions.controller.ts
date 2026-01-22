@@ -36,7 +36,7 @@ export class QuestionsController {
   @ApiResponse({ status: HttpStatus.CREATED, type: QuestionResponse })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateQuestionDto): Promise<QuestionResponse> {
-    const created = await this.reviews.createReviewQuestion(dto);
+    const created = await this.reviews.createQuestion(dto);
     return Feedback360HttpMapper.toQuestionResponse(created);
   }
 
@@ -45,7 +45,7 @@ export class QuestionsController {
   @ApiResponse({ status: HttpStatus.OK, type: QuestionResponse, isArray: true })
   @ApiListReadErrorResponses()
   async search(@Query() query: QuestionQueryDto): Promise<QuestionResponse[]> {
-    const items = await this.reviews.listReviewQuestions(query);
+    const items = await this.reviews.listQuestions(query);
     return items.map(Feedback360HttpMapper.toQuestionResponse);
   }
 
@@ -55,6 +55,6 @@ export class QuestionsController {
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async delete(@Param('id') id: string): Promise<void> {
-    await this.reviews.deleteReviewQuestion(Number(id));
+    await this.reviews.deleteQuestion(Number(id));
   }
 }

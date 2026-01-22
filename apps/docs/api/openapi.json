@@ -723,7 +723,7 @@
         ]
       }
     },
-    "/organisation/teams/{id}/members/{userId}": {
+    "/organisation/teams/{id}/members/{memberId}": {
       "delete": {
         "operationId": "TeamsController_removeMember",
         "parameters": [
@@ -736,7 +736,7 @@
             }
           },
           {
-            "name": "userId",
+            "name": "memberId",
             "required": true,
             "in": "path",
             "schema": {
@@ -3885,9 +3885,9 @@
       "AddTeamMemberDto": {
         "type": "object",
         "properties": {
-          "userId": {
+          "memberId": {
             "type": "number",
-            "description": "User id",
+            "description": "Member id",
             "example": 15
           },
           "isPrimary": {
@@ -3897,7 +3897,7 @@
           }
         },
         "required": [
-          "userId"
+          "memberId"
         ]
       },
       "TeamMemberResponse": {
@@ -3911,7 +3911,7 @@
             "type": "number",
             "example": 3
           },
-          "userId": {
+          "memberId": {
             "type": "number",
             "example": 42
           },
@@ -3930,7 +3930,7 @@
         "required": [
           "id",
           "teamId",
-          "userId",
+          "memberId",
           "isPrimary",
           "createdAt"
         ]

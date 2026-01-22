@@ -13,7 +13,7 @@ export class TeamMemberResponse {
 
   @ApiProperty({ example: 42 })
   @Expose()
-  userId!: number;
+  memberId!: number;
 
   @ApiProperty({ example: false })
   @Expose()

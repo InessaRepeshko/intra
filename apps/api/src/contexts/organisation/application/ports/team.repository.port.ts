@@ -32,7 +32,7 @@ export interface TeamRepositoryPort {
   search(query: TeamSearchQuery): Promise<TeamDomain[]>;
   updateById(id: number, patch: TeamUpdatePayload): Promise<TeamDomain>;
   deleteById(id: number): Promise<void>;
-  addMember(teamId: number, userId: number, isPrimary?: boolean | null): Promise<TeamMembershipDomain>;
-  removeMember(teamId: number, userId: number): Promise<void>;
+  addMember(teamId: number, memberId: number, isPrimary?: boolean | null): Promise<TeamMembershipDomain>;
+  removeMember(teamId: number, memberId: number): Promise<void>;
   listMembers(teamId: number): Promise<TeamMembershipDomain[]>;
 }

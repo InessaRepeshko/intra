@@ -18,7 +18,7 @@ export type CreateTeamCommand = {
 export type UpdateTeamCommand = Partial<CreateTeamCommand>;
 
 export type AddTeamMemberCommand = {
-  userId: number;
+  memberId: number;
   isPrimary?: boolean | null;
 };
 
@@ -74,18 +74,18 @@ export class TeamService {
 
   async addMember(teamId: number, command: AddTeamMemberCommand, opts?: { withUser?: boolean }): Promise<TeamMembershipDomain> {
     await this.getById(teamId);
-    const user = await this.identityUsers.getById(command.userId);
+    const user = await this.identityUsers.getById(command.memberId);
 
-    const membership = await this.teams.addMember(teamId, command.userId, command.isPrimary);
+    const membership = await this.teams.addMember(teamId, command.memberId, command.isPrimary);
     if (opts?.withUser) {
       return membership.withUser(user);
     }
     return membership;
   }
 
-  async removeMember(teamId: number, userId: number): Promise<void> {
+  async removeMember(teamId: number, memberId: number): Promise<void> {
     await this.getById(teamId);
-    await this.teams.removeMember(teamId, userId);
+    await this.teams.removeMember(teamId, memberId);
   }
 
   async listMembers(teamId: number, opts?: { withUsers?: boolean }): Promise<TeamMembershipDomain[]> {
