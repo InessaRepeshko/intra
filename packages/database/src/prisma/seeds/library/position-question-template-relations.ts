@@ -288,6 +288,7 @@ const POSITION_QUESTION_TEMPLATES_SEED_DATA: PositionQuestionTemplateSeed[] = [
     {
         positionTitle: 'Senior Software Engineer',
         questionTemplateTitles: [
+            // TECH
             'Produces maintainable code that follows standards.',
             'Designs systems with scalability in mind.',
             'Reviews code thoroughly and constructively.',
@@ -296,19 +297,40 @@ const POSITION_QUESTION_TEMPLATES_SEED_DATA: PositionQuestionTemplateSeed[] = [
             'Keeps dependencies and tooling up to date.',
             'Understands trade-offs of architectural decisions.',
             'Designs reliable APIs with clear contracts.',
+            // DELIV
             'Breaks work into milestones with realistic estimates.',
             'Keeps delivery risks visible and mitigated.',
             'Runs efficient planning and retrospectives.',
             'Measures outcomes, not just output.',
             'Aligns priorities with business impact.',
             'Continuously improves team workflows.',
+            // QUAL
             'Defines clear acceptance criteria before starting work.',
             'Adds automated tests for critical paths.',
             'Prevents regressions through proactive checks.',
             'Escalates quality risks early.',
+            // COLLAB
             'Shares context proactively with peers.',
             'Seeks input from relevant experts before committing.',
             'Resolves misalignment respectfully and quickly.',
+            // LEAD
+            'Acts as a role model for company values.',
+            'Builds trust through transparent decisions.',
+            // COMM
+            'Tailors messaging to different audiences.',
+            'Keeps stakeholders informed on progress and risks.',
+            // PMGT
+            'Sets clear goals and expectations for team members.',
+            'Provides timely coaching and recognition.',
+            // PROD
+            'Translates user problems into actionable hypotheses.',
+            'Uses data and research to prioritize features.',
+            // CUST
+            'Advocates for customer needs in decision making.',
+            'Understands impact of changes on clients workflows.',
+            // STRAT
+            'Connects day-to-day work to long-term strategy.',
+            'Challenges assumptions with data and experiments.',
         ],
     },
     {
