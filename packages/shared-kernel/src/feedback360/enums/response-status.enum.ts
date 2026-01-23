@@ -1,8 +1,8 @@
 export enum ResponseStatus {
-  PENDING = 'pending',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  CANCELED = 'canceled',
+  PENDING = 'PENDING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  CANCELED = 'CANCELED',
 }
 
 export const RESPONSE_STATUSES = Object.values(ResponseStatus);

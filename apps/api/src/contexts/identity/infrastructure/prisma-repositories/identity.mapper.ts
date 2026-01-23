@@ -1,6 +1,6 @@
 import {
   IdentityRole as PrismaIdentityRole,
-  IdentityStatus as PrismaIdentityUserStatus,
+  IdentityStatus as PrismaIdentityStatus,
   Role,
   User,
   UserRole,
@@ -45,11 +45,19 @@ export class IdentityMapper {
     });
   }
 
-  static fromStatus(status?: IdentityStatus): PrismaIdentityUserStatus | undefined {
-    return status as PrismaIdentityUserStatus | undefined;
+  static toPrismaStatus(domainStatus: IdentityStatus): PrismaIdentityStatus {
+    return domainStatus.toString() as PrismaIdentityStatus;
   }
 
-  static fromRole(role: IdentityRole): PrismaIdentityRole | undefined {
-    return role as PrismaIdentityRole | undefined;
+  static toPrismaRole(domainRole: IdentityRole): PrismaIdentityRole {
+    return domainRole.toString() as PrismaIdentityRole;
+  }
+
+  static fromPrismaStatus(prismaStatus: PrismaIdentityStatus): IdentityStatus {
+    return prismaStatus.toString() as IdentityStatus;
+  }
+
+  static fromPrismaRole(prismaRole: PrismaIdentityRole): IdentityRole {
+    return prismaRole.toString() as IdentityRole;
   }
 }

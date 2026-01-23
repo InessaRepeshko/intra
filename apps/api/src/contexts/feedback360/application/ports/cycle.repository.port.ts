@@ -35,7 +35,7 @@ export type CycleUpdatePayload = Partial<{
   startDate: Date;
   reviewDeadline: Date | null;
   approvalDeadline: Date | null;
-  surveyDeadline: Date | null;
+  responseDeadline: Date | null;
   endDate: Date;
 }>;
 

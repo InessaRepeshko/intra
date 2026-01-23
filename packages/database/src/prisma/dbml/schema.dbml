@@ -85,8 +85,9 @@ Table org_positions {
   description String
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
+  competences library_position_competence_relations [not null]
   reviews feedback360_reviews [not null]
-  questionTemplateRelations library_question_template_position_relations [not null]
+  questionTemplateRelations library_position_question_template_relations [not null]
   superiors org_position_hierarchies [not null]
   subordinates org_position_hierarchies [not null]
   respondents feedback360_respondents [not null]
@@ -112,10 +113,12 @@ Table library_competences {
   description String
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
-  clusters library_clusters [not null]
+  positions library_position_competence_relations [not null]
+  questionTemplateRelations library_competence_question_template_relations [not null]
   questionTemplates library_question_templates [not null]
   reviewQuestions feedback360_questions [not null]
   reviewQuestionRelations feedback360_review_question_relations [not null]
+  clusters library_clusters [not null]
 }
 
 Table library_clusters {
@@ -149,20 +152,47 @@ Table library_question_templates {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   competence library_competences [not null]
-  positionRelations library_question_template_position_relations [not null]
+  competences library_competence_question_template_relations [not null]
+  positionRelations library_position_question_template_relations [not null]
   reviewQuestions feedback360_questions [not null]
 }
 
-Table library_question_template_position_relations {
+Table library_position_question_template_relations {
   id Int [pk, increment]
-  questionTemplateId Int [not null]
   positionId Int [not null]
+  questionTemplateId Int [not null]
   createdAt DateTime [default: `now()`, not null]
-  questionTemplate library_question_templates [not null]
   position org_positions [not null]
+  questionTemplate library_question_templates [not null]
 
   indexes {
     (questionTemplateId, positionId) [unique]
+  }
+}
+
+Table library_position_competence_relations {
+  id Int [pk, increment]
+  positionId Int [not null]
+  competenceId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  position org_positions [not null]
+  competence library_competences [not null]
+
+  indexes {
+    (positionId, competenceId) [unique]
+  }
+}
+
+Table library_competence_question_template_relations {
+  id Int [pk, increment]
+  competenceId Int [not null]
+  questionTemplateId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  competence library_competences [not null]
+  questionTemplate library_question_templates [not null]
+
+  indexes {
+    (competenceId, questionTemplateId) [unique]
   }
 }
 
@@ -271,14 +301,14 @@ Table feedback360_clusters_scores {
   cycleId Int
   clusterId Int [not null]
   rateeId Int [not null]
-  reviewId Int
+  reviewId Int [not null]
   score Float [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   ratee identity_users [not null]
   cycle feedback360_cycles
   cluster library_clusters [not null]
-  review feedback360_reviews
+  review feedback360_reviews [not null]
 
   indexes {
     (clusterId, rateeId) [unique]
@@ -462,9 +492,17 @@ Ref: library_clusters.competenceId > library_competences.id [delete: No Action]
 
 Ref: library_question_templates.competenceId > library_competences.id [delete: No Action]
 
-Ref: library_question_template_position_relations.questionTemplateId > library_question_templates.id [delete: No Action]
+Ref: library_position_question_template_relations.positionId > org_positions.id [delete: No Action]
 
-Ref: library_question_template_position_relations.positionId > org_positions.id [delete: No Action]
+Ref: library_position_question_template_relations.questionTemplateId > library_question_templates.id [delete: No Action]
+
+Ref: library_position_competence_relations.positionId > org_positions.id
+
+Ref: library_position_competence_relations.competenceId > library_competences.id
+
+Ref: library_competence_question_template_relations.competenceId > library_competences.id
+
+Ref: library_competence_question_template_relations.questionTemplateId > library_question_templates.id
 
 Ref: feedback360_cycles.hrId > identity_users.id [delete: No Action]
 

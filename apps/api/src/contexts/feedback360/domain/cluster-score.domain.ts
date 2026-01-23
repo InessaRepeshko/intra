@@ -3,7 +3,7 @@ export type ClusterScoreProps = {
   cycleId?: number | null;
   clusterId: number;
   rateeId: number;
-  reviewId?: number | null;
+  reviewId: number;
   score: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -14,7 +14,7 @@ export class ClusterScoreDomain {
   readonly cycleId?: number | null;
   readonly clusterId: number;
   readonly rateeId: number;
-  readonly reviewId?: number | null;
+  readonly reviewId: number;
   readonly score: number;
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
@@ -24,7 +24,7 @@ export class ClusterScoreDomain {
     this.cycleId = props.cycleId ?? null;
     this.clusterId = props.clusterId;
     this.rateeId = props.rateeId;
-    this.reviewId = props.reviewId ?? null;
+    this.reviewId = props.reviewId;
     this.score = props.score;
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;

@@ -90,12 +90,19 @@ export class LibraryMapper {
     });
   }
 
-  static toPrismaAnswerType(answerType: AnswerType): PrismaAnswerType {
-    return answerType as PrismaAnswerType;
+  static toPrismaAnswerType(domainType: AnswerType): PrismaAnswerType {
+    return domainType.toString() as PrismaAnswerType;
   }
 
-  static toPrismaStatus(status: QuestionTemplateStatus): PrismaQuestionTemplateStatus {
-    return status as PrismaQuestionTemplateStatus;
+  static toPrismaStatus(domainStatus: QuestionTemplateStatus): PrismaQuestionTemplateStatus {
+    return domainStatus.toString() as PrismaQuestionTemplateStatus;
+  }
+
+  static fromPrismaAnswerType(prismaType: PrismaAnswerType): AnswerType {
+    return prismaType.toString() as AnswerType;
+  }
+
+  static fromPrismaStatus(prismaStatus: PrismaQuestionTemplateStatus): QuestionTemplateStatus {
+    return prismaStatus.toString() as QuestionTemplateStatus;
   }
 }
-

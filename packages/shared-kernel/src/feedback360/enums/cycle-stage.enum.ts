@@ -1,9 +1,9 @@
 export enum CycleStage {
-  CANCELED = 'canceled',
-  NEW = 'new',
-  ACTIVE = 'active',
-  FINISHED = 'finished',
-  ARCHIVED = 'archived',
+  CANCELED = 'CANCELED',
+  NEW = 'NEW',
+  ACTIVE = 'ACTIVE',
+  FINISHED = 'FINISHED',
+  ARCHIVED = 'ARCHIVED',
 }
 
 export const CYCLE_STAGES = Object.values(CycleStage);

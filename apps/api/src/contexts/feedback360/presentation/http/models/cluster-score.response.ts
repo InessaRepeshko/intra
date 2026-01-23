@@ -18,9 +18,9 @@ export class ClusterScoreResponse {
   @Expose()
   rateeId!: number;
 
-  @ApiPropertyOptional({ example: 2 })
+  @ApiProperty({ example: 2 })
   @Expose()
-  reviewId?: number | null;
+  reviewId!: number;
 
   @ApiProperty({ example: 4.3 })
   @Expose()

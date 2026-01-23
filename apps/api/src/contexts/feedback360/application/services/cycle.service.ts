@@ -19,7 +19,7 @@ export type CreateCycleCommand = {
   startDate: Date;
   reviewDeadline?: Date;
   approvalDeadline?: Date;
-  surveyDeadline?: Date;
+  responseDeadline?: Date;
   endDate: Date;
 };
 
@@ -43,7 +43,7 @@ export class CycleService {
       startDate: command.startDate,
       reviewDeadline: command.reviewDeadline,
       approvalDeadline: command.approvalDeadline,
-      responseDeadline: command.surveyDeadline,
+      responseDeadline: command.responseDeadline,
       endDate: command.endDate,
     });
 
@@ -73,7 +73,7 @@ export class CycleService {
       ...(patch.startDate !== undefined ? { startDate: patch.startDate } : {}),
       ...(patch.reviewDeadline !== undefined ? { reviewDeadline: patch.reviewDeadline } : {}),
       ...(patch.approvalDeadline !== undefined ? { approvalDeadline: patch.approvalDeadline } : {}),
-      ...(patch.surveyDeadline !== undefined ? { surveyDeadline: patch.surveyDeadline } : {}),
+      ...(patch.responseDeadline !== undefined ? { responseDeadline: patch.responseDeadline } : {}),
       ...(patch.endDate !== undefined ? { endDate: patch.endDate } : {}),
     };
 

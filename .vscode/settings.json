@@ -1,8 +1,12 @@
 {
-    // "files.exclude": {
-    //   "apps/api/node_modules/@intra/database": true
-    // },
-    // "search.exclude": {
-    //   "**/apps/api/node_modules/@intra/database/**": true
-    // }
-  }
+  // "files.exclude": {
+  //   "apps/api/node_modules/@intra/database": true
+  // },
+  // "search.exclude": {
+  //   "**/apps/api/node_modules/@intra/database/**": true
+  // }
+  // "[prisma]": {
+  //   "editor.defaultFormatter": "Prisma.prisma",
+  //   "editor.formatOnSave": true
+  // }
+}

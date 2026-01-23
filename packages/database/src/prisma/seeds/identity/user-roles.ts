@@ -3,7 +3,7 @@ import { IdentityRole } from '@intra/shared-kernel';
 
 export default async function seedUserRoles(prisma: PrismaClient) {
     const data = Object.values(IdentityRole).map((val) => {
-        const role = val as PrismaIdentityRole;
+        const role = val as unknown as PrismaIdentityRole;
         return {
             code: role,
             title: role.toString(),

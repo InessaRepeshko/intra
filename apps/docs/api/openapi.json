@@ -80,12 +80,12 @@
             "in": "query",
             "description": "User's status",
             "schema": {
-              "default": "active",
-              "example": "active",
+              "default": "ACTIVE",
+              "example": "ACTIVE",
               "type": "string",
               "enum": [
-                "active",
-                "inactive"
+                "ACTIVE",
+                "INACTIVE"
               ]
             }
           },
@@ -1406,6 +1406,276 @@
         ]
       }
     },
+    "/library/competences/{id}/positions": {
+      "post": {
+        "operationId": "CompetencesController_attachPosition",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachPositionCompetenceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Attach competence to position",
+        "tags": [
+          "Library / Competences"
+        ]
+      },
+      "get": {
+        "operationId": "CompetencesController_listPositions",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List positions linked to competence",
+        "tags": [
+          "Library / Competences"
+        ]
+      }
+    },
+    "/library/competences/{id}/positions/{positionId}": {
+      "delete": {
+        "operationId": "CompetencesController_detachPosition",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Detach competence from position",
+        "tags": [
+          "Library / Competences"
+        ]
+      }
+    },
+    "/library/competences/{id}/question-templates": {
+      "post": {
+        "operationId": "CompetencesController_attachQuestionTemplate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachQuestionTemplateCompetenceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Attach competence to question template",
+        "tags": [
+          "Library / Competences"
+        ]
+      },
+      "get": {
+        "operationId": "CompetencesController_listQuestionTemplates",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List question templates linked to competence",
+        "tags": [
+          "Library / Competences"
+        ]
+      }
+    },
+    "/library/competences/{id}/question-templates/{questionTemplateId}": {
+      "delete": {
+        "operationId": "CompetencesController_detachQuestionTemplate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "questionTemplateId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Detach competence from question template",
+        "tags": [
+          "Library / Competences"
+        ]
+      }
+    },
     "/library/clusters": {
       "post": {
         "operationId": "ClustersController_create",
@@ -1718,11 +1988,11 @@
             "required": false,
             "in": "query",
             "schema": {
-              "example": "active",
+              "example": "ACTIVE",
               "type": "string",
               "enum": [
-                "archive",
-                "active"
+                "ARCHIVE",
+                "ACTIVE"
               ]
             }
           },
@@ -1731,11 +2001,11 @@
             "required": false,
             "in": "query",
             "schema": {
-              "example": "text_field",
+              "example": "TEXT_FIELD",
               "type": "string",
               "enum": [
-                "numerical_scale",
-                "text_field"
+                "NUMERICAL_SCALE",
+                "TEXT_FIELD"
               ]
             }
           },
@@ -1955,7 +2225,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AttachQuestionTemplatePositionDto"
+                "$ref": "#/components/schemas/AttachPositionQuestionTemplateDto"
               }
             }
           }
@@ -2069,6 +2339,141 @@
         ]
       }
     },
+    "/library/question-templates/{id}/competences": {
+      "post": {
+        "operationId": "QuestionTemplatesController_attachCompetence",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachCompetenceQuestionTemplateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Attach question template to competence",
+        "tags": [
+          "Library / Question Templates"
+        ]
+      },
+      "get": {
+        "operationId": "QuestionTemplatesController_listCompetences",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List linked competences for the question template",
+        "tags": [
+          "Library / Question Templates"
+        ]
+      }
+    },
+    "/library/question-templates/{id}/competences/{competenceId}": {
+      "delete": {
+        "operationId": "QuestionTemplatesController_detachCompetence",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "competenceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Detach question template from competence",
+        "tags": [
+          "Library / Question Templates"
+        ]
+      }
+    },
     "/feedback360/cycles": {
       "post": {
         "operationId": "CyclesController_create",
@@ -2139,14 +2544,14 @@
             "required": false,
             "in": "query",
             "schema": {
-              "example": "active",
+              "example": "ACTIVE",
               "type": "string",
               "enum": [
-                "canceled",
-                "new",
-                "active",
-                "finished",
-                "archived"
+                "CANCELED",
+                "NEW",
+                "ACTIVE",
+                "FINISHED",
+                "ARCHIVED"
               ]
             }
           },
@@ -2455,15 +2860,15 @@
             "schema": {
               "type": "string",
               "enum": [
-                "canceled",
-                "verification_by_hr",
-                "verification_by_user",
-                "rejected",
-                "self_assessment",
-                "waiting_to_start",
-                "in_progress",
-                "research",
-                "finished"
+                "CANCELED",
+                "VERIFICATION_BY_HR",
+                "VERIFICATION_BY_USER",
+                "REJECTED",
+                "SELF_ASSESSMENT",
+                "WAITING_TO_START",
+                "IN_PROGRESS",
+                "RESEARCH",
+                "FINISHED"
               ]
             }
           },
@@ -2844,9 +3249,9 @@
             "schema": {
               "type": "string",
               "enum": [
-                "self_assessment",
-                "team",
-                "other"
+                "SELF_ASSESSMENT",
+                "TEAM",
+                "OTHER"
               ]
             }
           }
@@ -3254,8 +3659,8 @@
             "schema": {
               "type": "string",
               "enum": [
-                "numerical_scale",
-                "text_field"
+                "NUMERICAL_SCALE",
+                "TEXT_FIELD"
               ]
             }
           },
@@ -3550,11 +3955,11 @@
             "type": "string",
             "description": "User's status",
             "enum": [
-              "active",
-              "inactive"
+              "ACTIVE",
+              "INACTIVE"
             ],
-            "default": "active",
-            "example": "active"
+            "default": "ACTIVE",
+            "example": "ACTIVE"
           },
           "positionId": {
             "type": "number",
@@ -3610,10 +4015,10 @@
           "status": {
             "type": "string",
             "enum": [
-              "active",
-              "inactive"
+              "ACTIVE",
+              "INACTIVE"
             ],
-            "example": "active"
+            "example": "ACTIVE"
           },
           "positionId": {
             "type": "number",
@@ -3633,15 +4038,15 @@
           "roles": {
             "type": "array",
             "example": [
-              "manager"
+              "MANAGER"
             ],
             "items": {
               "type": "string",
               "enum": [
-                "admin",
-                "hr",
-                "manager",
-                "employee"
+                "ADMIN",
+                "HR",
+                "MANAGER",
+                "EMPLOYEE"
               ]
             }
           },
@@ -3711,11 +4116,11 @@
             "type": "string",
             "description": "User's status",
             "enum": [
-              "active",
-              "inactive"
+              "ACTIVE",
+              "INACTIVE"
             ],
-            "default": "active",
-            "example": "active"
+            "default": "ACTIVE",
+            "example": "ACTIVE"
           },
           "positionId": {
             "type": "number",
@@ -3741,16 +4146,16 @@
             "type": "array",
             "description": "Role codes to assign to the user (replace existing)",
             "example": [
-              "manager",
-              "hr"
+              "MANAGER",
+              "HR"
             ],
             "items": {
               "type": "string",
               "enum": [
-                "admin",
-                "hr",
-                "manager",
-                "employee"
+                "ADMIN",
+                "HR",
+                "MANAGER",
+                "EMPLOYEE"
               ]
             }
           }
@@ -3765,12 +4170,12 @@
           "code": {
             "type": "string",
             "enum": [
-              "admin",
-              "hr",
-              "manager",
-              "employee"
+              "ADMIN",
+              "HR",
+              "MANAGER",
+              "EMPLOYEE"
             ],
-            "example": "manager"
+            "example": "MANAGER"
           },
           "title": {
             "type": "string",
@@ -4120,6 +4525,32 @@
           }
         }
       },
+      "AttachPositionCompetenceDto": {
+        "type": "object",
+        "properties": {
+          "positionId": {
+            "type": "number",
+            "description": "Position id to link",
+            "example": 5
+          }
+        },
+        "required": [
+          "positionId"
+        ]
+      },
+      "AttachQuestionTemplateCompetenceDto": {
+        "type": "object",
+        "properties": {
+          "questionTemplateId": {
+            "type": "number",
+            "description": "Question template id to link",
+            "example": 3
+          }
+        },
+        "required": [
+          "questionTemplateId"
+        ]
+      },
       "CreateClusterDto": {
         "type": "object",
         "properties": {
@@ -4305,10 +4736,10 @@
           "answerType": {
             "type": "string",
             "enum": [
-              "numerical_scale",
-              "text_field"
+              "NUMERICAL_SCALE",
+              "TEXT_FIELD"
             ],
-            "example": "numerical_scale"
+            "example": "NUMERICAL_SCALE"
           },
           "isForSelfassessment": {
             "type": "boolean",
@@ -4319,11 +4750,11 @@
           "status": {
             "type": "string",
             "enum": [
-              "archive",
-              "active"
+              "ARCHIVE",
+              "ACTIVE"
             ],
-            "example": "active",
-            "default": "active"
+            "example": "ACTIVE",
+            "default": "ACTIVE"
           },
           "positionIds": {
             "description": "Positions this question template is linked to",
@@ -4361,10 +4792,10 @@
           "answerType": {
             "type": "string",
             "enum": [
-              "numerical_scale",
-              "text_field"
+              "NUMERICAL_SCALE",
+              "TEXT_FIELD"
             ],
-            "example": "numerical_scale"
+            "example": "NUMERICAL_SCALE"
           },
           "isForSelfassessment": {
             "type": "boolean",
@@ -4373,10 +4804,10 @@
           "status": {
             "type": "string",
             "enum": [
-              "archive",
-              "active"
+              "ARCHIVE",
+              "ACTIVE"
             ],
-            "example": "active"
+            "example": "ACTIVE"
           },
           "positionIds": {
             "example": [
@@ -4426,10 +4857,10 @@
           "answerType": {
             "type": "string",
             "enum": [
-              "numerical_scale",
-              "text_field"
+              "NUMERICAL_SCALE",
+              "TEXT_FIELD"
             ],
-            "example": "numerical_scale"
+            "example": "NUMERICAL_SCALE"
           },
           "isForSelfassessment": {
             "type": "boolean",
@@ -4440,11 +4871,11 @@
           "status": {
             "type": "string",
             "enum": [
-              "archive",
-              "active"
+              "ARCHIVE",
+              "ACTIVE"
             ],
-            "example": "active",
-            "default": "active"
+            "example": "ACTIVE",
+            "default": "ACTIVE"
           },
           "positionIds": {
             "description": "Positions this question template is linked to",
@@ -4459,7 +4890,7 @@
           }
         }
       },
-      "AttachQuestionTemplatePositionDto": {
+      "AttachPositionQuestionTemplateDto": {
         "type": "object",
         "properties": {
           "positionId": {
@@ -4470,6 +4901,19 @@
         },
         "required": [
           "positionId"
+        ]
+      },
+      "AttachCompetenceQuestionTemplateDto": {
+        "type": "object",
+        "properties": {
+          "competenceId": {
+            "type": "number",
+            "description": "Competence id to link",
+            "example": 2
+          }
+        },
+        "required": [
+          "competenceId"
         ]
       },
       "CreateCycleDto": {
@@ -4498,14 +4942,14 @@
           "stage": {
             "type": "string",
             "enum": [
-              "canceled",
-              "new",
-              "active",
-              "finished",
-              "archived"
+              "CANCELED",
+              "NEW",
+              "ACTIVE",
+              "FINISHED",
+              "ARCHIVED"
             ],
-            "example": "new",
-            "default": "new"
+            "example": "NEW",
+            "default": "NEW"
           },
           "isActive": {
             "type": "boolean",
@@ -4567,13 +5011,13 @@
           "stage": {
             "type": "string",
             "enum": [
-              "canceled",
-              "new",
-              "active",
-              "finished",
-              "archived"
+              "CANCELED",
+              "NEW",
+              "ACTIVE",
+              "FINISHED",
+              "ARCHIVED"
             ],
-            "example": "new"
+            "example": "NEW"
           },
           "isActive": {
             "type": "boolean",
@@ -4638,14 +5082,14 @@
           "stage": {
             "type": "string",
             "enum": [
-              "canceled",
-              "new",
-              "active",
-              "finished",
-              "archived"
+              "CANCELED",
+              "NEW",
+              "ACTIVE",
+              "FINISHED",
+              "ARCHIVED"
             ],
-            "example": "new",
-            "default": "new"
+            "example": "NEW",
+            "default": "NEW"
           },
           "isActive": {
             "type": "boolean",
@@ -4724,17 +5168,17 @@
           "stage": {
             "type": "string",
             "enum": [
-              "canceled",
-              "verification_by_hr",
-              "verification_by_user",
-              "rejected",
-              "self_assessment",
-              "waiting_to_start",
-              "in_progress",
-              "research",
-              "finished"
+              "CANCELED",
+              "VERIFICATION_BY_HR",
+              "VERIFICATION_BY_USER",
+              "REJECTED",
+              "SELF_ASSESSMENT",
+              "WAITING_TO_START",
+              "IN_PROGRESS",
+              "RESEARCH",
+              "FINISHED"
             ],
-            "example": "verification_by_hr"
+            "example": "VERIFICATION_BY_HR"
           }
         },
         "required": [
@@ -4790,17 +5234,17 @@
           "stage": {
             "type": "string",
             "enum": [
-              "canceled",
-              "verification_by_hr",
-              "verification_by_user",
-              "rejected",
-              "self_assessment",
-              "waiting_to_start",
-              "in_progress",
-              "research",
-              "finished"
+              "CANCELED",
+              "VERIFICATION_BY_HR",
+              "VERIFICATION_BY_USER",
+              "REJECTED",
+              "SELF_ASSESSMENT",
+              "WAITING_TO_START",
+              "IN_PROGRESS",
+              "RESEARCH",
+              "FINISHED"
             ],
-            "example": "verification_by_hr"
+            "example": "VERIFICATION_BY_HR"
           },
           "createdAt": {
             "type": "string"
@@ -4868,17 +5312,17 @@
           "stage": {
             "type": "string",
             "enum": [
-              "canceled",
-              "verification_by_hr",
-              "verification_by_user",
-              "rejected",
-              "self_assessment",
-              "waiting_to_start",
-              "in_progress",
-              "research",
-              "finished"
+              "CANCELED",
+              "VERIFICATION_BY_HR",
+              "VERIFICATION_BY_USER",
+              "REJECTED",
+              "SELF_ASSESSMENT",
+              "WAITING_TO_START",
+              "IN_PROGRESS",
+              "RESEARCH",
+              "FINISHED"
             ],
-            "example": "verification_by_hr"
+            "example": "VERIFICATION_BY_HR"
           }
         }
       },
@@ -4917,10 +5361,10 @@
           "answerType": {
             "type": "string",
             "enum": [
-              "numerical_scale",
-              "text_field"
+              "NUMERICAL_SCALE",
+              "TEXT_FIELD"
             ],
-            "example": "numerical_scale"
+            "example": "NUMERICAL_SCALE"
           },
           "competenceId": {
             "type": "number",
@@ -4960,19 +5404,19 @@
           "respondentCategory": {
             "type": "string",
             "enum": [
-              "self_assessment",
-              "team",
-              "other"
+              "SELF_ASSESSMENT",
+              "TEAM",
+              "OTHER"
             ],
-            "example": "team"
+            "example": "TEAM"
           },
           "answerType": {
             "type": "string",
             "enum": [
-              "numerical_scale",
-              "text_field"
+              "NUMERICAL_SCALE",
+              "TEXT_FIELD"
             ],
-            "example": "numerical_scale"
+            "example": "NUMERICAL_SCALE"
           },
           "numericalValue": {
             "type": "number",
@@ -5009,16 +5453,16 @@
           "respondentCategory": {
             "type": "string",
             "enum": [
-              "self_assessment",
-              "team",
-              "other"
+              "SELF_ASSESSMENT",
+              "TEAM",
+              "OTHER"
             ]
           },
           "answerType": {
             "type": "string",
             "enum": [
-              "numerical_scale",
-              "text_field"
+              "NUMERICAL_SCALE",
+              "TEXT_FIELD"
             ]
           },
           "numericalValue": {
@@ -5052,21 +5496,21 @@
           "category": {
             "type": "string",
             "enum": [
-              "self_assessment",
-              "team",
-              "other"
+              "SELF_ASSESSMENT",
+              "TEAM",
+              "OTHER"
             ],
-            "example": "team"
+            "example": "TEAM"
           },
           "responseStatus": {
             "type": "string",
             "enum": [
-              "pending",
-              "in_progress",
-              "completed",
-              "canceled"
+              "PENDING",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "CANCELED"
             ],
-            "example": "pending"
+            "example": "PENDING"
           },
           "respondentNote": {
             "type": "string",
@@ -5124,18 +5568,18 @@
           "category": {
             "type": "string",
             "enum": [
-              "self_assessment",
-              "team",
-              "other"
+              "SELF_ASSESSMENT",
+              "TEAM",
+              "OTHER"
             ]
           },
           "responseStatus": {
             "type": "string",
             "enum": [
-              "pending",
-              "in_progress",
-              "completed",
-              "canceled"
+              "PENDING",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "CANCELED"
             ]
           },
           "respondentNote": {
@@ -5191,21 +5635,21 @@
           "category": {
             "type": "string",
             "enum": [
-              "self_assessment",
-              "team",
-              "other"
+              "SELF_ASSESSMENT",
+              "TEAM",
+              "OTHER"
             ],
-            "example": "team"
+            "example": "TEAM"
           },
           "responseStatus": {
             "type": "string",
             "enum": [
-              "pending",
-              "in_progress",
-              "completed",
-              "canceled"
+              "PENDING",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "CANCELED"
             ],
-            "example": "pending"
+            "example": "PENDING"
           },
           "respondentNote": {
             "type": "string",
@@ -5320,10 +5764,10 @@
           "answerType": {
             "type": "string",
             "enum": [
-              "numerical_scale",
-              "text_field"
+              "NUMERICAL_SCALE",
+              "TEXT_FIELD"
             ],
-            "example": "numerical_scale"
+            "example": "NUMERICAL_SCALE"
           },
           "competenceId": {
             "type": "number",
@@ -5362,10 +5806,10 @@
           "answerType": {
             "type": "string",
             "enum": [
-              "numerical_scale",
-              "text_field"
+              "NUMERICAL_SCALE",
+              "TEXT_FIELD"
             ],
-            "example": "text_field"
+            "example": "TEXT_FIELD"
           },
           "competenceId": {
             "type": "object",
@@ -5402,12 +5846,12 @@
           "rateeId": {
             "type": "number",
             "example": 7,
-            "description": "Оцінюваний"
+            "description": "Ratee"
           },
           "reviewId": {
             "type": "number",
             "example": 5,
-            "description": "Review (optional)"
+            "description": "Review"
           },
           "score": {
             "type": "number",
@@ -5417,6 +5861,7 @@
         "required": [
           "clusterId",
           "rateeId",
+          "reviewId",
           "score"
         ]
       },
@@ -5440,7 +5885,7 @@
             "example": 7
           },
           "reviewId": {
-            "type": "object",
+            "type": "number",
             "example": 2
           },
           "score": {
@@ -5458,6 +5903,7 @@
           "id",
           "clusterId",
           "rateeId",
+          "reviewId",
           "score"
         ]
       }

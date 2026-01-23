@@ -1,6 +1,6 @@
 export enum QuestionTemplateStatus {
-  ARCHIVE = 'archive',
-  ACTIVE = 'active',
+  ARCHIVE = 'ARCHIVE',
+  ACTIVE = 'ACTIVE',
 }
 
 export const QUESTION_TEMPLATE_STATUSES = Object.values(QuestionTemplateStatus);

@@ -1,6 +1,6 @@
 export enum IdentityStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
 }
 
 export const IDENTITY_STATUSES = Object.values(IdentityStatus);

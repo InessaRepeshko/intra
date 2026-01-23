@@ -1,7 +1,7 @@
 {
     "name": "@intra/database",
     "version": "1.0.0",
-    "description": "Shared Prisma schema, migrations and seeders for Intra monorepo",
+    "description": "Shared Prisma schema, migrations and seeders for Intra database",
     "private": true,
     "license": "MIT",
     "author": "Inessa Repeshko",
@@ -20,6 +20,7 @@
         "prisma:dev": "dotenv -e ../../.env.development.local -- pnpm prisma:config",
         "prisma:test": "dotenv -e ../../.env.test -- pnpm prisma:config",
         "db:deploy": "pnpm prisma:dev -- migrate deploy",
+        "db:schema": "pnpm prisma validate --schema ./src/prisma/schema.prisma && pnpm prisma format --schema ./src/prisma/schema.prisma",
         "db:create": "pnpm prisma:dev -- migrate dev",
         "db:generate": "pnpm prisma:dev -- generate",
         "db:seed": "pnpm prisma:dev -- db seed",

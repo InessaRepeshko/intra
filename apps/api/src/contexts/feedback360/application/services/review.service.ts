@@ -111,7 +111,7 @@ export type UpsertClusterScoreCommand = {
   cycleId?: number | null;
   clusterId: number;
   rateeId: number;
-  reviewId?: number | null;
+  reviewId: number;
   score: number;
 };
 
@@ -339,7 +339,7 @@ export class ReviewService {
       cycleId: command.cycleId ?? null,
       clusterId: command.clusterId,
       rateeId: command.rateeId,
-      reviewId: command.reviewId ?? null,
+      reviewId: command.reviewId,
       score: command.score,
     });
 

@@ -1,8 +1,8 @@
 export enum IdentityRole {
-  ADMIN = 'admin',
-  HR = 'hr',
-  MANAGER = 'manager',
-  EMPLOYEE = 'employee',
+  ADMIN = 'ADMIN',
+  HR = 'HR',
+  MANAGER = 'MANAGER',
+  EMPLOYEE = 'EMPLOYEE',
 }
 
 export const IDENTITY_ROLES = Object.values(IdentityRole);

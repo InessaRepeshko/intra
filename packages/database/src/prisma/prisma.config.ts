@@ -4,7 +4,7 @@ export default ({
     schema: "./schema.prisma",
     migrations: {
         path: "./migrations",
-        seed: "pnpm tsx ./seeds/seeds.ts"
+        seed: "pnpm tsx ./src/prisma/seeds/seeds.ts"
     },
     datasource: {
         url: process.env.DATABASE_URL!,

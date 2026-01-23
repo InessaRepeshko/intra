@@ -148,7 +148,7 @@ model Position {
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  competences PositionCompetenceRelation[] 
+  competences               PositionCompetenceRelation[]
   reviews                   Review[]
   questionTemplateRelations PositionQuestionTemplateRelation[]
   superiors                 PositionHierarchy[]                @relation("superior_position")
@@ -198,12 +198,12 @@ model Competence {
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  positions PositionCompetenceRelation[]
+  positions                 PositionCompetenceRelation[]
   questionTemplateRelations CompetenceQuestionTemplateRelation[]
-  questionTemplates       QuestionTemplate[]
-  reviewQuestions         Question[]
-  reviewQuestionRelations ReviewQuestionRelation[]
-  clusters                Cluster[]
+  questionTemplates         QuestionTemplate[]
+  reviewQuestions           Question[]
+  reviewQuestionRelations   ReviewQuestionRelation[]
+  clusters                  Cluster[]
 
   @@map("library_competences")
 }
@@ -241,8 +241,8 @@ model QuestionTemplate {
   createdAt           DateTime               @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt           DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  competence        Competence                         @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  competences CompetenceQuestionTemplateRelation[]
+  competence        Competence                           @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  competences       CompetenceQuestionTemplateRelation[]
   positionRelations PositionQuestionTemplateRelation[]
   reviewQuestions   Question[]
 
@@ -265,26 +265,27 @@ model PositionQuestionTemplateRelation {
 }
 
 model PositionCompetenceRelation {
-  id           Int        @id @default(autoincrement())
-  positionId   Int        @map("position_id")
-  competenceId Int        @map("competence_id")
-  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
- 
-  position     Position   @relation(fields: [positionId], references: [id])
-  competence   Competence @relation(fields: [competenceId], references: [id])
- 
+  id           Int      @id @default(autoincrement())
+  positionId   Int      @map("position_id")
+  competenceId Int      @map("competence_id")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  position   Position   @relation(fields: [positionId], references: [id])
+  competence Competence @relation(fields: [competenceId], references: [id])
+
   @@unique([positionId, competenceId])
   @@map("library_position_competence_relations")
 }
 
 model CompetenceQuestionTemplateRelation {
-  id                 Int              @id @default(autoincrement())
-  competenceId       Int              @map("competence_id")
-  questionTemplateId Int              @map("question_template_id")
-  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
-  
-  competence         Competence       @relation(fields: [competenceId], references: [id])
-  questionTemplate   QuestionTemplate @relation(fields: [questionTemplateId], references: [id])
+  id                 Int      @id @default(autoincrement())
+  competenceId       Int      @map("competence_id")
+  questionTemplateId Int      @map("question_template_id")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  competence       Competence       @relation(fields: [competenceId], references: [id])
+  questionTemplate QuestionTemplate @relation(fields: [questionTemplateId], references: [id])
+
   @@unique([competenceId, questionTemplateId])
   @@map("library_competence_question_template_relations")
 }
@@ -472,7 +473,7 @@ model ClusterScore {
   cycleId   Int?     @map("cycle_id")
   clusterId Int      @map("cluster_id")
   rateeId   Int      @map("user_id")
-  reviewId  Int     @map("review_id")
+  reviewId  Int      @map("review_id")
   score     Float
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
@@ -480,7 +481,7 @@ model ClusterScore {
   ratee   User    @relation("cluster_ratee_scores", fields: [rateeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cycle   Cycle?  @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cluster Cluster @relation(fields: [clusterId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  review  Review @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  review  Review  @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([clusterId, rateeId])
   @@index([cycleId])

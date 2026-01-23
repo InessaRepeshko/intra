@@ -1,13 +1,13 @@
 export enum ReviewStage {
-  CANCELED = 'canceled',
-  VERIFICATION_BY_HR = 'verification_by_hr',
-  VERIFICATION_BY_USER = 'verification_by_user',
-  REJECTED = 'rejected',
-  SELF_ASSESSMENT = 'self_assessment',
-  WAITING_TO_START = 'waiting_to_start',
-  IN_PROGRESS = 'in_progress',
-  RESEARCH = 'research',
-  FINISHED = 'finished',
+  CANCELED = 'CANCELED',
+  VERIFICATION_BY_HR = 'VERIFICATION_BY_HR',
+  VERIFICATION_BY_USER = 'VERIFICATION_BY_USER',
+  REJECTED = 'REJECTED',
+  SELF_ASSESSMENT = 'SELF_ASSESSMENT',
+  WAITING_TO_START = 'WAITING_TO_START',
+  IN_PROGRESS = 'IN_PROGRESS',
+  RESEARCH = 'RESEARCH',
+  FINISHED = 'FINISHED',
 }
 
 export const REVIEW_STAGES = Object.values(ReviewStage);

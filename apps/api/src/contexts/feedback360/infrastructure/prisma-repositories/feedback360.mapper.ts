@@ -147,23 +147,43 @@ export class Feedback360Mapper {
     });
   }
 
-  static toPrismaCycleStage(stage: CycleStage): PrismaCycleStage {
-    return stage as PrismaCycleStage;
+  static toPrismaCycleStage(domainStage: CycleStage): PrismaCycleStage {
+    return domainStage.toString() as PrismaCycleStage;
   }
 
-  static toPrismaReviewStage(stage: ReviewStage): PrismaReviewStage {
-    return stage as PrismaReviewStage;
+  static toPrismaReviewStage(domainStage: ReviewStage): PrismaReviewStage {
+    return domainStage.toString() as PrismaReviewStage;
   }
 
-  static toPrismaResponseStatus(status: ResponseStatus): PrismaResponseStatus {
-    return status as PrismaResponseStatus;
+  static toPrismaResponseStatus(domainStatus: ResponseStatus): PrismaResponseStatus {
+    return domainStatus.toString() as PrismaResponseStatus;
   }
 
-  static toPrismaRespondentCategory(category: RespondentCategory): PrismaRespondentCategory {
-    return category as PrismaRespondentCategory;
+  static toPrismaRespondentCategory(domainCategory: RespondentCategory): PrismaRespondentCategory {
+    return domainCategory.toString() as PrismaRespondentCategory;
   }
 
-  static toPrismaAnswerType(type: AnswerType): PrismaAnswerType {
-    return type as PrismaAnswerType;
+  static toPrismaAnswerType(domainType: AnswerType): PrismaAnswerType {
+    return domainType.toString() as PrismaAnswerType;
+  }
+
+  static fromPrismaCycleStage(prismaStage: PrismaCycleStage): CycleStage {
+    return prismaStage.toString() as CycleStage;
+  }
+
+  static fromPrismaReviewStage(prismaStage: PrismaReviewStage): ReviewStage {
+    return prismaStage.toString() as ReviewStage;
+  }
+
+  static fromPrismaResponseStatus(prismaStatus: PrismaResponseStatus): ResponseStatus {
+    return prismaStatus.toString() as ResponseStatus;
+  }
+
+  static fromPrismaRespondentCategory(prismaCategory: PrismaRespondentCategory): RespondentCategory {
+    return prismaCategory.toString() as RespondentCategory;
+  }
+
+  static fromPrismaAnswerType(prismaType: PrismaAnswerType): AnswerType {
+    return prismaType.toString() as AnswerType;
   }
 }
