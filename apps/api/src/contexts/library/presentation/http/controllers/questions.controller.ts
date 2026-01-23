@@ -20,7 +20,8 @@ import { QuestionTemplateResponse } from '../models/question-template.response';
 import { QuestionTemplateHttpMapper } from '../mappers/question-template.http.mapper';
 import { QuestionTemplateQueryDto } from '../dto/questions/question-template-query.dto';
 import { UpdateQuestionTemplateDto } from '../dto/questions/update-question-template.dto';
-import { AttachQuestionTemplatePositionDto } from '../dto/questions/attach-question-template-position.dto';
+import { AttachPositionQuestionTemplateDto } from '../dto/questions/attach-position-question-template.dto';
+import { AttachCompetenceQuestionTemplateDto } from '../dto/questions/attach-competence-question-template.dto';
 import {
   ApiCreateAndUpdateErrorResponses,
   ApiDeletionErrorResponses,
@@ -93,7 +94,7 @@ export class QuestionTemplatesController {
   @ApiCreateAndUpdateErrorResponses()
   async attachPosition(
     @Param('id') id: string,
-    @Body() dto: AttachQuestionTemplatePositionDto,
+    @Body() dto: AttachPositionQuestionTemplateDto,
   ): Promise<QuestionTemplateResponse> {
     const updated = await this.service.attachPosition(Number(id), dto.positionId);
     return QuestionTemplateHttpMapper.toResponse(updated);
@@ -114,6 +115,34 @@ export class QuestionTemplatesController {
   @ApiListReadErrorResponses()
   async listPositions(@Param('id') id: string): Promise<number[]> {
     return this.service.listPositions(Number(id));
+  }
+
+  @Post(':id/competences')
+  @ApiOperation({ summary: 'Attach question template to competence' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: Number, isArray: true })
+  @ApiCreateAndUpdateErrorResponses()
+  async attachCompetence(
+    @Param('id') id: string,
+    @Body() dto: AttachCompetenceQuestionTemplateDto,
+  ): Promise<number[]> {
+    return this.service.attachCompetence(Number(id), dto.competenceId);
+  }
+
+  @Delete(':id/competences/:competenceId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Detach question template from competence' })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  @ApiDeletionErrorResponses()
+  async detachCompetence(@Param('id') id: string, @Param('competenceId') competenceId: string): Promise<void> {
+    await this.service.detachCompetence(Number(id), Number(competenceId));
+  }
+
+  @Get(':id/competences')
+  @ApiOperation({ summary: 'List linked competences for the question template' })
+  @ApiResponse({ status: HttpStatus.OK, type: Number, isArray: true })
+  @ApiListReadErrorResponses()
+  async listCompetences(@Param('id') id: string): Promise<number[]> {
+    return this.service.listCompetences(Number(id));
   }
 }
 

@@ -616,7 +616,7 @@ const POSITION_QUESTION_TEMPLATES_SEED_DATA: PositionQuestionTemplateSeed[] = [
     },
 ];
 
-export default async function seedQuestionTemplatePositionRelations(
+export default async function seedPositionQuestionTemplateRelations(
     prisma: PrismaClient,
     questionTemplateMap: QuestionTemplateMap,
     positionMap: PositionMap,
@@ -635,13 +635,13 @@ export default async function seedQuestionTemplatePositionRelations(
                 continue;
             }
 
-            const existing = await prisma.questionTemplatePositionRelation.findFirst({
+            const existing = await prisma.positionQuestionTemplateRelation.findFirst({
                 where: { positionId: position.id, questionTemplateId: question.id },
             });
 
             if (existing) continue;
 
-            await prisma.questionTemplatePositionRelation.create({
+            await prisma.positionQuestionTemplateRelation.create({
                 data: {
                     positionId: position.id,
                     questionTemplateId: question.id,

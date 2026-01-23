@@ -7,14 +7,18 @@ import { QuestionTemplateService } from './application/services/question-templat
 import { CompetenceRepository } from './infrastructure/prisma-repositories/competence.repository';
 import { ClusterRepository } from './infrastructure/prisma-repositories/cluster.repository';
 import { QuestionTemplateRepository } from './infrastructure/prisma-repositories/question-template.repository';
-import { QuestionTemplatePositionRelationRepository } from './infrastructure/prisma-repositories/question-template-position-relation.repository';
+import { PositionQuestionTemplateRelationRepository } from './infrastructure/prisma-repositories/position-question-template-relation.repository';
 import { COMPETENCE_REPOSITORY } from './application/ports/competence.repository.port';
 import { CLUSTER_REPOSITORY } from './application/ports/cluster.repository.port';
 import { QUESTION_TEMPLATE_REPOSITORY } from './application/ports/question-template.repository.port';
-import { QUESTION_TEMPLATE_POSITION_RELATION_REPOSITORY } from './application/ports/question-template-position-relation.repository.port';
+import { POSITION_QUESTION_TEMPLATE_RELATION_REPOSITORY } from './application/ports/position-question-template-relation.repository.port';
 import { CompetencesController } from './presentation/http/controllers/competences.controller';
 import { ClustersController } from './presentation/http/controllers/clusters.controller';
 import { QuestionTemplatesController } from './presentation/http/controllers/questions.controller';
+import { PositionCompetenceRelationRepository } from './infrastructure/prisma-repositories/position-competence-relation.repository';
+import { CompetenceQuestionTemplateRelationRepository } from './infrastructure/prisma-repositories/competence-question-template-relation.repository';
+import { POSITION_COMPETENCE_RELATION_REPOSITORY } from './application/ports/position-competence-relation.repository.port';
+import { COMPETENCE_QUESTION_TEMPLATE_RELATION_REPOSITORY } from './application/ports/competence-question-template-relation.repository.port';
 
 @Module({
   imports: [DatabaseModule, OrganisationModule],
@@ -26,11 +30,15 @@ import { QuestionTemplatesController } from './presentation/http/controllers/que
     CompetenceRepository,
     ClusterRepository,
     QuestionTemplateRepository,
-    QuestionTemplatePositionRelationRepository,
+    PositionQuestionTemplateRelationRepository,
+    PositionCompetenceRelationRepository,
+    CompetenceQuestionTemplateRelationRepository,
     { provide: COMPETENCE_REPOSITORY, useExisting: CompetenceRepository },
     { provide: CLUSTER_REPOSITORY, useExisting: ClusterRepository },
     { provide: QUESTION_TEMPLATE_REPOSITORY, useExisting: QuestionTemplateRepository },
-    { provide: QUESTION_TEMPLATE_POSITION_RELATION_REPOSITORY, useExisting: QuestionTemplatePositionRelationRepository },
+    { provide: POSITION_QUESTION_TEMPLATE_RELATION_REPOSITORY, useExisting: PositionQuestionTemplateRelationRepository },
+    { provide: POSITION_COMPETENCE_RELATION_REPOSITORY, useExisting: PositionCompetenceRelationRepository },
+    { provide: COMPETENCE_QUESTION_TEMPLATE_RELATION_REPOSITORY, useExisting: CompetenceQuestionTemplateRelationRepository },
   ],
   exports: [CompetenceService, ClusterService, QuestionTemplateService],
 })

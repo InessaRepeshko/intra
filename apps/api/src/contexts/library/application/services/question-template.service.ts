@@ -10,10 +10,14 @@ import { QuestionTemplateDomain } from '../../domain/question-template.domain';
 import { AnswerType } from '@intra/shared-kernel';
 import { QuestionTemplateStatus } from '@intra/shared-kernel';
 import {
-  QUESTION_TEMPLATE_POSITION_RELATION_REPOSITORY,
-  QuestionTemplatePositionRelationRepositoryPort,
-} from '../ports/question-template-position-relation.repository.port';
+  POSITION_QUESTION_TEMPLATE_RELATION_REPOSITORY,
+  PositionQuestionTemplateRelationRepositoryPort,
+} from '../ports/position-question-template-relation.repository.port';
 import { PositionService } from 'src/contexts/organisation/application/services/position.service';
+import {
+  COMPETENCE_QUESTION_TEMPLATE_RELATION_REPOSITORY,
+  CompetenceQuestionTemplateRelationRepositoryPort,
+} from '../ports/competence-question-template-relation.repository.port';
 
 export type CreateQuestionTemplateCommand = {
   competenceId: number;
@@ -30,8 +34,10 @@ export type UpdateQuestionTemplateCommand = Partial<CreateQuestionTemplateComman
 export class QuestionTemplateService {
   constructor(
     @Inject(QUESTION_TEMPLATE_REPOSITORY) private readonly questionTemplates: QuestionTemplateRepositoryPort,
-    @Inject(QUESTION_TEMPLATE_POSITION_RELATION_REPOSITORY)
-    private readonly questionTemplatePositionRelations: QuestionTemplatePositionRelationRepositoryPort,
+    @Inject(POSITION_QUESTION_TEMPLATE_RELATION_REPOSITORY)
+    private readonly positionQuestionTemplateRelations: PositionQuestionTemplateRelationRepositoryPort,
+    @Inject(COMPETENCE_QUESTION_TEMPLATE_RELATION_REPOSITORY)
+    private readonly competenceQuestionTemplateRelations: CompetenceQuestionTemplateRelationRepositoryPort,
     private readonly competences: CompetenceService,
     private readonly positions: PositionService,
   ) { }
@@ -52,7 +58,7 @@ export class QuestionTemplateService {
     const positionIds = command.positionIds ? Array.from(new Set(command.positionIds)) : [];
     if (positionIds.length) {
       await this.ensurePositionsExist(positionIds);
-      await this.questionTemplatePositionRelations.replace(created.id!, positionIds);
+      await this.positionQuestionTemplateRelations.replace(created.id!, positionIds);
     }
 
     return this.getById(created.id!);
@@ -88,7 +94,7 @@ export class QuestionTemplateService {
     if (patch.positionIds) {
       const uniquePositions = Array.from(new Set(patch.positionIds));
       await this.ensurePositionsExist(uniquePositions);
-      await this.questionTemplatePositionRelations.replace(id, uniquePositions);
+      await this.positionQuestionTemplateRelations.replace(id, uniquePositions);
     }
 
     return this.getById(id);
@@ -103,19 +109,38 @@ export class QuestionTemplateService {
     await this.getById(questionId);
     await this.positions.getById(positionId);
 
-    await this.questionTemplatePositionRelations.link(questionId, positionId);
+    await this.positionQuestionTemplateRelations.link(questionId, positionId);
     return this.getById(questionId);
   }
 
   async detachPosition(questionId: number, positionId: number): Promise<void> {
     await this.getById(questionId);
-    await this.questionTemplatePositionRelations.unlink(questionId, positionId);
+    await this.positionQuestionTemplateRelations.unlink(questionId, positionId);
   }
 
   async listPositions(questionId: number): Promise<number[]> {
     await this.getById(questionId);
-    const relations = await this.questionTemplatePositionRelations.listByQuestion(questionId);
+    const relations = await this.positionQuestionTemplateRelations.listByQuestion(questionId);
     return relations.map((r) => r.positionId);
+  }
+
+  async attachCompetence(questionId: number, competenceId: number): Promise<number[]> {
+    await this.getById(questionId);
+    await this.competences.getById(competenceId);
+
+    await this.competenceQuestionTemplateRelations.link(competenceId, questionId);
+    return this.listCompetences(questionId);
+  }
+
+  async detachCompetence(questionId: number, competenceId: number): Promise<void> {
+    await this.getById(questionId);
+    await this.competenceQuestionTemplateRelations.unlink(competenceId, questionId);
+  }
+
+  async listCompetences(questionId: number): Promise<number[]> {
+    await this.getById(questionId);
+    const relations = await this.competenceQuestionTemplateRelations.listByQuestionTemplate(questionId);
+    return relations.map((r) => r.competenceId);
   }
 
   private async ensurePositionsExist(positionIds: number[]): Promise<void> {

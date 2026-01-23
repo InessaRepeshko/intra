@@ -9,7 +9,7 @@ import seedTeamHeads from './organisation/team-heads';
 import seedClusters from './library/clusters';
 import seedCompetences from './library/competences';
 import seedQuestionTemplates from './library/question-templates';
-import seedQuestionTemplatePositionRelations from './library/question-template-position-relations';
+import seedPositionQuestionTemplateRelations from './library/question-template-position-relations';
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({
@@ -48,7 +48,7 @@ async function main() {
     const questions = await seedQuestionTemplates(prisma);
     console.info('❓ Questions');
 
-    await seedQuestionTemplatePositionRelations(prisma, questions, positions);
+    await seedPositionQuestionTemplateRelations(prisma, questions, positions);
     console.info('🔗 Question-position relations');
 
     await seedClusters(prisma);

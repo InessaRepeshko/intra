@@ -4,14 +4,18 @@ import {
   AnswerType as PrismaAnswerType,
   QuestionTemplateStatus as PrismaQuestionTemplateStatus,
   QuestionTemplate as PrismaQuestionTemplate,
-  QuestionTemplatePositionRelation as PrismaQuestionTemplatePositionRelation,
+  PositionQuestionTemplateRelation as PrismaPositionQuestionTemplateRelation,
+  PositionCompetenceRelation as PrismaPositionCompetenceRelation,
+  CompetenceQuestionTemplateRelation as PrismaCompetenceQuestionTemplateRelation,
 } from '@intra/database';
 import { CompetenceDomain } from '../../domain/competence.domain';
 import { ClusterDomain } from '../../domain/cluster.domain';
 import { QuestionTemplateDomain } from '../../domain/question-template.domain';
 import { AnswerType } from '@intra/shared-kernel';
 import { QuestionTemplateStatus } from '@intra/shared-kernel';
-import { QuestionTemplatePositionRelationDomain } from '../../domain/question-template-position-relation.domain';
+import { PositionQuestionTemplateRelationDomain } from '../../domain/position-question-template-relation.domain';
+import { PositionCompetenceRelationDomain } from '../../domain/position-competence-relation.domain';
+import { CompetenceQuestionTemplateRelationDomain } from '../../domain/competence-question-template-relation.domain';
 
 type QuestionWithPositions = PrismaQuestionTemplate & { positionRelations?: { positionId: number }[] };
 
@@ -57,11 +61,31 @@ export class LibraryMapper {
     });
   }
 
-  static toQuestionTemplatePositionRelationDomain(relation: PrismaQuestionTemplatePositionRelation): QuestionTemplatePositionRelationDomain {
-    return QuestionTemplatePositionRelationDomain.create({
+  static toPositionQuestionTemplateRelationDomain(relation: PrismaPositionQuestionTemplateRelation): PositionQuestionTemplateRelationDomain {
+    return PositionQuestionTemplateRelationDomain.create({
       id: relation.id,
       questionTemplateId: relation.questionTemplateId,
       positionId: relation.positionId,
+      createdAt: relation.createdAt,
+    });
+  }
+
+  static toPositionCompetenceRelationDomain(relation: PrismaPositionCompetenceRelation): PositionCompetenceRelationDomain {
+    return PositionCompetenceRelationDomain.create({
+      id: relation.id,
+      positionId: relation.positionId,
+      competenceId: relation.competenceId,
+      createdAt: relation.createdAt,
+    });
+  }
+
+  static toCompetenceQuestionTemplateRelationDomain(
+    relation: PrismaCompetenceQuestionTemplateRelation,
+  ): CompetenceQuestionTemplateRelationDomain {
+    return CompetenceQuestionTemplateRelationDomain.create({
+      id: relation.id,
+      competenceId: relation.competenceId,
+      questionTemplateId: relation.questionTemplateId,
       createdAt: relation.createdAt,
     });
   }
