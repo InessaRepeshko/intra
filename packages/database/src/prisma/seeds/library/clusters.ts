@@ -23,6 +23,13 @@ export const CLUSTERS_SEED_DATA = [
     { competenceCode: 'LEAD', clusters: clusterLevels(5) },
     { competenceCode: 'COMM', clusters: clusterLevels(6) },
     { competenceCode: 'TECH', clusters: clusterLevels(7) },
+    { competenceCode: 'PMGT', clusters: clusterLevels(4) },
+    { competenceCode: 'DELIV', clusters: clusterLevels(6) },
+    { competenceCode: 'QUAL', clusters: clusterLevels(5) },
+    { competenceCode: 'PROD', clusters: clusterLevels(4) },
+    { competenceCode: 'CUST', clusters: clusterLevels(3) },
+    { competenceCode: 'COLLAB', clusters: clusterLevels(8) },
+    { competenceCode: 'STRAT', clusters: clusterLevels(3) },
 ];
 
 export default async function seedClusters(prisma: PrismaClient) {

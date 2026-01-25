@@ -12,6 +12,14 @@ import seedQuestionTemplates from './library/question-templates';
 import seedCompetenceQuestionTemplateRelations from './library/competence-question-template-relations';
 import seedPositionCompetenceRelations from './library/position-competence-relations';
 import seedPositionQuestionTemplateRelations from './library/position-question-template-relations';
+import seedCycles from './feedback360/cycles';
+import seedReviews from './feedback360/reviews';
+import seedQuestions from './feedback360/questions';
+import seedReviewQuestionRelations from './feedback360/review-question-relations';
+import seedRespondents from './feedback360/respondents';
+import seedReviewers from './feedback360/reviewers';
+import seedAnswers from './feedback360/answers';
+import seedClusterScores from './feedback360/cluster-scores';
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({
@@ -47,22 +55,46 @@ async function main() {
     await seedCompetences(prisma);
     console.info('📚 Competences');
 
-    const questions = await seedQuestionTemplates(prisma);
-    console.info('❓ Questions');
+    const questionTemplates = await seedQuestionTemplates(prisma);
+    console.info('❓ Question templates');
 
     await seedCompetenceQuestionTemplateRelations(prisma);
-    console.info('🔗 Competence-question relations');
+    console.info('🔗 Competence-question template relations');
 
     await seedPositionCompetenceRelations(prisma, positions);
     console.info('🔗 Position-competence relations');
 
-    await seedPositionQuestionTemplateRelations(prisma, questions, positions);
-    console.info('🔗 Question-position relations');
+    await seedPositionQuestionTemplateRelations(prisma, questionTemplates, positions);
+    console.info('🔗 Question template-position relations');
 
     await seedClusters(prisma);
     console.info('📊 Clusters');
 
     /* Feedback360 */
+    console.info('\n🎯 Feedback360 seeding:');
+    const cycles = await seedCycles(prisma, users);
+    console.info('🔄 Cycles');
+
+    const reviews = await seedReviews(prisma, users, cycles);
+    console.info('📝 Reviews');
+
+    const questions = await seedQuestions(prisma, cycles);
+    console.info('❓ Cycle questions');
+
+    await seedReviewQuestionRelations(prisma, reviews, questions);
+    console.info('🔗 Review-question relations');
+
+    await seedRespondents(prisma, reviews, users);
+    console.info('👥 Respondents');
+
+    await seedReviewers(prisma, reviews, users);
+    console.info('👁️  Reviewers');
+
+    await seedAnswers(prisma, reviews);
+    console.info('💬 Answers');
+
+    await seedClusterScores(prisma, reviews, cycles);
+    console.info('📊 Cluster scores');
 }
 
 main()
