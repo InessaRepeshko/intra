@@ -32,4 +32,11 @@ export class UpsertClusterScoreDto {
   @Min(0)
   @Max(10)
   score!: number;
+
+  @ApiPropertyOptional({ example: 5, description: 'Number of answers (optional, default 1)' })
+  @ToOptionalInt({ min: 1 })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  answersCount?: number;
 }

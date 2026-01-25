@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
 export class ClusterResponse {
@@ -10,33 +10,21 @@ export class ClusterResponse {
   @Expose()
   competenceId!: number;
 
-  @ApiPropertyOptional({ example: 5, nullable: true })
-  @Expose()
-  cycleId!: number | null;
-
   @ApiProperty({ example: 0 })
   @Expose()
   lowerBound!: number;
 
-  @ApiProperty({ example: 10 })
+  @ApiProperty({ example: 1 })
   @Expose()
   upperBound!: number;
 
-  @ApiProperty({ example: 2 })
+  @ApiProperty({ example: 'Beginner' })
   @Expose()
-  minScore!: number;
+  title!: string;
 
-  @ApiProperty({ example: 9.5 })
+  @ApiProperty({ example: 'Initial level of competence development' })
   @Expose()
-  maxScore!: number;
-
-  @ApiProperty({ example: 6.2 })
-  @Expose()
-  averageScore!: number;
-
-  @ApiProperty({ example: 30 })
-  @Expose()
-  employeesCount!: number;
+  description!: string;
 
   @ApiProperty({ type: String, example: '2024-01-01T10:00:00.000Z' })
   @Expose()
@@ -46,4 +34,3 @@ export class ClusterResponse {
   @Expose()
   updatedAt?: Date;
 }
-

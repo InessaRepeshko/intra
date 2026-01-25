@@ -7,6 +7,7 @@ import {
   Respondent as PrismaRespondent,
   Reviewer as PrismaReviewer,
   ClusterScore as PrismaClusterScore,
+  CycleClusterAnalytics as PrismaCycleClusterAnalytics,
   CycleStage as PrismaCycleStage,
   ReviewStage as PrismaReviewStage,
   ResponseStatus as PrismaResponseStatus,
@@ -26,6 +27,7 @@ import { RespondentDomain } from '../../domain/respondent.domain';
 import { ResponseStatus } from '@intra/shared-kernel';
 import { ReviewerDomain } from '../../domain/reviewer.domain';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
+import { CycleClusterAnalyticsDomain } from '../../domain/cycle-cluster-analytics.domain';
 
 export class Feedback360Mapper {
   static toCycleDomain(cycle: PrismaCycle): CycleDomain {
@@ -142,8 +144,23 @@ export class Feedback360Mapper {
       rateeId: score.rateeId,
       reviewId: score.reviewId,
       score: score.score,
+      answersCount: score.answersCount,
       createdAt: score.createdAt,
       updatedAt: score.updatedAt,
+    });
+  }
+
+  static toCycleClusterAnalyticsDomain(analytics: PrismaCycleClusterAnalytics): CycleClusterAnalyticsDomain {
+    return CycleClusterAnalyticsDomain.create({
+      id: analytics.id,
+      cycleId: analytics.cycleId,
+      clusterId: analytics.clusterId,
+      employeesCount: analytics.employeesCount,
+      minScore: analytics.minScore,
+      maxScore: analytics.maxScore,
+      averageScore: analytics.averageScore,
+      createdAt: analytics.createdAt,
+      updatedAt: analytics.updatedAt,
     });
   }
 

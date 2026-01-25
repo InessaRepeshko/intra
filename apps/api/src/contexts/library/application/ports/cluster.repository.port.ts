@@ -7,26 +7,24 @@ export enum ClusterSortField {
   ID = 'id',
   LOWER_BOUND = 'lowerBound',
   UPPER_BOUND = 'upperBound',
+  TITLE = 'title',
+  DESCRIPTION = 'description',
   CREATED_AT = 'createdAt',
   UPDATED_AT = 'updatedAt',
 }
 
 export type ClusterSearchQuery = {
   competenceId?: number;
-  cycleId?: number | null;
   sortBy?: ClusterSortField;
   sortDirection?: SortDirection;
 };
 
 export type ClusterUpdatePayload = Partial<{
   competenceId: number;
-  cycleId: number | null;
   lowerBound: number;
   upperBound: number;
-  minScore: number;
-  maxScore: number;
-  averageScore: number;
-  employeesCount: number;
+  title: string;
+  description: string;
 }>;
 
 export interface ClusterRepositoryPort {
@@ -36,4 +34,3 @@ export interface ClusterRepositoryPort {
   updateById(id: number, patch: ClusterUpdatePayload): Promise<ClusterDomain>;
   deleteById(id: number): Promise<void>;
 }
-

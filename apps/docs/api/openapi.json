@@ -1733,15 +1733,6 @@
             }
           },
           {
-            "name": "cycleId",
-            "required": false,
-            "in": "query",
-            "description": "Filter by cycle id",
-            "schema": {
-              "$ref": "#/components/schemas/Object"
-            }
-          },
-          {
             "name": "sortBy",
             "required": false,
             "in": "query",
@@ -1752,6 +1743,8 @@
                 "id",
                 "lowerBound",
                 "upperBound",
+                "title",
+                "description",
                 "createdAt",
                 "updatedAt"
               ]
@@ -4559,12 +4552,6 @@
             "description": "Competence id",
             "example": 2
           },
-          "cycleId": {
-            "type": "object",
-            "description": "Feedback360 cycle id",
-            "example": 3,
-            "nullable": true
-          },
           "lowerBound": {
             "type": "number",
             "description": "Lower bound of the cluster",
@@ -4573,37 +4560,25 @@
           "upperBound": {
             "type": "number",
             "description": "Upper bound of the cluster",
-            "example": 10
+            "example": 1
           },
-          "minScore": {
-            "type": "number",
-            "description": "Minimal score in the cluster",
-            "example": 2
+          "title": {
+            "type": "string",
+            "description": "Title of the cluster level",
+            "example": "Beginner"
           },
-          "maxScore": {
-            "type": "number",
-            "description": "Max score in the cluster",
-            "example": 9.5
-          },
-          "averageScore": {
-            "type": "number",
-            "description": "Average score in the cluster",
-            "example": 6.2
-          },
-          "employeesCount": {
-            "type": "number",
-            "description": "Employees in cluster",
-            "example": 30
+          "description": {
+            "type": "string",
+            "description": "Description of the cluster level",
+            "example": "Initial level of competence development"
           }
         },
         "required": [
           "competenceId",
           "lowerBound",
           "upperBound",
-          "minScore",
-          "maxScore",
-          "averageScore",
-          "employeesCount"
+          "title",
+          "description"
         ]
       },
       "ClusterResponse": {
@@ -4617,34 +4592,21 @@
             "type": "number",
             "example": 2
           },
-          "cycleId": {
-            "type": "object",
-            "example": 5,
-            "nullable": true
-          },
           "lowerBound": {
             "type": "number",
             "example": 0
           },
           "upperBound": {
             "type": "number",
-            "example": 10
+            "example": 1
           },
-          "minScore": {
-            "type": "number",
-            "example": 2
+          "title": {
+            "type": "string",
+            "example": "Beginner"
           },
-          "maxScore": {
-            "type": "number",
-            "example": 9.5
-          },
-          "averageScore": {
-            "type": "number",
-            "example": 6.2
-          },
-          "employeesCount": {
-            "type": "number",
-            "example": 30
+          "description": {
+            "type": "string",
+            "example": "Initial level of competence development"
           },
           "createdAt": {
             "type": "string",
@@ -4660,17 +4622,11 @@
           "competenceId",
           "lowerBound",
           "upperBound",
-          "minScore",
-          "maxScore",
-          "averageScore",
-          "employeesCount",
+          "title",
+          "description",
           "createdAt",
           "updatedAt"
         ]
-      },
-      "Object": {
-        "type": "object",
-        "properties": {}
       },
       "UpdateClusterDto": {
         "type": "object",
@@ -4680,12 +4636,6 @@
             "description": "Competence id",
             "example": 2
           },
-          "cycleId": {
-            "type": "object",
-            "description": "Feedback360 cycle id",
-            "example": 3,
-            "nullable": true
-          },
           "lowerBound": {
             "type": "number",
             "description": "Lower bound of the cluster",
@@ -4694,27 +4644,17 @@
           "upperBound": {
             "type": "number",
             "description": "Upper bound of the cluster",
-            "example": 10
+            "example": 1
           },
-          "minScore": {
-            "type": "number",
-            "description": "Minimal score in the cluster",
-            "example": 2
+          "title": {
+            "type": "string",
+            "description": "Title of the cluster level",
+            "example": "Beginner"
           },
-          "maxScore": {
-            "type": "number",
-            "description": "Max score in the cluster",
-            "example": 9.5
-          },
-          "averageScore": {
-            "type": "number",
-            "description": "Average score in the cluster",
-            "example": 6.2
-          },
-          "employeesCount": {
-            "type": "number",
-            "description": "Employees in cluster",
-            "example": 30
+          "description": {
+            "type": "string",
+            "description": "Description of the cluster level",
+            "example": "Initial level of competence development"
           }
         }
       },
@@ -5856,6 +5796,11 @@
           "score": {
             "type": "number",
             "example": 4.5
+          },
+          "answersCount": {
+            "type": "number",
+            "example": 5,
+            "description": "Number of answers (optional, default 1)"
           }
         },
         "required": [
@@ -5892,6 +5837,11 @@
             "type": "number",
             "example": 4.3
           },
+          "answersCount": {
+            "type": "number",
+            "example": 12,
+            "description": "Number of answers this score is based on"
+          },
           "createdAt": {
             "type": "string"
           },
@@ -5904,7 +5854,8 @@
           "clusterId",
           "rateeId",
           "reviewId",
-          "score"
+          "score",
+          "answersCount"
         ]
       }
     }

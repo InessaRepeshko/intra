@@ -26,6 +26,10 @@ export class ClusterScoreResponse {
   @Expose()
   score!: number;
 
+  @ApiProperty({ example: 12, description: 'Number of answers this score is based on' })
+  @Expose()
+  answersCount!: number;
+
   @ApiPropertyOptional({ type: String })
   @Expose()
   createdAt?: Date;

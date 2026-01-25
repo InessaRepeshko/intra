@@ -10,13 +10,10 @@ import { CompetenceService } from './competence.service';
 
 export type CreateClusterCommand = {
   competenceId: number;
-  cycleId?: number | null;
   lowerBound: number;
   upperBound: number;
-  minScore: number;
-  maxScore: number;
-  averageScore: number;
-  employeesCount: number;
+  title: string;
+  description: string;
 };
 
 export type UpdateClusterCommand = Partial<CreateClusterCommand>;
@@ -34,13 +31,10 @@ export class ClusterService {
 
     const cluster = ClusterDomain.create({
       competenceId: command.competenceId,
-      cycleId: command.cycleId ?? null,
       lowerBound: command.lowerBound,
       upperBound: command.upperBound,
-      minScore: command.minScore,
-      maxScore: command.maxScore,
-      averageScore: command.averageScore,
-      employeesCount: command.employeesCount,
+      title: command.title,
+      description: command.description,
     });
 
     return this.clusters.create(cluster);
@@ -71,13 +65,10 @@ export class ClusterService {
 
     const payload: ClusterUpdatePayload = {
       ...(patch.competenceId !== undefined ? { competenceId: patch.competenceId } : {}),
-      ...(patch.cycleId !== undefined ? { cycleId: patch.cycleId } : {}),
       ...(patch.lowerBound !== undefined ? { lowerBound: patch.lowerBound } : {}),
       ...(patch.upperBound !== undefined ? { upperBound: patch.upperBound } : {}),
-      ...(patch.minScore !== undefined ? { minScore: patch.minScore } : {}),
-      ...(patch.maxScore !== undefined ? { maxScore: patch.maxScore } : {}),
-      ...(patch.averageScore !== undefined ? { averageScore: patch.averageScore } : {}),
-      ...(patch.employeesCount !== undefined ? { employeesCount: patch.employeesCount } : {}),
+      ...(patch.title !== undefined ? { title: patch.title } : {}),
+      ...(patch.description !== undefined ? { description: patch.description } : {}),
     };
 
     return this.clusters.updateById(id, payload);

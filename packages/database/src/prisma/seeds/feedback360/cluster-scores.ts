@@ -10,16 +10,6 @@ export default async function seedClusterScores(
     // Get all reviews with their answers
     const reviews = await prisma.review.findMany({
         include: {
-            reviewQuestionRelations: {
-                include: {
-                    question: {
-                        include: {
-                            competence: true,
-                        },
-                    },
-                    competence: true,
-                },
-            },
             answers: {
                 where: {
                     answerType: 'NUMERICAL_SCALE',
@@ -40,8 +30,8 @@ export default async function seedClusterScores(
     for (const review of reviews) {
         if (!review.cycle) continue;
 
-        // Calculate average score for each competence
-        const competenceScores = new Map<number, number[]>();
+        // Calculate average score for each competence and count answers
+        const competenceData = new Map<number, { scores: number[] }>();
 
         for (const answer of review.answers) {
             const question = await prisma.question.findUnique({
@@ -51,16 +41,18 @@ export default async function seedClusterScores(
 
             if (!question?.competence || !answer.numericalValue) continue;
 
-            const scores = competenceScores.get(question.competence.id) || [];
-            scores.push(answer.numericalValue);
-            competenceScores.set(question.competence.id, scores);
+            const data = competenceData.get(question.competence.id) || { scores: [] };
+            data.scores.push(answer.numericalValue);
+            competenceData.set(question.competence.id, data);
         }
 
         // For each competence, calculate average and find matching cluster
-        for (const [competenceId, scores] of competenceScores) {
+        for (const [competenceId, data] of competenceData) {
+            const { scores } = data;
             if (scores.length === 0) continue;
 
             const averageScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+            const answersCount = scores.length; // Count total answers instead of unique evaluators
 
             const competence = competences.find(c => c.id === competenceId);
             if (!competence) continue;
@@ -91,6 +83,7 @@ export default async function seedClusterScores(
                     where: { id: existing.id },
                     data: {
                         score: averageScore,
+                        answersCount,
                         cycleId: review.cycleId,
                         reviewId: review.id,
                     },
@@ -104,6 +97,7 @@ export default async function seedClusterScores(
                         rateeId: review.rateeId,
                         reviewId: review.id,
                         score: averageScore,
+                        answersCount,
                     },
                 });
             }

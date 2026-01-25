@@ -6,13 +6,10 @@ export class ClusterHttpMapper {
     const view = new ClusterResponse();
     view.id = domain.id!;
     view.competenceId = domain.competenceId;
-    view.cycleId = domain.cycleId;
     view.lowerBound = domain.lowerBound;
     view.upperBound = domain.upperBound;
-    view.minScore = domain.minScore;
-    view.maxScore = domain.maxScore;
-    view.averageScore = domain.averageScore;
-    view.employeesCount = domain.employeesCount;
+    view.title = domain.title;
+    view.description = domain.description;
     view.createdAt = domain.createdAt;
     view.updatedAt = domain.updatedAt;
     return view;

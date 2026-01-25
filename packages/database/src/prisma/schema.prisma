@@ -68,6 +68,7 @@ model User {
   reviewsAsReviewer Reviewer[]     @relation("reviews_as_reviewer")
   reviewsAsManager  Review[]       @relation("review_as_manager")
   clusterScores     ClusterScore[] @relation("cluster_ratee_scores")
+  answers           Answer[]
 
   @@index([managerId])
   @@index([positionId])
@@ -209,25 +210,21 @@ model Competence {
 }
 
 model Cluster {
-  id             Int      @id @default(autoincrement())
-  cycleId        Int?     @map("cycle_id")
-  competenceId   Int      @map("competence_id")
-  lowerBound     Float    @map("lower_bound")
-  upperBound     Float    @map("upper_bound")
-  minScore       Float    @map("min_score")
-  maxScore       Float    @map("max_score")
-  averageScore   Float    @map("average_score")
-  employeesCount Int      @map("employees_count")
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+  id           Int      @id @default(autoincrement())
+  competenceId Int      @map("competence_id")
+  lowerBound   Float    @map("lower_bound")
+  upperBound   Float    @map("upper_bound")
+  title        String   @db.VarChar(255)
+  description  String   @db.Text
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  clusterScores ClusterScore[]
-  cycle         Cycle?         @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  competence    Competence     @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  clusterScores         ClusterScore[]
+  cycleClusterAnalytics CycleClusterAnalytics[]
+  competence            Competence              @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([cycleId, competenceId, lowerBound, upperBound])
+  @@unique([competenceId, lowerBound, upperBound])
   @@index([competenceId])
-  @@index([cycleId])
   @@map("library_clusters")
 }
 
@@ -351,12 +348,12 @@ model Cycle {
   createdAt               DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt               DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  hr              User           @relation("managed_cycles", fields: [hrId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  clusterScores   ClusterScore[]
-  clusters        Cluster[]
-  reviews         Review[]
-  reports         Report[]
-  reviewQuestions Question[]
+  hr                    User                    @relation("managed_cycles", fields: [hrId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  clusterScores         ClusterScore[]
+  cycleClusterAnalytics CycleClusterAnalytics[]
+  reviews               Review[]
+  reports               Report[]
+  reviewQuestions       Question[]
 
   @@index([hrId])
   @@index([stage])
@@ -460,6 +457,8 @@ model Answer {
 
   question Question @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   review   Review   @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user     User?    @relation(fields: [userId], references: [id])
+  userId   Int?
 
   @@index([reviewId])
   @@index([questionId])
@@ -469,14 +468,15 @@ model Answer {
 }
 
 model ClusterScore {
-  id        Int      @id @default(autoincrement())
-  cycleId   Int?     @map("cycle_id")
-  clusterId Int      @map("cluster_id")
-  rateeId   Int      @map("user_id")
-  reviewId  Int      @map("review_id")
-  score     Float
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+  id           Int      @id @default(autoincrement())
+  cycleId      Int?     @map("cycle_id")
+  clusterId    Int      @map("cluster_id")
+  rateeId      Int      @map("user_id")
+  reviewId     Int      @map("review_id")
+  score        Float
+  answersCount Int      @default(0) @map("answers_count")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
   ratee   User    @relation("cluster_ratee_scores", fields: [rateeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cycle   Cycle?  @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -489,6 +489,26 @@ model ClusterScore {
   @@index([rateeId])
   @@index([reviewId])
   @@map("feedback360_clusters_scores")
+}
+
+model CycleClusterAnalytics {
+  id             Int      @id @default(autoincrement())
+  cycleId        Int      @map("cycle_id")
+  clusterId      Int      @map("cluster_id")
+  employeesCount Int      @default(0) @map("employees_count")
+  minScore       Float   @map("min_score")
+  maxScore       Float   @map("max_score")
+  averageScore   Float   @map("average_score")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  cycle   Cycle   @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cluster Cluster @relation(fields: [clusterId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([cycleId, clusterId])
+  @@index([cycleId])
+  @@index([clusterId])
+  @@map("feedback360_cycle_cluster_analytics")
 }
 
 model Respondent {

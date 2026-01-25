@@ -41,13 +41,10 @@ export class ClustersController {
   async create(@Body() dto: CreateClusterDto): Promise<ClusterResponse> {
     const created = await this.service.create({
       competenceId: dto.competenceId,
-      cycleId: dto.cycleId,
       lowerBound: dto.lowerBound,
       upperBound: dto.upperBound,
-      minScore: dto.minScore,
-      maxScore: dto.maxScore,
-      averageScore: dto.averageScore,
-      employeesCount: dto.employeesCount,
+      title: dto.title,
+      description: dto.description,
     });
     return ClusterHttpMapper.toResponse(created);
   }

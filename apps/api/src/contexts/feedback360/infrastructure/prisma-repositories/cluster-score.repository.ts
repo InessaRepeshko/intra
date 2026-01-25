@@ -28,11 +28,13 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
         rateeId: score.rateeId,
         reviewId: score.reviewId,
         score: score.score,
+        answersCount: score.answersCount,
       },
       update: {
         cycleId: score.cycleId,
         reviewId: score.reviewId,
         score: score.score,
+        answersCount: score.answersCount,
       },
     });
 

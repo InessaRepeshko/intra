@@ -19,13 +19,10 @@ export class ClusterRepository implements ClusterRepositoryPort {
     const created = await this.prisma.cluster.create({
       data: {
         competenceId: cluster.competenceId,
-        cycleId: cluster.cycleId,
         lowerBound: cluster.lowerBound,
         upperBound: cluster.upperBound,
-        minScore: cluster.minScore,
-        maxScore: cluster.maxScore,
-        averageScore: cluster.averageScore,
-        employeesCount: cluster.employeesCount,
+        title: cluster.title,
+        description: cluster.description,
       },
     });
 
@@ -59,10 +56,9 @@ export class ClusterRepository implements ClusterRepositoryPort {
   }
 
   private buildWhere(query: ClusterSearchQuery): Prisma.ClusterWhereInput {
-    const { competenceId, cycleId } = query;
+    const { competenceId } = query;
     return {
       ...(competenceId ? { competenceId } : {}),
-      ...(cycleId !== undefined ? { cycleId } : {}),
     };
   }
 
@@ -72,4 +68,3 @@ export class ClusterRepository implements ClusterRepositoryPort {
     return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
   }
 }
-

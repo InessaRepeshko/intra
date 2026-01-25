@@ -20,6 +20,7 @@ import seedRespondents from './feedback360/respondents';
 import seedReviewers from './feedback360/reviewers';
 import seedAnswers from './feedback360/answers';
 import seedClusterScores from './feedback360/cluster-scores';
+import seedCycleClusterAnalytics from './feedback360/cycle-cluster-analytics';
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({
@@ -95,6 +96,9 @@ async function main() {
 
     await seedClusterScores(prisma, reviews, cycles);
     console.info('📊 Cluster scores');
+
+    await seedCycleClusterAnalytics(prisma, reviews, cycles);
+    console.info('📈 Cycle cluster analytics');
 }
 
 main()

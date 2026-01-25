@@ -6,6 +6,7 @@ import { AnswerDomain } from '../../../domain/answer.domain';
 import { RespondentDomain } from '../../../domain/respondent.domain';
 import { ReviewerDomain } from '../../../domain/reviewer.domain';
 import { ClusterScoreDomain } from '../../../domain/cluster-score.domain';
+import { CycleClusterAnalyticsDomain } from '../../../domain/cycle-cluster-analytics.domain';
 import { CycleResponse } from '../models/cycle.response';
 import { ReviewResponse } from '../models/review.response';
 import { QuestionResponse } from '../models/question.response';
@@ -14,6 +15,7 @@ import { AnswerResponse } from '../models/answer.response';
 import { RespondentResponse } from '../models/respondent.response';
 import { ReviewerResponse } from '../models/reviewer.response';
 import { ClusterScoreResponse } from '../models/cluster-score.response';
+import { CycleClusterAnalyticsResponse } from '../models/cycle-cluster-analytics.response';
 
 export class Feedback360HttpMapper {
   static toCycleResponse(domain: CycleDomain): CycleResponse {
@@ -131,6 +133,21 @@ export class Feedback360HttpMapper {
     view.rateeId = domain.rateeId;
     view.reviewId = domain.reviewId ?? null;
     view.score = domain.score;
+    view.answersCount = domain.answersCount;
+    view.createdAt = domain.createdAt;
+    view.updatedAt = domain.updatedAt;
+    return view;
+  }
+
+  static toCycleClusterAnalyticsResponse(domain: CycleClusterAnalyticsDomain): CycleClusterAnalyticsResponse {
+    const view = new CycleClusterAnalyticsResponse();
+    view.id = domain.id!;
+    view.cycleId = domain.cycleId;
+    view.clusterId = domain.clusterId;
+    view.employeesCount = domain.employeesCount;
+    view.minScore = domain.minScore;
+    view.maxScore = domain.maxScore;
+    view.averageScore = domain.averageScore;
     view.createdAt = domain.createdAt;
     view.updatedAt = domain.updatedAt;
     return view;

@@ -12,13 +12,6 @@ export class ClusterQueryDto {
   @Min(1)
   competenceId?: number;
 
-  @ApiPropertyOptional({ description: 'Filter by cycle id', example: 3, nullable: true })
-  @ToOptionalInt({ min: 1 })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  cycleId?: number | null;
-
   @ApiPropertyOptional({ enum: ClusterSortField, example: ClusterSortField.CREATED_AT })
   @IsOptional()
   @IsEnum(ClusterSortField)
@@ -29,4 +22,3 @@ export class ClusterQueryDto {
   @IsEnum(SortDirection)
   sortDirection?: SortDirection;
 }
-

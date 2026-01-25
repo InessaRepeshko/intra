@@ -35,13 +35,10 @@ export class LibraryMapper {
     return ClusterDomain.create({
       id: cluster.id,
       competenceId: cluster.competenceId,
-      cycleId: cluster.cycleId,
       lowerBound: cluster.lowerBound,
       upperBound: cluster.upperBound,
-      minScore: cluster.minScore,
-      maxScore: cluster.maxScore,
-      averageScore: cluster.averageScore,
-      employeesCount: cluster.employeesCount,
+      title: cluster.title,
+      description: cluster.description,
       createdAt: cluster.createdAt,
       updatedAt: cluster.updatedAt,
     });

@@ -113,6 +113,7 @@ export type UpsertClusterScoreCommand = {
   rateeId: number;
   reviewId: number;
   score: number;
+  answersCount?: number;
 };
 
 @Injectable()
@@ -341,6 +342,7 @@ export class ReviewService {
       rateeId: command.rateeId,
       reviewId: command.reviewId,
       score: command.score,
+      answersCount: command.answersCount ?? 1,
     });
 
     return this.clusterScores.upsert(score);
