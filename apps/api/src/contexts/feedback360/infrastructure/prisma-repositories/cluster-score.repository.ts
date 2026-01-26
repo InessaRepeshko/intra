@@ -4,9 +4,12 @@ import {
   CLUSTER_SCORE_REPOSITORY,
   ClusterScoreRepositoryPort,
   ClusterScoreSearchQuery,
+  ClusterScoreSortField,
 } from '../../application/ports/cluster-score.repository.port';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
+import { Prisma } from '@intra/database';
+import { SortDirection } from '@intra/shared-kernel';
 
 @Injectable()
 export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
@@ -42,18 +45,31 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
   }
 
   async list(query: ClusterScoreSearchQuery): Promise<ClusterScoreDomain[]> {
-    const scores = await this.prisma.clusterScore.findMany({
-      where: {
-        ...(query.cycleId ? { cycleId: query.cycleId } : {}),
-        ...(query.clusterId ? { clusterId: query.clusterId } : {}),
-        ...(query.rateeId ? { rateeId: query.rateeId } : {}),
-        ...(query.reviewId ? { reviewId: query.reviewId } : {}),
-      },
-    });
+    const where = this.buildWhere(query);
+    const orderBy = this.buildOrder(query);
+    const scores = await this.prisma.clusterScore.findMany({ where, orderBy });
     return scores.map(Feedback360Mapper.toClusterScoreDomain);
   }
 
   async deleteById(id: number): Promise<void> {
     await this.prisma.clusterScore.delete({ where: { id } });
+  }
+
+  private buildWhere(query: ClusterScoreSearchQuery): Prisma.ClusterScoreWhereInput {
+    const { cycleId, clusterId, rateeId, reviewId, score, answerCount } = query;
+    return {
+      ...(cycleId ? { cycleId } : {}),
+      ...(clusterId ? { clusterId } : {}),
+      ...(rateeId ? { rateeId } : {}),
+      ...(reviewId ? { reviewId } : {}),
+      ...(score ? { score } : {}),
+      ...(answerCount ? { answerCount } : {}),
+    };
+  }
+
+  private buildOrder(query: ClusterScoreSearchQuery): Prisma.ClusterScoreOrderByWithRelationInput[] {
+    const field = query.sortBy ?? ClusterScoreSortField.ID;
+    const direction = query.sortDirection ?? SortDirection.ASC;
+    return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
   }
 }

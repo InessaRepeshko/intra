@@ -12,13 +12,20 @@ export { IdentityStatus, IDENTITY_STATUSES } from './identity/enums/identity-sta
 
 /* Library */
 export { COMPETENCE_CONSTRAINTS } from './library/constraints/competence.constraints';
-export { QUESTION_CONSTRAINTS } from './library/constraints/question.constraints';
+export { QUESTION_TEMPLATE_CONSTRAINTS } from './library/constraints/question.constraints';
 export { AnswerType, ANSWER_TYPES } from './library/enums/answer-type.enum';
 export { QuestionTemplateStatus, QUESTION_TEMPLATE_STATUSES } from './library/enums/question-template-status.enum';
 
 /* Feedback360 */
+export { ANSWER_CONSTRAINTS } from './feedback360/constraints/answer.constraints';
+export { CLUSTER_SCORE_CONSTRAINTS } from './feedback360/constraints/cluster-score.constraints';
+export { CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS } from './feedback360/constraints/cycle-cluster-analytics.constraints';
 export { CYCLE_CONSTRAINTS } from './feedback360/constraints/cycle.constraints';
+export { QUESTION_CONSTRAINTS } from './feedback360/constraints/question.constraints';
+export { RESPONDENT_CONSTRAINTS } from './feedback360/constraints/respondent.constraints';
+export { REVIEW_QUESTION_RELATION_CONSTRAINTS } from './feedback360/constraints/review-question-relation.constraints';
 export { REVIEW_CONSTRAINTS } from './feedback360/constraints/review.constraints';
+export { REVIEWER_CONSTRAINTS } from './feedback360/constraints/reviewer.constraints';
 export { isAnonymityThresholdMet } from './feedback360/rules/anonymity.rules';
 export { CycleStage, CYCLE_STAGES } from './feedback360/enums/cycle-stage.enum';
 export { RespondentCategory, RESPONDENT_CATEGORIES } from './feedback360/enums/respondent-category.enum';

@@ -7,20 +7,33 @@ export const CYCLE_REPOSITORY = Symbol('FEEDBACK360.CYCLE_REPOSITORY');
 export enum CycleSortField {
   ID = 'id',
   TITLE = 'title',
-  STAGE = 'stage',
+  DESCRIPTION = 'description',
+  HR_ID = 'hrId',
   MIN_RESPONDENTS_THRESHOLD = 'minRespondentsThreshold',
+  STAGE = 'stage',
+  IS_ACTIVE = 'isActive',
   START_DATE = 'startDate',
+  REVIEW_DEADLINE = 'reviewDeadline',
+  APPROVAL_DEADLINE = 'approvalDeadline',
+  RESPONSE_DEADLINE = 'responseDeadline',
   END_DATE = 'endDate',
   CREATED_AT = 'createdAt',
   UPDATED_AT = 'updatedAt',
 }
 
 export type CycleSearchQuery = {
+  title?: string;
+  description?: string;
+  search?: string;
   hrId?: number;
   minRespondentsThreshold?: number;
   stage?: CycleStage;
   isActive?: boolean;
-  search?: string;
+  startDate?: Date;
+  reviewDeadline?: Date;
+  approvalDeadline?: Date;
+  responseDeadline?: Date;
+  endDate?: Date;
   sortBy?: CycleSortField;
   sortDirection?: SortDirection;
 };

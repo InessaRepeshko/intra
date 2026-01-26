@@ -5,7 +5,7 @@ import { SortDirection } from '@intra/shared-kernel';
 import { AnswerType } from '@intra/shared-kernel';
 import { QuestionTemplateStatus } from '@intra/shared-kernel';
 import { QuestionTemplateSortField } from 'src/contexts/library/application/ports/question-template.repository.port';
-import { QUESTION_CONSTRAINTS } from '@intra/shared-kernel';
+import { QUESTION_TEMPLATE_CONSTRAINTS } from '@intra/shared-kernel';
 
 export class QuestionTemplateQueryDto {
   @ApiPropertyOptional({ description: 'Filter by competence id', example: 2 })
@@ -41,12 +41,12 @@ export class QuestionTemplateQueryDto {
   @ApiPropertyOptional({
     description: 'Search in title',
     example: 'features',
-    maxLength: QUESTION_CONSTRAINTS.TITLE.LENGTH.MAX,
+    maxLength: QUESTION_TEMPLATE_CONSTRAINTS.TITLE.LENGTH.MAX,
   })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()
-  @MaxLength(QUESTION_CONSTRAINTS.TITLE.LENGTH.MAX)
+  @MaxLength(QUESTION_TEMPLATE_CONSTRAINTS.TITLE.LENGTH.MAX)
   search?: string;
 
   @ApiPropertyOptional({ enum: QuestionTemplateSortField, example: QuestionTemplateSortField.TITLE })

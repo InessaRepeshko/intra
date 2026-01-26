@@ -1741,6 +1741,7 @@
               "type": "string",
               "enum": [
                 "id",
+                "competenceId",
                 "lowerBound",
                 "upperBound",
                 "title",
@@ -2514,9 +2515,40 @@
         "operationId": "CyclesController_search",
         "parameters": [
           {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "description": "Filter by title",
+            "schema": {
+              "example": "Q1",
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Filter by description",
+            "schema": {
+              "example": "Description",
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by title/description",
+            "schema": {
+              "example": "Q1",
+              "type": "string"
+            }
+          },
+          {
             "name": "hrId",
             "required": false,
             "in": "query",
+            "description": "Filter by HR ID",
             "schema": {
               "example": 2,
               "type": "number"
@@ -2526,6 +2558,7 @@
             "name": "minRespondentsThreshold",
             "required": false,
             "in": "query",
+            "description": "Filter by min respondents threshold",
             "schema": {
               "default": 3,
               "example": 5,
@@ -2536,6 +2569,7 @@
             "name": "stage",
             "required": false,
             "in": "query",
+            "description": "Filter by stage",
             "schema": {
               "example": "ACTIVE",
               "type": "string",
@@ -2552,18 +2586,64 @@
             "name": "isActive",
             "required": false,
             "in": "query",
+            "description": "Filter by active",
             "schema": {
               "example": true,
               "type": "boolean"
             }
           },
           {
-            "name": "search",
+            "name": "startDate",
             "required": false,
             "in": "query",
-            "description": "Search by name/description",
+            "description": "Filter by start date",
             "schema": {
-              "example": "Q1",
+              "format": "date",
+              "example": "2022-01-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter by end date",
+            "schema": {
+              "format": "date",
+              "example": "2022-01-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "reviewDeadline",
+            "required": false,
+            "in": "query",
+            "description": "Filter by review deadline",
+            "schema": {
+              "format": "date",
+              "example": "2022-01-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "approvalDeadline",
+            "required": false,
+            "in": "query",
+            "description": "Filter by approval deadline",
+            "schema": {
+              "format": "date",
+              "example": "2022-01-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "responseDeadline",
+            "required": false,
+            "in": "query",
+            "description": "Filter by response deadline",
+            "schema": {
+              "format": "date",
+              "example": "2022-01-01",
               "type": "string"
             }
           },
@@ -2571,15 +2651,22 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
+            "description": "Sort by field",
             "schema": {
               "example": "startDate",
               "type": "string",
               "enum": [
                 "id",
                 "title",
-                "stage",
+                "description",
+                "hrId",
                 "minRespondentsThreshold",
+                "stage",
+                "isActive",
                 "startDate",
+                "reviewDeadline",
+                "approvalDeadline",
+                "responseDeadline",
                 "endDate",
                 "createdAt",
                 "updatedAt"
@@ -2590,6 +2677,7 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
+            "description": "Sort direction",
             "schema": {
               "example": "desc",
               "type": "string",
@@ -2793,29 +2881,12 @@
         "operationId": "ReviewController_search",
         "parameters": [
           {
-            "name": "cycleId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
             "name": "rateeId",
             "required": false,
             "in": "query",
+            "description": "Ratee id",
             "schema": {
-              "example": 5,
-              "type": "number"
-            }
-          },
-          {
-            "name": "hrId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "example": 2,
+              "example": 1,
               "type": "number"
             }
           },
@@ -2823,26 +2894,79 @@
             "name": "rateePositionId",
             "required": false,
             "in": "query",
+            "description": "Ratee position id",
             "schema": {
-              "example": 3,
+              "example": 1,
               "type": "number"
+            }
+          },
+          {
+            "name": "rateePositionTitle",
+            "required": false,
+            "in": "query",
+            "description": "Ratee position title",
+            "schema": {
+              "example": "Software Engineer",
+              "type": "string"
+            }
+          },
+          {
+            "name": "hrId",
+            "required": false,
+            "in": "query",
+            "description": "HR id",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "name": "hrNote",
+            "required": false,
+            "in": "query",
+            "description": "HR note",
+            "schema": {
+              "example": "Completion of probationary period",
+              "type": "string"
             }
           },
           {
             "name": "teamId",
             "required": false,
             "in": "query",
+            "description": "Team id",
             "schema": {
-              "example": 4,
+              "example": 1,
               "type": "number"
+            }
+          },
+          {
+            "name": "teamTitle",
+            "required": false,
+            "in": "query",
+            "description": "Team title",
+            "schema": {
+              "example": "Engineering team",
+              "type": "string"
             }
           },
           {
             "name": "managerId",
             "required": false,
             "in": "query",
+            "description": "Manager id",
             "schema": {
-              "example": 7,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "description": "Cycle id",
+            "schema": {
+              "example": 1,
               "type": "number"
             }
           },
@@ -2850,7 +2974,9 @@
             "name": "stage",
             "required": false,
             "in": "query",
+            "description": "Review stage",
             "schema": {
+              "example": "VERIFICATION_BY_HR",
               "type": "string",
               "enum": [
                 "CANCELED",
@@ -2869,11 +2995,21 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
+            "description": "Sort by",
             "schema": {
               "example": "createdAt",
               "type": "string",
               "enum": [
                 "id",
+                "rateeId",
+                "rateePositionId",
+                "rateePositionTitle",
+                "hrId",
+                "hrNote",
+                "teamId",
+                "teamTitle",
+                "managerId",
+                "cycleId",
                 "stage",
                 "createdAt",
                 "updatedAt"
@@ -2884,6 +3020,7 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
+            "description": "Sort direction",
             "schema": {
               "example": "desc",
               "type": "string",
@@ -3236,15 +3373,101 @@
             }
           },
           {
+            "name": "reviewId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by review ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "questionId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by question ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
             "name": "respondentCategory",
             "required": false,
             "in": "query",
+            "description": "Filter by respondent category",
             "schema": {
               "type": "string",
               "enum": [
                 "SELF_ASSESSMENT",
                 "TEAM",
                 "OTHER"
+              ]
+            }
+          },
+          {
+            "name": "answerType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by answer type",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NUMERICAL_SCALE",
+                "TEXT_FIELD"
+              ]
+            }
+          },
+          {
+            "name": "numericalValue",
+            "required": false,
+            "in": "query",
+            "description": "Filter by numerical value",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "textValue",
+            "required": false,
+            "in": "query",
+            "description": "Filter by text value",
+            "schema": {
+              "example": "text",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Sort by field",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "reviewId",
+                "questionId",
+                "respondentCategory",
+                "answerType",
+                "numericalValue",
+                "textValue",
+                "createdAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
               ]
             }
           }
@@ -3622,6 +3845,7 @@
             "name": "cycleId",
             "required": false,
             "in": "query",
+            "description": "Cycle id",
             "schema": {
               "example": 1,
               "type": "number"
@@ -3631,15 +3855,27 @@
             "name": "questionTemplateId",
             "required": false,
             "in": "query",
+            "description": "Question template id",
             "schema": {
               "example": 3,
               "type": "number"
             }
           },
           {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "description": "Question title",
+            "schema": {
+              "example": "Listens actively before responding.",
+              "type": "string"
+            }
+          },
+          {
             "name": "competenceId",
             "required": false,
             "in": "query",
+            "description": "Competence id",
             "schema": {
               "example": 2,
               "type": "number"
@@ -3649,7 +3885,9 @@
             "name": "answerType",
             "required": false,
             "in": "query",
+            "description": "Answer type",
             "schema": {
+              "example": "NUMERICAL_SCALE",
               "type": "string",
               "enum": [
                 "NUMERICAL_SCALE",
@@ -3661,6 +3899,7 @@
             "name": "isForSelfassessment",
             "required": false,
             "in": "query",
+            "description": "Is for selfassessment",
             "schema": {
               "example": false,
               "type": "boolean"
@@ -3670,11 +3909,18 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
+            "description": "Sort by",
             "schema": {
-              "example": "createdAt",
+              "example": "title",
               "type": "string",
               "enum": [
                 "id",
+                "cycleId",
+                "questionTemplateId",
+                "title",
+                "answerType",
+                "competenceId",
+                "isForSelfassessment",
                 "createdAt"
               ]
             }
@@ -3683,6 +3929,7 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
+            "description": "Sort direction",
             "schema": {
               "example": "desc",
               "type": "string",
@@ -3803,6 +4050,7 @@
             "name": "cycleId",
             "required": false,
             "in": "query",
+            "description": "Filter by cycle ID",
             "schema": {
               "example": 1,
               "type": "number"
@@ -3812,6 +4060,7 @@
             "name": "clusterId",
             "required": false,
             "in": "query",
+            "description": "Filter by cluster ID",
             "schema": {
               "example": 3,
               "type": "number"
@@ -3821,6 +4070,7 @@
             "name": "rateeId",
             "required": false,
             "in": "query",
+            "description": "Filter by ratee ID",
             "schema": {
               "example": 7,
               "type": "number"
@@ -3830,9 +4080,63 @@
             "name": "reviewId",
             "required": false,
             "in": "query",
+            "description": "Filter by review ID",
             "schema": {
               "example": 2,
               "type": "number"
+            }
+          },
+          {
+            "name": "score",
+            "required": false,
+            "in": "query",
+            "description": "Filter by score",
+            "schema": {
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "name": "answerCount",
+            "required": false,
+            "in": "query",
+            "description": "Filter by answer count",
+            "schema": {
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Sort by field",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "cycleId",
+                "clusterId",
+                "rateeId",
+                "reviewId",
+                "score",
+                "answerCount",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           }
         ],
@@ -3893,6 +4197,292 @@
         "summary": "Delete cluster score",
         "tags": [
           "Feedback360 / Cluster Scores"
+        ]
+      }
+    },
+    "/feedback360/cycle-cluster-analytics": {
+      "post": {
+        "operationId": "CycleClusterAnalyticsController_upsert",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertCycleClusterAnalyticsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CycleClusterAnalyticsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Create or update cycle cluster analytics",
+        "tags": [
+          "Feedback360 / Cycle Cluster Analytics"
+        ]
+      },
+      "get": {
+        "operationId": "CycleClusterAnalyticsController_search",
+        "parameters": [
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by cycle ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "clusterId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by cluster ID",
+            "schema": {
+              "example": 3,
+              "type": "number"
+            }
+          },
+          {
+            "name": "employeesCount",
+            "required": false,
+            "in": "query",
+            "description": "Filter by employees count",
+            "schema": {
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "minScore",
+            "required": false,
+            "in": "query",
+            "description": "Filter by min score",
+            "schema": {
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxScore",
+            "required": false,
+            "in": "query",
+            "description": "Filter by max score",
+            "schema": {
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "name": "averageScore",
+            "required": false,
+            "in": "query",
+            "description": "Filter by average score",
+            "schema": {
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Sort by field",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "cycleId",
+                "clusterId",
+                "employeesCount",
+                "minScore",
+                "maxScore",
+                "averageScore",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CycleClusterAnalyticsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Search cycle cluster analytics",
+        "tags": [
+          "Feedback360 / Cycle Cluster Analytics"
+        ]
+      }
+    },
+    "/feedback360/cycle-cluster-analytics/{id}": {
+      "get": {
+        "operationId": "CycleClusterAnalyticsController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CycleClusterAnalyticsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get cycle cluster analytics by id",
+        "tags": [
+          "Feedback360 / Cycle Cluster Analytics"
+        ]
+      },
+      "patch": {
+        "operationId": "CycleClusterAnalyticsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCycleClusterAnalyticsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CycleClusterAnalyticsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Update cycle cluster analytics",
+        "tags": [
+          "Feedback360 / Cycle Cluster Analytics"
+        ]
+      },
+      "delete": {
+        "operationId": "CycleClusterAnalyticsController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Delete cycle cluster analytics",
+        "tags": [
+          "Feedback360 / Cycle Cluster Analytics"
         ]
       }
     }
@@ -5857,6 +6447,128 @@
           "score",
           "answersCount"
         ]
+      },
+      "UpsertCycleClusterAnalyticsDto": {
+        "type": "object",
+        "properties": {
+          "cycleId": {
+            "type": "number",
+            "example": 1,
+            "description": "Cycle ID"
+          },
+          "clusterId": {
+            "type": "number",
+            "example": 3,
+            "description": "Cluster ID"
+          },
+          "employeesCount": {
+            "type": "number",
+            "example": 42,
+            "description": "Number of employees in this cluster"
+          },
+          "minScore": {
+            "type": "number",
+            "example": 3.2,
+            "description": "Minimum score"
+          },
+          "maxScore": {
+            "type": "number",
+            "example": 9.8,
+            "description": "Maximum score"
+          },
+          "averageScore": {
+            "type": "number",
+            "example": 6.5,
+            "description": "Average score"
+          }
+        },
+        "required": [
+          "cycleId",
+          "clusterId",
+          "employeesCount",
+          "minScore",
+          "maxScore",
+          "averageScore"
+        ]
+      },
+      "CycleClusterAnalyticsResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "cycleId": {
+            "type": "number",
+            "example": 1,
+            "description": "Cycle ID"
+          },
+          "clusterId": {
+            "type": "number",
+            "example": 3,
+            "description": "Cluster ID"
+          },
+          "employeesCount": {
+            "type": "number",
+            "example": 42,
+            "description": "Number of employees in this cluster"
+          },
+          "minScore": {
+            "type": "number",
+            "example": 3.2,
+            "description": "Minimum score in this cluster"
+          },
+          "maxScore": {
+            "type": "number",
+            "example": 9.8,
+            "description": "Maximum score in this cluster"
+          },
+          "averageScore": {
+            "type": "number",
+            "example": 6.5,
+            "description": "Average score in this cluster"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "cycleId",
+          "clusterId",
+          "employeesCount",
+          "minScore",
+          "maxScore",
+          "averageScore"
+        ]
+      },
+      "UpdateCycleClusterAnalyticsDto": {
+        "type": "object",
+        "properties": {
+          "employeesCount": {
+            "type": "number",
+            "example": 45,
+            "description": "Number of employees in this cluster"
+          },
+          "minScore": {
+            "type": "number",
+            "example": 3.5,
+            "description": "Minimum score"
+          },
+          "maxScore": {
+            "type": "number",
+            "example": 9.5,
+            "description": "Maximum score"
+          },
+          "averageScore": {
+            "type": "number",
+            "example": 6.8,
+            "description": "Average score"
+          }
+        }
       }
     }
   }

@@ -4,9 +4,12 @@ import {
   ANSWER_REPOSITORY,
   AnswerRepositoryPort,
   AnswerSearchQuery,
+  AnswerSortField,
 } from '../../application/ports/answer.repository.port';
 import { AnswerDomain } from '../../domain/answer.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
+import { SortDirection } from '@intra/shared-kernel';
+import { Prisma } from '@intra/database';
 
 @Injectable()
 export class AnswerRepository implements AnswerRepositoryPort {
@@ -31,18 +34,31 @@ export class AnswerRepository implements AnswerRepositoryPort {
   }
 
   async list(query: AnswerSearchQuery): Promise<AnswerDomain[]> {
-    const answers = await this.prisma.answer.findMany({
-      where: {
-        ...(query.reviewId ? { reviewId: query.reviewId } : {}),
-        ...(query.respondentCategory
-          ? { respondentCategory: Feedback360Mapper.toPrismaRespondentCategory(query.respondentCategory) }
-          : {}),
-      },
-    });
+    const where = this.buildWhere(query);
+    const orderBy = this.buildOrder(query);
+    const answers = await this.prisma.answer.findMany({ where, orderBy });
     return answers.map(Feedback360Mapper.toAnswerDomain);
   }
 
   async deleteById(id: number): Promise<void> {
     await this.prisma.answer.delete({ where: { id } });
+  }
+
+  private buildWhere(query: AnswerSearchQuery): Prisma.AnswerWhereInput {
+    const { reviewId, questionId, respondentCategory, answerType, numericalValue, textValue } = query;
+    return {
+      ...(reviewId ? { reviewId } : {}),
+      ...(questionId ? { questionId } : {}),
+      ...(respondentCategory ? { respondentCategory: Feedback360Mapper.toPrismaRespondentCategory(respondentCategory) } : {}),
+      ...(answerType ? { answerType: Feedback360Mapper.toPrismaAnswerType(answerType) } : {}),
+      ...(numericalValue ? { numericalValue } : {}),
+      ...(textValue ? { textValue: { contains: textValue, mode: 'insensitive' } } : {}),
+    };
+  }
+
+  private buildOrder(query: AnswerSearchQuery): Prisma.AnswerOrderByWithRelationInput[] {
+    const field = query.sortBy ?? AnswerSortField.ID;
+    const direction = query.sortDirection ?? SortDirection.ASC;
+    return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
   }
 }

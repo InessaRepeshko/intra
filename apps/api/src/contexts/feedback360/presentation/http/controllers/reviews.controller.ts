@@ -13,7 +13,7 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   ApiCreateAndUpdateErrorResponses,
   ApiDeletionErrorResponses,
@@ -37,6 +37,10 @@ import { UpdateRespondentDto } from '../dto/respondents/update-respondent.dto';
 import { CreateReviewerDto } from '../dto/reviewers/create-reviewer.dto';
 import { ReviewerResponse } from '../models/reviewer.response';
 import { RespondentCategory } from '@intra/shared-kernel';
+import { ReviewQuestionRelationQueryDto } from '../dto/review-question-relations/review-question-relation-query.dto';
+import { ReviewerSearchQuery } from 'src/contexts/feedback360/application/ports/reviewer.repository.port';
+import { ReviewerQueryDto } from '../dto/reviewers/reviewer-query.dto';
+import { RespondentQueryDto } from '../dto/respondents/respondent-query.dto';
 
 @ApiTags('Feedback360 / Reviews')
 @Controller('feedback360/reviews')
@@ -47,6 +51,7 @@ export class ReviewController {
 
   @Post()
   @ApiOperation({ summary: 'Create Review' })
+  @ApiBody({ type: CreateReviewDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: ReviewResponse })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateReviewDto): Promise<ReviewResponse> {
@@ -56,7 +61,8 @@ export class ReviewController {
 
   @Get()
   @ApiOperation({ summary: 'List Reviews' })
-  @ApiResponse({ status: HttpStatus.OK, type: ReviewResponse, isArray: true })
+  @ApiQuery({ type: ReviewQueryDto })
+  @ApiResponse({ status: HttpStatus.OK, type: ReviewResponse, isArray: true, description: 'Default sort by ascending id' })
   @ApiListReadErrorResponses()
   async search(@Query() query: ReviewQueryDto): Promise<ReviewResponse[]> {
     const items = await this.reviews.search(query);
@@ -65,6 +71,7 @@ export class ReviewController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get Review by id' })
+  @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
   @ApiResponse({ status: HttpStatus.OK, type: ReviewResponse })
   @ApiReadErrorResponses()
   async getById(@Param('id') id: string): Promise<ReviewResponse> {
@@ -74,6 +81,8 @@ export class ReviewController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update Review' })
+  @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+  @ApiBody({ type: UpdateReviewDto })
   @ApiResponse({ status: HttpStatus.OK, type: ReviewResponse })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateReviewDto): Promise<ReviewResponse> {
@@ -84,6 +93,7 @@ export class ReviewController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete Review' })
+  @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async delete(@Param('id') id: string): Promise<void> {
@@ -92,6 +102,8 @@ export class ReviewController {
 
   @Post(':id/questions')
   @ApiOperation({ summary: 'Add question from library to Review' })
+  @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+  @ApiBody({ type: AttachQuestionDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: ReviewQuestionRelationResponse })
   @ApiCreateAndUpdateErrorResponses()
   async attachQuestion(
@@ -107,16 +119,20 @@ export class ReviewController {
 
   @Get(':id/questions')
   @ApiOperation({ summary: 'List questions in Review' })
-  @ApiResponse({ status: HttpStatus.OK, type: ReviewQuestionRelationResponse, isArray: true })
+  @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+  @ApiQuery({ type: ReviewQuestionRelationQueryDto })
+  @ApiResponse({ status: HttpStatus.OK, type: ReviewQuestionRelationResponse, isArray: true, description: 'Default sort by ascending id' })
   @ApiListReadErrorResponses()
-  async listQuestions(@Param('id') id: string): Promise<ReviewQuestionRelationResponse[]> {
-    const relations = await this.reviews.listQuestionRelations(Number(id));
+  async listQuestions(@Param('id') id: string, @Query() query: ReviewQuestionRelationQueryDto): Promise<ReviewQuestionRelationResponse[]> {
+    const relations = await this.reviews.listQuestionRelations(Number(id), query);
     return relations.map(Feedback360HttpMapper.toReviewQuestionRelationResponse);
   }
 
   @Delete(':id/questions/:questionId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete question from Review' })
+  @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+  @ApiParam({ name: 'questionId', description: 'Question id', type: 'number' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async detachQuestion(@Param('id') id: string, @Param('questionId') questionId: string): Promise<void> {
@@ -125,6 +141,8 @@ export class ReviewController {
 
   @Post(':id/answers')
   @ApiOperation({ summary: 'Add answer to Review' })
+  @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+  @ApiBody({ type: CreateAnswerDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: AnswerResponse })
   @ApiCreateAndUpdateErrorResponses()
   async addAnswer(@Param('id') id: string, @Body() dto: CreateAnswerDto): Promise<AnswerResponse> {
@@ -141,7 +159,9 @@ export class ReviewController {
 
   @Get(':id/answers')
   @ApiOperation({ summary: 'List answers to Review' })
-  @ApiResponse({ status: HttpStatus.OK, type: AnswerResponse, isArray: true })
+  @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+  @ApiQuery({ type: AnswerQueryDto })
+  @ApiResponse({ status: HttpStatus.OK, type: AnswerResponse, isArray: true, description: 'Default sort by ascending id' })
   @ApiListReadErrorResponses()
   async listAnswers(@Param('id') id: string, @Query() query: AnswerQueryDto): Promise<AnswerResponse[]> {
     const answers = await this.reviews.listAnswers(Number(id), query.respondentCategory as RespondentCategory | undefined);
@@ -150,6 +170,8 @@ export class ReviewController {
 
   @Post(':id/respondents')
   @ApiOperation({ summary: 'Add respondent to Review' })
+  @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+  @ApiBody({ type: CreateRespondentDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: RespondentResponse })
   @ApiCreateAndUpdateErrorResponses()
   async addRespondent(@Param('id') id: string, @Body() dto: CreateRespondentDto): Promise<RespondentResponse> {
@@ -171,15 +193,19 @@ export class ReviewController {
 
   @Get(':id/respondents')
   @ApiOperation({ summary: 'List respondents to Review' })
-  @ApiResponse({ status: HttpStatus.OK, type: RespondentResponse, isArray: true })
+  @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+  @ApiQuery({ type: RespondentQueryDto })
+  @ApiResponse({ status: HttpStatus.OK, type: RespondentResponse, isArray: true, description: 'Default sort by ascending id' })
   @ApiListReadErrorResponses()
-  async listRespondents(@Param('id') id: string): Promise<RespondentResponse[]> {
-    const relations = await this.reviews.listRespondents({ reviewId: Number(id) });
+  async listRespondents(@Param('id') id: string, @Query() query: RespondentQueryDto): Promise<RespondentResponse[]> {
+    const relations = await this.reviews.listRespondents(Number(id), query);
     return relations.map(Feedback360HttpMapper.toRespondentResponse);
   }
 
   @Patch('respondents/:relationId')
   @ApiOperation({ summary: 'Update respondent status' })
+  @ApiParam({ name: 'relationId', description: 'Respondent relation id', type: 'number' })
+  @ApiBody({ type: UpdateRespondentDto })
   @ApiResponse({ status: HttpStatus.OK, type: RespondentResponse })
   @ApiCreateAndUpdateErrorResponses()
   async updateRespondent(
@@ -193,6 +219,7 @@ export class ReviewController {
   @Delete('respondents/:relationId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete respondent from Review' })
+  @ApiParam({ name: 'relationId', description: 'Respondent relation id', type: 'number' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async deleteRespondent(@Param('relationId') relationId: string): Promise<void> {
@@ -201,6 +228,8 @@ export class ReviewController {
 
   @Post(':id/reviewers')
   @ApiOperation({ summary: 'Add reviewer to Review' })
+  @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+  @ApiBody({ type: CreateReviewerDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: ReviewerResponse })
   @ApiCreateAndUpdateErrorResponses()
   async addReviewer(@Param('id') id: string, @Body() dto: CreateReviewerDto): Promise<ReviewerResponse> {
@@ -215,16 +244,19 @@ export class ReviewController {
 
   @Get(':id/reviewers')
   @ApiOperation({ summary: 'List reviewers to Review' })
-  @ApiResponse({ status: HttpStatus.OK, type: ReviewerResponse, isArray: true })
+  @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+  @ApiQuery({ type: ReviewerQueryDto })
+  @ApiResponse({ status: HttpStatus.OK, type: ReviewerResponse, isArray: true, description: 'Default sort by ascending id' })
   @ApiListReadErrorResponses()
-  async listReviewers(@Param('id') id: string): Promise<ReviewerResponse[]> {
-    const reviewers = await this.reviews.listReviewers(Number(id));
+  async listReviewers(@Param('id') id: string, @Query() query: ReviewerQueryDto): Promise<ReviewerResponse[]> {
+    const reviewers = await this.reviews.listReviewers(Number(id), query);
     return reviewers.map(Feedback360HttpMapper.toReviewerResponse);
   }
 
   @Delete('reviewers/:relationId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete reviewer from Review' })
+  @ApiParam({ name: 'relationId', description: 'Reviewer relation id', type: 'number' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async deleteReviewer(@Param('relationId') relationId: string): Promise<void> {

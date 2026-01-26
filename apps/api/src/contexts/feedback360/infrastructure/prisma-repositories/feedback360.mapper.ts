@@ -62,6 +62,7 @@ export class Feedback360Mapper {
       managerId: review.managerId,
       cycleId: review.cycleId,
       stage: review.stage as ReviewStage,
+      reportId: review.reportId,
       createdAt: review.createdAt,
       updatedAt: review.updatedAt,
     });

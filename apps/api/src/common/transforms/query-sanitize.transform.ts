@@ -4,11 +4,13 @@ function isEmpty(value: unknown): boolean {
   return value === undefined || value === null || (typeof value === 'string' && value.trim() === '');
 }
 
-export function ToOptionalTrimmedString(): PropertyDecorator {
+export function ToOptionalTrimmedString(options?: { min?: number; max?: number }): PropertyDecorator {
   return Transform(({ value }) => {
     if (isEmpty(value)) return undefined;
     if (typeof value !== 'string') return value;
     const v = value.trim();
+    if (options?.min !== undefined && typeof v === 'string' && v.length < options.min) return v;
+    if (options?.max !== undefined && typeof v === 'string' && v.length > options.max) return v;
     return v === '' ? undefined : v;
   });
 }

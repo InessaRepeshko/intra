@@ -18,6 +18,10 @@ export enum CycleClusterAnalyticsSortField {
 export type CycleClusterAnalyticsSearchQuery = {
     cycleId?: number;
     clusterId?: number;
+    employeesCount?: number;
+    minScore?: number;
+    maxScore?: number;
+    averageScore?: number;
     sortBy?: CycleClusterAnalyticsSortField;
     sortDirection?: SortDirection;
 };

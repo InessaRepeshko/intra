@@ -1,0 +1,22 @@
+import { GLOBAL_CONSTRAINTS } from "../../common/constraints/global.constraints";
+
+export const RESPONDENT_CONSTRAINTS = {
+    RESPONDENT_NOTE: {
+        LENGTH: {
+            MIN: GLOBAL_CONSTRAINTS.DESCRIPTION.LENGTH.MIN,
+            MAX: GLOBAL_CONSTRAINTS.DESCRIPTION.LENGTH.MAX,
+        },
+    },
+    HR_NOTE: {
+        LENGTH: {
+            MIN: GLOBAL_CONSTRAINTS.DESCRIPTION.LENGTH.MIN,
+            MAX: GLOBAL_CONSTRAINTS.DESCRIPTION.LENGTH.MAX,
+        },
+    },
+    POSITION_TITLE: {
+        LENGTH: {
+            MIN: GLOBAL_CONSTRAINTS.DESCRIPTION.LENGTH.MIN,
+            MAX: GLOBAL_CONSTRAINTS.DESCRIPTION.LENGTH.MAX,
+        },
+    },
+};

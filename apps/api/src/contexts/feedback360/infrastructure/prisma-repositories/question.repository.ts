@@ -49,12 +49,13 @@ export class QuestionRepository implements QuestionRepositoryPort {
   }
 
   private buildWhere(query: QuestionSearchQuery): Prisma.QuestionWhereInput {
-    const { cycleId, questionTemplateId, competenceId, answerType, isForSelfassessment } = query;
+    const { cycleId, questionTemplateId, competenceId, answerType, isForSelfassessment, title } = query;
     return {
       ...(cycleId ? { cycleId } : {}),
       ...(questionTemplateId ? { questionTemplateId } : {}),
-      ...(competenceId ? { competenceId } : {}),
+      ...(title ? { title: { contains: title, mode: 'insensitive' } } : {}),
       ...(answerType ? { answerType: Feedback360Mapper.toPrismaAnswerType(answerType) } : {}),
+      ...(competenceId ? { competenceId } : {}),
       ...(isForSelfassessment !== undefined ? { isForSelfassessment } : {}),
     };
   }

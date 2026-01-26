@@ -6,19 +6,33 @@ export const REVIEW_REPOSITORY = Symbol('FEEDBACK360.REVIEW_REPOSITORY');
 
 export enum ReviewSortField {
   ID = 'id',
+  RATEE_ID = 'rateeId',
+  RATEE_POSITION_ID = 'rateePositionId',
+  RATEE_POSITION_TITLE = 'rateePositionTitle',
+  HR_ID = 'hrId',
+  HR_NOTE = 'hrNote',
+  TEAM_ID = 'teamId',
+  TEAM_TITLE = 'teamTitle',
+  MANAGER_ID = 'managerId',
+  CYCLE_ID = 'cycleId',
   STAGE = 'stage',
+  REPORT_ID = 'reportId',
   CREATED_AT = 'createdAt',
   UPDATED_AT = 'updatedAt',
 }
 
 export type ReviewSearchQuery = {
-  cycleId?: number;
   rateeId?: number;
-  hrId?: number;
   rateePositionId?: number;
+  rateePositionTitle?: string;
+  hrId?: number;
+  hrNote?: string;
   teamId?: number;
+  teamTitle?: string;
   managerId?: number;
+  cycleId?: number;
   stage?: ReviewStage;
+  reportId?: number;
   sortBy?: ReviewSortField;
   sortDirection?: SortDirection;
 };
@@ -34,6 +48,7 @@ export type ReviewUpdatePayload = Partial<{
   managerId: number | null;
   cycleId: number | null;
   stage: ReviewStage;
+  reportId: number | null;
 }>;
 
 export interface ReviewRepositoryPort {

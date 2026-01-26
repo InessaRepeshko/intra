@@ -5,6 +5,7 @@ export const CLUSTER_REPOSITORY = Symbol('LIBRARY.CLUSTER_REPOSITORY');
 
 export enum ClusterSortField {
   ID = 'id',
+  COMPETENCE_ID = 'competenceId',
   LOWER_BOUND = 'lowerBound',
   UPPER_BOUND = 'upperBound',
   TITLE = 'title',

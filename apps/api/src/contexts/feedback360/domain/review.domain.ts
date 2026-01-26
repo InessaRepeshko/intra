@@ -12,6 +12,7 @@ export type ReviewProps = {
   managerId?: number | null;
   cycleId?: number | null;
   stage?: ReviewStage;
+  reportId?: number | null;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -28,6 +29,7 @@ export class ReviewDomain {
   readonly managerId?: number | null;
   readonly cycleId?: number | null;
   readonly stage: ReviewStage;
+  readonly reportId?: number | null;
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
 
@@ -43,6 +45,7 @@ export class ReviewDomain {
     this.managerId = props.managerId ?? null;
     this.cycleId = props.cycleId ?? null;
     this.stage = props.stage ?? ReviewStage.VERIFICATION_BY_HR;
+    this.reportId = props.reportId ?? null;
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
   }

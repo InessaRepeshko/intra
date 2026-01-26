@@ -71,11 +71,10 @@ export class CycleRepository implements CycleRepositoryPort {
   }
 
   private buildWhere(query: CycleSearchQuery): Prisma.CycleWhereInput {
-    const { hrId, stage, isActive, search } = query;
+    const { title, description, hrId, stage, isActive, search, minRespondentsThreshold, startDate, reviewDeadline, approvalDeadline, responseDeadline, endDate } = query;
     return {
-      ...(hrId ? { hrId } : {}),
-      ...(stage ? { stage: Feedback360Mapper.toPrismaCycleStage(stage) } : {}),
-      ...(isActive !== undefined ? { isActive } : {}),
+      ...(title ? { title: { contains: title, mode: 'insensitive' } } : {}),
+      ...(description ? { description: { contains: description, mode: 'insensitive' } } : {}),
       ...(search
         ? {
           OR: [
@@ -84,12 +83,21 @@ export class CycleRepository implements CycleRepositoryPort {
           ],
         }
         : {}),
+      ...(hrId ? { hrId } : {}),
+      ...(minRespondentsThreshold ? { minRespondentsThreshold } : {}),
+      ...(stage ? { stage: Feedback360Mapper.toPrismaCycleStage(stage) } : {}),
+      ...(isActive !== undefined ? { isActive } : {}),
+      ...(startDate ? { startDate } : {}),
+      ...(reviewDeadline ? { reviewDeadline } : {}),
+      ...(approvalDeadline ? { approvalDeadline } : {}),
+      ...(responseDeadline ? { responseDeadline } : {}),
+      ...(endDate ? { endDate } : {}),
     };
   }
 
   private buildOrder(query: CycleSearchQuery): Prisma.CycleOrderByWithRelationInput[] {
     const field = query.sortBy ?? CycleSortField.ID;
-    const direction = query.sortDirection ?? SortDirection.DESC;
+    const direction = query.sortDirection ?? SortDirection.ASC;
     return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
   }
 }

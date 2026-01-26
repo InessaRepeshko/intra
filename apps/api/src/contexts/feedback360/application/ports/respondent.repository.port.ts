@@ -1,14 +1,40 @@
 import { RespondentDomain } from '../../domain/respondent.domain';
-import { ResponseStatus } from '@intra/shared-kernel';
+import { ResponseStatus, SortDirection } from '@intra/shared-kernel';
 import { RespondentCategory } from '@intra/shared-kernel';
 
 export const RESPONDENT_REPOSITORY = Symbol('FEEDBACK360.RESPONDENT_REPOSITORY');
+
+export enum RespondentSortField {
+  ID = 'id',
+  REVIEW_ID = 'reviewId',
+  RESPONDENT_ID = 'respondentId',
+  CATEGORY = 'category',
+  RESPONSE_STATUS = 'responseStatus',
+  RESPONDENT_NOTE = 'respondentNote',
+  HR_NOTE = 'hrNote',
+  POSITION_ID = 'positionId',
+  POSITION_TITLE = 'positionTitle',
+  INVITED_AT = 'invitedAt',
+  CANCELED_AT = 'canceledAt',
+  RESPONDED_AT = 'respondedAt',
+  CREATED_AT = 'createdAt',
+  UPDATED_AT = 'updatedAt',
+}
 
 export type RespondentSearchQuery = {
   reviewId?: number;
   respondentId?: number;
   category?: RespondentCategory;
-  status?: ResponseStatus;
+  responseStatus?: ResponseStatus;
+  respondentNote?: string;
+  hrNote?: string;
+  positionId?: number;
+  positionTitle?: string;
+  invitedAt?: Date;
+  canceledAt?: Date;
+  respondedAt?: Date;
+  sortBy?: RespondentSortField;
+  sortDirection?: SortDirection;
 };
 
 export type RespondentUpdatePayload = Partial<{
@@ -24,7 +50,7 @@ export type RespondentUpdatePayload = Partial<{
 
 export interface RespondentRepositoryPort {
   create(relation: RespondentDomain): Promise<RespondentDomain>;
-  list(query: RespondentSearchQuery): Promise<RespondentDomain[]>;
+  listByReview(reviewId: number, query: RespondentSearchQuery): Promise<RespondentDomain[]>;
   updateById(id: number, patch: RespondentUpdatePayload): Promise<RespondentDomain>;
   deleteById(id: number): Promise<void>;
 }

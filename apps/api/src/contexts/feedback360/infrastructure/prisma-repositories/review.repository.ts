@@ -65,21 +65,25 @@ export class ReviewRepository implements ReviewRepositoryPort {
   }
 
   private buildWhere(query: ReviewSearchQuery): Prisma.ReviewWhereInput {
-    const { cycleId, rateeId, hrId, rateePositionId, teamId, managerId, stage } = query;
+    const { cycleId, rateeId, hrId, rateePositionId, teamId, managerId, stage, rateePositionTitle, hrNote, teamTitle, reportId } = query;
     return {
-      ...(cycleId ? { cycleId } : {}),
       ...(rateeId ? { rateeId } : {}),
-      ...(hrId ? { hrId } : {}),
       ...(rateePositionId ? { rateePositionId } : {}),
+      ...(rateePositionTitle ? { rateePositionTitle: { contains: rateePositionTitle, mode: 'insensitive' } } : {}),
+      ...(hrId ? { hrId } : {}),
+      ...(hrNote ? { hrNote: { contains: hrNote, mode: 'insensitive' } } : {}),
       ...(teamId ? { teamId } : {}),
+      ...(teamTitle ? { teamTitle: { contains: teamTitle, mode: 'insensitive' } } : {}),
       ...(managerId ? { managerId } : {}),
+      ...(cycleId ? { cycleId } : {}),
       ...(stage ? { stage: Feedback360Mapper.toPrismaReviewStage(stage) } : {}),
+      ...(reportId ? { reportId } : {}),
     };
   }
 
   private buildOrder(query: ReviewSearchQuery): Prisma.ReviewOrderByWithRelationInput[] {
-    const field = query.sortBy ?? ReviewSortField.CREATED_AT;
-    const direction = query.sortDirection ?? SortDirection.DESC;
+    const field = query.sortBy ?? ReviewSortField.ID;
+    const direction = query.sortDirection ?? SortDirection.ASC;
     return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
   }
 }

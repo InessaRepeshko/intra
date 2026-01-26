@@ -1,40 +1,41 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
+import { CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS } from '@intra/shared-kernel';
 
 export class CycleClusterAnalyticsResponse {
-    @ApiProperty({ example: 1 })
+    @ApiProperty({ example: 1, description: 'Cycle cluster analytics id', type: 'number', required: true })
     @Expose()
     id!: number;
 
-    @ApiProperty({ example: 1, description: 'Cycle ID' })
+    @ApiProperty({ example: 1, description: 'Cycle ID', type: 'number', required: true })
     @Expose()
     cycleId!: number;
 
-    @ApiProperty({ example: 3, description: 'Cluster ID' })
+    @ApiProperty({ example: 2, description: 'Cluster ID', type: 'number', required: true })
     @Expose()
     clusterId!: number;
 
-    @ApiProperty({ example: 42, description: 'Number of employees in this cluster' })
+    @ApiProperty({ example: 8, description: 'Number of employees in this cluster', type: 'number', required: true, minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.EMPLOYEES_COUNT.MIN })
     @Expose()
     employeesCount!: number;
 
-    @ApiProperty({ example: 3.2, description: 'Minimum score in this cluster' })
+    @ApiProperty({ example: 2.2, description: 'Minimum score in this cluster', type: 'number', required: true, minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN, maximum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX })
     @Expose()
     minScore!: number;
 
-    @ApiProperty({ example: 9.8, description: 'Maximum score in this cluster' })
+    @ApiProperty({ example: 4.8, description: 'Maximum score in this cluster', type: 'number', required: true, minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN, maximum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX })
     @Expose()
     maxScore!: number;
 
-    @ApiProperty({ example: 6.5, description: 'Average score in this cluster' })
+    @ApiProperty({ example: 4.5, description: 'Average score in this cluster', type: 'number', required: true, minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN, maximum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX })
     @Expose()
     averageScore!: number;
 
-    @ApiPropertyOptional({ type: String })
+    @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time', required: false })
     @Expose()
     createdAt?: Date;
 
-    @ApiPropertyOptional({ type: String })
+    @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Updated at', type: 'string', format: 'date-time', required: false })
     @Expose()
     updatedAt?: Date;
 }

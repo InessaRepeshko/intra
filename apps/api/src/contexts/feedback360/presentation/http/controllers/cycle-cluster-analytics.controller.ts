@@ -13,7 +13,7 @@ import {
     SerializeOptions,
     UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
     ApiCreateAndUpdateErrorResponses,
     ApiDeletionErrorResponses,
@@ -36,6 +36,7 @@ export class CycleClusterAnalyticsController {
 
     @Post()
     @ApiOperation({ summary: 'Create or update cycle cluster analytics' })
+    @ApiBody({ type: UpsertCycleClusterAnalyticsDto })
     @ApiResponse({ status: HttpStatus.CREATED, type: CycleClusterAnalyticsResponse })
     @ApiCreateAndUpdateErrorResponses()
     async upsert(@Body() dto: UpsertCycleClusterAnalyticsDto): Promise<CycleClusterAnalyticsResponse> {
@@ -52,7 +53,8 @@ export class CycleClusterAnalyticsController {
 
     @Get()
     @ApiOperation({ summary: 'Search cycle cluster analytics' })
-    @ApiResponse({ status: HttpStatus.OK, type: CycleClusterAnalyticsResponse, isArray: true })
+    @ApiQuery({ type: CycleClusterAnalyticsQueryDto })
+    @ApiResponse({ status: HttpStatus.OK, type: CycleClusterAnalyticsResponse, isArray: true, description: 'Default sort by ascending id' })
     @ApiListReadErrorResponses()
     async search(@Query() query: CycleClusterAnalyticsQueryDto): Promise<CycleClusterAnalyticsResponse[]> {
         const items = await this.service.search(query);
@@ -61,6 +63,7 @@ export class CycleClusterAnalyticsController {
 
     @Get(':id')
     @ApiOperation({ summary: 'Get cycle cluster analytics by id' })
+    @ApiParam({ name: 'id', description: 'Cycle cluster analytics id', type: 'number' })
     @ApiResponse({ status: HttpStatus.OK, type: CycleClusterAnalyticsResponse })
     @ApiReadErrorResponses()
     async getById(@Param('id') id: string): Promise<CycleClusterAnalyticsResponse> {
@@ -70,6 +73,8 @@ export class CycleClusterAnalyticsController {
 
     @Patch(':id')
     @ApiOperation({ summary: 'Update cycle cluster analytics' })
+    @ApiParam({ name: 'id', description: 'Cycle cluster analytics id', type: 'number' })
+    @ApiBody({ type: UpdateCycleClusterAnalyticsDto })
     @ApiResponse({ status: HttpStatus.OK, type: CycleClusterAnalyticsResponse })
     @ApiCreateAndUpdateErrorResponses()
     async update(@Param('id') id: string, @Body() dto: UpdateCycleClusterAnalyticsDto): Promise<CycleClusterAnalyticsResponse> {

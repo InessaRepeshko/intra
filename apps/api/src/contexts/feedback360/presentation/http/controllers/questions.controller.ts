@@ -12,7 +12,7 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   ApiCreateAndUpdateErrorResponses,
   ApiDeletionErrorResponses,
@@ -33,6 +33,7 @@ export class QuestionsController {
 
   @Post()
   @ApiOperation({ summary: 'Create review question' })
+  @ApiBody({ type: CreateQuestionDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: QuestionResponse })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateQuestionDto): Promise<QuestionResponse> {
@@ -42,7 +43,8 @@ export class QuestionsController {
 
   @Get()
   @ApiOperation({ summary: 'List review questions' })
-  @ApiResponse({ status: HttpStatus.OK, type: QuestionResponse, isArray: true })
+  @ApiQuery({ type: QuestionQueryDto })
+  @ApiResponse({ status: HttpStatus.OK, type: QuestionResponse, isArray: true, description: 'Default sort by ascending id' })
   @ApiListReadErrorResponses()
   async search(@Query() query: QuestionQueryDto): Promise<QuestionResponse[]> {
     const items = await this.reviews.listQuestions(query);
@@ -52,6 +54,7 @@ export class QuestionsController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete review question' })
+  @ApiParam({ name: 'id', description: 'Question id', type: 'number' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async delete(@Param('id') id: string): Promise<void> {

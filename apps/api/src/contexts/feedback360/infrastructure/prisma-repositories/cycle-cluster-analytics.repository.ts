@@ -72,10 +72,14 @@ export class CycleClusterAnalyticsRepository implements CycleClusterAnalyticsRep
     }
 
     private buildWhere(query: CycleClusterAnalyticsSearchQuery): Prisma.CycleClusterAnalyticsWhereInput {
-        const { cycleId, clusterId } = query;
+        const { cycleId, clusterId, employeesCount, minScore, maxScore, averageScore } = query;
         return {
             ...(cycleId ? { cycleId } : {}),
             ...(clusterId ? { clusterId } : {}),
+            ...(employeesCount ? { employeesCount } : {}),
+            ...(minScore ? { minScore } : {}),
+            ...(maxScore ? { maxScore } : {}),
+            ...(averageScore ? { averageScore } : {}),
         };
     }
 

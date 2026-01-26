@@ -50,6 +50,7 @@ export class Feedback360HttpMapper {
     view.managerId = domain.managerId ?? null;
     view.cycleId = domain.cycleId ?? null;
     view.stage = domain.stage;
+    view.reportId = domain.reportId ?? null;
     view.createdAt = domain.createdAt;
     view.updatedAt = domain.updatedAt;
     return view;

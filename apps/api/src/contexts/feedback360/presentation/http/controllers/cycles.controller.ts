@@ -13,7 +13,7 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   ApiCreateAndUpdateErrorResponses,
   ApiDeletionErrorResponses,
@@ -36,6 +36,7 @@ export class CyclesController {
 
   @Post()
   @ApiOperation({ summary: 'Create 360-Feedback cycle' })
+  @ApiBody({ type: CreateCycleDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: CycleResponse })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateCycleDto): Promise<CycleResponse> {
@@ -45,7 +46,8 @@ export class CyclesController {
 
   @Get()
   @ApiOperation({ summary: 'List 360-Feedback cycles' })
-  @ApiResponse({ status: HttpStatus.OK, type: CycleResponse, isArray: true })
+  @ApiQuery({ type: CycleQueryDto })
+  @ApiResponse({ status: HttpStatus.OK, type: CycleResponse, isArray: true, description: 'Default sort by ascending id' })
   @ApiListReadErrorResponses()
   async search(@Query() query: CycleQueryDto): Promise<CycleResponse[]> {
     const items = await this.cycles.search(query);
@@ -54,6 +56,7 @@ export class CyclesController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get 360-Feedback cycle by id' })
+  @ApiParam({ name: 'id', description: 'Cycle id', type: 'number' })
   @ApiResponse({ status: HttpStatus.OK, type: CycleResponse })
   @ApiReadErrorResponses()
   async getById(@Param('id') id: string): Promise<CycleResponse> {
@@ -63,6 +66,8 @@ export class CyclesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update 360-Feedback cycle' })
+  @ApiParam({ name: 'id', description: 'Cycle id', type: 'number' })
+  @ApiBody({ type: UpdateCycleDto })
   @ApiResponse({ status: HttpStatus.OK, type: CycleResponse })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateCycleDto): Promise<CycleResponse> {
@@ -73,6 +78,7 @@ export class CyclesController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete 360-Feedback cycle' })
+  @ApiParam({ name: 'id', description: 'Cycle id', type: 'number' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async delete(@Param('id') id: string): Promise<void> {

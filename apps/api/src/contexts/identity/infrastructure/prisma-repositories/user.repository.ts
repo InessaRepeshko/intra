@@ -115,10 +115,10 @@ export class UserRepository implements UserRepositoryPort {
       ...(search
         ? {
           OR: [
-            { firstName: { contains: search } },
-            { lastName: { contains: search } },
-            { email: { contains: search } },
-            { fullName: { contains: search } },
+            { firstName: { contains: search, mode: 'insensitive' } },
+            { lastName: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+            { fullName: { contains: search, mode: 'insensitive' } },
           ],
         }
         : {}),

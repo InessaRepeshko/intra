@@ -16,6 +16,7 @@ import {
 import {
   REVIEW_QUESTION_RELATION_REPOSITORY,
   ReviewQuestionRelationRepositoryPort,
+  ReviewQuestionRelationSearchQuery,
 } from '../ports/review-question-relation.repository.port';
 import {
   ANSWER_REPOSITORY,
@@ -30,6 +31,7 @@ import {
 import {
   REVIEWER_REPOSITORY,
   ReviewerRepositoryPort,
+  ReviewerSearchQuery,
 } from '../ports/reviewer.repository.port';
 import {
   CLUSTER_SCORE_REPOSITORY,
@@ -59,6 +61,7 @@ export type CreateReviewCommand = {
   managerId?: number | null;
   cycleId?: number | null;
   stage?: ReviewStage;
+  reportId?: number | null;
 };
 
 export type UpdateReviewCommand = Partial<CreateReviewCommand>;
@@ -152,6 +155,7 @@ export class ReviewService {
       managerId: command.managerId ?? null,
       cycleId: command.cycleId ?? null,
       stage: command.stage ?? ReviewStage.VERIFICATION_BY_HR,
+      reportId: command.reportId ?? null,
     });
 
     const created = await this.reviews.create(review);
@@ -249,9 +253,9 @@ export class ReviewService {
     return this.questionRelations.link(relation);
   }
 
-  async listQuestionRelations(reviewId: number): Promise<ReviewQuestionRelationDomain[]> {
+  async listQuestionRelations(reviewId: number, query: ReviewQuestionRelationSearchQuery): Promise<ReviewQuestionRelationDomain[]> {
     await this.getById(reviewId);
-    return this.questionRelations.listByReview(reviewId);
+    return this.questionRelations.listByReview(reviewId, query);
   }
 
   async detachQuestion(reviewId: number, questionId: number): Promise<void> {
@@ -303,8 +307,9 @@ export class ReviewService {
     return this.respondents.updateById(id, patch);
   }
 
-  async listRespondents(query: RespondentSearchQuery): Promise<RespondentDomain[]> {
-    return this.respondents.list(query);
+  async listRespondents(reviewId: number, query: RespondentSearchQuery): Promise<RespondentDomain[]> {
+    await this.getById(reviewId);
+    return this.respondents.listByReview(reviewId, query);
   }
 
   async removeRespondent(id: number): Promise<void> {
@@ -322,9 +327,9 @@ export class ReviewService {
     return this.reviewers.create(relation);
   }
 
-  async listReviewers(reviewId: number): Promise<ReviewerDomain[]> {
+  async listReviewers(reviewId: number, query: ReviewerSearchQuery): Promise<ReviewerDomain[]> {
     await this.getById(reviewId);
-    return this.reviewers.listByReview(reviewId);
+    return this.reviewers.listByReview(reviewId, query);
   }
 
   async removeReviewer(id: number): Promise<void> {

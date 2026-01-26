@@ -4,10 +4,13 @@ import {
   RESPONDENT_REPOSITORY,
   RespondentRepositoryPort,
   RespondentSearchQuery,
+  RespondentSortField,
   RespondentUpdatePayload,
 } from '../../application/ports/respondent.repository.port';
 import { RespondentDomain } from '../../domain/respondent.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
+import { Prisma } from '@intra/database';
+import { SortDirection } from '@intra/shared-kernel';
 
 @Injectable()
 export class RespondentRepository implements RespondentRepositoryPort {
@@ -35,17 +38,11 @@ export class RespondentRepository implements RespondentRepositoryPort {
     return Feedback360Mapper.toRespondentDomain(created);
   }
 
-  async list(query: RespondentSearchQuery): Promise<RespondentDomain[]> {
-    const relations = await this.prisma.respondent.findMany({
-      where: {
-        ...(query.reviewId ? { reviewId: query.reviewId } : {}),
-        ...(query.respondentId ? { respondentId: query.respondentId } : {}),
-        ...(query.category
-          ? { category: Feedback360Mapper.toPrismaRespondentCategory(query.category) }
-          : {}),
-        ...(query.status ? { responseStatus: Feedback360Mapper.toPrismaResponseStatus(query.status) } : {}),
-      },
-    });
+  async listByReview(reviewId: number, query: RespondentSearchQuery): Promise<RespondentDomain[]> {
+    const where = this.buildWhere(query);
+    where.reviewId = reviewId;
+    const orderBy = this.buildOrder(query);
+    const relations = await this.prisma.respondent.findMany({ where, orderBy });
 
     return relations.map(Feedback360Mapper.toRespondentDomain);
   }
@@ -64,4 +61,28 @@ export class RespondentRepository implements RespondentRepositoryPort {
   async deleteById(id: number): Promise<void> {
     await this.prisma.respondent.delete({ where: { id } });
   }
+
+  private buildWhere(query: RespondentSearchQuery): Prisma.RespondentWhereInput {
+    const { reviewId, respondentId, category, responseStatus, respondentNote, hrNote, positionId, positionTitle, invitedAt, canceledAt, respondedAt } = query;
+    return {
+      ...(reviewId ? { reviewId } : {}),
+      ...(respondentId ? { respondentId } : {}),
+      ...(category ? { category: Feedback360Mapper.toPrismaRespondentCategory(category) } : {}),
+      ...(responseStatus ? { responseStatus: Feedback360Mapper.toPrismaResponseStatus(responseStatus) } : {}),
+      ...(respondentNote ? { respondentNote: { contains: respondentNote, mode: 'insensitive' } } : {}),
+      ...(hrNote ? { hrNote: { contains: hrNote, mode: 'insensitive' } } : {}),
+      ...(positionId ? { positionId } : {}),
+      ...(positionTitle ? { positionTitle: { contains: positionTitle, mode: 'insensitive' } } : {}),
+      ...(invitedAt ? { invitedAt } : {}),
+      ...(canceledAt ? { canceledAt } : {}),
+      ...(respondedAt ? { respondedAt } : {}),
+    };
+  }
+
+  private buildOrder(query: RespondentSearchQuery): Prisma.RespondentOrderByWithRelationInput[] {
+    const field = query.sortBy ?? RespondentSortField.ID;
+    const direction = query.sortDirection ?? SortDirection.ASC;
+    return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
+  }
+
 }
