@@ -1,6 +1,6 @@
 import { RespondentCategory, ResponseStatus, SortDirection } from "@intra/shared-kernel";
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsDate, IsEnum, IsInt, IsOptional, IsString, MinLength, MaxLength } from "class-validator";
+import { IsDate, IsEnum, IsInt, IsOptional, IsString, MinLength, MaxLength, Min } from "class-validator";
 import { ToOptionalDate, ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from "src/common/transforms/query-sanitize.transform";
 import { RESPONDENT_CONSTRAINTS } from "@intra/shared-kernel";
 import { RespondentSortField } from "src/contexts/feedback360/application/ports/respondent.repository.port";
@@ -17,6 +17,14 @@ export class RespondentQueryDto {
     @IsOptional()
     @IsInt()
     respondentId?: number;
+
+    @ApiPropertyOptional({ example: 'Ivanna Bulava', description: 'Filter by respondent full name (contains, case-insensitive)', type: 'string', minLength: RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+    @ToOptionalTrimmedString({ min: RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+    @IsOptional()
+    @IsString()
+    @MinLength(RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MIN)
+    @MaxLength(RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MAX)
+    fullName?: string;
 
     @ApiPropertyOptional({ example: RespondentCategory.TEAM, description: 'Filter by respondent category', type: 'string' })
     @ToOptionalEnum(RespondentCategory)
@@ -59,6 +67,21 @@ export class RespondentQueryDto {
     @MinLength(RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN)
     @MaxLength(RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX)
     positionTitle?: string;
+
+    @ApiPropertyOptional({ example: 3, description: 'Filter by team id', type: 'number', nullable: true })
+    @ToOptionalInt({ min: 1 })
+    @IsOptional()
+    @IsInt()
+    @Min(1)
+    teamId?: number | null;
+
+    @ApiPropertyOptional({ example: 'Team title', description: 'Filter by team title (contains, case-insensitive)', type: 'string', minLength: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maxLength: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX, nullable: true })
+    @ToOptionalTrimmedString({ min: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, max: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX })
+    @IsOptional()
+    @IsString()
+    @MinLength(RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN)
+    @MaxLength(RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX)
+    teamTitle?: string | null;
 
     @ApiPropertyOptional({ example: '2025-01-20T00:00:00.000Z', description: 'Filter by invited at', type: 'string', format: 'date-time' })
     @ToOptionalDate()

@@ -1,4 +1,4 @@
-import { REVIEW_CONSTRAINTS } from '@intra/shared-kernel';
+import { REVIEWER_CONSTRAINTS } from '@intra/shared-kernel';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
@@ -15,13 +15,25 @@ export class ReviewerResponse {
   @Expose()
   reviewerId!: number;
 
+  @ApiProperty({ example: 'Ivanna Bulava', description: 'Reviewer full name', type: 'string', required: true, minimum: REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @Expose()
+  fullName!: string;
+
   @ApiProperty({ example: 3, description: 'Position id', type: 'number', required: true })
   @Expose()
   positionId!: number;
 
-  @ApiProperty({ example: 'Tech Lead', description: 'Position title', type: 'string', required: true, minimum: REVIEW_CONSTRAINTS.RATEE_POSITION_TITLE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.RATEE_POSITION_TITLE.LENGTH.MAX })
+  @ApiProperty({ example: 'Tech Lead', description: 'Position title', type: 'string', required: true, minimum: REVIEWER_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maximum: REVIEWER_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
   @Expose()
   positionTitle!: string;
+
+  @ApiProperty({ example: 5, description: 'Team id', type: 'number', required: false, nullable: true })
+  @Expose()
+  teamId?: number | null;
+
+  @ApiProperty({ example: 'Engineering team', description: 'Team title', type: 'string', required: false, nullable: true, minimum: REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maximum: REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX })
+  @Expose()
+  teamTitle?: string | null;
 
   @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time', required: false })
   @Expose()

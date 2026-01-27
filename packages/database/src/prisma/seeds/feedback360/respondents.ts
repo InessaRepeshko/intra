@@ -647,6 +647,20 @@ export default async function seedRespondents(
                 }
             }
 
+            // Get respondent team info
+            const respondentWithMemberships = await prisma.user.findUnique({
+                where: { id: respondentUser.id },
+                include: {
+                    memberships: {
+                        where: { isPrimary: true },
+                        include: { team: true }
+                    }
+                }
+            });
+            const respondentTeam = respondentWithMemberships?.memberships[0]?.team;
+            const teamId = respondentTeam?.id ?? null;
+            const teamTitle = respondentTeam?.title ?? null;
+
             await prisma.respondent.create({
                 data: {
                     reviewId: reviewRef.id,
@@ -655,6 +669,9 @@ export default async function seedRespondents(
                     responseStatus: data.responseStatus.toString().toUpperCase() as unknown as PrismaResponseStatus,
                     positionId: position.id,
                     positionTitle: position.title,
+                    fullName: respondentUser.fullName || `${respondentUser.firstName} ${respondentUser.lastName}`,
+                    teamId,
+                    teamTitle,
                     invitedAt,
                     respondedAt,
                     canceledAt,

@@ -237,8 +237,28 @@ export default async function seedReviews(
         const teamId = primaryTeam?.id ?? null;
         const teamTitle = primaryTeam?.title ?? null;
 
-        // Get manager
-        const managerId = rateeUser.managerId ?? null;
+        // Get manager details if exists
+        let managerFullName: string | null = null;
+        let managerPositionId: number | null = null;
+        let managerPositionTitle: string | null = null;
+
+        if (rateeUser.managerId) {
+            const manager = await prisma.user.findUnique({
+                where: { id: rateeUser.managerId },
+            });
+            if (manager) {
+                managerFullName = manager.fullName || `${manager.firstName} ${manager.lastName}`;
+                // If user has direct relation to position
+                // Check schema: User has positionId.
+                if (manager.positionId) {
+                    const managerPos = await prisma.position.findUnique({ where: { id: manager.positionId } });
+                    if (managerPos) {
+                        managerPositionId = managerPos.id;
+                        managerPositionTitle = managerPos.title;
+                    }
+                }
+            }
+        }
 
         const existing = await prisma.review.findFirst({
             where: {
@@ -250,37 +270,32 @@ export default async function seedReviews(
         // Use cycle:email as map key to support same employee across cycles
         const mapKey = `${reviewData.cycleTitle}:${reviewData.rateeEmail}`;
 
+        const reviewDataPayload = {
+            rateeId: rateeUser.id,
+            rateeFullName: rateeUser.fullName || `${rateeUser.firstName} ${rateeUser.lastName}`,
+            rateePositionId: position.id,
+            rateePositionTitle: position.title,
+            hrId: hrUser.id,
+            hrFullName: hrUser.fullName || `${hrUser.firstName} ${hrUser.lastName}`,
+            hrNote: reviewData.hrNote,
+            teamId,
+            teamTitle,
+            managerId: rateeUser.managerId,
+            managerFullName,
+            managerPositionId,
+            managerPositionTitle,
+            cycleId: cycle.id,
+            reportId: null,
+            stage: reviewData.stage.toString().toUpperCase() as unknown as PrismaReviewStage,
+        };
+
         const record = existing
             ? await prisma.review.update({
                 where: { id: existing.id },
-                data: {
-                    rateeId: rateeUser.id,
-                    rateePositionId: position.id,
-                    rateePositionTitle: position.title,
-                    hrId: hrUser.id,
-                    hrNote: reviewData.hrNote,
-                    teamId,
-                    teamTitle,
-                    managerId,
-                    cycleId: cycle.id,
-                    reportId: null,
-                    stage: reviewData.stage.toString().toUpperCase() as unknown as PrismaReviewStage,
-                },
+                data: reviewDataPayload,
             })
             : await prisma.review.create({
-                data: {
-                    rateeId: rateeUser.id,
-                    rateePositionId: position.id,
-                    rateePositionTitle: position.title,
-                    hrId: hrUser.id,
-                    hrNote: reviewData.hrNote,
-                    teamId,
-                    teamTitle,
-                    managerId,
-                    cycleId: cycle.id,
-                    reportId: null,
-                    stage: reviewData.stage.toString().toUpperCase() as unknown as PrismaReviewStage,
-                },
+                data: reviewDataPayload,
             });
 
         reviewMap.set(mapKey, { id: record.id });

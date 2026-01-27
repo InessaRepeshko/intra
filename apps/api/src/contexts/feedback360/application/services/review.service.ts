@@ -52,13 +52,18 @@ import { CycleService } from './cycle.service';
 
 export type CreateReviewCommand = {
   rateeId: number;
+  rateeFullName: string,
   rateePositionId: number;
   rateePositionTitle: string;
   hrId: number;
+  hrFullName: string,
   hrNote?: string;
   teamId?: number | null;
   teamTitle?: string | null;
   managerId?: number | null;
+  managerFullName?: string | null,
+  managerPositionId?: number | null,
+  managerPositionTitle?: string | null,
   cycleId?: number | null;
   stage?: ReviewStage;
   reportId?: number | null;
@@ -92,12 +97,15 @@ export type AddAnswerCommand = {
 export type AddRespondentCommand = {
   reviewId: number;
   respondentId: number;
+  fullName: string;
   category: RespondentCategory;
   responseStatus?: ResponseStatus;
   respondentNote?: string | null;
   hrNote?: string | null;
   positionId: number;
   positionTitle: string;
+  teamId?: number | null;
+  teamTitle?: string | null;
   invitedAt?: Date | null;
   canceledAt?: Date | null;
   respondedAt?: Date | null;
@@ -106,8 +114,11 @@ export type AddRespondentCommand = {
 export type AddReviewerCommand = {
   reviewId: number;
   reviewerId: number;
+  fullName: string;
   positionId: number;
   positionTitle: string;
+  teamId?: number | null;
+  teamTitle?: string | null;
 };
 
 export type UpsertClusterScoreCommand = {
@@ -146,13 +157,18 @@ export class ReviewService {
 
     const review = ReviewDomain.create({
       rateeId: command.rateeId,
+      rateeFullName: command.rateeFullName,
       rateePositionId: command.rateePositionId,
       rateePositionTitle: command.rateePositionTitle,
       hrId: command.hrId,
+      hrFullName: command.hrFullName,
       hrNote: command.hrNote,
       teamId: command.teamId ?? null,
       teamTitle: command.teamTitle ?? null,
       managerId: command.managerId ?? null,
+      managerFullName: command.managerFullName ?? null,
+      managerPositionId: command.managerPositionId ?? null,
+      managerPositionTitle: command.managerPositionTitle ?? null,
       cycleId: command.cycleId ?? null,
       stage: command.stage ?? ReviewStage.VERIFICATION_BY_HR,
       reportId: command.reportId ?? null,
@@ -181,15 +197,21 @@ export class ReviewService {
 
     const payload: ReviewUpdatePayload = {
       ...(patch.rateeId !== undefined ? { rateeId: patch.rateeId } : {}),
+      ...(patch.rateeFullName !== undefined ? { rateeFullName: patch.rateeFullName } : {}),
       ...(patch.rateePositionId !== undefined ? { rateePositionId: patch.rateePositionId } : {}),
       ...(patch.rateePositionTitle !== undefined ? { rateePositionTitle: patch.rateePositionTitle } : {}),
       ...(patch.hrId !== undefined ? { hrId: patch.hrId } : {}),
+      ...(patch.hrFullName !== undefined ? { hrFullName: patch.hrFullName } : {}),
       ...(patch.hrNote !== undefined ? { hrNote: patch.hrNote } : {}),
       ...(patch.teamId !== undefined ? { teamId: patch.teamId } : {}),
       ...(patch.teamTitle !== undefined ? { teamTitle: patch.teamTitle } : {}),
       ...(patch.managerId !== undefined ? { managerId: patch.managerId } : {}),
+      ...(patch.managerFullName !== undefined ? { managerFullName: patch.managerFullName } : {}),
+      ...(patch.managerPositionId !== undefined ? { managerPositionId: patch.managerPositionId } : {}),
+      ...(patch.managerPositionTitle !== undefined ? { managerPositionTitle: patch.managerPositionTitle } : {}),
       ...(patch.cycleId !== undefined ? { cycleId: patch.cycleId } : {}),
       ...(patch.stage !== undefined ? { stage: patch.stage } : {}),
+      ...(patch.reportId !== undefined ? { reportId: patch.reportId } : {}),
     };
 
     await this.reviews.updateById(id, payload);
@@ -289,12 +311,15 @@ export class ReviewService {
     const relation = RespondentDomain.create({
       reviewId: command.reviewId,
       respondentId: command.respondentId,
+      fullName: command.fullName,
       category: command.category,
       responseStatus: command.responseStatus,
       respondentNote: command.respondentNote,
       hrNote: command.hrNote,
       positionId: command.positionId,
       positionTitle: command.positionTitle,
+      teamId: command.teamId,
+      teamTitle: command.teamTitle,
       invitedAt: command.invitedAt,
       canceledAt: command.canceledAt,
       respondedAt: command.respondedAt,
@@ -321,8 +346,11 @@ export class ReviewService {
     const relation = ReviewerDomain.create({
       reviewId: command.reviewId,
       reviewerId: command.reviewerId,
+      fullName: command.fullName,
       positionId: command.positionId,
       positionTitle: command.positionTitle,
+      teamId: command.teamId,
+      teamTitle: command.teamTitle,
     });
     return this.reviewers.create(relation);
   }

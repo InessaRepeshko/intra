@@ -193,12 +193,29 @@ export default async function seedReviewers(
 
             if (existing) continue;
 
+            // Get reviewer team info
+            const reviewerWithMemberships = await prisma.user.findUnique({
+                where: { id: reviewerUser.id },
+                include: {
+                    memberships: {
+                        where: { isPrimary: true },
+                        include: { team: true }
+                    }
+                }
+            });
+            const reviewerTeam = reviewerWithMemberships?.memberships[0]?.team;
+            const teamId = reviewerTeam?.id ?? null;
+            const teamTitle = reviewerTeam?.title ?? null;
+
             await prisma.reviewer.create({
                 data: {
                     reviewId: reviewRef.id,
                     reviewerId: reviewerUser.id,
+                    fullName: reviewerUser.fullName || `${reviewerUser.firstName} ${reviewerUser.lastName}`,
                     positionId: position.id,
                     positionTitle: position.title,
+                    teamId,
+                    teamTitle,
                 },
             });
         }

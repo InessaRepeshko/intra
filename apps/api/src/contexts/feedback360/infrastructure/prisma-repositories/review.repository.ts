@@ -22,15 +22,21 @@ export class ReviewRepository implements ReviewRepositoryPort {
     const created = await this.prisma.review.create({
       data: {
         rateeId: review.rateeId,
+        rateeFullName: review.rateeFullName,
         rateePositionId: review.rateePositionId,
         rateePositionTitle: review.rateePositionTitle,
         hrId: review.hrId,
+        hrFullName: review.hrFullName,
         hrNote: review.hrNote,
         teamId: review.teamId,
         teamTitle: review.teamTitle,
         managerId: review.managerId,
+        managerFullName: review.managerFullName,
+        managerPositionId: review.managerPositionId,
+        managerPositionTitle: review.managerPositionTitle,
         cycleId: review.cycleId,
         stage: Feedback360Mapper.toPrismaReviewStage(review.stage),
+        reportId: review.reportId,
       },
     });
 
@@ -65,16 +71,21 @@ export class ReviewRepository implements ReviewRepositoryPort {
   }
 
   private buildWhere(query: ReviewSearchQuery): Prisma.ReviewWhereInput {
-    const { cycleId, rateeId, hrId, rateePositionId, teamId, managerId, stage, rateePositionTitle, hrNote, teamTitle, reportId } = query;
+    const { cycleId, rateeId, rateeFullName, hrId, hrFullName, rateePositionId, teamId, managerId, managerFullName, managerPositionId, managerPositionTitle, stage, rateePositionTitle, hrNote, teamTitle, reportId } = query;
     return {
       ...(rateeId ? { rateeId } : {}),
+      ...(rateeFullName ? { rateeFullName: { contains: rateeFullName, mode: 'insensitive' } } : {}),
       ...(rateePositionId ? { rateePositionId } : {}),
       ...(rateePositionTitle ? { rateePositionTitle: { contains: rateePositionTitle, mode: 'insensitive' } } : {}),
       ...(hrId ? { hrId } : {}),
+      ...(hrFullName ? { hrFullName: { contains: hrFullName, mode: 'insensitive' } } : {}),
       ...(hrNote ? { hrNote: { contains: hrNote, mode: 'insensitive' } } : {}),
       ...(teamId ? { teamId } : {}),
       ...(teamTitle ? { teamTitle: { contains: teamTitle, mode: 'insensitive' } } : {}),
       ...(managerId ? { managerId } : {}),
+      ...(managerFullName ? { managerFullName: { contains: managerFullName, mode: 'insensitive' } } : {}),
+      ...(managerPositionId ? { managerPositionId } : {}),
+      ...(managerPositionTitle ? { managerPositionTitle: { contains: managerPositionTitle, mode: 'insensitive' } } : {}),
       ...(cycleId ? { cycleId } : {}),
       ...(stage ? { stage: Feedback360Mapper.toPrismaReviewStage(stage) } : {}),
       ...(reportId ? { reportId } : {}),

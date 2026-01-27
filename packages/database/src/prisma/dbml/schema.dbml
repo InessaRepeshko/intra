@@ -64,6 +64,8 @@ Table org_teams {
   memberships org_team_memberships [not null]
   head identity_users
   reviews feedback360_reviews [not null]
+  respondents feedback360_respondents [not null]
+  reviewers feedback360_reviewers [not null]
 }
 
 Table org_team_memberships {
@@ -220,13 +222,18 @@ Table feedback360_cycles {
 Table feedback360_reviews {
   id Int [pk, increment]
   rateeId Int [not null]
+  rateeFullName String [not null]
   rateePositionId Int [not null]
   rateePositionTitle String [not null]
   hrId Int [not null]
+  hrFullName String [not null]
   hrNote String
   teamId Int
   teamTitle String
   managerId Int
+  managerFullName String
+  managerPositionId Int
+  managerPositionTitle String
   cycleId Int
   reportId Int
   stage ReviewStage [not null, default: 'VERIFICATION_BY_HR']
@@ -338,12 +345,15 @@ Table feedback360_respondents {
   id Int [pk, increment]
   reviewId Int [not null]
   respondentId Int [not null]
+  fullName String [not null]
   category RespondentCategory [not null]
   responseStatus ResponseStatus [not null, default: 'PENDING']
   respondentNote String
   hrNote String
   positionId Int [not null]
   positionTitle String [not null]
+  teamId Int
+  teamTitle String
   invitedAt DateTime
   canceledAt DateTime
   respondedAt DateTime
@@ -352,6 +362,7 @@ Table feedback360_respondents {
   user identity_users [not null]
   review feedback360_reviews [not null]
   respondentPosition org_positions
+  respondentTeam org_teams
 
   indexes {
     (respondentId, reviewId) [unique]
@@ -362,11 +373,15 @@ Table feedback360_reviewers {
   id Int [pk, increment]
   reviewId Int [not null]
   reviewerId Int [not null]
+  fullName String [not null]
   positionId Int [not null]
   positionTitle String [not null]
+  teamId Int
+  teamTitle String
   createdAt DateTime [default: `now()`, not null]
   user identity_users [not null]
   review feedback360_reviews [not null]
+  team org_teams
 
   indexes {
     (reviewId, reviewerId) [unique]
@@ -571,9 +586,13 @@ Ref: feedback360_respondents.reviewId > feedback360_reviews.id [delete: No Actio
 
 Ref: feedback360_respondents.positionId > org_positions.id [delete: No Action]
 
+Ref: feedback360_respondents.teamId > org_teams.id [delete: No Action]
+
 Ref: feedback360_reviewers.reviewerId > identity_users.id [delete: No Action]
 
 Ref: feedback360_reviewers.reviewId > feedback360_reviews.id [delete: No Action]
+
+Ref: feedback360_reviewers.teamId > org_teams.id [delete: No Action]
 
 Ref: reporting_reports.reviewId - feedback360_reviews.id [delete: No Action]
 

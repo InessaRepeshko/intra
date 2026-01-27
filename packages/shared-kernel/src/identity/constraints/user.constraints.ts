@@ -20,7 +20,7 @@ export const USER_CONSTRAINTS = {
     FULL_NAME: {
         LENGTH: {
             MIN: USER_NAME.LENGTH.MIN,
-            MAX: USER_NAME.LENGTH.MAX * 3 + 2, // 3 names * 3 letters + 2 spaces
+            MAX: USER_NAME.LENGTH.MAX * 3 + 2, // 3 names * 100 letters + 2 spaces
         },
         PATTERN: USER_NAME.PATTERN.ONLY_LETTERS,
     },

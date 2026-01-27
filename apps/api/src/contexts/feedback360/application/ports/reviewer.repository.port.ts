@@ -7,16 +7,22 @@ export enum ReviewerSortField {
   ID = 'id',
   REVIEW_ID = 'reviewId',
   REVIEWER_ID = 'reviewerId',
+  FULL_NAME = 'fullName',
   POSITION_ID = 'positionId',
   POSITION_TITLE = 'positionTitle',
+  TEAM_ID = 'teamId',
+  TEAM_TITLE = 'teamTitle',
   CREATED_AT = 'createdAt',
 }
 
 export type ReviewerSearchQuery = {
   reviewId?: number;
   reviewerId?: number;
+  fullName?: string;
   positionId?: number;
   positionTitle?: string;
+  teamId?: number | null;
+  teamTitle?: string | null;
   sortBy?: ReviewerSortField;
   sortDirection?: SortDirection;
 };

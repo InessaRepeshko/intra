@@ -10,6 +10,13 @@ export class CreateReviewerDto {
   @Min(1)
   reviewerId!: number;
 
+  @ApiProperty({ example: 'Ivanna Bulava', description: 'Reviewer full name', type: 'string', required: true, minLength: REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @ToOptionalTrimmedString({ min: REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @IsString()
+  @MinLength(REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MIN)
+  @MaxLength(REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MAX)
+  fullName!: string;
+
   @ApiProperty({ example: 3, description: 'Reviewer position id', type: 'number', required: true })
   @ToOptionalInt({ min: 1 })
   @IsInt()
@@ -22,4 +29,17 @@ export class CreateReviewerDto {
   @MinLength(REVIEWER_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN)
   @MaxLength(REVIEWER_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX)
   positionTitle!: string;
+
+  @ApiProperty({ example: 5, description: 'Reviewer team id', type: 'number', required: false, nullable: true })
+  @ToOptionalInt({ min: 1 })
+  @IsInt()
+  @Min(1)
+  teamId?: number | null;
+
+  @ApiProperty({ example: 'Engineering team', description: 'Reviewer team title', type: 'string', required: false, nullable: true, minLength: REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maxLength: REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX })
+  @ToOptionalTrimmedString({ min: REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, max: REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX })
+  @IsString()
+  @MinLength(REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN)
+  @MaxLength(REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX)
+  teamTitle?: string | null;
 }

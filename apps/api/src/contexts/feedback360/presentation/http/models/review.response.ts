@@ -11,17 +11,25 @@ export class ReviewResponse {
   @Expose()
   rateeId!: number;
 
+  @ApiProperty({ example: 'Valerii Velychko', description: 'Ratee full name', type: 'string', required: true, minimum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @Expose()
+  rateeFullName!: string;
+
   @ApiProperty({ example: 3, description: 'Ratee position id', type: 'number', required: true })
   @Expose()
   rateePositionId!: number;
 
-  @ApiProperty({ example: 'Senior Engineer', description: 'Ratee position title', type: 'string', required: true, minimum: REVIEW_CONSTRAINTS.RATEE_POSITION_TITLE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.RATEE_POSITION_TITLE.LENGTH.MAX })
+  @ApiProperty({ example: 'Senior Engineer', description: 'Ratee position title', type: 'string', required: true, minimum: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
   @Expose()
   rateePositionTitle!: string;
 
   @ApiProperty({ example: 2, description: 'HR id', type: 'number', required: true })
   @Expose()
   hrId!: number;
+
+  @ApiProperty({ example: 'Anna Boyko', description: 'HR full name', type: 'string', required: true, minimum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @Expose()
+  hrFullName!: string;
 
   @ApiPropertyOptional({ example: 'HR comment', description: 'HR note', type: 'string', required: false, nullable: true, minimum: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
   @Expose()
@@ -38,6 +46,18 @@ export class ReviewResponse {
   @ApiPropertyOptional({ example: 5, description: 'Manager id', type: 'number', required: false, nullable: true })
   @Expose()
   managerId?: number | null;
+
+  @ApiPropertyOptional({ example: 'John Doe', description: 'Manager full name', type: 'string', required: false, nullable: true, minimum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @Expose()
+  managerFullName?: string | null;
+
+  @ApiPropertyOptional({ example: 2, description: 'Manager position id', type: 'number', required: false, nullable: true })
+  @Expose()
+  managerPositionId?: number | null;
+
+  @ApiPropertyOptional({ example: 'Senior Engineer', description: 'Manager position title', type: 'string', required: false, nullable: true, minimum: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
+  @Expose()
+  managerPositionTitle?: string | null;
 
   @ApiPropertyOptional({ example: 1, description: 'Cycle id', type: 'number', required: false, nullable: true })
   @Expose()

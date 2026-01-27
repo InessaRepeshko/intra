@@ -121,6 +121,8 @@ model Team {
   memberships TeamMembership[]
   head        User?            @relation("team_head", fields: [headId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   reviews     Review[]
+  respondents Respondent[]
+  reviewers   Reviewer[]
 
   @@index([headId])
   @@map("org_teams")
@@ -361,20 +363,25 @@ model Cycle {
 }
 
 model Review {
-  id                 Int         @id @default(autoincrement())
-  rateeId            Int         @map("ratee_id")
-  rateePositionId    Int         @map("ratee_position_id")
-  rateePositionTitle String      @map("ratee_position_title") @db.Text
-  hrId               Int         @map("hr_id")
-  hrNote             String?     @map("hr_note") @db.Text
-  teamId             Int?        @map("team_id")
-  teamTitle          String?     @map("team_title") @db.Text
-  managerId          Int?        @map("manager_id")
-  cycleId            Int?        @map("cycle_id")
-  reportId           Int?        @map("report_id")
-  stage              ReviewStage @default(VERIFICATION_BY_HR)
-  createdAt          DateTime    @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt          DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+  id                   Int         @id @default(autoincrement())
+  rateeId              Int         @map("ratee_id")
+  rateeFullName        String      @map("ratee_full_name") @db.VarChar(302)
+  rateePositionId      Int         @map("ratee_position_id")
+  rateePositionTitle   String      @map("ratee_position_title") @db.Text
+  hrId                 Int         @map("hr_id")
+  hrFullName           String      @map("hr_full_name") @db.VarChar(302)
+  hrNote               String?     @map("hr_note") @db.Text
+  teamId               Int?        @map("team_id")
+  teamTitle            String?     @map("team_title") @db.Text
+  managerId            Int?        @map("manager_id")
+  managerFullName      String?     @map("manager_full_name") @db.VarChar(302)
+  managerPositionId    Int?        @map("manager_position_id")
+  managerPositionTitle String?     @map("manager_position_title") @db.Text
+  cycleId              Int?        @map("cycle_id")
+  reportId             Int?        @map("report_id")
+  stage                ReviewStage @default(VERIFICATION_BY_HR)
+  createdAt            DateTime    @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt            DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
   ratee    User     @relation("reviews_as_ratee", fields: [rateeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   hr       User     @relation("managed_reviews", fields: [hrId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -496,9 +503,9 @@ model CycleClusterAnalytics {
   cycleId        Int      @map("cycle_id")
   clusterId      Int      @map("cluster_id")
   employeesCount Int      @default(0) @map("employees_count")
-  minScore       Float   @map("min_score")
-  maxScore       Float   @map("max_score")
-  averageScore   Float   @map("average_score")
+  minScore       Float    @map("min_score")
+  maxScore       Float    @map("max_score")
+  averageScore   Float    @map("average_score")
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
@@ -515,12 +522,15 @@ model Respondent {
   id             Int                @id @default(autoincrement())
   reviewId       Int                @map("review_id")
   respondentId   Int                @map("respondent_id")
+  fullName       String             @map("full_name") @db.VarChar(302)
   category       RespondentCategory @map("category")
   responseStatus ResponseStatus     @default(PENDING) @map("response_status")
   respondentNote String?            @map("respondent_note") @db.Text
   hrNote         String?            @map("hr_note") @db.Text
   positionId     Int                @map("position_id")
   positionTitle  String             @map("position_title") @db.Text
+  teamId         Int?               @map("team_id")
+  teamTitle      String?            @map("team_title") @db.Text
   invitedAt      DateTime?          @map("invited_at") @db.Timestamp(0)
   canceledAt     DateTime?          @map("canceled_at") @db.Timestamp(0)
   respondedAt    DateTime?          @map("responded_at") @db.Timestamp(0)
@@ -530,12 +540,14 @@ model Respondent {
   user               User      @relation("user_responses", fields: [respondentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   review             Review    @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   respondentPosition Position? @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  respondentTeam     Team?     @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([respondentId, reviewId])
   @@index([reviewId])
   @@index([responseStatus])
   @@index([respondentId])
   @@index([positionId])
+  @@index([teamId])
   @@index([respondentId, responseStatus])
   @@map("feedback360_respondents")
 }
@@ -544,16 +556,21 @@ model Reviewer {
   id            Int      @id @default(autoincrement())
   reviewId      Int      @map("review_id")
   reviewerId    Int      @map("reviewer_id")
+  fullName      String   @map("full_name") @db.VarChar(302)
   positionId    Int      @map("position_id")
   positionTitle String   @map("position_title") @db.Text
+  teamId        Int?     @map("team_id")
+  teamTitle     String?  @map("team_title") @db.Text
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamp(0)
 
   user   User   @relation("reviews_as_reviewer", fields: [reviewerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   review Review @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  team   Team?  @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([reviewId, reviewerId])
   @@index([reviewId])
   @@index([reviewerId])
+  @@index([teamId])
   @@map("feedback360_reviewers")
 }
 

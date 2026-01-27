@@ -16,6 +16,10 @@ export class RespondentResponse {
   @Expose()
   respondentId!: number;
 
+  @ApiProperty({ example: 'Ivanna Bulava', description: 'Respondent full name', type: 'string', required: true, minimum: RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @Expose()
+  fullName!: string;
+
   @ApiProperty({ enum: RespondentCategory, description: 'Respondent category', type: 'string', required: true })
   @Expose()
   category!: RespondentCategory;
@@ -39,6 +43,14 @@ export class RespondentResponse {
   @ApiProperty({ example: 'Senior Engineer', description: 'Position title', type: 'string', required: true, minimum: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maximum: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
   @Expose()
   positionTitle!: string;
+
+  @ApiProperty({ example: 3, description: 'Team id', type: 'number', required: false, nullable: true })
+  @Expose()
+  teamId?: number | null;
+
+  @ApiProperty({ example: 'Senior Engineer', description: 'Position title', type: 'string', required: false, nullable: true, minimum: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maximum: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
+  @Expose()
+  teamTitle?: string | null;
 
   @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Invited at', type: 'string', format: 'date-time', required: false, nullable: true })
   @Expose()

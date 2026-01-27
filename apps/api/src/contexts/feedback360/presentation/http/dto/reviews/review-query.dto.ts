@@ -13,18 +13,26 @@ export class ReviewQueryDto {
   @IsInt()
   rateeId?: number;
 
+  @ApiPropertyOptional({ example: 'Valerii Velichko', description: 'Ratee full name (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @IsOptional()
+  @IsString()
+  @MinLength(REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN)
+  @MaxLength(REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX)
+  rateeFullName?: string;
+
   @ApiPropertyOptional({ example: 1, description: 'Ratee position id', type: 'number' })
   @ToOptionalInt({ min: 1 })
   @IsOptional()
   @IsInt()
   rateePositionId?: number;
 
-  @ApiPropertyOptional({ example: 'Software Engineer', description: 'Ratee position title (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.RATEE_POSITION_TITLE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.RATEE_POSITION_TITLE.LENGTH.MAX })
-  @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.RATEE_POSITION_TITLE.LENGTH.MIN, max: REVIEW_CONSTRAINTS.RATEE_POSITION_TITLE.LENGTH.MAX })
+  @ApiPropertyOptional({ example: 'Software Engineer', description: 'Ratee position title (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
+  @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, max: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
   @IsOptional()
   @IsString()
-  @MinLength(REVIEW_CONSTRAINTS.RATEE_POSITION_TITLE.LENGTH.MIN)
-  @MaxLength(REVIEW_CONSTRAINTS.RATEE_POSITION_TITLE.LENGTH.MAX)
+  @MinLength(REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN)
+  @MaxLength(REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX)
   rateePositionTitle?: string;
 
   @ApiPropertyOptional({ example: 2, description: 'HR id', type: 'number' })
@@ -32,6 +40,14 @@ export class ReviewQueryDto {
   @IsOptional()
   @IsInt()
   hrId?: number;
+
+  @ApiPropertyOptional({ example: 'Anna Boyko', description: 'HR full name (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @IsOptional()
+  @IsString()
+  @MinLength(REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN)
+  @MaxLength(REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX)
+  hrFullName?: string;
 
   @ApiPropertyOptional({ example: 'Completion of probationary period', description: 'HR note (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MIN, max: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
@@ -41,31 +57,53 @@ export class ReviewQueryDto {
   @MaxLength(REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MAX)
   hrNote?: string;
 
-  @ApiPropertyOptional({ example: 1, description: 'Team id', type: 'number' })
+  @ApiPropertyOptional({ example: 1, description: 'Team id', type: 'number', nullable: true })
   @ToOptionalInt({ min: 1 })
   @IsOptional()
   @IsInt()
-  teamId?: number;
+  teamId?: number | null;
 
-  @ApiPropertyOptional({ example: 'Engineering team', description: 'Team title (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX })
+  @ApiPropertyOptional({ example: 'Engineering team', description: 'Team title (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX, nullable: true })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, max: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX })
   @IsOptional()
   @IsString()
   @MinLength(REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN)
   @MaxLength(REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX)
-  teamTitle?: string;
+  teamTitle?: string | null;
 
-  @ApiPropertyOptional({ example: 1, description: 'Manager id', type: 'number' })
+  @ApiPropertyOptional({ example: 1, description: 'Manager id', type: 'number', nullable: true })
   @ToOptionalInt({ min: 1 })
   @IsOptional()
   @IsInt()
-  managerId?: number;
+  managerId?: number | null;
 
-  @ApiPropertyOptional({ example: 1, description: 'Cycle id', type: 'number' })
+  @ApiPropertyOptional({ example: 'Yaroslav Syvyi', description: 'Manager full name (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX, nullable: true })
+  @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @IsOptional()
+  @IsString()
+  @MinLength(REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN)
+  @MaxLength(REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX)
+  managerFullName?: string | null;
+
+  @ApiPropertyOptional({ example: 1, description: 'Manager position id', type: 'number', nullable: true })
   @ToOptionalInt({ min: 1 })
   @IsOptional()
   @IsInt()
-  cycleId?: number;
+  managerPositionId?: number | null;
+
+  @ApiPropertyOptional({ example: 'Software Engineer', description: 'Manager position title (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX, nullable: true })
+  @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, max: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
+  @IsOptional()
+  @IsString()
+  @MinLength(REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN)
+  @MaxLength(REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX)
+  managerPositionTitle?: string | null;
+
+  @ApiPropertyOptional({ example: 1, description: 'Cycle id', type: 'number', nullable: true })
+  @ToOptionalInt({ min: 1 })
+  @IsOptional()
+  @IsInt()
+  cycleId?: number | null;
 
   @ApiPropertyOptional({ enum: ReviewStage, example: ReviewStage.VERIFICATION_BY_HR, description: 'Review stage' })
   @ToOptionalEnum(ReviewStage)
@@ -73,11 +111,11 @@ export class ReviewQueryDto {
   @IsEnum(ReviewStage)
   stage?: ReviewStage;
 
-  @ApiPropertyOptional({ example: 1, description: 'Report id', type: 'number' })
+  @ApiPropertyOptional({ example: 1, description: 'Report id', type: 'number', nullable: true })
   @ToOptionalInt({ min: 1 })
   @IsOptional()
   @IsInt()
-  reportId?: number;
+  reportId?: number | null;
 
   @ApiPropertyOptional({ example: ReviewSortField.CREATED_AT, enum: ReviewSortField, description: 'Sort by', default: ReviewSortField.ID, type: 'string' })
   @ToOptionalEnum(ReviewSortField)

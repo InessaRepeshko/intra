@@ -2520,6 +2520,8 @@
             "in": "query",
             "description": "Filter by title",
             "schema": {
+              "minLength": 1,
+              "maxLength": 255,
               "example": "Q1",
               "type": "string"
             }
@@ -2530,6 +2532,8 @@
             "in": "query",
             "description": "Filter by description",
             "schema": {
+              "minLength": 1,
+              "maxLength": 1000,
               "example": "Description",
               "type": "string"
             }
@@ -2540,6 +2544,8 @@
             "in": "query",
             "description": "Search by title/description",
             "schema": {
+              "minLength": 1,
+              "maxLength": 255,
               "example": "Q1",
               "type": "string"
             }
@@ -2560,6 +2566,7 @@
             "in": "query",
             "description": "Filter by min respondents threshold",
             "schema": {
+              "minimum": 3,
               "default": 3,
               "example": 5,
               "type": "number"
@@ -2598,8 +2605,8 @@
             "in": "query",
             "description": "Filter by start date",
             "schema": {
-              "format": "date",
-              "example": "2022-01-01",
+              "format": "date-time",
+              "example": "2025-01-01T00:00:00.000Z",
               "type": "string"
             }
           },
@@ -2609,8 +2616,8 @@
             "in": "query",
             "description": "Filter by end date",
             "schema": {
-              "format": "date",
-              "example": "2022-01-01",
+              "format": "date-time",
+              "example": "2025-01-01T00:00:00.000Z",
               "type": "string"
             }
           },
@@ -2620,8 +2627,8 @@
             "in": "query",
             "description": "Filter by review deadline",
             "schema": {
-              "format": "date",
-              "example": "2022-01-01",
+              "format": "date-time",
+              "example": "2025-01-01T00:00:00.000Z",
               "type": "string"
             }
           },
@@ -2631,8 +2638,8 @@
             "in": "query",
             "description": "Filter by approval deadline",
             "schema": {
-              "format": "date",
-              "example": "2022-01-01",
+              "format": "date-time",
+              "example": "2025-01-01T00:00:00.000Z",
               "type": "string"
             }
           },
@@ -2642,8 +2649,8 @@
             "in": "query",
             "description": "Filter by response deadline",
             "schema": {
-              "format": "date",
-              "example": "2022-01-01",
+              "format": "date-time",
+              "example": "2025-01-01T00:00:00.000Z",
               "type": "string"
             }
           },
@@ -2653,7 +2660,8 @@
             "in": "query",
             "description": "Sort by field",
             "schema": {
-              "example": "startDate",
+              "default": "id",
+              "example": "stage",
               "type": "string",
               "enum": [
                 "id",
@@ -2679,6 +2687,7 @@
             "in": "query",
             "description": "Sort direction",
             "schema": {
+              "default": "asc",
               "example": "desc",
               "type": "string",
               "enum": [
@@ -2686,11 +2695,166 @@
                 "desc"
               ]
             }
+          },
+          {
+            "description": "Filter by title",
+            "required": false,
+            "name": "title",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "example": "Q1",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by description",
+            "required": false,
+            "name": "description",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 1000,
+              "example": "Description",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Search by title/description",
+            "required": false,
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "example": "Q1",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by HR ID",
+            "required": false,
+            "name": "hrId",
+            "in": "query",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by min respondents threshold",
+            "required": false,
+            "name": "minRespondentsThreshold",
+            "in": "query",
+            "schema": {
+              "minimum": 3,
+              "default": 3,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by stage",
+            "required": false,
+            "name": "stage",
+            "in": "query",
+            "schema": {
+              "example": "ACTIVE",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by active",
+            "required": false,
+            "name": "isActive",
+            "in": "query",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Filter by start date",
+            "required": false,
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-01T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by end date",
+            "required": false,
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-01T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by review deadline",
+            "required": false,
+            "name": "reviewDeadline",
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-01T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by approval deadline",
+            "required": false,
+            "name": "approvalDeadline",
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-01T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by response deadline",
+            "required": false,
+            "name": "responseDeadline",
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-01T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort by field",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "stage",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Default sort by ascending id",
             "content": {
               "application/json": {
                 "schema": {
@@ -2720,8 +2884,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Cycle id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2755,8 +2920,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Cycle id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2806,8 +2972,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Cycle id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2891,6 +3058,18 @@
             }
           },
           {
+            "name": "rateeFullName",
+            "required": false,
+            "in": "query",
+            "description": "Ratee full name (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 302,
+              "example": "Valerii Velichko",
+              "type": "string"
+            }
+          },
+          {
             "name": "rateePositionId",
             "required": false,
             "in": "query",
@@ -2904,8 +3083,10 @@
             "name": "rateePositionTitle",
             "required": false,
             "in": "query",
-            "description": "Ratee position title",
+            "description": "Ratee position title (contains, case-insensitive)",
             "schema": {
+              "minLength": 1,
+              "maxLength": 255,
               "example": "Software Engineer",
               "type": "string"
             }
@@ -2921,11 +3102,25 @@
             }
           },
           {
+            "name": "hrFullName",
+            "required": false,
+            "in": "query",
+            "description": "HR full name (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 302,
+              "example": "Anna Boyko",
+              "type": "string"
+            }
+          },
+          {
             "name": "hrNote",
             "required": false,
             "in": "query",
-            "description": "HR note",
+            "description": "HR note (contains, case-insensitive)",
             "schema": {
+              "minLength": 1000,
+              "maxLength": 1000,
               "example": "Completion of probationary period",
               "type": "string"
             }
@@ -2936,6 +3131,7 @@
             "in": "query",
             "description": "Team id",
             "schema": {
+              "nullable": true,
               "example": 1,
               "type": "number"
             }
@@ -2944,8 +3140,11 @@
             "name": "teamTitle",
             "required": false,
             "in": "query",
-            "description": "Team title",
+            "description": "Team title (contains, case-insensitive)",
             "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "nullable": true,
               "example": "Engineering team",
               "type": "string"
             }
@@ -2956,8 +3155,46 @@
             "in": "query",
             "description": "Manager id",
             "schema": {
+              "nullable": true,
               "example": 1,
               "type": "number"
+            }
+          },
+          {
+            "name": "managerFullName",
+            "required": false,
+            "in": "query",
+            "description": "Manager full name (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 302,
+              "nullable": true,
+              "example": "Yaroslav Syvyi",
+              "type": "string"
+            }
+          },
+          {
+            "name": "managerPositionId",
+            "required": false,
+            "in": "query",
+            "description": "Manager position id",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "managerPositionTitle",
+            "required": false,
+            "in": "query",
+            "description": "Manager position title (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "nullable": true,
+              "example": "Software Engineer",
+              "type": "string"
             }
           },
           {
@@ -2966,6 +3203,7 @@
             "in": "query",
             "description": "Cycle id",
             "schema": {
+              "nullable": true,
               "example": 1,
               "type": "number"
             }
@@ -2992,25 +3230,43 @@
             }
           },
           {
+            "name": "reportId",
+            "required": false,
+            "in": "query",
+            "description": "Report id",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
             "name": "sortBy",
             "required": false,
             "in": "query",
             "description": "Sort by",
             "schema": {
+              "default": "id",
               "example": "createdAt",
               "type": "string",
               "enum": [
                 "id",
                 "rateeId",
+                "rateeFullName",
                 "rateePositionId",
                 "rateePositionTitle",
                 "hrId",
+                "hrFullName",
                 "hrNote",
                 "teamId",
                 "teamTitle",
                 "managerId",
+                "managerFullName",
+                "managerPositionId",
+                "managerPositionTitle",
                 "cycleId",
                 "stage",
+                "reportId",
                 "createdAt",
                 "updatedAt"
               ]
@@ -3022,6 +3278,7 @@
             "in": "query",
             "description": "Sort direction",
             "schema": {
+              "default": "asc",
               "example": "desc",
               "type": "string",
               "enum": [
@@ -3029,11 +3286,215 @@
                 "desc"
               ]
             }
+          },
+          {
+            "description": "Ratee id",
+            "required": false,
+            "name": "rateeId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Ratee full name (contains, case-insensitive)",
+            "required": false,
+            "name": "rateeFullName",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 302,
+              "example": "Valerii Velichko",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Ratee position id",
+            "required": false,
+            "name": "rateePositionId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Ratee position title (contains, case-insensitive)",
+            "required": false,
+            "name": "rateePositionTitle",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "example": "Software Engineer",
+              "type": "string"
+            }
+          },
+          {
+            "description": "HR id",
+            "required": false,
+            "name": "hrId",
+            "in": "query",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "description": "HR full name (contains, case-insensitive)",
+            "required": false,
+            "name": "hrFullName",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 302,
+              "example": "Anna Boyko",
+              "type": "string"
+            }
+          },
+          {
+            "description": "HR note (contains, case-insensitive)",
+            "required": false,
+            "name": "hrNote",
+            "in": "query",
+            "schema": {
+              "minLength": 1000,
+              "maxLength": 1000,
+              "example": "Completion of probationary period",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Team id",
+            "required": false,
+            "name": "teamId",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Team title (contains, case-insensitive)",
+            "required": false,
+            "name": "teamTitle",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "nullable": true,
+              "example": "Engineering team",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Manager id",
+            "required": false,
+            "name": "managerId",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Manager full name (contains, case-insensitive)",
+            "required": false,
+            "name": "managerFullName",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 302,
+              "nullable": true,
+              "example": "Yaroslav Syvyi",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Manager position id",
+            "required": false,
+            "name": "managerPositionId",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Manager position title (contains, case-insensitive)",
+            "required": false,
+            "name": "managerPositionTitle",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "nullable": true,
+              "example": "Software Engineer",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Cycle id",
+            "required": false,
+            "name": "cycleId",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Review stage",
+            "required": false,
+            "name": "stage",
+            "in": "query",
+            "schema": {
+              "example": "VERIFICATION_BY_HR",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Report id",
+            "required": false,
+            "name": "reportId",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Sort by",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Default sort by ascending id",
             "content": {
               "application/json": {
                 "schema": {
@@ -3063,8 +3524,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Review id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -3098,8 +3560,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Review id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -3149,8 +3612,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Review id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -3185,8 +3649,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Review id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -3236,14 +3701,222 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Review id",
             "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "reviewId",
+            "required": false,
+            "in": "query",
+            "description": "Review id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "questionId",
+            "required": false,
+            "in": "query",
+            "description": "Question id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "questionTitle",
+            "required": false,
+            "in": "query",
+            "description": "Question title (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "example": "Listens actively before responding.",
+              "type": "string"
+            }
+          },
+          {
+            "name": "answerType",
+            "required": false,
+            "in": "query",
+            "description": "Answer type",
+            "schema": {
+              "example": "NUMERICAL_SCALE",
+              "type": "string"
+            }
+          },
+          {
+            "name": "competenceId",
+            "required": false,
+            "in": "query",
+            "description": "Competence id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "competenceTitle",
+            "required": false,
+            "in": "query",
+            "description": "Competence title (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "example": "Communication",
+              "type": "string"
+            }
+          },
+          {
+            "name": "isForSelfassessment",
+            "required": false,
+            "in": "query",
+            "description": "Is for selfassessment",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Sort field by ",
+            "schema": {
+              "default": "id",
+              "example": "questionTitle",
+              "type": "string",
+              "enum": [
+                "id",
+                "reviewId",
+                "questionId",
+                "questionTitle",
+                "answerType",
+                "competenceId",
+                "competenceTitle",
+                "isForSelfassessment",
+                "createdAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "description": "Review id",
+            "required": false,
+            "name": "reviewId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Question id",
+            "required": false,
+            "name": "questionId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Question title (contains, case-insensitive)",
+            "required": false,
+            "name": "questionTitle",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "example": "Listens actively before responding.",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Answer type",
+            "required": false,
+            "name": "answerType",
+            "in": "query",
+            "schema": {
+              "example": "NUMERICAL_SCALE",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Competence id",
+            "required": false,
+            "name": "competenceId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Competence title (contains, case-insensitive)",
+            "required": false,
+            "name": "competenceTitle",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "example": "Communication",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Is for selfassessment",
+            "required": false,
+            "name": "isForSelfassessment",
+            "in": "query",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Sort field by ",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "questionTitle",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Default sort by ascending id",
             "content": {
               "application/json": {
                 "schema": {
@@ -3273,16 +3946,18 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Review id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           },
           {
             "name": "questionId",
             "required": true,
             "in": "path",
+            "description": "Question id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -3317,8 +3992,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Review id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -3368,8 +4044,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Review id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           },
           {
@@ -3425,6 +4102,8 @@
             "in": "query",
             "description": "Filter by numerical value",
             "schema": {
+              "minimum": 0,
+              "maximum": 5,
               "example": 1,
               "type": "number"
             }
@@ -3433,8 +4112,10 @@
             "name": "textValue",
             "required": false,
             "in": "query",
-            "description": "Filter by text value",
+            "description": "Filter by text value (contains, case-insensitive)",
             "schema": {
+              "minimum": 1,
+              "maximum": 1000,
               "example": "text",
               "type": "string"
             }
@@ -3445,6 +4126,8 @@
             "in": "query",
             "description": "Sort by field",
             "schema": {
+              "default": "id",
+              "example": "answerType",
               "type": "string",
               "enum": [
                 "id",
@@ -3464,17 +4147,103 @@
             "in": "query",
             "description": "Sort direction",
             "schema": {
+              "default": "asc",
+              "example": "desc",
               "type": "string",
               "enum": [
                 "asc",
                 "desc"
               ]
             }
+          },
+          {
+            "description": "Filter by review ID",
+            "required": false,
+            "name": "reviewId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by question ID",
+            "required": false,
+            "name": "questionId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by respondent category",
+            "required": false,
+            "name": "respondentCategory",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by answer type",
+            "required": false,
+            "name": "answerType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by numerical value",
+            "required": false,
+            "name": "numericalValue",
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by text value (contains, case-insensitive)",
+            "required": false,
+            "name": "textValue",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "text",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort by field",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "answerType",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Default sort by ascending id",
             "content": {
               "application/json": {
                 "schema": {
@@ -3504,8 +4273,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Review id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -3555,14 +4325,392 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Review id",
             "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "reviewId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by cycle id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "respondentId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by respondent id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "fullName",
+            "required": false,
+            "in": "query",
+            "description": "Filter by respondent full name (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 302,
+              "example": "Ivanna Bulava",
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Filter by respondent category",
+            "schema": {
+              "example": "TEAM",
+              "type": "string"
+            }
+          },
+          {
+            "name": "responseStatus",
+            "required": false,
+            "in": "query",
+            "description": "Filter by response status",
+            "schema": {
+              "example": "PENDING",
+              "type": "string"
+            }
+          },
+          {
+            "name": "respondentNote",
+            "required": false,
+            "in": "query",
+            "description": "Filter by respondent note (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 1000,
+              "example": "Respondent note",
+              "type": "string"
+            }
+          },
+          {
+            "name": "hrNote",
+            "required": false,
+            "in": "query",
+            "description": "Filter by HR note (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 1000,
+              "example": "HR note",
+              "type": "string"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by position id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "positionTitle",
+            "required": false,
+            "in": "query",
+            "description": "Filter by position title (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 1000,
+              "example": "Position title",
+              "type": "string"
+            }
+          },
+          {
+            "name": "teamId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by team id",
+            "schema": {
+              "nullable": true,
+              "example": 3,
+              "type": "number"
+            }
+          },
+          {
+            "name": "teamTitle",
+            "required": false,
+            "in": "query",
+            "description": "Filter by team title (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 1000,
+              "nullable": true,
+              "example": "Team title",
+              "type": "string"
+            }
+          },
+          {
+            "name": "invitedAt",
+            "required": false,
+            "in": "query",
+            "description": "Filter by invited at",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-20T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "canceledAt",
+            "required": false,
+            "in": "query",
+            "description": "Filter by canceled at",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-20T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "respondedAt",
+            "required": false,
+            "in": "query",
+            "description": "Filter by responded at",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-20T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Sort by field",
+            "schema": {
+              "default": "id",
+              "example": "responseStatus",
+              "type": "string",
+              "enum": [
+                "id",
+                "reviewId",
+                "respondentId",
+                "fullName",
+                "category",
+                "responseStatus",
+                "respondentNote",
+                "hrNote",
+                "positionId",
+                "positionTitle",
+                "teamId",
+                "teamTitle",
+                "invitedAt",
+                "canceledAt",
+                "respondedAt",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "description": "Filter by cycle id",
+            "required": false,
+            "name": "reviewId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by respondent id",
+            "required": false,
+            "name": "respondentId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by respondent full name (contains, case-insensitive)",
+            "required": false,
+            "name": "fullName",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 302,
+              "example": "Ivanna Bulava",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by respondent category",
+            "required": false,
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "example": "TEAM",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by response status",
+            "required": false,
+            "name": "responseStatus",
+            "in": "query",
+            "schema": {
+              "example": "PENDING",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by respondent note (contains, case-insensitive)",
+            "required": false,
+            "name": "respondentNote",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 1000,
+              "example": "Respondent note",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by HR note (contains, case-insensitive)",
+            "required": false,
+            "name": "hrNote",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 1000,
+              "example": "HR note",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by position id",
+            "required": false,
+            "name": "positionId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by position title (contains, case-insensitive)",
+            "required": false,
+            "name": "positionTitle",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 1000,
+              "example": "Position title",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by team id",
+            "required": false,
+            "name": "teamId",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "example": 3,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by team title (contains, case-insensitive)",
+            "required": false,
+            "name": "teamTitle",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 1000,
+              "nullable": true,
+              "example": "Team title",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by invited at",
+            "required": false,
+            "name": "invitedAt",
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-20T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by canceled at",
+            "required": false,
+            "name": "canceledAt",
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-20T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by responded at",
+            "required": false,
+            "name": "respondedAt",
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-20T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort by field",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "responseStatus",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Default sort by ascending id",
             "content": {
               "application/json": {
                 "schema": {
@@ -3592,8 +4740,9 @@
             "name": "relationId",
             "required": true,
             "in": "path",
+            "description": "Respondent relation id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -3643,8 +4792,9 @@
             "name": "relationId",
             "required": true,
             "in": "path",
+            "description": "Respondent relation id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -3679,8 +4829,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Review id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -3730,14 +4881,230 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Review id",
             "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "reviewId",
+            "required": false,
+            "in": "query",
+            "description": "Review id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "reviewerId",
+            "required": false,
+            "in": "query",
+            "description": "Reviewer id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "fullName",
+            "required": false,
+            "in": "query",
+            "description": "Reviewer full name",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 302,
+              "example": "Ivanna Bulava",
+              "type": "string"
+            }
+          },
+          {
+            "name": "positionId",
+            "required": false,
+            "in": "query",
+            "description": "Position id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "positionTitle",
+            "required": false,
+            "in": "query",
+            "description": "Position title (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "example": "Position title",
+              "type": "string"
+            }
+          },
+          {
+            "name": "teamId",
+            "required": false,
+            "in": "query",
+            "description": "Team id",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "teamTitle",
+            "required": false,
+            "in": "query",
+            "description": "Team title (contains, case-insensitive)",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "nullable": true,
+              "example": "Engineering team",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Sort field by ",
+            "schema": {
+              "default": "id",
+              "example": "positionTitle",
+              "type": "string",
+              "enum": [
+                "id",
+                "reviewId",
+                "reviewerId",
+                "fullName",
+                "positionId",
+                "positionTitle",
+                "teamId",
+                "teamTitle",
+                "createdAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "description": "Review id",
+            "required": false,
+            "name": "reviewId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Reviewer id",
+            "required": false,
+            "name": "reviewerId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Reviewer full name",
+            "required": false,
+            "name": "fullName",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 302,
+              "example": "Ivanna Bulava",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Position id",
+            "required": false,
+            "name": "positionId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Position title (contains, case-insensitive)",
+            "required": false,
+            "name": "positionTitle",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "example": "Position title",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Team id",
+            "required": false,
+            "name": "teamId",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Team title (contains, case-insensitive)",
+            "required": false,
+            "name": "teamTitle",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "nullable": true,
+              "example": "Engineering team",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort field by ",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "positionTitle",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Default sort by ascending id",
             "content": {
               "application/json": {
                 "schema": {
@@ -3767,8 +5134,9 @@
             "name": "relationId",
             "required": true,
             "in": "path",
+            "description": "Reviewer relation id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -3845,7 +5213,7 @@
             "name": "cycleId",
             "required": false,
             "in": "query",
-            "description": "Cycle id",
+            "description": "Filter by cycle id",
             "schema": {
               "example": 1,
               "type": "number"
@@ -3855,7 +5223,7 @@
             "name": "questionTemplateId",
             "required": false,
             "in": "query",
-            "description": "Question template id",
+            "description": "Filter by question template id",
             "schema": {
               "example": 3,
               "type": "number"
@@ -3865,8 +5233,10 @@
             "name": "title",
             "required": false,
             "in": "query",
-            "description": "Question title",
+            "description": "Filter by question title (contains, case-insensitive)",
             "schema": {
+              "minLength": 1,
+              "maxLength": 255,
               "example": "Listens actively before responding.",
               "type": "string"
             }
@@ -3875,7 +5245,7 @@
             "name": "competenceId",
             "required": false,
             "in": "query",
-            "description": "Competence id",
+            "description": "Filter by competence id",
             "schema": {
               "example": 2,
               "type": "number"
@@ -3885,7 +5255,7 @@
             "name": "answerType",
             "required": false,
             "in": "query",
-            "description": "Answer type",
+            "description": "Filter by answer type",
             "schema": {
               "example": "NUMERICAL_SCALE",
               "type": "string",
@@ -3899,7 +5269,7 @@
             "name": "isForSelfassessment",
             "required": false,
             "in": "query",
-            "description": "Is for selfassessment",
+            "description": "Filter by is for selfassessment",
             "schema": {
               "example": false,
               "type": "boolean"
@@ -3909,8 +5279,9 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
-            "description": "Sort by",
+            "description": "Sort by field",
             "schema": {
+              "default": "id",
               "example": "title",
               "type": "string",
               "enum": [
@@ -3931,6 +5302,7 @@
             "in": "query",
             "description": "Sort direction",
             "schema": {
+              "default": "asc",
               "example": "desc",
               "type": "string",
               "enum": [
@@ -3938,11 +5310,95 @@
                 "desc"
               ]
             }
+          },
+          {
+            "description": "Filter by cycle id",
+            "required": false,
+            "name": "cycleId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by question template id",
+            "required": false,
+            "name": "questionTemplateId",
+            "in": "query",
+            "schema": {
+              "example": 3,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by question title (contains, case-insensitive)",
+            "required": false,
+            "name": "title",
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "example": "Listens actively before responding.",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by competence id",
+            "required": false,
+            "name": "competenceId",
+            "in": "query",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by answer type",
+            "required": false,
+            "name": "answerType",
+            "in": "query",
+            "schema": {
+              "example": "NUMERICAL_SCALE",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by is for selfassessment",
+            "required": false,
+            "name": "isForSelfassessment",
+            "in": "query",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Sort by field",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "title",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Default sort by ascending id",
             "content": {
               "application/json": {
                 "schema": {
@@ -3972,8 +5428,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Question id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -4092,6 +5549,8 @@
             "in": "query",
             "description": "Filter by score",
             "schema": {
+              "minimum": 0,
+              "maximum": 5,
               "example": 5,
               "type": "number"
             }
@@ -4102,6 +5561,7 @@
             "in": "query",
             "description": "Filter by answer count",
             "schema": {
+              "minimum": 1,
               "example": 5,
               "type": "number"
             }
@@ -4112,6 +5572,8 @@
             "in": "query",
             "description": "Sort by field",
             "schema": {
+              "default": "id",
+              "example": "rateeId",
               "type": "string",
               "enum": [
                 "id",
@@ -4132,17 +5594,104 @@
             "in": "query",
             "description": "Sort direction",
             "schema": {
+              "default": "asc",
+              "example": "desc",
               "type": "string",
               "enum": [
                 "asc",
                 "desc"
               ]
             }
+          },
+          {
+            "description": "Filter by cycle ID",
+            "required": false,
+            "name": "cycleId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by cluster ID",
+            "required": false,
+            "name": "clusterId",
+            "in": "query",
+            "schema": {
+              "example": 3,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by ratee ID",
+            "required": false,
+            "name": "rateeId",
+            "in": "query",
+            "schema": {
+              "example": 7,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by review ID",
+            "required": false,
+            "name": "reviewId",
+            "in": "query",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by score",
+            "required": false,
+            "name": "score",
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by answer count",
+            "required": false,
+            "name": "answerCount",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Sort by field",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "rateeId",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Default sort by ascending id",
             "content": {
               "application/json": {
                 "schema": {
@@ -4172,8 +5721,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Cluster score id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -4272,6 +5822,7 @@
             "in": "query",
             "description": "Filter by employees count",
             "schema": {
+              "minimum": 0,
               "example": 10,
               "type": "number"
             }
@@ -4282,6 +5833,8 @@
             "in": "query",
             "description": "Filter by min score",
             "schema": {
+              "minimum": 0,
+              "maximum": 5,
               "example": 5,
               "type": "number"
             }
@@ -4292,6 +5845,8 @@
             "in": "query",
             "description": "Filter by max score",
             "schema": {
+              "minimum": 0,
+              "maximum": 5,
               "example": 5,
               "type": "number"
             }
@@ -4302,6 +5857,8 @@
             "in": "query",
             "description": "Filter by average score",
             "schema": {
+              "minimum": 0,
+              "maximum": 5,
               "example": 5,
               "type": "number"
             }
@@ -4312,6 +5869,8 @@
             "in": "query",
             "description": "Sort by field",
             "schema": {
+              "default": "id",
+              "example": "averageScore",
               "type": "string",
               "enum": [
                 "id",
@@ -4332,17 +5891,108 @@
             "in": "query",
             "description": "Sort direction",
             "schema": {
+              "default": "asc",
+              "example": "desc",
               "type": "string",
               "enum": [
                 "asc",
                 "desc"
               ]
             }
+          },
+          {
+            "description": "Filter by cycle ID",
+            "required": false,
+            "name": "cycleId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by cluster ID",
+            "required": false,
+            "name": "clusterId",
+            "in": "query",
+            "schema": {
+              "example": 3,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by employees count",
+            "required": false,
+            "name": "employeesCount",
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by min score",
+            "required": false,
+            "name": "minScore",
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by max score",
+            "required": false,
+            "name": "maxScore",
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by average score",
+            "required": false,
+            "name": "averageScore",
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Sort by field",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "averageScore",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Default sort by ascending id",
             "content": {
               "application/json": {
                 "schema": {
@@ -4372,8 +6022,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Cycle cluster analytics id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -4407,8 +6058,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Cycle cluster analytics id",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -5452,12 +7104,16 @@
           "title": {
             "type": "string",
             "example": "Q1 2025",
-            "description": "Cycle name"
+            "description": "Cycle name (contains, case-insensitive)",
+            "minLength": 1,
+            "maxLength": 255
           },
           "description": {
             "type": "string",
-            "example": "First 360 cycle for the team",
-            "description": "Description"
+            "example": "First 360 cycle for 2025",
+            "description": "Description (contains, case-insensitive)",
+            "minLength": 1,
+            "maxLength": 1000
           },
           "hrId": {
             "type": "number",
@@ -5467,6 +7123,7 @@
           "minRespondentsThreshold": {
             "type": "number",
             "example": 5,
+            "description": "Minimum number of respondents",
             "default": 3
           },
           "stage": {
@@ -5479,32 +7136,44 @@
               "ARCHIVED"
             ],
             "example": "NEW",
+            "description": "Cycle stage",
             "default": "NEW"
           },
           "isActive": {
             "type": "boolean",
             "example": true,
+            "description": "Is active cycle",
             "default": true
           },
           "startDate": {
             "type": "string",
-            "example": "2025-01-01T00:00:00.000Z"
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Start date",
+            "format": "date-time"
           },
           "reviewDeadline": {
             "type": "string",
-            "example": "2025-01-10T00:00:00.000Z"
+            "example": "2025-01-10T00:00:00.000Z",
+            "description": "Review deadline",
+            "format": "date-time"
           },
           "approvalDeadline": {
             "type": "string",
-            "example": "2025-01-15T00:00:00.000Z"
+            "example": "2025-01-15T00:00:00.000Z",
+            "description": "Approval deadline",
+            "format": "date-time"
           },
           "responseDeadline": {
             "type": "string",
-            "example": "2025-01-20T00:00:00.000Z"
+            "example": "2025-01-20T00:00:00.000Z",
+            "description": "Response deadline",
+            "format": "date-time"
           },
           "endDate": {
             "type": "string",
-            "example": "2025-02-01T00:00:00.000Z"
+            "example": "2025-02-01T00:00:00.000Z",
+            "description": "End date",
+            "format": "date-time"
           }
         },
         "required": [
@@ -5519,24 +7188,35 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Cycle id"
           },
           "title": {
             "type": "string",
-            "example": "Q1 2025"
+            "example": "Q1 2025",
+            "description": "Cycle title",
+            "minimum": 1,
+            "maximum": 255
           },
           "description": {
-            "type": "object",
-            "example": "First cycle"
+            "type": "string",
+            "example": "First cycle",
+            "description": "Cycle description",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 1000
           },
           "hrId": {
             "type": "number",
-            "example": 2
+            "example": 2,
+            "description": "HR id"
           },
           "minRespondentsThreshold": {
             "type": "number",
             "example": 5,
-            "default": 3
+            "default": 3,
+            "description": "Minimum number of respondents",
+            "minimum": 3
           },
           "stage": {
             "type": "string",
@@ -5547,32 +7227,58 @@
               "FINISHED",
               "ARCHIVED"
             ],
-            "example": "NEW"
+            "example": "NEW",
+            "description": "Cycle stage"
           },
           "isActive": {
             "type": "boolean",
-            "example": true
+            "example": true,
+            "description": "Cycle is active"
           },
           "startDate": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Cycle start date",
+            "format": "date-time"
           },
           "reviewDeadline": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Cycle review deadline",
+            "format": "date-time",
+            "nullable": true
           },
           "approvalDeadline": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Cycle approval deadline",
+            "format": "date-time",
+            "nullable": true
           },
           "responseDeadline": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Cycle response deadline",
+            "format": "date-time",
+            "nullable": true
           },
           "endDate": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Cycle end date",
+            "format": "date-time"
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Cycle created at",
+            "format": "date-time"
           },
           "updatedAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Cycle updated at",
+            "format": "date-time"
           }
         },
         "required": [
@@ -5592,12 +7298,16 @@
           "title": {
             "type": "string",
             "example": "Q1 2025",
-            "description": "Cycle name"
+            "description": "Cycle name (contains, case-insensitive)",
+            "minLength": 1,
+            "maxLength": 255
           },
           "description": {
             "type": "string",
-            "example": "First 360 cycle for the team",
-            "description": "Description"
+            "example": "First 360 cycle for 2025",
+            "description": "Description (contains, case-insensitive)",
+            "minLength": 1,
+            "maxLength": 1000
           },
           "hrId": {
             "type": "number",
@@ -5607,6 +7317,7 @@
           "minRespondentsThreshold": {
             "type": "number",
             "example": 5,
+            "description": "Minimum number of respondents",
             "default": 3
           },
           "stage": {
@@ -5619,32 +7330,44 @@
               "ARCHIVED"
             ],
             "example": "NEW",
+            "description": "Cycle stage",
             "default": "NEW"
           },
           "isActive": {
             "type": "boolean",
             "example": true,
+            "description": "Is active cycle",
             "default": true
           },
           "startDate": {
             "type": "string",
-            "example": "2025-01-01T00:00:00.000Z"
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Start date",
+            "format": "date-time"
           },
           "reviewDeadline": {
             "type": "string",
-            "example": "2025-01-10T00:00:00.000Z"
+            "example": "2025-01-10T00:00:00.000Z",
+            "description": "Review deadline",
+            "format": "date-time"
           },
           "approvalDeadline": {
             "type": "string",
-            "example": "2025-01-15T00:00:00.000Z"
+            "example": "2025-01-15T00:00:00.000Z",
+            "description": "Approval deadline",
+            "format": "date-time"
           },
           "responseDeadline": {
             "type": "string",
-            "example": "2025-01-20T00:00:00.000Z"
+            "example": "2025-01-20T00:00:00.000Z",
+            "description": "Response deadline",
+            "format": "date-time"
           },
           "endDate": {
             "type": "string",
-            "example": "2025-02-01T00:00:00.000Z"
+            "example": "2025-02-01T00:00:00.000Z",
+            "description": "End date",
+            "format": "date-time"
           }
         }
       },
@@ -5654,46 +7377,93 @@
           "rateeId": {
             "type": "number",
             "example": 10,
-            "description": "Who we are evaluating"
+            "description": "Ratee id"
+          },
+          "rateeFullName": {
+            "type": "string",
+            "example": "Valerii Velichko",
+            "description": "Ratee full name",
+            "minLength": 1,
+            "maxLength": 302
           },
           "rateePositionId": {
             "type": "number",
             "example": 3,
-            "description": "Position of the evaluated"
+            "description": "Ratee position id"
           },
           "rateePositionTitle": {
             "type": "string",
             "example": "Senior Engineer",
-            "description": "Назва посади оцінюваного"
+            "description": "Ratee position title",
+            "minLength": 1,
+            "maxLength": 255
           },
           "hrId": {
             "type": "number",
             "example": 2,
             "description": "HR, responsible for the process"
           },
+          "hrFullName": {
+            "type": "string",
+            "example": "Anna Boyko",
+            "description": "HR full name",
+            "minLength": 1,
+            "maxLength": 302
+          },
           "hrNote": {
             "type": "string",
-            "description": "HR comment"
+            "example": "Completion of probationary period",
+            "description": "HR note",
+            "minLength": 1000,
+            "maxLength": 1000
           },
           "teamId": {
             "type": "number",
             "example": 5,
-            "description": "ІД команди"
+            "description": "Team id",
+            "nullable": true
           },
           "teamTitle": {
             "type": "string",
-            "example": "Platform",
-            "description": "Назва команди"
+            "example": "Engineering team",
+            "description": "Team title",
+            "minLength": 1,
+            "maxLength": 255,
+            "nullable": true
           },
           "managerId": {
             "type": "number",
             "example": 12,
-            "description": "Менеджер оцінюваного"
+            "description": "Ratee manager",
+            "nullable": true
+          },
+          "managerFullName": {
+            "type": "string",
+            "example": "Yaroslav Syvyi",
+            "description": "Manager full name",
+            "minLength": 1,
+            "maxLength": 302,
+            "nullable": true
+          },
+          "managerPositionId": {
+            "type": "number",
+            "example": 1,
+            "description": "Manager position id",
+            "nullable": true
+          },
+          "managerPositionTitle": {
+            "type": "string",
+            "example": "Senior Engineer",
+            "description": "Manager position title",
+            "minLength": 1,
+            "maxLength": 255,
+            "nullable": true
           },
           "cycleId": {
             "type": "number",
             "example": 1,
-            "description": "Attached cycle"
+            "description": "Attached cycle",
+            "nullable": true
           },
           "stage": {
             "type": "string",
@@ -5708,14 +7478,23 @@
               "RESEARCH",
               "FINISHED"
             ],
-            "example": "VERIFICATION_BY_HR"
+            "example": "VERIFICATION_BY_HR",
+            "description": "Review stage"
+          },
+          "reportId": {
+            "type": "number",
+            "example": 1,
+            "description": "Attached report",
+            "nullable": true
           }
         },
         "required": [
           "rateeId",
+          "rateeFullName",
           "rateePositionId",
           "rateePositionTitle",
-          "hrId"
+          "hrId",
+          "hrFullName"
         ]
       },
       "ReviewResponse": {
@@ -5723,43 +7502,100 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Review id"
           },
           "rateeId": {
             "type": "number",
-            "example": 10
+            "example": 10,
+            "description": "Ratee id"
+          },
+          "rateeFullName": {
+            "type": "string",
+            "example": "Valerii Velychko",
+            "description": "Ratee full name",
+            "minimum": 1,
+            "maximum": 302
           },
           "rateePositionId": {
             "type": "number",
-            "example": 3
+            "example": 3,
+            "description": "Ratee position id"
           },
           "rateePositionTitle": {
             "type": "string",
-            "example": "Senior Engineer"
+            "example": "Senior Engineer",
+            "description": "Ratee position title",
+            "minimum": 1,
+            "maximum": 255
           },
           "hrId": {
             "type": "number",
-            "example": 2
+            "example": 2,
+            "description": "HR id"
+          },
+          "hrFullName": {
+            "type": "string",
+            "example": "Anna Boyko",
+            "description": "HR full name",
+            "minimum": 1,
+            "maximum": 302
           },
           "hrNote": {
-            "type": "object",
-            "example": "HR comment"
-          },
-          "cycleId": {
-            "type": "object",
-            "example": 1
+            "type": "string",
+            "example": "HR comment",
+            "description": "HR note",
+            "nullable": true,
+            "minimum": 1000,
+            "maximum": 1000
           },
           "teamId": {
-            "type": "object",
-            "example": 2
+            "type": "number",
+            "example": 2,
+            "description": "Team id",
+            "nullable": true
           },
           "teamTitle": {
-            "type": "object",
-            "example": "Platform team"
+            "type": "string",
+            "example": "Platform team",
+            "description": "Team title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
           },
           "managerId": {
-            "type": "object",
-            "example": 5
+            "type": "number",
+            "example": 5,
+            "description": "Manager id",
+            "nullable": true
+          },
+          "managerFullName": {
+            "type": "string",
+            "example": "John Doe",
+            "description": "Manager full name",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 302
+          },
+          "managerPositionId": {
+            "type": "number",
+            "example": 2,
+            "description": "Manager position id",
+            "nullable": true
+          },
+          "managerPositionTitle": {
+            "type": "string",
+            "example": "Senior Engineer",
+            "description": "Manager position title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "cycleId": {
+            "type": "number",
+            "example": 1,
+            "description": "Cycle id",
+            "nullable": true
           },
           "stage": {
             "type": "string",
@@ -5774,21 +7610,36 @@
               "RESEARCH",
               "FINISHED"
             ],
-            "example": "VERIFICATION_BY_HR"
+            "example": "VERIFICATION_BY_HR",
+            "description": "Review stage"
+          },
+          "reportId": {
+            "type": "number",
+            "example": 1,
+            "description": "Report id",
+            "nullable": true
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Created at",
+            "format": "date-time"
           },
           "updatedAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Updated at",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
           "rateeId",
+          "rateeFullName",
           "rateePositionId",
           "rateePositionTitle",
           "hrId",
+          "hrFullName",
           "stage"
         ]
       },
@@ -5798,46 +7649,93 @@
           "rateeId": {
             "type": "number",
             "example": 10,
-            "description": "Who we are evaluating"
+            "description": "Ratee id"
+          },
+          "rateeFullName": {
+            "type": "string",
+            "example": "Valerii Velichko",
+            "description": "Ratee full name",
+            "minLength": 1,
+            "maxLength": 302
           },
           "rateePositionId": {
             "type": "number",
             "example": 3,
-            "description": "Position of the evaluated"
+            "description": "Ratee position id"
           },
           "rateePositionTitle": {
             "type": "string",
             "example": "Senior Engineer",
-            "description": "Назва посади оцінюваного"
+            "description": "Ratee position title",
+            "minLength": 1,
+            "maxLength": 255
           },
           "hrId": {
             "type": "number",
             "example": 2,
             "description": "HR, responsible for the process"
           },
+          "hrFullName": {
+            "type": "string",
+            "example": "Anna Boyko",
+            "description": "HR full name",
+            "minLength": 1,
+            "maxLength": 302
+          },
           "hrNote": {
             "type": "string",
-            "description": "HR comment"
+            "example": "Completion of probationary period",
+            "description": "HR note",
+            "minLength": 1000,
+            "maxLength": 1000
           },
           "teamId": {
             "type": "number",
             "example": 5,
-            "description": "ІД команди"
+            "description": "Team id",
+            "nullable": true
           },
           "teamTitle": {
             "type": "string",
-            "example": "Platform",
-            "description": "Назва команди"
+            "example": "Engineering team",
+            "description": "Team title",
+            "minLength": 1,
+            "maxLength": 255,
+            "nullable": true
           },
           "managerId": {
             "type": "number",
             "example": 12,
-            "description": "Менеджер оцінюваного"
+            "description": "Ratee manager",
+            "nullable": true
+          },
+          "managerFullName": {
+            "type": "string",
+            "example": "Yaroslav Syvyi",
+            "description": "Manager full name",
+            "minLength": 1,
+            "maxLength": 302,
+            "nullable": true
+          },
+          "managerPositionId": {
+            "type": "number",
+            "example": 1,
+            "description": "Manager position id",
+            "nullable": true
+          },
+          "managerPositionTitle": {
+            "type": "string",
+            "example": "Senior Engineer",
+            "description": "Manager position title",
+            "minLength": 1,
+            "maxLength": 255,
+            "nullable": true
           },
           "cycleId": {
             "type": "number",
             "example": 1,
-            "description": "Attached cycle"
+            "description": "Attached cycle",
+            "nullable": true
           },
           "stage": {
             "type": "string",
@@ -5852,7 +7750,14 @@
               "RESEARCH",
               "FINISHED"
             ],
-            "example": "VERIFICATION_BY_HR"
+            "example": "VERIFICATION_BY_HR",
+            "description": "Review stage"
+          },
+          "reportId": {
+            "type": "number",
+            "example": 1,
+            "description": "Attached report",
+            "nullable": true
           }
         }
       },
@@ -5874,19 +7779,25 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Review question relation id"
           },
           "reviewId": {
             "type": "number",
-            "example": 2
+            "example": 2,
+            "description": "Review id"
           },
           "questionId": {
             "type": "number",
-            "example": 10
+            "example": 10,
+            "description": "Question id"
           },
           "questionTitle": {
             "type": "string",
-            "example": "Delivers features on time"
+            "example": "Listens actively before responding.",
+            "description": "Question title",
+            "minimum": 1,
+            "maximum": 255
           },
           "answerType": {
             "type": "string",
@@ -5894,22 +7805,31 @@
               "NUMERICAL_SCALE",
               "TEXT_FIELD"
             ],
-            "example": "NUMERICAL_SCALE"
+            "example": "NUMERICAL_SCALE",
+            "description": "Answer type"
           },
           "competenceId": {
             "type": "number",
-            "example": 3
+            "example": 3,
+            "description": "Competence id"
           },
           "competenceTitle": {
             "type": "string",
-            "example": "Teamwork"
+            "example": "Communication",
+            "description": "Competence title",
+            "minimum": 1,
+            "maximum": 255
           },
           "isForSelfassessment": {
             "type": "boolean",
-            "example": false
+            "example": false,
+            "description": "Is for selfassessment"
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Created at",
+            "format": "date-time"
           }
         },
         "required": [
@@ -5929,7 +7849,7 @@
           "questionId": {
             "type": "number",
             "example": 12,
-            "description": "Питання з відгуку"
+            "description": "Question id from review"
           },
           "respondentCategory": {
             "type": "string",
@@ -5938,7 +7858,8 @@
               "TEAM",
               "OTHER"
             ],
-            "example": "TEAM"
+            "example": "TEAM",
+            "description": "Respondent category"
           },
           "answerType": {
             "type": "string",
@@ -5946,17 +7867,22 @@
               "NUMERICAL_SCALE",
               "TEXT_FIELD"
             ],
-            "example": "NUMERICAL_SCALE"
+            "example": "NUMERICAL_SCALE",
+            "description": "Answer type"
           },
           "numericalValue": {
             "type": "number",
             "example": 4,
-            "description": "Numerical score"
+            "description": "Numerical score",
+            "minimum": 0,
+            "maximum": 5
           },
           "textValue": {
             "type": "string",
             "example": "Good progress",
-            "description": "Text answer"
+            "description": "Text answer",
+            "minimum": 1,
+            "maximum": 1000
           }
         },
         "required": [
@@ -5970,41 +7896,59 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Answer id"
           },
           "reviewId": {
             "type": "number",
-            "example": 2
+            "example": 2,
+            "description": "Review id"
           },
           "questionId": {
             "type": "number",
-            "example": 10
+            "example": 10,
+            "description": "Question id"
           },
           "respondentCategory": {
             "type": "string",
+            "example": "TEAM",
             "enum": [
               "SELF_ASSESSMENT",
               "TEAM",
               "OTHER"
-            ]
+            ],
+            "description": "Respondent category"
           },
           "answerType": {
             "type": "string",
+            "example": "NUMERICAL_SCALE",
             "enum": [
               "NUMERICAL_SCALE",
               "TEXT_FIELD"
-            ]
+            ],
+            "description": "Answer type"
           },
           "numericalValue": {
-            "type": "object",
-            "example": 4
+            "type": "number",
+            "example": 4,
+            "description": "Numerical value",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
           },
           "textValue": {
-            "type": "object",
-            "example": "Comment"
+            "type": "string",
+            "example": "Great companion and friendly colleague",
+            "description": "Text value",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 1000
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Created at",
+            "format": "date-time"
           }
         },
         "required": [
@@ -6021,7 +7965,14 @@
           "respondentId": {
             "type": "number",
             "example": 7,
-            "description": "Respondent"
+            "description": "Respondent id"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Ivanna Bulava",
+            "description": "Respondent full name",
+            "minimum": 1,
+            "maximum": 302
           },
           "category": {
             "type": "string",
@@ -6030,7 +7981,8 @@
               "TEAM",
               "OTHER"
             ],
-            "example": "TEAM"
+            "example": "TEAM",
+            "description": "Respondent category"
           },
           "responseStatus": {
             "type": "string",
@@ -6040,41 +7992,71 @@
               "COMPLETED",
               "CANCELED"
             ],
-            "example": "PENDING"
+            "example": "PENDING",
+            "description": "Response status"
           },
           "respondentNote": {
             "type": "string",
-            "example": "Ask to respond by Friday"
+            "example": "Unable to participate due to hospitalisation",
+            "description": "Respondent note",
+            "minLength": 1,
+            "maxLength": 1000
           },
           "hrNote": {
             "type": "string",
-            "example": "Коментар HR"
+            "example": "Completion of probationary period",
+            "description": "HR note",
+            "minLength": 1,
+            "maxLength": 1000
           },
           "positionId": {
             "type": "number",
             "example": 3,
-            "description": "Посада респондента"
+            "description": "Position id"
           },
           "positionTitle": {
             "type": "string",
             "example": "Senior Engineer",
-            "description": "Назва посади"
+            "description": "Position title",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "teamId": {
+            "type": "number",
+            "example": 3,
+            "description": "Team id",
+            "nullable": true
+          },
+          "teamTitle": {
+            "type": "string",
+            "example": "Senior Engineer",
+            "description": "Position title",
+            "minLength": 1,
+            "maxLength": 1000,
+            "nullable": true
           },
           "invitedAt": {
             "type": "string",
-            "example": "2025-01-05T00:00:00.000Z"
+            "example": "2025-01-05T00:00:00.000Z",
+            "description": "Invited at",
+            "format": "date-time"
           },
           "canceledAt": {
             "type": "string",
-            "example": "2025-01-07T00:00:00.000Z"
+            "example": "2025-01-07T00:00:00.000Z",
+            "description": "Canceled at",
+            "format": "date-time"
           },
           "respondedAt": {
             "type": "string",
-            "example": "2025-01-10T00:00:00.000Z"
+            "example": "2025-01-10T00:00:00.000Z",
+            "description": "Responded at",
+            "format": "date-time"
           }
         },
         "required": [
           "respondentId",
+          "fullName",
           "category",
           "positionId",
           "positionTitle"
@@ -6085,15 +8067,25 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Respondent id"
           },
           "reviewId": {
             "type": "number",
-            "example": 2
+            "example": 2,
+            "description": "Review id"
           },
           "respondentId": {
             "type": "number",
-            "example": 7
+            "example": 7,
+            "description": "Respondent id"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Ivanna Bulava",
+            "description": "Respondent full name",
+            "minimum": 1,
+            "maximum": 302
           },
           "category": {
             "type": "string",
@@ -6101,7 +8093,8 @@
               "SELF_ASSESSMENT",
               "TEAM",
               "OTHER"
-            ]
+            ],
+            "description": "Respondent category"
           },
           "responseStatus": {
             "type": "string",
@@ -6110,44 +8103,90 @@
               "IN_PROGRESS",
               "COMPLETED",
               "CANCELED"
-            ]
+            ],
+            "description": "Response status"
           },
           "respondentNote": {
-            "type": "object",
-            "example": "Comment"
+            "type": "string",
+            "example": "Unable to participate due to hospitalisation",
+            "description": "Respondent note",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 1000
           },
           "hrNote": {
-            "type": "object",
-            "example": "HR comment"
+            "type": "string",
+            "example": "Completion of probationary period",
+            "description": "HR note",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 1000
           },
           "positionId": {
             "type": "number",
-            "example": 3
+            "example": 3,
+            "description": "Position id"
           },
           "positionTitle": {
             "type": "string",
-            "example": "Senior Engineer"
+            "example": "Senior Engineer",
+            "description": "Position title",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "teamId": {
+            "type": "number",
+            "example": 3,
+            "description": "Team id",
+            "nullable": true
+          },
+          "teamTitle": {
+            "type": "string",
+            "example": "Senior Engineer",
+            "description": "Position title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 1000
           },
           "invitedAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Invited at",
+            "format": "date-time",
+            "nullable": true
           },
           "canceledAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Canceled at",
+            "format": "date-time",
+            "nullable": true
           },
           "respondedAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Responded at",
+            "format": "date-time",
+            "nullable": true
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Created at",
+            "format": "date-time"
           },
           "updatedAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Updated at",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
           "reviewId",
           "respondentId",
+          "fullName",
           "category",
           "responseStatus",
           "positionId",
@@ -6160,7 +8199,14 @@
           "respondentId": {
             "type": "number",
             "example": 7,
-            "description": "Respondent"
+            "description": "Respondent id"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Ivanna Bulava",
+            "description": "Respondent full name",
+            "minimum": 1,
+            "maximum": 302
           },
           "category": {
             "type": "string",
@@ -6169,7 +8215,8 @@
               "TEAM",
               "OTHER"
             ],
-            "example": "TEAM"
+            "example": "TEAM",
+            "description": "Respondent category"
           },
           "responseStatus": {
             "type": "string",
@@ -6179,37 +8226,66 @@
               "COMPLETED",
               "CANCELED"
             ],
-            "example": "PENDING"
+            "example": "PENDING",
+            "description": "Response status"
           },
           "respondentNote": {
             "type": "string",
-            "example": "Ask to respond by Friday"
+            "example": "Unable to participate due to hospitalisation",
+            "description": "Respondent note",
+            "minLength": 1,
+            "maxLength": 1000
           },
           "hrNote": {
             "type": "string",
-            "example": "Коментар HR"
+            "example": "Completion of probationary period",
+            "description": "HR note",
+            "minLength": 1,
+            "maxLength": 1000
           },
           "positionId": {
             "type": "number",
             "example": 3,
-            "description": "Посада респондента"
+            "description": "Position id"
           },
           "positionTitle": {
             "type": "string",
             "example": "Senior Engineer",
-            "description": "Назва посади"
+            "description": "Position title",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "teamId": {
+            "type": "number",
+            "example": 3,
+            "description": "Team id",
+            "nullable": true
+          },
+          "teamTitle": {
+            "type": "string",
+            "example": "Senior Engineer",
+            "description": "Position title",
+            "minLength": 1,
+            "maxLength": 1000,
+            "nullable": true
           },
           "invitedAt": {
             "type": "string",
-            "example": "2025-01-05T00:00:00.000Z"
+            "example": "2025-01-05T00:00:00.000Z",
+            "description": "Invited at",
+            "format": "date-time"
           },
           "canceledAt": {
             "type": "string",
-            "example": "2025-01-07T00:00:00.000Z"
+            "example": "2025-01-07T00:00:00.000Z",
+            "description": "Canceled at",
+            "format": "date-time"
           },
           "respondedAt": {
             "type": "string",
-            "example": "2025-01-10T00:00:00.000Z"
+            "example": "2025-01-10T00:00:00.000Z",
+            "description": "Responded at",
+            "format": "date-time"
           }
         }
       },
@@ -6219,21 +8295,45 @@
           "reviewerId": {
             "type": "number",
             "example": 4,
-            "description": "Користувач-рецензент"
+            "description": "Reviewer id"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Ivanna Bulava",
+            "description": "Reviewer full name",
+            "minLength": 1,
+            "maxLength": 302
           },
           "positionId": {
             "type": "number",
             "example": 3,
-            "description": "Посада рецензента"
+            "description": "Reviewer position id"
           },
           "positionTitle": {
             "type": "string",
             "example": "Team Lead",
-            "description": "Назва посади"
+            "description": "Reviewer position title",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "teamId": {
+            "type": "number",
+            "example": 5,
+            "description": "Reviewer team id",
+            "nullable": true
+          },
+          "teamTitle": {
+            "type": "string",
+            "example": "Engineering team",
+            "description": "Reviewer team title",
+            "nullable": true,
+            "minLength": 1,
+            "maxLength": 255
           }
         },
         "required": [
           "reviewerId",
+          "fullName",
           "positionId",
           "positionTitle"
         ]
@@ -6243,32 +8343,64 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Reviewer id"
           },
           "reviewId": {
             "type": "number",
-            "example": 2
+            "example": 2,
+            "description": "Review id"
           },
           "reviewerId": {
             "type": "number",
-            "example": 4
+            "example": 4,
+            "description": "Reviewer id"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Ivanna Bulava",
+            "description": "Reviewer full name",
+            "minimum": 1,
+            "maximum": 302
           },
           "positionId": {
             "type": "number",
-            "example": 3
+            "example": 3,
+            "description": "Position id"
           },
           "positionTitle": {
             "type": "string",
-            "example": "Tech Lead"
+            "example": "Tech Lead",
+            "description": "Position title",
+            "minimum": 1,
+            "maximum": 255
+          },
+          "teamId": {
+            "type": "number",
+            "example": 5,
+            "description": "Team id",
+            "nullable": true
+          },
+          "teamTitle": {
+            "type": "string",
+            "example": "Engineering team",
+            "description": "Team title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Created at",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
           "reviewId",
           "reviewerId",
+          "fullName",
           "positionId",
           "positionTitle"
         ]
@@ -6288,8 +8420,10 @@
           },
           "title": {
             "type": "string",
-            "example": "How do you plan your work?",
-            "description": "Question text"
+            "example": "Listens actively before responding.",
+            "description": "Question text",
+            "minLength": 1,
+            "maxLength": 255
           },
           "answerType": {
             "type": "string",
@@ -6297,7 +8431,8 @@
               "NUMERICAL_SCALE",
               "TEXT_FIELD"
             ],
-            "example": "NUMERICAL_SCALE"
+            "example": "NUMERICAL_SCALE",
+            "description": "Answer type"
           },
           "competenceId": {
             "type": "number",
@@ -6306,7 +8441,8 @@
           },
           "isForSelfassessment": {
             "type": "boolean",
-            "example": false
+            "example": false,
+            "description": "Is for selfassessment"
           }
         },
         "required": [
@@ -6319,19 +8455,27 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 5
+            "example": 5,
+            "description": "Question id"
           },
           "cycleId": {
-            "type": "object",
-            "example": 1
+            "type": "number",
+            "example": 1,
+            "description": "Cycle id",
+            "nullable": true
           },
           "questionTemplateId": {
-            "type": "object",
-            "example": 12
+            "type": "number",
+            "example": 12,
+            "description": "Question template id",
+            "nullable": true
           },
           "title": {
             "type": "string",
-            "example": "How do you plan your work?"
+            "example": "Listens actively before responding.",
+            "description": "Question title",
+            "minimum": 1,
+            "maximum": 255
           },
           "answerType": {
             "type": "string",
@@ -6339,18 +8483,25 @@
               "NUMERICAL_SCALE",
               "TEXT_FIELD"
             ],
-            "example": "TEXT_FIELD"
+            "example": "TEXT_FIELD",
+            "description": "Answer type"
           },
           "competenceId": {
-            "type": "object",
-            "example": 3
+            "type": "number",
+            "example": 3,
+            "description": "Competence id",
+            "nullable": true
           },
           "isForSelfassessment": {
             "type": "boolean",
-            "example": false
+            "example": false,
+            "description": "Is for selfassessment"
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Created at",
+            "format": "date-time"
           }
         },
         "required": [
@@ -6366,31 +8517,35 @@
           "cycleId": {
             "type": "number",
             "example": 1,
-            "description": "Cycle (optional)"
+            "description": "Cycle id"
           },
           "clusterId": {
             "type": "number",
             "example": 3,
-            "description": "Cluster"
+            "description": "Cluster id"
           },
           "rateeId": {
             "type": "number",
             "example": 7,
-            "description": "Ratee"
+            "description": "Ratee id"
           },
           "reviewId": {
             "type": "number",
             "example": 5,
-            "description": "Review"
+            "description": "Review id"
           },
           "score": {
             "type": "number",
-            "example": 4.5
+            "example": 4.5,
+            "description": "Score",
+            "minimum": 0,
+            "maximum": 5
           },
           "answersCount": {
             "type": "number",
             "example": 5,
-            "description": "Number of answers (optional, default 1)"
+            "description": "Number of answers",
+            "minimum": 1
           }
         },
         "required": [
@@ -6405,38 +8560,54 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Cluster score id"
           },
           "cycleId": {
-            "type": "object",
-            "example": 1
+            "type": "number",
+            "example": 1,
+            "description": "Cycle id",
+            "nullable": true
           },
           "clusterId": {
             "type": "number",
-            "example": 3
+            "example": 3,
+            "description": "Cluster id"
           },
           "rateeId": {
             "type": "number",
-            "example": 7
+            "example": 7,
+            "description": "Ratee id"
           },
           "reviewId": {
             "type": "number",
-            "example": 2
+            "example": 2,
+            "description": "Review id"
           },
           "score": {
             "type": "number",
-            "example": 4.3
+            "example": 4.3,
+            "description": "Cluster score",
+            "minimum": 0,
+            "maximum": 5
           },
           "answersCount": {
             "type": "number",
-            "example": 12,
-            "description": "Number of answers this score is based on"
+            "example": 5,
+            "description": "Number of answers this score is based on",
+            "minimum": 1
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Created at",
+            "format": "date-time"
           },
           "updatedAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Updated at",
+            "format": "date-time"
           }
         },
         "required": [
@@ -6464,22 +8635,29 @@
           "employeesCount": {
             "type": "number",
             "example": 42,
-            "description": "Number of employees in this cluster"
+            "description": "Number of employees in this cluster",
+            "minimum": 0
           },
           "minScore": {
             "type": "number",
             "example": 3.2,
-            "description": "Minimum score"
+            "description": "Minimum score",
+            "minimum": 0,
+            "maximum": 5
           },
           "maxScore": {
             "type": "number",
             "example": 9.8,
-            "description": "Maximum score"
+            "description": "Maximum score",
+            "minimum": 0,
+            "maximum": 5
           },
           "averageScore": {
             "type": "number",
             "example": 6.5,
-            "description": "Average score"
+            "description": "Average score",
+            "minimum": 0,
+            "maximum": 5
           }
         },
         "required": [
@@ -6496,7 +8674,8 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Cycle cluster analytics id"
           },
           "cycleId": {
             "type": "number",
@@ -6505,34 +8684,47 @@
           },
           "clusterId": {
             "type": "number",
-            "example": 3,
+            "example": 2,
             "description": "Cluster ID"
           },
           "employeesCount": {
             "type": "number",
-            "example": 42,
-            "description": "Number of employees in this cluster"
+            "example": 8,
+            "description": "Number of employees in this cluster",
+            "minimum": 1
           },
           "minScore": {
             "type": "number",
-            "example": 3.2,
-            "description": "Minimum score in this cluster"
+            "example": 2.2,
+            "description": "Minimum score in this cluster",
+            "minimum": 0,
+            "maximum": 5
           },
           "maxScore": {
             "type": "number",
-            "example": 9.8,
-            "description": "Maximum score in this cluster"
+            "example": 4.8,
+            "description": "Maximum score in this cluster",
+            "minimum": 0,
+            "maximum": 5
           },
           "averageScore": {
             "type": "number",
-            "example": 6.5,
-            "description": "Average score in this cluster"
+            "example": 4.5,
+            "description": "Average score in this cluster",
+            "minimum": 0,
+            "maximum": 5
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Created at",
+            "format": "date-time"
           },
           "updatedAt": {
-            "type": "string"
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Updated at",
+            "format": "date-time"
           }
         },
         "required": [
@@ -6551,22 +8743,29 @@
           "employeesCount": {
             "type": "number",
             "example": 45,
-            "description": "Number of employees in this cluster"
+            "description": "Number of employees in this cluster",
+            "minimum": 0
           },
           "minScore": {
             "type": "number",
             "example": 3.5,
-            "description": "Minimum score"
+            "description": "Minimum score",
+            "minimum": 0,
+            "maximum": 5
           },
           "maxScore": {
             "type": "number",
             "example": 9.5,
-            "description": "Maximum score"
+            "description": "Maximum score",
+            "minimum": 0,
+            "maximum": 5
           },
           "averageScore": {
             "type": "number",
             "example": 6.8,
-            "description": "Average score"
+            "description": "Average score",
+            "minimum": 0,
+            "maximum": 5
           }
         }
       }

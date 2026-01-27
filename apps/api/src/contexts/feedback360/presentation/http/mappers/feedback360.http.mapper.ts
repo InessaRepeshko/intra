@@ -41,13 +41,18 @@ export class Feedback360HttpMapper {
     const view = new ReviewResponse();
     view.id = domain.id!;
     view.rateeId = domain.rateeId;
+    view.rateeFullName = domain.rateeFullName;
     view.rateePositionId = domain.rateePositionId;
     view.rateePositionTitle = domain.rateePositionTitle;
     view.hrId = domain.hrId;
+    view.hrFullName = domain.hrFullName;
     view.hrNote = domain.hrNote ?? null;
     view.teamId = domain.teamId ?? null;
     view.teamTitle = domain.teamTitle ?? null;
     view.managerId = domain.managerId ?? null;
+    view.managerFullName = domain.managerFullName ?? null;
+    view.managerPositionId = domain.managerPositionId ?? null;
+    view.managerPositionTitle = domain.managerPositionTitle ?? null;
     view.cycleId = domain.cycleId ?? null;
     view.stage = domain.stage;
     view.reportId = domain.reportId ?? null;
@@ -101,12 +106,15 @@ export class Feedback360HttpMapper {
     view.id = domain.id!;
     view.reviewId = domain.reviewId;
     view.respondentId = domain.respondentId;
+    view.fullName = domain.fullName;
     view.category = domain.category;
     view.responseStatus = domain.responseStatus;
     view.respondentNote = domain.respondentNote ?? null;
     view.hrNote = domain.hrNote ?? null;
     view.positionId = domain.positionId;
     view.positionTitle = domain.positionTitle;
+    view.teamId = domain.teamId ?? null;
+    view.teamTitle = domain.teamTitle ?? null;
     view.invitedAt = domain.invitedAt ?? null;
     view.canceledAt = domain.canceledAt ?? null;
     view.respondedAt = domain.respondedAt ?? null;
@@ -120,8 +128,11 @@ export class Feedback360HttpMapper {
     view.id = domain.id!;
     view.reviewId = domain.reviewId;
     view.reviewerId = domain.reviewerId;
+    view.fullName = domain.fullName;
     view.positionId = domain.positionId;
     view.positionTitle = domain.positionTitle;
+    view.teamId = domain.teamId ?? null;
+    view.teamTitle = domain.teamTitle ?? null;
     view.createdAt = domain.createdAt;
     return view;
   }

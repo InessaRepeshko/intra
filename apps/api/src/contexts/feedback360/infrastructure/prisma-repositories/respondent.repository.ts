@@ -23,12 +23,15 @@ export class RespondentRepository implements RespondentRepositoryPort {
       data: {
         reviewId: relation.reviewId,
         respondentId: relation.respondentId,
+        fullName: relation.fullName,
         category: Feedback360Mapper.toPrismaRespondentCategory(relation.category),
         responseStatus: Feedback360Mapper.toPrismaResponseStatus(relation.responseStatus),
         respondentNote: relation.respondentNote,
         hrNote: relation.hrNote,
         positionId: relation.positionId,
         positionTitle: relation.positionTitle,
+        teamId: relation.teamId,
+        teamTitle: relation.teamTitle,
         invitedAt: relation.invitedAt,
         canceledAt: relation.canceledAt,
         respondedAt: relation.respondedAt,
@@ -52,6 +55,7 @@ export class RespondentRepository implements RespondentRepositoryPort {
       where: { id },
       data: {
         ...patch,
+        ...(patch.category ? { category: Feedback360Mapper.toPrismaRespondentCategory(patch.category) } : {}),
         ...(patch.responseStatus ? { responseStatus: Feedback360Mapper.toPrismaResponseStatus(patch.responseStatus) } : {}),
       },
     });
@@ -63,16 +67,19 @@ export class RespondentRepository implements RespondentRepositoryPort {
   }
 
   private buildWhere(query: RespondentSearchQuery): Prisma.RespondentWhereInput {
-    const { reviewId, respondentId, category, responseStatus, respondentNote, hrNote, positionId, positionTitle, invitedAt, canceledAt, respondedAt } = query;
+    const { reviewId, respondentId, fullName, category, responseStatus, respondentNote, hrNote, positionId, positionTitle, teamId, teamTitle, invitedAt, canceledAt, respondedAt } = query;
     return {
       ...(reviewId ? { reviewId } : {}),
       ...(respondentId ? { respondentId } : {}),
+      ...(fullName ? { fullName: { contains: fullName, mode: 'insensitive' } } : {}),
       ...(category ? { category: Feedback360Mapper.toPrismaRespondentCategory(category) } : {}),
       ...(responseStatus ? { responseStatus: Feedback360Mapper.toPrismaResponseStatus(responseStatus) } : {}),
       ...(respondentNote ? { respondentNote: { contains: respondentNote, mode: 'insensitive' } } : {}),
       ...(hrNote ? { hrNote: { contains: hrNote, mode: 'insensitive' } } : {}),
       ...(positionId ? { positionId } : {}),
       ...(positionTitle ? { positionTitle: { contains: positionTitle, mode: 'insensitive' } } : {}),
+      ...(teamId ? { teamId } : {}),
+      ...(teamTitle ? { teamTitle: { contains: teamTitle, mode: 'insensitive' } } : {}),
       ...(invitedAt ? { invitedAt } : {}),
       ...(canceledAt ? { canceledAt } : {}),
       ...(respondedAt ? { respondedAt } : {}),
@@ -84,5 +91,4 @@ export class RespondentRepository implements RespondentRepositoryPort {
     const direction = query.sortDirection ?? SortDirection.ASC;
     return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
   }
-
 }

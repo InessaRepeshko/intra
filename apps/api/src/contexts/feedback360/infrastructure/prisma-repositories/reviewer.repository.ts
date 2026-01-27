@@ -22,8 +22,11 @@ export class ReviewerRepository implements ReviewerRepositoryPort {
       data: {
         reviewId: relation.reviewId,
         reviewerId: relation.reviewerId,
+        fullName: relation.fullName,
         positionId: relation.positionId,
         positionTitle: relation.positionTitle,
+        teamId: relation.teamId,
+        teamTitle: relation.teamTitle,
       },
     });
     return Feedback360Mapper.toReviewerDomain(created);
@@ -42,12 +45,15 @@ export class ReviewerRepository implements ReviewerRepositoryPort {
   }
 
   private buildWhere(query: ReviewerSearchQuery): Prisma.ReviewerWhereInput {
-    const { reviewId, reviewerId, positionId, positionTitle } = query;
+    const { reviewId, reviewerId, fullName, positionId, positionTitle, teamId, teamTitle } = query;
     return {
       ...(reviewId ? { reviewId } : {}),
       ...(reviewerId ? { reviewerId } : {}),
+      ...(fullName ? { fullName: { contains: fullName, mode: 'insensitive' } } : {}),
       ...(positionId ? { positionId } : {}),
       ...(positionTitle ? { positionTitle: { contains: positionTitle, mode: 'insensitive' } } : {}),
+      ...(teamId ? { teamId } : {}),
+      ...(teamTitle ? { teamTitle: { contains: teamTitle, mode: 'insensitive' } } : {}),
     };
   }
 

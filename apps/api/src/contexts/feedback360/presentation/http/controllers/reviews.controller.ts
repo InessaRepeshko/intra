@@ -178,12 +178,15 @@ export class ReviewController {
     const relation = await this.reviews.addRespondent({
       reviewId: Number(id),
       respondentId: dto.respondentId,
+      fullName: dto.fullName,
       category: dto.category,
       responseStatus: dto.responseStatus,
       respondentNote: dto.respondentNote,
       hrNote: dto.hrNote,
       positionId: dto.positionId,
       positionTitle: dto.positionTitle,
+      teamId: dto.teamId,
+      teamTitle: dto.teamTitle,
       invitedAt: dto.invitedAt,
       canceledAt: dto.canceledAt,
       respondedAt: dto.respondedAt,
@@ -236,8 +239,11 @@ export class ReviewController {
     const created = await this.reviews.addReviewer({
       reviewId: Number(id),
       reviewerId: dto.reviewerId,
+      fullName: dto.fullName,
       positionId: dto.positionId,
       positionTitle: dto.positionTitle,
+      teamId: dto.teamId,
+      teamTitle: dto.teamTitle,
     });
     return Feedback360HttpMapper.toReviewerResponse(created);
   }
