@@ -5,7 +5,7 @@ import { ToOptionalBool, ToOptionalDate, ToOptionalInt, ToOptionalTrimmedString 
 import { CycleStage, isAnonymityThresholdMet } from '@intra/shared-kernel';
 
 export class CreateCycleDto {
-  @ApiProperty({ example: 'Q1 2025', description: 'Cycle name (contains, case-insensitive)', type: 'string', minLength: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, maxLength: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX, required: true })
+  @ApiProperty({ example: 'Q1 2025', description: 'Cycle name (contains, case-insensitive)', type: 'string', minimum: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, maximum: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX, required: true })
   @ToOptionalTrimmedString({ min: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, max: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX })
   @IsString()
   @IsNotEmpty()
@@ -13,7 +13,7 @@ export class CreateCycleDto {
   @MaxLength(CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX)
   title!: string;
 
-  @ApiPropertyOptional({ example: 'First 360 cycle for 2025', description: 'Description (contains, case-insensitive)', type: 'string', minLength: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN, maxLength: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX, required: false })
+  @ApiPropertyOptional({ example: 'First 360 cycle for 2025', description: 'Description (contains, case-insensitive)', type: 'string', minimum: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN, maximum: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX, required: false })
   @ToOptionalTrimmedString({ min: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN, max: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX })
   @IsOptional()
   @IsString()

@@ -6,6 +6,7 @@ export { TEAM_CONSTRAINTS } from './organisation/constraints/team.constraints';
 export { POSITION_CONSTRAINTS } from './organisation/constraints/position.constraints';
 
 /* Identity */
+export { ROLE_CONSTRAINTS } from './identity/constraints/role.constraints';
 export { USER_CONSTRAINTS } from './identity/constraints/user.constraints';
 export { IdentityRole, IDENTITY_ROLES } from './identity/enums/identity-role.enum';
 export { IdentityStatus, IDENTITY_STATUSES } from './identity/enums/identity-status.enum';

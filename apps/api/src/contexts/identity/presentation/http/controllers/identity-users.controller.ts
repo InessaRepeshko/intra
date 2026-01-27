@@ -40,12 +40,14 @@ export class IdentityUsersController {
       firstName: dto.firstName,
       secondName: dto.secondName,
       lastName: dto.lastName,
+      fullName: dto.fullName,
       email: dto.email,
       passwordHash: dto.passwordHash,
       status: dto.status,
       positionId: dto.positionId,
       teamId: dto.teamId,
       managerId: dto.managerId,
+      roles: dto.roles,
     });
     return UserHttpMapper.toResponse(created);
   }

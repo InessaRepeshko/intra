@@ -17,7 +17,7 @@ export class ReviewerQueryDto {
     @IsInt()
     reviewerId?: number;
 
-    @ApiPropertyOptional({ example: 'Ivanna Bulava', description: 'Reviewer full name', type: 'string', minLength: REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+    @ApiPropertyOptional({ example: 'Ivanna Bulava', description: 'Reviewer full name', type: 'string', minimum: REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
     @ToOptionalTrimmedString({ min: REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: REVIEWER_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
     @IsOptional()
     @IsString()
@@ -31,7 +31,7 @@ export class ReviewerQueryDto {
     @IsInt()
     positionId?: number;
 
-    @ApiPropertyOptional({ example: 'Position title', description: 'Position title (contains, case-insensitive)', type: 'string', minLength: REVIEWER_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maxLength: REVIEWER_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
+    @ApiPropertyOptional({ example: 'Position title', description: 'Position title (contains, case-insensitive)', type: 'string', minimum: REVIEWER_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maximum: REVIEWER_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
     @ToOptionalTrimmedString({ min: REVIEWER_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, max: REVIEWER_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
     @IsOptional()
     @IsString()
@@ -45,7 +45,7 @@ export class ReviewerQueryDto {
     @IsInt()
     teamId?: number | null;
 
-    @ApiPropertyOptional({ example: 'Engineering team', description: 'Team title (contains, case-insensitive)', type: 'string', nullable: true, minLength: REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maxLength: REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX })
+    @ApiPropertyOptional({ example: 'Engineering team', description: 'Team title (contains, case-insensitive)', type: 'string', nullable: true, minimum: REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maximum: REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX })
     @ToOptionalTrimmedString({ min: REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, max: REVIEWER_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX })
     @IsOptional()
     @IsString()

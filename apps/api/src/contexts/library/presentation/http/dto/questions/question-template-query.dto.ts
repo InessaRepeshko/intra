@@ -41,7 +41,7 @@ export class QuestionTemplateQueryDto {
   @ApiPropertyOptional({
     description: 'Search in title',
     example: 'features',
-    maxLength: QUESTION_TEMPLATE_CONSTRAINTS.TITLE.LENGTH.MAX,
+    maximum: QUESTION_TEMPLATE_CONSTRAINTS.TITLE.LENGTH.MAX,
   })
   @IsOptional()
   @ToOptionalTrimmedString()

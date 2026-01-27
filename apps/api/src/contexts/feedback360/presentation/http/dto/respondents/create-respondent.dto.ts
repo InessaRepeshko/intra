@@ -30,7 +30,7 @@ export class CreateRespondentDto {
   @IsEnum(ResponseStatus)
   responseStatus?: ResponseStatus;
 
-  @ApiPropertyOptional({ example: 'Unable to participate due to hospitalisation', description: 'Respondent note', type: 'string', minLength: RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MIN, maxLength: RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MAX, required: false })
+  @ApiPropertyOptional({ example: 'Unable to participate due to hospitalisation', description: 'Respondent note', type: 'string', minimum: RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MIN, maximum: RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MAX, required: false })
   @ToOptionalTrimmedString({ min: RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MIN, max: RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MAX })
   @IsOptional()
   @IsString()
@@ -38,7 +38,7 @@ export class CreateRespondentDto {
   @MaxLength(RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MAX)
   respondentNote?: string;
 
-  @ApiPropertyOptional({ example: 'Completion of probationary period', description: 'HR note', type: 'string', minLength: RESPONDENT_CONSTRAINTS.HR_NOTE.LENGTH.MIN, maxLength: RESPONDENT_CONSTRAINTS.HR_NOTE.LENGTH.MAX, required: false })
+  @ApiPropertyOptional({ example: 'Completion of probationary period', description: 'HR note', type: 'string', minimum: RESPONDENT_CONSTRAINTS.HR_NOTE.LENGTH.MIN, maximum: RESPONDENT_CONSTRAINTS.HR_NOTE.LENGTH.MAX, required: false })
   @ToOptionalTrimmedString({ min: RESPONDENT_CONSTRAINTS.HR_NOTE.LENGTH.MIN, max: RESPONDENT_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
   @IsOptional()
   @IsString()
@@ -52,7 +52,7 @@ export class CreateRespondentDto {
   @Min(1)
   positionId!: number;
 
-  @ApiProperty({ example: 'Senior Engineer', description: 'Position title', type: 'string', minLength: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maxLength: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX, required: true })
+  @ApiProperty({ example: 'Senior Engineer', description: 'Position title', type: 'string', minimum: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maximum: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX, required: true })
   @ToOptionalTrimmedString({ min: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, max: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
   @IsString()
   @MinLength(RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN)
@@ -66,7 +66,7 @@ export class CreateRespondentDto {
   @Min(1)
   teamId?: number | null;
 
-  @ApiPropertyOptional({ example: 'Senior Engineer', description: 'Position title', type: 'string', minLength: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maxLength: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX, required: false, nullable: true })
+  @ApiPropertyOptional({ example: 'Senior Engineer', description: 'Position title', type: 'string', minimum: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maximum: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX, required: false, nullable: true })
   @ToOptionalTrimmedString({ min: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, max: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX })
   @IsOptional()
   @IsString()

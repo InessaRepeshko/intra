@@ -11,7 +11,7 @@ export class CreateReviewDto {
   @Min(1)
   rateeId!: number;
 
-  @ApiProperty({ example: 'Valerii Velichko', description: 'Ratee full name', type: 'string', required: true, minLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @ApiProperty({ example: 'Valerii Velichko', description: 'Ratee full name', type: 'string', required: true, minimum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
   @IsString()
   @MinLength(REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN)
@@ -24,7 +24,7 @@ export class CreateReviewDto {
   @Min(1)
   rateePositionId!: number;
 
-  @ApiProperty({ example: 'Senior Engineer', description: 'Ratee position title', type: 'string', required: true, minLength: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
+  @ApiProperty({ example: 'Senior Engineer', description: 'Ratee position title', type: 'string', required: true, minimum: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, max: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
   @IsString()
   @MinLength(REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN)
@@ -37,14 +37,14 @@ export class CreateReviewDto {
   @Min(1)
   hrId!: number;
 
-  @ApiProperty({ example: 'Anna Boyko', description: 'HR full name', type: 'string', required: true, minLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @ApiProperty({ example: 'Anna Boyko', description: 'HR full name', type: 'string', required: true, minimum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
   @IsString()
   @MinLength(REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN)
   @MaxLength(REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX)
   hrFullName!: string;
 
-  @ApiPropertyOptional({ example: 'Completion of probationary period', description: 'HR note', type: 'string', required: false, minLength: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
+  @ApiPropertyOptional({ example: 'Completion of probationary period', description: 'HR note', type: 'string', required: false, minimum: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MIN, max: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
   @IsOptional()
   @IsString()
@@ -58,7 +58,7 @@ export class CreateReviewDto {
   @IsInt()
   teamId?: number | null;
 
-  @ApiPropertyOptional({ example: 'Engineering team', description: 'Team title', type: 'string', required: false, minLength: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX, nullable: true })
+  @ApiPropertyOptional({ example: 'Engineering team', description: 'Team title', type: 'string', required: false, minimum: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX, nullable: true })
   @ToOptionalTrimmedString()
   @IsOptional()
   @IsString()
@@ -70,7 +70,7 @@ export class CreateReviewDto {
   @IsInt()
   managerId?: number | null;
 
-  @ApiPropertyOptional({ example: 'Yaroslav Syvyi', description: 'Manager full name', type: 'string', required: false, minLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX, nullable: true })
+  @ApiPropertyOptional({ example: 'Yaroslav Syvyi', description: 'Manager full name', type: 'string', required: false, minimum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX, nullable: true })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
   @IsOptional()
   @IsString()
@@ -84,7 +84,7 @@ export class CreateReviewDto {
   @IsInt()
   managerPositionId?: number | null;
 
-  @ApiPropertyOptional({ example: 'Senior Engineer', description: 'Manager position title', type: 'string', required: false, minLength: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX, nullable: true })
+  @ApiPropertyOptional({ example: 'Senior Engineer', description: 'Manager position title', type: 'string', required: false, minimum: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX, nullable: true })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, max: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
   @IsOptional()
   @IsString()

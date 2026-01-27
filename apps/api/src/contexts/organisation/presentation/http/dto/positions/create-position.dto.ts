@@ -4,7 +4,7 @@ import { ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.tr
 import { POSITION_CONSTRAINTS } from '@intra/shared-kernel';
 
 export class CreatePositionDto {
-  @ApiProperty({ description: 'Position title', example: 'Senior Backend Engineer', maxLength: POSITION_CONSTRAINTS.TITLE.LENGTH.MAX, minLength: POSITION_CONSTRAINTS.TITLE.LENGTH.MIN })
+  @ApiProperty({ description: 'Position title', example: 'Senior Backend Engineer', maximum: POSITION_CONSTRAINTS.TITLE.LENGTH.MAX, minimum: POSITION_CONSTRAINTS.TITLE.LENGTH.MIN })
   @ToOptionalTrimmedString()
   @IsString()
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class CreatePositionDto {
   @MaxLength(POSITION_CONSTRAINTS.TITLE.LENGTH.MAX)
   title!: string;
 
-  @ApiPropertyOptional({ description: 'Position description', example: 'Backend development, architecture design, code reviews', nullable: true, maxLength: POSITION_CONSTRAINTS.DESCRIPTION.LENGTH.MAX, minLength: POSITION_CONSTRAINTS.DESCRIPTION.LENGTH.MIN })
+  @ApiPropertyOptional({ description: 'Position description', example: 'Backend development, architecture design, code reviews', nullable: true, maximum: POSITION_CONSTRAINTS.DESCRIPTION.LENGTH.MAX, minimum: POSITION_CONSTRAINTS.DESCRIPTION.LENGTH.MIN })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()

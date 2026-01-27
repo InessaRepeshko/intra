@@ -19,7 +19,7 @@ export class IdentityMapper {
     return UserDomain.create({
       id: user.id,
       firstName: user.firstName,
-      secondName: user.secondName,
+      secondName: user.secondName ?? undefined,
       lastName: user.lastName,
       fullName: user.fullName,
       email: user.email,

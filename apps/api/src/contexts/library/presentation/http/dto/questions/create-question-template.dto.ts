@@ -15,8 +15,8 @@ export class CreateQuestionTemplateDto {
   @ApiProperty({
     description: 'Question template text/title',
     example: 'Delivers features on time',
-    minLength: QUESTION_TEMPLATE_CONSTRAINTS.TITLE.LENGTH.MIN,
-    maxLength: QUESTION_TEMPLATE_CONSTRAINTS.TITLE.LENGTH.MAX,
+    minimum: QUESTION_TEMPLATE_CONSTRAINTS.TITLE.LENGTH.MIN,
+    maximum: QUESTION_TEMPLATE_CONSTRAINTS.TITLE.LENGTH.MAX,
   })
   @ToOptionalTrimmedString()
   @IsString()

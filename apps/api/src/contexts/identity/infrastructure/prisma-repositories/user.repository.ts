@@ -65,7 +65,12 @@ export class UserRepository implements UserRepositoryPort {
   async updateById(id: number, patch: UserUpdatePayload): Promise<UserDomain> {
     const updated = await this.prisma.user.update({
       where: { id },
-      data: patch,
+      data: {
+        ...patch,
+        secondName: patch.secondName ?? null,
+        teamId: patch.teamId ?? null,
+        managerId: patch.managerId ?? null,
+      },
       include: this.withRolesInclude(true),
     });
 
@@ -104,14 +109,13 @@ export class UserRepository implements UserRepositoryPort {
   }
 
   private buildWhere(query: UserSearchQuery): Prisma.UserWhereInput {
-    const { search, email, status, teamId, positionId, managerId } = query;
+    const { firstName, secondName, lastName, fullName, search, email, status, teamId, positionId, managerId, roles } = query;
 
     return {
-      ...(email ? { email } : {}),
-      ...(status ? { status } : {}),
-      ...(teamId ? { teamId } : {}),
-      ...(positionId ? { positionId } : {}),
-      ...(managerId ? { managerId } : {}),
+      ...(firstName ? { firstName: { contains: firstName, mode: 'insensitive' } } : {}),
+      ...(secondName ? { secondName: { contains: secondName, mode: 'insensitive' } } : {}),
+      ...(lastName ? { lastName: { contains: lastName, mode: 'insensitive' } } : {}),
+      ...(fullName ? { fullName: { contains: fullName, mode: 'insensitive' } } : {}),
       ...(search
         ? {
           OR: [
@@ -122,6 +126,12 @@ export class UserRepository implements UserRepositoryPort {
           ],
         }
         : {}),
+      ...(email ? { email: { contains: email, mode: 'insensitive' } } : {}),
+      ...(status ? { status } : {}),
+      ...(teamId ? { teamId } : {}),
+      ...(positionId ? { positionId } : {}),
+      ...(managerId ? { managerId } : {}),
+      ...(roles?.length ? { userRoles: { some: { roleCode: { in: roles } } } } : {}),
     };
   }
 

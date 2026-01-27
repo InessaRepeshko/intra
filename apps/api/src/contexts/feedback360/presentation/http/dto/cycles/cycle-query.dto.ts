@@ -7,7 +7,7 @@ import { CycleSortField } from 'src/contexts/feedback360/application/ports/cycle
 import { SortDirection } from '@intra/shared-kernel';
 
 export class CycleQueryDto {
-  @ApiPropertyOptional({ description: 'Filter by title', example: 'Q1', type: 'string', minLength: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, maxLength: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX })
+  @ApiPropertyOptional({ description: 'Filter by title', example: 'Q1', type: 'string', minimum: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, maximum: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, max: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX })
   @IsOptional()
   @IsString()
@@ -15,7 +15,7 @@ export class CycleQueryDto {
   @MaxLength(CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX)
   title?: string;
 
-  @ApiPropertyOptional({ description: 'Filter by description', example: 'Description', type: 'string', minLength: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN, maxLength: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX })
+  @ApiPropertyOptional({ description: 'Filter by description', example: 'Description', type: 'string', minimum: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN, maximum: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN, max: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX })
   @IsOptional()
   @IsString()
@@ -23,7 +23,7 @@ export class CycleQueryDto {
   @MaxLength(CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX)
   description?: string;
 
-  @ApiPropertyOptional({ description: 'Search by title/description', example: 'Q1', type: 'string', minLength: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, maxLength: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX })
+  @ApiPropertyOptional({ description: 'Search by title/description', example: 'Q1', type: 'string', minimum: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, maximum: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, max: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX })
   @IsOptional()
   @IsString()

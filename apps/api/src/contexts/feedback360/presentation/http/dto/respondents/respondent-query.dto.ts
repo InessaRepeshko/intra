@@ -18,7 +18,7 @@ export class RespondentQueryDto {
     @IsInt()
     respondentId?: number;
 
-    @ApiPropertyOptional({ example: 'Ivanna Bulava', description: 'Filter by respondent full name (contains, case-insensitive)', type: 'string', minLength: RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+    @ApiPropertyOptional({ example: 'Ivanna Bulava', description: 'Filter by respondent full name (contains, case-insensitive)', type: 'string', minimum: RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
     @ToOptionalTrimmedString({ min: RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: RESPONDENT_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
     @IsOptional()
     @IsString()
@@ -38,7 +38,7 @@ export class RespondentQueryDto {
     @IsEnum(ResponseStatus)
     responseStatus?: ResponseStatus;
 
-    @ApiPropertyOptional({ example: 'Respondent note', description: 'Filter by respondent note (contains, case-insensitive)', type: 'string', minLength: RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MIN, maxLength: RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MAX })
+    @ApiPropertyOptional({ example: 'Respondent note', description: 'Filter by respondent note (contains, case-insensitive)', type: 'string', minimum: RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MIN, maximum: RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MAX })
     @ToOptionalTrimmedString({ min: RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MIN, max: RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MAX })
     @IsOptional()
     @IsString()
@@ -46,7 +46,7 @@ export class RespondentQueryDto {
     @MaxLength(RESPONDENT_CONSTRAINTS.RESPONDENT_NOTE.LENGTH.MAX)
     respondentNote?: string;
 
-    @ApiPropertyOptional({ example: 'HR note', description: 'Filter by HR note (contains, case-insensitive)', type: 'string', minLength: RESPONDENT_CONSTRAINTS.HR_NOTE.LENGTH.MIN, maxLength: RESPONDENT_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
+    @ApiPropertyOptional({ example: 'HR note', description: 'Filter by HR note (contains, case-insensitive)', type: 'string', minimum: RESPONDENT_CONSTRAINTS.HR_NOTE.LENGTH.MIN, maximum: RESPONDENT_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
     @ToOptionalTrimmedString({ min: RESPONDENT_CONSTRAINTS.HR_NOTE.LENGTH.MIN, max: RESPONDENT_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
     @IsOptional()
     @IsString()
@@ -60,7 +60,7 @@ export class RespondentQueryDto {
     @IsInt()
     positionId?: number;
 
-    @ApiPropertyOptional({ example: 'Position title', description: 'Filter by position title (contains, case-insensitive)', type: 'string', minLength: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maxLength: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
+    @ApiPropertyOptional({ example: 'Position title', description: 'Filter by position title (contains, case-insensitive)', type: 'string', minimum: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maximum: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
     @ToOptionalTrimmedString({ min: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, max: RESPONDENT_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
     @IsOptional()
     @IsString()
@@ -75,7 +75,7 @@ export class RespondentQueryDto {
     @Min(1)
     teamId?: number | null;
 
-    @ApiPropertyOptional({ example: 'Team title', description: 'Filter by team title (contains, case-insensitive)', type: 'string', minLength: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maxLength: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX, nullable: true })
+    @ApiPropertyOptional({ example: 'Team title', description: 'Filter by team title (contains, case-insensitive)', type: 'string', minimum: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maximum: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX, nullable: true })
     @ToOptionalTrimmedString({ min: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, max: RESPONDENT_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX })
     @IsOptional()
     @IsString()

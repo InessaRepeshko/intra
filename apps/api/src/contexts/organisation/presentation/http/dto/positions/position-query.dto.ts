@@ -6,7 +6,7 @@ import { SortDirection } from '@intra/shared-kernel';
 import { PositionSortField } from '../../../../application/ports/position.repository.port';
 
 export class PositionQueryDto {
-  @ApiPropertyOptional({ description: 'Search by title or description', minLength: POSITION_CONSTRAINTS.TITLE.LENGTH.MIN, maxLength: POSITION_CONSTRAINTS.TITLE.LENGTH.MAX, example: 'Senior Backend Engineer' })
+  @ApiPropertyOptional({ description: 'Search by title or description', minimum: POSITION_CONSTRAINTS.TITLE.LENGTH.MIN, maximum: POSITION_CONSTRAINTS.TITLE.LENGTH.MAX, example: 'Senior Backend Engineer' })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()

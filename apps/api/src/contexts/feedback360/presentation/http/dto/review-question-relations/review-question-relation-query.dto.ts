@@ -20,7 +20,7 @@ export class ReviewQuestionRelationQueryDto {
     @IsInt()
     questionId?: number;
 
-    @ApiPropertyOptional({ example: 'Listens actively before responding.', description: 'Question title (contains, case-insensitive)', type: 'string', minLength: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN, maxLength: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX })
+    @ApiPropertyOptional({ example: 'Listens actively before responding.', description: 'Question title (contains, case-insensitive)', type: 'string', minimum: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN, maximum: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX })
     @ToOptionalTrimmedString({ min: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN, max: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX })
     @IsOptional()
     @IsString()
@@ -40,7 +40,7 @@ export class ReviewQuestionRelationQueryDto {
     @IsInt()
     competenceId?: number;
 
-    @ApiPropertyOptional({ example: 'Communication', description: 'Competence title (contains, case-insensitive)', type: 'string', minLength: QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MIN, maxLength: QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MAX })
+    @ApiPropertyOptional({ example: 'Communication', description: 'Competence title (contains, case-insensitive)', type: 'string', minimum: QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MIN, maximum: QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MAX })
     @ToOptionalTrimmedString({ min: QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MIN, max: QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MAX })
     @IsOptional()
     @IsString()

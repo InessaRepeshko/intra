@@ -4,13 +4,13 @@ import { IdentityStatus } from '@intra/shared-kernel';
 export type UserProps = {
   id?: number;
   firstName: string;
-  secondName?: string | null;
+  secondName?: string;
   lastName: string;
-  fullName?: string | null;
+  fullName?: string;
   email: string;
   passwordHash: string;
   status?: IdentityStatus;
-  positionId?: number | null;
+  positionId: number;
   teamId?: number | null;
   managerId?: number | null;
   createdAt?: Date;
@@ -21,15 +21,15 @@ export type UserProps = {
 export class UserDomain {
   readonly id?: number;
   readonly firstName: string;
-  readonly secondName: string | null;
+  readonly secondName?: string;
   readonly lastName: string;
-  readonly fullName: string | null;
+  readonly fullName: string;
   readonly email: string;
   readonly passwordHash: string;
   readonly status: IdentityStatus;
-  readonly positionId: number | null;
-  readonly teamId: number | null;
-  readonly managerId: number | null;
+  readonly positionId: number;
+  readonly teamId?: number | null;
+  readonly managerId?: number | null;
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
   readonly roles: IdentityRole[];
@@ -37,13 +37,13 @@ export class UserDomain {
   private constructor(props: UserProps) {
     this.id = props.id;
     this.firstName = props.firstName;
-    this.secondName = props.secondName ?? null;
+    this.secondName = props.secondName;
     this.lastName = props.lastName;
     this.fullName = props.fullName ?? UserDomain.buildFullName(props.firstName, props.secondName, props.lastName);
     this.email = props.email;
     this.passwordHash = props.passwordHash;
     this.status = props.status ?? IdentityStatus.ACTIVE;
-    this.positionId = props.positionId ?? null;
+    this.positionId = props.positionId;
     this.teamId = props.teamId ?? null;
     this.managerId = props.managerId ?? null;
     this.createdAt = props.createdAt;
@@ -63,8 +63,8 @@ export class UserDomain {
     return new UserDomain({ ...this, ...patch });
   }
 
-  private static buildFullName(firstName: string, secondName: string | null | undefined, lastName: string): string | null {
+  private static buildFullName(firstName: string, secondName: string | undefined, lastName: string): string {
     const parts = [firstName, secondName ?? undefined, lastName].filter(Boolean);
-    return parts.length ? parts.join(' ') : null;
+    return parts.join(' ');
   }
 }

@@ -304,7 +304,7 @@ export default async function seedUsers(
     const users: UserMap = new Map();
 
     for (const user of USER_SEED_DATA) {
-        const positionId = positionMap.get(user.position)?.id ?? null;
+        const positionId = positionMap.get(user.position)?.id as number;
         const teamId = teamMap.get(user.team)?.id ?? null;
         const passwordHash = hashPassword(user.password ?? DEFAULT_USER_PASSWORD);
         const fullName = buildFullName(user);

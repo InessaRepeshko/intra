@@ -19,7 +19,7 @@ export class QuestionQueryDto {
   @IsInt()
   questionTemplateId?: number;
 
-  @ApiPropertyOptional({ example: 'Listens actively before responding.', description: 'Filter by question title (contains, case-insensitive)', type: 'string', minLength: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN, maxLength: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX })
+  @ApiPropertyOptional({ example: 'Listens actively before responding.', description: 'Filter by question title (contains, case-insensitive)', type: 'string', minimum: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN, maximum: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN, max: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX })
   @IsOptional()
   @IsString()

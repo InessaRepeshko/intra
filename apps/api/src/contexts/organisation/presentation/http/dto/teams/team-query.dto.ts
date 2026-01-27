@@ -6,7 +6,7 @@ import { TEAM_CONSTRAINTS } from '@intra/shared-kernel';
 import { TeamSortField } from '../../../../application/ports/team.repository.port';
 
 export class TeamQueryDto {
-  @ApiPropertyOptional({ description: 'Search by title or description', minLength: TEAM_CONSTRAINTS.TITLE.LENGTH.MIN, maxLength: TEAM_CONSTRAINTS.TITLE.LENGTH.MAX, example: 'Engineering Team' })
+  @ApiPropertyOptional({ description: 'Search by title or description', minimum: TEAM_CONSTRAINTS.TITLE.LENGTH.MIN, maximum: TEAM_CONSTRAINTS.TITLE.LENGTH.MAX, example: 'Engineering Team' })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()

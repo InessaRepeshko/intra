@@ -8,6 +8,7 @@ export const IDENTITY_USER_REPOSITORY = Symbol('IDENTITY.USER_REPOSITORY');
 export enum UserSortField {
   ID = 'id',
   FIRST_NAME = 'firstName',
+  SECOND_NAME = 'secondName',
   LAST_NAME = 'lastName',
   FULL_NAME = 'fullName',
   EMAIL = 'email',
@@ -17,15 +18,21 @@ export enum UserSortField {
   MANAGER_ID = 'managerId',
   CREATED_AT = 'createdAt',
   UPDATED_AT = 'updatedAt',
+  ROLES = 'roles',
 }
 
 export type UserSearchQuery = {
   search?: string;
+  firstName?: string;
+  secondName?: string;
+  lastName?: string;
+  fullName?: string;
   email?: string;
   status?: IdentityStatus;
   teamId?: number;
   positionId?: number;
   managerId?: number;
+  roles?: IdentityRole[];
   sortBy?: UserSortField;
   sortDirection?: SortDirection;
 };
@@ -34,10 +41,10 @@ export type UserUpdatePayload = Partial<{
   firstName: string;
   secondName: string | null;
   lastName: string;
-  fullName: string | null;
+  fullName: string;
   passwordHash: string;
   status: IdentityStatus;
-  positionId: number | null;
+  positionId: number;
   teamId: number | null;
   managerId: number | null;
 }>;

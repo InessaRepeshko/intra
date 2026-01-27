@@ -4,7 +4,7 @@ import { ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/qu
 import { TEAM_CONSTRAINTS } from '@intra/shared-kernel';
 
 export class CreateTeamDto {
-  @ApiProperty({ description: 'Team title', example: 'Engineering Team', maxLength: TEAM_CONSTRAINTS.TITLE.LENGTH.MAX, minLength: TEAM_CONSTRAINTS.TITLE.LENGTH.MIN })
+  @ApiProperty({ description: 'Team title', example: 'Engineering Team', maximum: TEAM_CONSTRAINTS.TITLE.LENGTH.MAX, minimum: TEAM_CONSTRAINTS.TITLE.LENGTH.MIN })
   @ToOptionalTrimmedString()
   @IsString()
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class CreateTeamDto {
   @MaxLength(TEAM_CONSTRAINTS.TITLE.LENGTH.MAX)
   title!: string;
 
-  @ApiPropertyOptional({ description: 'Team description', example: 'Responsible for product development', nullable: true, maxLength: TEAM_CONSTRAINTS.DESCRIPTION.LENGTH.MAX, minLength: TEAM_CONSTRAINTS.DESCRIPTION.LENGTH.MIN })
+  @ApiPropertyOptional({ description: 'Team description', example: 'Responsible for product development', nullable: true, maximum: TEAM_CONSTRAINTS.DESCRIPTION.LENGTH.MAX, minimum: TEAM_CONSTRAINTS.DESCRIPTION.LENGTH.MIN })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()

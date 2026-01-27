@@ -68,9 +68,69 @@
             "in": "query",
             "description": "Search by first name or last name or email",
             "schema": {
-              "minLength": 1,
-              "maxLength": 100,
+              "minimum": 1,
+              "maximum": 100,
               "example": "Valerii",
+              "type": "string"
+            }
+          },
+          {
+            "name": "firstName",
+            "required": false,
+            "in": "query",
+            "description": "User's first name",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "example": "Valerii",
+              "type": "string"
+            }
+          },
+          {
+            "name": "secondName",
+            "required": false,
+            "in": "query",
+            "description": "User's second name",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "example": "Valeriiovych",
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastName",
+            "required": false,
+            "in": "query",
+            "description": "User's last name",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "example": "Velychko",
+              "type": "string"
+            }
+          },
+          {
+            "name": "fullName",
+            "required": false,
+            "in": "query",
+            "description": "User's full name",
+            "schema": {
+              "minimum": 1,
+              "maximum": 302,
+              "example": "Valerii Valeriiovych Velychko",
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "required": false,
+            "in": "query",
+            "description": "User's email",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "example": "valerii.velychko@example.com",
               "type": "string"
             }
           },
@@ -120,6 +180,28 @@
             }
           },
           {
+            "name": "roles",
+            "required": false,
+            "in": "query",
+            "description": "User's roles",
+            "schema": {
+              "example": [
+                "EMPLOYEE",
+                "HR"
+              ],
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ADMIN",
+                  "HR",
+                  "MANAGER",
+                  "EMPLOYEE"
+                ]
+              }
+            }
+          },
+          {
             "name": "sortBy",
             "required": false,
             "in": "query",
@@ -131,6 +213,7 @@
               "enum": [
                 "id",
                 "firstName",
+                "secondName",
                 "lastName",
                 "fullName",
                 "email",
@@ -139,7 +222,8 @@
                 "teamId",
                 "managerId",
                 "createdAt",
-                "updatedAt"
+                "updatedAt",
+                "roles"
               ]
             }
           },
@@ -438,8 +522,8 @@
             "in": "query",
             "description": "Search by title or description",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Engineering Team",
               "type": "string"
             }
@@ -819,8 +903,8 @@
             "in": "query",
             "description": "Search by title or description",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Senior Backend Engineer",
               "type": "string"
             }
@@ -2019,7 +2103,7 @@
             "in": "query",
             "description": "Search in title",
             "schema": {
-              "maxLength": 1000,
+              "maximum": 1000,
               "example": "features",
               "type": "string"
             }
@@ -2520,8 +2604,8 @@
             "in": "query",
             "description": "Filter by title",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Q1",
               "type": "string"
             }
@@ -2532,8 +2616,8 @@
             "in": "query",
             "description": "Filter by description",
             "schema": {
-              "minLength": 1,
-              "maxLength": 1000,
+              "minimum": 1,
+              "maximum": 1000,
               "example": "Description",
               "type": "string"
             }
@@ -2544,8 +2628,8 @@
             "in": "query",
             "description": "Search by title/description",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Q1",
               "type": "string"
             }
@@ -2702,8 +2786,8 @@
             "name": "title",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Q1",
               "type": "string"
             }
@@ -2714,8 +2798,8 @@
             "name": "description",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 1000,
+              "minimum": 1,
+              "maximum": 1000,
               "example": "Description",
               "type": "string"
             }
@@ -2726,8 +2810,8 @@
             "name": "search",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Q1",
               "type": "string"
             }
@@ -3063,8 +3147,8 @@
             "in": "query",
             "description": "Ratee full name (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 302,
+              "minimum": 1,
+              "maximum": 302,
               "example": "Valerii Velichko",
               "type": "string"
             }
@@ -3085,8 +3169,8 @@
             "in": "query",
             "description": "Ratee position title (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Software Engineer",
               "type": "string"
             }
@@ -3107,8 +3191,8 @@
             "in": "query",
             "description": "HR full name (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 302,
+              "minimum": 1,
+              "maximum": 302,
               "example": "Anna Boyko",
               "type": "string"
             }
@@ -3119,8 +3203,8 @@
             "in": "query",
             "description": "HR note (contains, case-insensitive)",
             "schema": {
-              "minLength": 1000,
-              "maxLength": 1000,
+              "minimum": 1000,
+              "maximum": 1000,
               "example": "Completion of probationary period",
               "type": "string"
             }
@@ -3142,8 +3226,8 @@
             "in": "query",
             "description": "Team title (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "nullable": true,
               "example": "Engineering team",
               "type": "string"
@@ -3166,8 +3250,8 @@
             "in": "query",
             "description": "Manager full name (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 302,
+              "minimum": 1,
+              "maximum": 302,
               "nullable": true,
               "example": "Yaroslav Syvyi",
               "type": "string"
@@ -3190,8 +3274,8 @@
             "in": "query",
             "description": "Manager position title (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "nullable": true,
               "example": "Software Engineer",
               "type": "string"
@@ -3303,8 +3387,8 @@
             "name": "rateeFullName",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 302,
+              "minimum": 1,
+              "maximum": 302,
               "example": "Valerii Velichko",
               "type": "string"
             }
@@ -3325,8 +3409,8 @@
             "name": "rateePositionTitle",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Software Engineer",
               "type": "string"
             }
@@ -3347,8 +3431,8 @@
             "name": "hrFullName",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 302,
+              "minimum": 1,
+              "maximum": 302,
               "example": "Anna Boyko",
               "type": "string"
             }
@@ -3359,8 +3443,8 @@
             "name": "hrNote",
             "in": "query",
             "schema": {
-              "minLength": 1000,
-              "maxLength": 1000,
+              "minimum": 1000,
+              "maximum": 1000,
               "example": "Completion of probationary period",
               "type": "string"
             }
@@ -3382,8 +3466,8 @@
             "name": "teamTitle",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "nullable": true,
               "example": "Engineering team",
               "type": "string"
@@ -3406,8 +3490,8 @@
             "name": "managerFullName",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 302,
+              "minimum": 1,
+              "maximum": 302,
               "nullable": true,
               "example": "Yaroslav Syvyi",
               "type": "string"
@@ -3430,8 +3514,8 @@
             "name": "managerPositionTitle",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "nullable": true,
               "example": "Software Engineer",
               "type": "string"
@@ -3732,8 +3816,8 @@
             "in": "query",
             "description": "Question title (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Listens actively before responding.",
               "type": "string"
             }
@@ -3764,8 +3848,8 @@
             "in": "query",
             "description": "Competence title (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Communication",
               "type": "string"
             }
@@ -3843,8 +3927,8 @@
             "name": "questionTitle",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Listens actively before responding.",
               "type": "string"
             }
@@ -3875,8 +3959,8 @@
             "name": "competenceTitle",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Communication",
               "type": "string"
             }
@@ -4356,8 +4440,8 @@
             "in": "query",
             "description": "Filter by respondent full name (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 302,
+              "minimum": 1,
+              "maximum": 302,
               "example": "Ivanna Bulava",
               "type": "string"
             }
@@ -4388,8 +4472,8 @@
             "in": "query",
             "description": "Filter by respondent note (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 1000,
+              "minimum": 1,
+              "maximum": 1000,
               "example": "Respondent note",
               "type": "string"
             }
@@ -4400,8 +4484,8 @@
             "in": "query",
             "description": "Filter by HR note (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 1000,
+              "minimum": 1,
+              "maximum": 1000,
               "example": "HR note",
               "type": "string"
             }
@@ -4422,8 +4506,8 @@
             "in": "query",
             "description": "Filter by position title (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 1000,
+              "minimum": 1,
+              "maximum": 1000,
               "example": "Position title",
               "type": "string"
             }
@@ -4445,8 +4529,8 @@
             "in": "query",
             "description": "Filter by team title (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 1000,
+              "minimum": 1,
+              "maximum": 1000,
               "nullable": true,
               "example": "Team title",
               "type": "string"
@@ -4556,8 +4640,8 @@
             "name": "fullName",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 302,
+              "minimum": 1,
+              "maximum": 302,
               "example": "Ivanna Bulava",
               "type": "string"
             }
@@ -4588,8 +4672,8 @@
             "name": "respondentNote",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 1000,
+              "minimum": 1,
+              "maximum": 1000,
               "example": "Respondent note",
               "type": "string"
             }
@@ -4600,8 +4684,8 @@
             "name": "hrNote",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 1000,
+              "minimum": 1,
+              "maximum": 1000,
               "example": "HR note",
               "type": "string"
             }
@@ -4622,8 +4706,8 @@
             "name": "positionTitle",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 1000,
+              "minimum": 1,
+              "maximum": 1000,
               "example": "Position title",
               "type": "string"
             }
@@ -4645,8 +4729,8 @@
             "name": "teamTitle",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 1000,
+              "minimum": 1,
+              "maximum": 1000,
               "nullable": true,
               "example": "Team title",
               "type": "string"
@@ -4912,8 +4996,8 @@
             "in": "query",
             "description": "Reviewer full name",
             "schema": {
-              "minLength": 1,
-              "maxLength": 302,
+              "minimum": 1,
+              "maximum": 302,
               "example": "Ivanna Bulava",
               "type": "string"
             }
@@ -4934,8 +5018,8 @@
             "in": "query",
             "description": "Position title (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Position title",
               "type": "string"
             }
@@ -4957,8 +5041,8 @@
             "in": "query",
             "description": "Team title (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "nullable": true,
               "example": "Engineering team",
               "type": "string"
@@ -5027,8 +5111,8 @@
             "name": "fullName",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 302,
+              "minimum": 1,
+              "maximum": 302,
               "example": "Ivanna Bulava",
               "type": "string"
             }
@@ -5049,8 +5133,8 @@
             "name": "positionTitle",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Position title",
               "type": "string"
             }
@@ -5072,8 +5156,8 @@
             "name": "teamTitle",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "nullable": true,
               "example": "Engineering team",
               "type": "string"
@@ -5235,8 +5319,8 @@
             "in": "query",
             "description": "Filter by question title (contains, case-insensitive)",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Listens actively before responding.",
               "type": "string"
             }
@@ -5337,8 +5421,8 @@
             "name": "title",
             "in": "query",
             "schema": {
-              "minLength": 1,
-              "maxLength": 255,
+              "minimum": 1,
+              "maximum": 255,
               "example": "Listens actively before responding.",
               "type": "string"
             }
@@ -6155,36 +6239,43 @@
           "firstName": {
             "type": "string",
             "description": "User's first name",
-            "minLength": 1,
-            "maxLength": 100,
+            "minimum": 1,
+            "maximum": 100,
             "example": "Valerii"
           },
           "secondName": {
-            "type": "object",
+            "type": "string",
             "description": "User's second name",
-            "minLength": 1,
-            "maxLength": 100,
-            "example": "Velychko"
+            "minimum": 1,
+            "maximum": 100,
+            "example": "Valeriiovych"
           },
           "lastName": {
             "type": "string",
             "description": "User's last name",
-            "minLength": 1,
-            "maxLength": 100,
-            "example": "Valeriiovych"
+            "minimum": 1,
+            "maximum": 100,
+            "example": "Velychko"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "User's full name",
+            "minimum": 1,
+            "maximum": 302,
+            "example": "Valerii Velychko"
           },
           "email": {
             "type": "string",
             "description": "User's email",
-            "minLength": 1,
-            "maxLength": 100,
+            "minimum": 1,
+            "maximum": 100,
             "example": "valerii.velychko@example.com"
           },
           "passwordHash": {
             "type": "string",
             "description": "Precomputed password hash or placeholder for external authentication",
             "example": "__external_auth__",
-            "maxLength": 300
+            "maximum": 300
           },
           "status": {
             "type": "string",
@@ -6204,12 +6295,24 @@
           "teamId": {
             "type": "number",
             "description": "Team ID",
-            "example": 10
+            "example": 10,
+            "nullable": true
           },
           "managerId": {
             "type": "number",
             "description": "Manager ID",
-            "example": 2
+            "example": 2,
+            "nullable": true
+          },
+          "roles": {
+            "description": "User's roles",
+            "example": [
+              "MANAGER"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -6223,29 +6326,45 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "User ID"
           },
           "firstName": {
             "type": "string",
-            "example": "Valerii"
+            "example": "Valerii",
+            "description": "User first name",
+            "minimum": 1,
+            "maximum": 100
           },
           "secondName": {
-            "type": "object",
-            "example": "Velychko",
-            "nullable": true
+            "type": "string",
+            "example": "Valeriiovych",
+            "description": "User second name",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 100
           },
           "lastName": {
             "type": "string",
-            "example": "Valeriiovych"
+            "example": "Velychko",
+            "description": "User last name",
+            "minimum": 1,
+            "maximum": 100
           },
           "fullName": {
-            "type": "object",
+            "type": "string",
             "example": "Valerii Valeriiovych Velychko",
-            "nullable": true
+            "description": "User full name",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 302
           },
           "email": {
             "type": "string",
-            "example": "valerii.velychko@example.com"
+            "example": "valerii.velychko@example.com",
+            "description": "User email",
+            "minimum": 1,
+            "maximum": 100
           },
           "status": {
             "type": "string",
@@ -6253,28 +6372,33 @@
               "ACTIVE",
               "INACTIVE"
             ],
-            "example": "ACTIVE"
+            "example": "ACTIVE",
+            "description": "User status"
           },
           "positionId": {
             "type": "number",
             "example": 1,
-            "nullable": true
+            "nullable": true,
+            "description": "User position ID"
           },
           "teamId": {
             "type": "number",
             "example": 10,
-            "nullable": true
+            "nullable": true,
+            "description": "User team ID"
           },
           "managerId": {
             "type": "number",
             "example": 2,
-            "nullable": true
+            "nullable": true,
+            "description": "User manager ID"
           },
           "roles": {
             "type": "array",
             "example": [
-              "MANAGER"
+              "EMPLOYEE"
             ],
+            "description": "User roles",
             "items": {
               "type": "string",
               "enum": [
@@ -6287,11 +6411,15 @@
           },
           "createdAt": {
             "type": "string",
-            "example": "2024-01-01T10:00:00.000Z"
+            "example": "2024-01-01T10:00:00.000Z",
+            "description": "User creation date",
+            "format": "date-time"
           },
           "updatedAt": {
             "type": "string",
-            "example": "2024-01-02T10:00:00.000Z"
+            "example": "2024-01-02T10:00:00.000Z",
+            "description": "User update date",
+            "format": "date-time"
           }
         },
         "required": [
@@ -6316,36 +6444,43 @@
           "firstName": {
             "type": "string",
             "description": "User's first name",
-            "minLength": 1,
-            "maxLength": 100,
+            "minimum": 1,
+            "maximum": 100,
             "example": "Valerii"
           },
           "secondName": {
-            "type": "object",
+            "type": "string",
             "description": "User's second name",
-            "minLength": 1,
-            "maxLength": 100,
-            "example": "Velychko"
+            "minimum": 1,
+            "maximum": 100,
+            "example": "Valeriiovych"
           },
           "lastName": {
             "type": "string",
             "description": "User's last name",
-            "minLength": 1,
-            "maxLength": 100,
-            "example": "Valeriiovych"
+            "minimum": 1,
+            "maximum": 100,
+            "example": "Velychko"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "User's full name",
+            "minimum": 1,
+            "maximum": 302,
+            "example": "Valerii Velychko"
           },
           "email": {
             "type": "string",
             "description": "User's email",
-            "minLength": 1,
-            "maxLength": 100,
+            "minimum": 1,
+            "maximum": 100,
             "example": "valerii.velychko@example.com"
           },
           "passwordHash": {
             "type": "string",
             "description": "Precomputed password hash or placeholder for external authentication",
             "example": "__external_auth__",
-            "maxLength": 300
+            "maximum": 300
           },
           "status": {
             "type": "string",
@@ -6365,12 +6500,24 @@
           "teamId": {
             "type": "number",
             "description": "Team ID",
-            "example": 10
+            "example": 10,
+            "nullable": true
           },
           "managerId": {
             "type": "number",
             "description": "Manager ID",
-            "example": 2
+            "example": 2,
+            "nullable": true
+          },
+          "roles": {
+            "description": "User's roles",
+            "example": [
+              "MANAGER"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -6410,16 +6557,23 @@
               "MANAGER",
               "EMPLOYEE"
             ],
-            "example": "MANAGER"
+            "example": "MANAGER",
+            "description": "Role code"
           },
           "title": {
             "type": "string",
-            "example": "Manager"
+            "example": "Manager",
+            "description": "Role title",
+            "minimum": 1,
+            "maximum": 255
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "example": "Responsible for managing the team",
-            "nullable": true
+            "nullable": true,
+            "description": "Role description",
+            "minimum": 1,
+            "maximum": 1000
           }
         },
         "required": [
@@ -6435,16 +6589,16 @@
             "type": "string",
             "description": "Team title",
             "example": "Engineering Team",
-            "maxLength": 255,
-            "minLength": 1
+            "maximum": 255,
+            "minimum": 1
           },
           "description": {
             "type": "object",
             "description": "Team description",
             "example": "Responsible for product development",
             "nullable": true,
-            "maxLength": 1000,
-            "minLength": 1
+            "maximum": 1000,
+            "minimum": 1
           },
           "headId": {
             "type": "object",
@@ -6503,16 +6657,16 @@
             "type": "string",
             "description": "Team title",
             "example": "Engineering Team",
-            "maxLength": 255,
-            "minLength": 1
+            "maximum": 255,
+            "minimum": 1
           },
           "description": {
             "type": "object",
             "description": "Team description",
             "example": "Responsible for product development",
             "nullable": true,
-            "maxLength": 1000,
-            "minLength": 1
+            "maximum": 1000,
+            "minimum": 1
           },
           "headId": {
             "type": "object",
@@ -6582,16 +6736,16 @@
             "type": "string",
             "description": "Position title",
             "example": "Senior Backend Engineer",
-            "maxLength": 255,
-            "minLength": 1
+            "maximum": 255,
+            "minimum": 1
           },
           "description": {
             "type": "object",
             "description": "Position description",
             "example": "Backend development, architecture design, code reviews",
             "nullable": true,
-            "maxLength": 1000,
-            "minLength": 1
+            "maximum": 1000,
+            "minimum": 1
           }
         },
         "required": [
@@ -6638,16 +6792,16 @@
             "type": "string",
             "description": "Position title",
             "example": "Senior Backend Engineer",
-            "maxLength": 255,
-            "minLength": 1
+            "maximum": 255,
+            "minimum": 1
           },
           "description": {
             "type": "object",
             "description": "Position description",
             "example": "Backend development, architecture design, code reviews",
             "nullable": true,
-            "maxLength": 1000,
-            "minLength": 1
+            "maximum": 1000,
+            "minimum": 1
           }
         }
       },
@@ -6672,23 +6826,23 @@
             "description": "Optional competence code",
             "example": "ENG-001",
             "nullable": true,
-            "minLength": 1,
-            "maxLength": 100
+            "minimum": 1,
+            "maximum": 100
           },
           "title": {
             "type": "string",
             "description": "Competence title",
             "example": "Engineering excellence",
-            "minLength": 1,
-            "maxLength": 255
+            "minimum": 1,
+            "maximum": 255
           },
           "description": {
             "type": "object",
             "description": "Competence description",
             "example": "Ability to deliver high-quality software",
             "nullable": true,
-            "minLength": 1,
-            "maxLength": 1000
+            "minimum": 1,
+            "maximum": 1000
           }
         },
         "required": [
@@ -6740,23 +6894,23 @@
             "description": "Optional competence code",
             "example": "ENG-001",
             "nullable": true,
-            "minLength": 1,
-            "maxLength": 100
+            "minimum": 1,
+            "maximum": 100
           },
           "title": {
             "type": "string",
             "description": "Competence title",
             "example": "Engineering excellence",
-            "minLength": 1,
-            "maxLength": 255
+            "minimum": 1,
+            "maximum": 255
           },
           "description": {
             "type": "object",
             "description": "Competence description",
             "example": "Ability to deliver high-quality software",
             "nullable": true,
-            "minLength": 1,
-            "maxLength": 1000
+            "minimum": 1,
+            "maximum": 1000
           }
         }
       },
@@ -6912,8 +7066,8 @@
             "type": "string",
             "description": "Question template text/title",
             "example": "Delivers features on time",
-            "minLength": 1,
-            "maxLength": 1000
+            "minimum": 1,
+            "maximum": 1000
           },
           "answerType": {
             "type": "string",
@@ -7033,8 +7187,8 @@
             "type": "string",
             "description": "Question template text/title",
             "example": "Delivers features on time",
-            "minLength": 1,
-            "maxLength": 1000
+            "minimum": 1,
+            "maximum": 1000
           },
           "answerType": {
             "type": "string",
@@ -7105,15 +7259,15 @@
             "type": "string",
             "example": "Q1 2025",
             "description": "Cycle name (contains, case-insensitive)",
-            "minLength": 1,
-            "maxLength": 255
+            "minimum": 1,
+            "maximum": 255
           },
           "description": {
             "type": "string",
             "example": "First 360 cycle for 2025",
             "description": "Description (contains, case-insensitive)",
-            "minLength": 1,
-            "maxLength": 1000
+            "minimum": 1,
+            "maximum": 1000
           },
           "hrId": {
             "type": "number",
@@ -7299,15 +7453,15 @@
             "type": "string",
             "example": "Q1 2025",
             "description": "Cycle name (contains, case-insensitive)",
-            "minLength": 1,
-            "maxLength": 255
+            "minimum": 1,
+            "maximum": 255
           },
           "description": {
             "type": "string",
             "example": "First 360 cycle for 2025",
             "description": "Description (contains, case-insensitive)",
-            "minLength": 1,
-            "maxLength": 1000
+            "minimum": 1,
+            "maximum": 1000
           },
           "hrId": {
             "type": "number",
@@ -7383,8 +7537,8 @@
             "type": "string",
             "example": "Valerii Velichko",
             "description": "Ratee full name",
-            "minLength": 1,
-            "maxLength": 302
+            "minimum": 1,
+            "maximum": 302
           },
           "rateePositionId": {
             "type": "number",
@@ -7395,8 +7549,8 @@
             "type": "string",
             "example": "Senior Engineer",
             "description": "Ratee position title",
-            "minLength": 1,
-            "maxLength": 255
+            "minimum": 1,
+            "maximum": 255
           },
           "hrId": {
             "type": "number",
@@ -7407,15 +7561,15 @@
             "type": "string",
             "example": "Anna Boyko",
             "description": "HR full name",
-            "minLength": 1,
-            "maxLength": 302
+            "minimum": 1,
+            "maximum": 302
           },
           "hrNote": {
             "type": "string",
             "example": "Completion of probationary period",
             "description": "HR note",
-            "minLength": 1000,
-            "maxLength": 1000
+            "minimum": 1000,
+            "maximum": 1000
           },
           "teamId": {
             "type": "number",
@@ -7427,8 +7581,8 @@
             "type": "string",
             "example": "Engineering team",
             "description": "Team title",
-            "minLength": 1,
-            "maxLength": 255,
+            "minimum": 1,
+            "maximum": 255,
             "nullable": true
           },
           "managerId": {
@@ -7441,8 +7595,8 @@
             "type": "string",
             "example": "Yaroslav Syvyi",
             "description": "Manager full name",
-            "minLength": 1,
-            "maxLength": 302,
+            "minimum": 1,
+            "maximum": 302,
             "nullable": true
           },
           "managerPositionId": {
@@ -7455,8 +7609,8 @@
             "type": "string",
             "example": "Senior Engineer",
             "description": "Manager position title",
-            "minLength": 1,
-            "maxLength": 255,
+            "minimum": 1,
+            "maximum": 255,
             "nullable": true
           },
           "cycleId": {
@@ -7655,8 +7809,8 @@
             "type": "string",
             "example": "Valerii Velichko",
             "description": "Ratee full name",
-            "minLength": 1,
-            "maxLength": 302
+            "minimum": 1,
+            "maximum": 302
           },
           "rateePositionId": {
             "type": "number",
@@ -7667,8 +7821,8 @@
             "type": "string",
             "example": "Senior Engineer",
             "description": "Ratee position title",
-            "minLength": 1,
-            "maxLength": 255
+            "minimum": 1,
+            "maximum": 255
           },
           "hrId": {
             "type": "number",
@@ -7679,15 +7833,15 @@
             "type": "string",
             "example": "Anna Boyko",
             "description": "HR full name",
-            "minLength": 1,
-            "maxLength": 302
+            "minimum": 1,
+            "maximum": 302
           },
           "hrNote": {
             "type": "string",
             "example": "Completion of probationary period",
             "description": "HR note",
-            "minLength": 1000,
-            "maxLength": 1000
+            "minimum": 1000,
+            "maximum": 1000
           },
           "teamId": {
             "type": "number",
@@ -7699,8 +7853,8 @@
             "type": "string",
             "example": "Engineering team",
             "description": "Team title",
-            "minLength": 1,
-            "maxLength": 255,
+            "minimum": 1,
+            "maximum": 255,
             "nullable": true
           },
           "managerId": {
@@ -7713,8 +7867,8 @@
             "type": "string",
             "example": "Yaroslav Syvyi",
             "description": "Manager full name",
-            "minLength": 1,
-            "maxLength": 302,
+            "minimum": 1,
+            "maximum": 302,
             "nullable": true
           },
           "managerPositionId": {
@@ -7727,8 +7881,8 @@
             "type": "string",
             "example": "Senior Engineer",
             "description": "Manager position title",
-            "minLength": 1,
-            "maxLength": 255,
+            "minimum": 1,
+            "maximum": 255,
             "nullable": true
           },
           "cycleId": {
@@ -7999,15 +8153,15 @@
             "type": "string",
             "example": "Unable to participate due to hospitalisation",
             "description": "Respondent note",
-            "minLength": 1,
-            "maxLength": 1000
+            "minimum": 1,
+            "maximum": 1000
           },
           "hrNote": {
             "type": "string",
             "example": "Completion of probationary period",
             "description": "HR note",
-            "minLength": 1,
-            "maxLength": 1000
+            "minimum": 1,
+            "maximum": 1000
           },
           "positionId": {
             "type": "number",
@@ -8018,8 +8172,8 @@
             "type": "string",
             "example": "Senior Engineer",
             "description": "Position title",
-            "minLength": 1,
-            "maxLength": 1000
+            "minimum": 1,
+            "maximum": 1000
           },
           "teamId": {
             "type": "number",
@@ -8031,8 +8185,8 @@
             "type": "string",
             "example": "Senior Engineer",
             "description": "Position title",
-            "minLength": 1,
-            "maxLength": 1000,
+            "minimum": 1,
+            "maximum": 1000,
             "nullable": true
           },
           "invitedAt": {
@@ -8233,15 +8387,15 @@
             "type": "string",
             "example": "Unable to participate due to hospitalisation",
             "description": "Respondent note",
-            "minLength": 1,
-            "maxLength": 1000
+            "minimum": 1,
+            "maximum": 1000
           },
           "hrNote": {
             "type": "string",
             "example": "Completion of probationary period",
             "description": "HR note",
-            "minLength": 1,
-            "maxLength": 1000
+            "minimum": 1,
+            "maximum": 1000
           },
           "positionId": {
             "type": "number",
@@ -8252,8 +8406,8 @@
             "type": "string",
             "example": "Senior Engineer",
             "description": "Position title",
-            "minLength": 1,
-            "maxLength": 1000
+            "minimum": 1,
+            "maximum": 1000
           },
           "teamId": {
             "type": "number",
@@ -8265,8 +8419,8 @@
             "type": "string",
             "example": "Senior Engineer",
             "description": "Position title",
-            "minLength": 1,
-            "maxLength": 1000,
+            "minimum": 1,
+            "maximum": 1000,
             "nullable": true
           },
           "invitedAt": {
@@ -8301,8 +8455,8 @@
             "type": "string",
             "example": "Ivanna Bulava",
             "description": "Reviewer full name",
-            "minLength": 1,
-            "maxLength": 302
+            "minimum": 1,
+            "maximum": 302
           },
           "positionId": {
             "type": "number",
@@ -8313,8 +8467,8 @@
             "type": "string",
             "example": "Team Lead",
             "description": "Reviewer position title",
-            "minLength": 1,
-            "maxLength": 255
+            "minimum": 1,
+            "maximum": 255
           },
           "teamId": {
             "type": "number",
@@ -8327,8 +8481,8 @@
             "example": "Engineering team",
             "description": "Reviewer team title",
             "nullable": true,
-            "minLength": 1,
-            "maxLength": 255
+            "minimum": 1,
+            "maximum": 255
           }
         },
         "required": [
@@ -8422,8 +8576,8 @@
             "type": "string",
             "example": "Listens actively before responding.",
             "description": "Question text",
-            "minLength": 1,
-            "maxLength": 255
+            "minimum": 1,
+            "maximum": 255
           },
           "answerType": {
             "type": "string",

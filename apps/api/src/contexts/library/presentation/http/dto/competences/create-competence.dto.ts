@@ -8,8 +8,8 @@ export class CreateCompetenceDto {
     description: 'Optional competence code',
     example: 'ENG-001',
     nullable: true,
-    minLength: COMPETENCE_CONSTRAINTS.CODE.LENGTH.MIN,
-    maxLength: COMPETENCE_CONSTRAINTS.CODE.LENGTH.MAX,
+    minimum: COMPETENCE_CONSTRAINTS.CODE.LENGTH.MIN,
+    maximum: COMPETENCE_CONSTRAINTS.CODE.LENGTH.MAX,
   })
   @IsOptional()
   @ToOptionalTrimmedString()
@@ -21,8 +21,8 @@ export class CreateCompetenceDto {
   @ApiProperty({
     description: 'Competence title',
     example: 'Engineering excellence',
-    minLength: COMPETENCE_CONSTRAINTS.TITLE.LENGTH.MIN,
-    maxLength: COMPETENCE_CONSTRAINTS.TITLE.LENGTH.MAX,
+    minimum: COMPETENCE_CONSTRAINTS.TITLE.LENGTH.MIN,
+    maximum: COMPETENCE_CONSTRAINTS.TITLE.LENGTH.MAX,
   })
   @ToOptionalTrimmedString()
   @IsString()
@@ -35,8 +35,8 @@ export class CreateCompetenceDto {
     description: 'Competence description',
     example: 'Ability to deliver high-quality software',
     nullable: true,
-    minLength: COMPETENCE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN,
-    maxLength: COMPETENCE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX,
+    minimum: COMPETENCE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN,
+    maximum: COMPETENCE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX,
   })
   @IsOptional()
   @ToOptionalTrimmedString()

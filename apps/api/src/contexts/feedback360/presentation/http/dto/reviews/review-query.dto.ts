@@ -13,7 +13,7 @@ export class ReviewQueryDto {
   @IsInt()
   rateeId?: number;
 
-  @ApiPropertyOptional({ example: 'Valerii Velichko', description: 'Ratee full name (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @ApiPropertyOptional({ example: 'Valerii Velichko', description: 'Ratee full name (contains, case-insensitive)', type: 'string', minimum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
   @IsOptional()
   @IsString()
@@ -27,7 +27,7 @@ export class ReviewQueryDto {
   @IsInt()
   rateePositionId?: number;
 
-  @ApiPropertyOptional({ example: 'Software Engineer', description: 'Ratee position title (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
+  @ApiPropertyOptional({ example: 'Software Engineer', description: 'Ratee position title (contains, case-insensitive)', type: 'string', minimum: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, max: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
   @IsOptional()
   @IsString()
@@ -41,7 +41,7 @@ export class ReviewQueryDto {
   @IsInt()
   hrId?: number;
 
-  @ApiPropertyOptional({ example: 'Anna Boyko', description: 'HR full name (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
+  @ApiPropertyOptional({ example: 'Anna Boyko', description: 'HR full name (contains, case-insensitive)', type: 'string', minimum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
   @IsOptional()
   @IsString()
@@ -49,7 +49,7 @@ export class ReviewQueryDto {
   @MaxLength(REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX)
   hrFullName?: string;
 
-  @ApiPropertyOptional({ example: 'Completion of probationary period', description: 'HR note (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
+  @ApiPropertyOptional({ example: 'Completion of probationary period', description: 'HR note (contains, case-insensitive)', type: 'string', minimum: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MIN, max: REVIEW_CONSTRAINTS.HR_NOTE.LENGTH.MAX })
   @IsOptional()
   @IsString()
@@ -63,7 +63,7 @@ export class ReviewQueryDto {
   @IsInt()
   teamId?: number | null;
 
-  @ApiPropertyOptional({ example: 'Engineering team', description: 'Team title (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX, nullable: true })
+  @ApiPropertyOptional({ example: 'Engineering team', description: 'Team title (contains, case-insensitive)', type: 'string', minimum: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX, nullable: true })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MIN, max: REVIEW_CONSTRAINTS.TEAM_TITLE.LENGTH.MAX })
   @IsOptional()
   @IsString()
@@ -77,7 +77,7 @@ export class ReviewQueryDto {
   @IsInt()
   managerId?: number | null;
 
-  @ApiPropertyOptional({ example: 'Yaroslav Syvyi', description: 'Manager full name (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX, nullable: true })
+  @ApiPropertyOptional({ example: 'Yaroslav Syvyi', description: 'Manager full name (contains, case-insensitive)', type: 'string', minimum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX, nullable: true })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: REVIEW_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
   @IsOptional()
   @IsString()
@@ -91,7 +91,7 @@ export class ReviewQueryDto {
   @IsInt()
   managerPositionId?: number | null;
 
-  @ApiPropertyOptional({ example: 'Software Engineer', description: 'Manager position title (contains, case-insensitive)', type: 'string', minLength: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maxLength: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX, nullable: true })
+  @ApiPropertyOptional({ example: 'Software Engineer', description: 'Manager position title (contains, case-insensitive)', type: 'string', minimum: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, maximum: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX, nullable: true })
   @ToOptionalTrimmedString({ min: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MIN, max: REVIEW_CONSTRAINTS.POSITION_TITLE.LENGTH.MAX })
   @IsOptional()
   @IsString()

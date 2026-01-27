@@ -13,14 +13,16 @@ import { UserDomain } from '../../domain/user.domain';
 
 export type CreateUserCommand = {
   firstName: string;
-  secondName?: string | null;
+  secondName?: string;
   lastName: string;
+  fullName?: string;
   email: string;
   passwordHash?: string;
   status?: IdentityStatus;
-  positionId?: number | null;
+  positionId: number;
   teamId?: number | null;
   managerId?: number | null;
+  roles?: IdentityRole[];
 };
 
 export type UpdateUserCommand = Partial<Omit<CreateUserCommand, 'email'>>;
@@ -37,14 +39,16 @@ export class IdentityUserService {
   async create(command: CreateUserCommand): Promise<UserDomain> {
     const user = UserDomain.create({
       firstName: command.firstName,
-      secondName: command.secondName ?? null,
+      secondName: command.secondName,
       lastName: command.lastName,
+      fullName: command.fullName ?? this.buildFullName(command.firstName, command.secondName, command.lastName),
       email: command.email,
       passwordHash: command.passwordHash ?? PASSWORD_PLACEHOLDER,
       status: command.status ?? IdentityStatus.ACTIVE,
-      positionId: command.positionId ?? null,
+      positionId: command.positionId,
       teamId: command.teamId ?? null,
       managerId: command.managerId ?? null,
+      roles: command.roles ?? [],
     });
 
     return this.users.create(user);
@@ -100,8 +104,8 @@ export class IdentityUserService {
     return this.users.replaceRoles(userId, uniqueRoles);
   }
 
-  private buildFullName(firstName: string, secondName: string | null, lastName: string): string | null {
+  private buildFullName(firstName: string, secondName: string | undefined, lastName: string): string {
     const parts = [firstName, secondName ?? undefined, lastName].filter(Boolean);
-    return parts.length ? parts.join(' ') : null;
+    return parts.join(' ');
   }
 }
