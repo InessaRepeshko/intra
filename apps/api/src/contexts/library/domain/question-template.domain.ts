@@ -8,9 +8,9 @@ export type QuestionTemplateProps = {
   competenceId: number;
   isForSelfassessment?: boolean | null;
   status?: QuestionTemplateStatus;
+  positionIds?: number[];
   createdAt?: Date;
   updatedAt?: Date;
-  positionIds?: number[];
 };
 
 export class QuestionTemplateDomain {
@@ -20,9 +20,9 @@ export class QuestionTemplateDomain {
   readonly competenceId: number;
   readonly isForSelfassessment: boolean;
   readonly status: QuestionTemplateStatus;
+  readonly positionIds: number[];
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
-  readonly positionIds: number[];
 
   private constructor(props: QuestionTemplateProps) {
     this.id = props.id;
@@ -31,9 +31,9 @@ export class QuestionTemplateDomain {
     this.competenceId = props.competenceId;
     this.isForSelfassessment = props.isForSelfassessment ?? false;
     this.status = props.status ?? QuestionTemplateStatus.ACTIVE;
+    this.positionIds = props.positionIds ?? [];
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
-    this.positionIds = props.positionIds ?? [];
   }
 
   static create(props: QuestionTemplateProps): QuestionTemplateDomain {

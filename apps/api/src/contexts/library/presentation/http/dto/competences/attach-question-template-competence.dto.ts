@@ -3,7 +3,7 @@ import { IsInt, Min } from 'class-validator';
 import { ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
 
 export class AttachQuestionTemplateCompetenceDto {
-  @ApiProperty({ description: 'Question template id to link', example: 3 })
+  @ApiProperty({ description: 'Question template id to link', example: 3, type: 'number' })
   @ToOptionalInt({ min: 1 })
   @IsInt()
   @Min(1)

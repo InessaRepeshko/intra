@@ -54,11 +54,17 @@ export class CompetenceRepository implements CompetenceRepositoryPort {
   }
 
   private buildWhere(query: CompetenceSearchQuery): Prisma.CompetenceWhereInput {
-    const { search } = query;
+    const { search, code, title, description } = query;
     return {
+      ...(code ? { code: { contains: code, mode: 'insensitive' } } : {}),
+      ...(title ? { title: { contains: title, mode: 'insensitive' } } : {}),
+      ...(description ? { description: { contains: description, mode: 'insensitive' } } : {}),
       ...(search
         ? {
-          OR: [{ title: { contains: search, mode: 'insensitive' } }, { code: { contains: search, mode: 'insensitive' } }],
+          OR: [
+            { title: { contains: search, mode: 'insensitive' } },
+            { code: { contains: search, mode: 'insensitive' } }
+          ],
         }
         : {}),
     };

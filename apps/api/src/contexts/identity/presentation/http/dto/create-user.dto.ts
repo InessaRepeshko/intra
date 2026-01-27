@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsEnum, IsInt, IsOptional, IsPositive, IsString, MaxLength, MinLength } from 'class-validator';
-import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
+import { ToOptionalEnum, ToOptionalInt, ToOptionalIntArray, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { IsEmail } from 'src/common/validators/email.validator';
 import { IsEnglishName } from 'src/common/validators/name.validator';
 import { IdentityRole, ROLE_CONSTRAINTS, USER_CONSTRAINTS } from '@intra/shared-kernel';
@@ -83,6 +83,7 @@ export class CreateUserDto {
   managerId?: number | null;
 
   @ApiPropertyOptional({ description: `User's roles`, type: 'string', isArray: true, example: [IdentityRole.MANAGER] })
+  @ToOptionalIntArray()
   @IsArray()
   @IsOptional()
   @IsEnum(IdentityRole, { each: true })

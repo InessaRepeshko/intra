@@ -22,12 +22,12 @@ export class PositionQueryDto {
   @MaxLength(POSITION_CONSTRAINTS.DESCRIPTION.LENGTH.MAX)
   description?: string;
 
-  @ApiPropertyOptional({ description: 'Search by title or description (contains, case-insensitive)', minimum: POSITION_CONSTRAINTS.TITLE.LENGTH.MIN, maximum: POSITION_CONSTRAINTS.TITLE.LENGTH.MAX, example: 'Senior', type: 'string' })
+  @ApiPropertyOptional({ description: 'Search by title or description (contains, case-insensitive)', minimum: POSITION_CONSTRAINTS.DESCRIPTION.LENGTH.MIN, maximum: POSITION_CONSTRAINTS.DESCRIPTION.LENGTH.MAX, example: 'Senior', type: 'string' })
   @IsOptional()
-  @ToOptionalTrimmedString({ min: POSITION_CONSTRAINTS.TITLE.LENGTH.MIN, max: POSITION_CONSTRAINTS.TITLE.LENGTH.MAX })
+  @ToOptionalTrimmedString({ min: POSITION_CONSTRAINTS.DESCRIPTION.LENGTH.MIN, max: POSITION_CONSTRAINTS.DESCRIPTION.LENGTH.MAX })
   @IsString()
-  @MinLength(POSITION_CONSTRAINTS.TITLE.LENGTH.MIN)
-  @MaxLength(POSITION_CONSTRAINTS.TITLE.LENGTH.MAX)
+  @MinLength(POSITION_CONSTRAINTS.DESCRIPTION.LENGTH.MIN)
+  @MaxLength(POSITION_CONSTRAINTS.DESCRIPTION.LENGTH.MAX)
   search?: string;
 
   @ApiPropertyOptional({ description: 'Sorting field', enum: PositionSortField, default: PositionSortField.ID, example: PositionSortField.TITLE, type: 'string' })

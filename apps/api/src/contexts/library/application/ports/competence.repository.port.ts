@@ -7,11 +7,15 @@ export enum CompetenceSortField {
   ID = 'id',
   CODE = 'code',
   TITLE = 'title',
+  DESCRIPTION = 'description',
   CREATED_AT = 'createdAt',
   UPDATED_AT = 'updatedAt',
 }
 
 export type CompetenceSearchQuery = {
+  code?: string;
+  title?: string;
+  description?: string;
   search?: string;
   sortBy?: CompetenceSortField;
   sortDirection?: SortDirection;

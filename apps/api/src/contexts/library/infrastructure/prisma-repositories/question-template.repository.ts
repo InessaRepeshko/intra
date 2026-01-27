@@ -10,6 +10,7 @@ import {
 import { QuestionTemplateDomain } from '../../domain/question-template.domain';
 import { LibraryMapper } from './library.mapper';
 import { SortDirection } from '@intra/shared-kernel';
+import { title } from 'process';
 
 @Injectable()
 export class QuestionTemplateRepository implements QuestionTemplateRepositoryPort {
@@ -23,7 +24,11 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
         competenceId: question.competenceId,
         isForSelfassessment: question.isForSelfassessment,
         status: question.status,
+        positionRelations: {
+          create: question.positionIds.map((positionId) => ({ positionId })),
+        },
       },
+      include: { positionRelations: { select: { positionId: true } } },
     });
 
     return LibraryMapper.toQuestionTemplateDomain(created);
@@ -68,23 +73,19 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
   }
 
   private buildWhere(query: QuestionTemplateSearchQuery): Prisma.QuestionTemplateWhereInput {
-    const { competenceId, positionId, status: status, answerType, isForSelfassessment, search } = query;
+    const { competenceId, positionIds, status: status, answerType, isForSelfassessment, title } = query;
 
     return {
+      ...(title ? { title: { contains: title, mode: 'insensitive' } } : {}),
       ...(competenceId ? { competenceId } : {}),
-      ...(positionId
-        ? {
-          positionRelations: {
-            some: { positionId },
-          },
-        }
-        : {}),
       ...(status ? { status } : {}),
       ...(answerType ? { answerType } : {}),
       ...(isForSelfassessment !== undefined ? { isForSelfassessment } : {}),
-      ...(search
+      ...(positionIds
         ? {
-          title: { contains: search, mode: 'insensitive' },
+          positionRelations: {
+            some: { positionId: { in: positionIds } },
+          },
         }
         : {}),
     };

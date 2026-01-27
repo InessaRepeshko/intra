@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail } from 'src/common/validators/email.validator';
 import { IsArray, IsEnum, IsInt, IsOptional, IsPositive, IsString, MaxLength, MinLength } from 'class-validator';
-import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
+import { ToOptionalEnum, ToOptionalInt, ToOptionalIntArray, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
 import { IdentityRole, IdentityStatus } from '@intra/shared-kernel';
 import { UserSortField } from '../../../application/ports/user.repository.port';
 import { SortDirection } from '@intra/shared-kernel';
@@ -9,12 +9,12 @@ import { USER_CONSTRAINTS } from '@intra/shared-kernel';
 import { IsEnglishName } from 'src/common/validators/name.validator';
 
 export class UserQueryDto {
-  @ApiPropertyOptional({ description: `Search by first name or last name or email (contains, case insensitive)`, minimum: USER_CONSTRAINTS.NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Valerii' })
+  @ApiPropertyOptional({ description: `Search by first name or last name or email (contains, case insensitive)`, minimum: USER_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.FULL_NAME.LENGTH.MAX, example: 'Valerii' })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()
-  @MinLength(USER_CONSTRAINTS.NAME.LENGTH.MIN)
-  @MaxLength(USER_CONSTRAINTS.NAME.LENGTH.MAX)
+  @MinLength(USER_CONSTRAINTS.FULL_NAME.LENGTH.MIN)
+  @MaxLength(USER_CONSTRAINTS.FULL_NAME.LENGTH.MAX)
   search?: string;
 
   @ApiPropertyOptional({ description: `User's first name (contains, case insensitive)`, minimum: USER_CONSTRAINTS.NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Valerii', type: 'string' })
@@ -90,6 +90,7 @@ export class UserQueryDto {
   managerId?: number;
 
   @ApiPropertyOptional({ description: `User's roles`, enum: IdentityRole, example: [IdentityRole.EMPLOYEE, IdentityRole.HR], type: [String] })
+  @ToOptionalIntArray()
   @IsOptional()
   @IsArray()
   @IsEnum(IdentityRole, { each: true })

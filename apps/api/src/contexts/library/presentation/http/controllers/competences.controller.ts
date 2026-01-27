@@ -13,7 +13,7 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CompetenceService } from '../../../application/services/competence.service';
 import { CreateCompetenceDto } from '../dto/competences/create-competence.dto';
 import { CompetenceResponse } from '../models/competence.response';
@@ -38,6 +38,7 @@ export class CompetencesController {
 
   @Post()
   @ApiOperation({ summary: 'Create a competence' })
+  @ApiBody({ type: CreateCompetenceDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: CompetenceResponse })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateCompetenceDto): Promise<CompetenceResponse> {
@@ -51,6 +52,7 @@ export class CompetencesController {
 
   @Get()
   @ApiOperation({ summary: 'Search competences' })
+  @ApiQuery({ type: CompetenceQueryDto })
   @ApiResponse({ status: HttpStatus.OK, type: CompetenceResponse, isArray: true })
   @ApiListReadErrorResponses()
   async search(@Query() query: CompetenceQueryDto): Promise<CompetenceResponse[]> {
@@ -60,6 +62,7 @@ export class CompetencesController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get competence by id' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.OK, type: CompetenceResponse })
   @ApiReadErrorResponses()
   async getById(@Param('id') id: string): Promise<CompetenceResponse> {
@@ -69,6 +72,8 @@ export class CompetencesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update competence' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
+  @ApiBody({ type: UpdateCompetenceDto })
   @ApiResponse({ status: HttpStatus.OK, type: CompetenceResponse })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateCompetenceDto): Promise<CompetenceResponse> {
@@ -79,6 +84,7 @@ export class CompetencesController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete competence' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async delete(@Param('id') id: string): Promise<void> {
@@ -87,6 +93,8 @@ export class CompetencesController {
 
   @Post(':id/positions')
   @ApiOperation({ summary: 'Attach competence to position' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
+  @ApiBody({ type: AttachPositionCompetenceDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: Number, isArray: true })
   @ApiCreateAndUpdateErrorResponses()
   async attachPosition(
@@ -99,6 +107,8 @@ export class CompetencesController {
   @Delete(':id/positions/:positionId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Detach competence from position' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
+  @ApiParam({ name: 'positionId', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async detachPosition(@Param('id') id: string, @Param('positionId') positionId: string): Promise<void> {
@@ -107,6 +117,7 @@ export class CompetencesController {
 
   @Get(':id/positions')
   @ApiOperation({ summary: 'List positions linked to competence' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.OK, type: Number, isArray: true })
   @ApiListReadErrorResponses()
   async listPositions(@Param('id') id: string): Promise<number[]> {
@@ -115,6 +126,8 @@ export class CompetencesController {
 
   @Post(':id/question-templates')
   @ApiOperation({ summary: 'Attach competence to question template' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
+  @ApiBody({ type: AttachQuestionTemplateCompetenceDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: Number, isArray: true })
   @ApiCreateAndUpdateErrorResponses()
   async attachQuestionTemplate(
@@ -127,6 +140,8 @@ export class CompetencesController {
   @Delete(':id/question-templates/:questionTemplateId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Detach competence from question template' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
+  @ApiParam({ name: 'questionTemplateId', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async detachQuestionTemplate(
@@ -138,6 +153,7 @@ export class CompetencesController {
 
   @Get(':id/question-templates')
   @ApiOperation({ summary: 'List question templates linked to competence' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.OK, type: Number, isArray: true })
   @ApiListReadErrorResponses()
   async listQuestionTemplates(@Param('id') id: string): Promise<number[]> {

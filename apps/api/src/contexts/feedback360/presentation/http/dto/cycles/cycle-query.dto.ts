@@ -23,12 +23,12 @@ export class CycleQueryDto {
   @MaxLength(CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX)
   description?: string;
 
-  @ApiPropertyOptional({ description: 'Search by title/description', example: 'Q1', type: 'string', minimum: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, maximum: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX })
-  @ToOptionalTrimmedString({ min: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, max: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX })
+  @ApiPropertyOptional({ description: 'Search by title/description', example: 'Q1', type: 'string', minimum: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN, maximum: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX })
+  @ToOptionalTrimmedString({ min: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN, max: CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX })
   @IsOptional()
   @IsString()
-  @MinLength(CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN)
-  @MaxLength(CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX)
+  @MinLength(CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MIN)
+  @MaxLength(CYCLE_CONSTRAINTS.DESCRIPTION.LENGTH.MAX)
   search?: string;
 
   @ApiPropertyOptional({ description: 'Filter by HR ID', example: 2, type: 'number' })

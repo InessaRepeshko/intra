@@ -22,12 +22,12 @@ export class TeamQueryDto {
   @MaxLength(TEAM_CONSTRAINTS.DESCRIPTION.LENGTH.MAX)
   description?: string;
 
-  @ApiPropertyOptional({ description: 'Search by title or description (contains, case-insensitive)', minimum: TEAM_CONSTRAINTS.TITLE.LENGTH.MIN, maximum: TEAM_CONSTRAINTS.TITLE.LENGTH.MAX, example: 'Engineering Team', type: 'string' })
+  @ApiPropertyOptional({ description: 'Search by title or description (contains, case-insensitive)', minimum: TEAM_CONSTRAINTS.DESCRIPTION.LENGTH.MIN, maximum: TEAM_CONSTRAINTS.DESCRIPTION.LENGTH.MAX, example: 'Engineering Team', type: 'string' })
   @IsOptional()
-  @ToOptionalTrimmedString({ min: TEAM_CONSTRAINTS.TITLE.LENGTH.MIN, max: TEAM_CONSTRAINTS.TITLE.LENGTH.MAX })
+  @ToOptionalTrimmedString({ min: TEAM_CONSTRAINTS.DESCRIPTION.LENGTH.MIN, max: TEAM_CONSTRAINTS.DESCRIPTION.LENGTH.MAX })
   @IsString()
-  @MinLength(TEAM_CONSTRAINTS.TITLE.LENGTH.MIN)
-  @MaxLength(TEAM_CONSTRAINTS.TITLE.LENGTH.MAX)
+  @MinLength(TEAM_CONSTRAINTS.DESCRIPTION.LENGTH.MIN)
+  @MaxLength(TEAM_CONSTRAINTS.DESCRIPTION.LENGTH.MAX)
   search?: string;
 
   @ApiPropertyOptional({ description: 'Id of team leader', type: 'number', example: 12 })

@@ -16,6 +16,11 @@ export enum ClusterSortField {
 
 export type ClusterSearchQuery = {
   competenceId?: number;
+  lowerBound?: number;
+  upperBound?: number;
+  title?: string;
+  description?: string;
+  search?: string;
   sortBy?: ClusterSortField;
   sortDirection?: SortDirection;
 };

@@ -75,3 +75,20 @@ export function ToOptionalDate(): PropertyDecorator {
 }
 
 
+
+export function ToOptionalIntArray(): PropertyDecorator {
+  return Transform(({ value }) => {
+    if (isEmpty(value)) return undefined;
+
+    const candidates = Array.isArray(value)
+      ? value
+      : typeof value === 'string'
+        ? value.split(',')
+        : [value];
+
+    return candidates.map((v: unknown) => {
+      const s = String(v).trim();
+      return s === '' ? NaN : Number(s);
+    });
+  });
+}

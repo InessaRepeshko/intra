@@ -12,6 +12,7 @@ export { IdentityRole, IDENTITY_ROLES } from './identity/enums/identity-role.enu
 export { IdentityStatus, IDENTITY_STATUSES } from './identity/enums/identity-status.enum';
 
 /* Library */
+export { CLUSTER_CONSTRAINTS } from './library/constraints/cluster.constraints';
 export { COMPETENCE_CONSTRAINTS } from './library/constraints/competence.constraints';
 export { QUESTION_TEMPLATE_CONSTRAINTS } from './library/constraints/question.constraints';
 export { AnswerType, ANSWER_TYPES } from './library/enums/answer-type.enum';

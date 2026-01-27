@@ -9,18 +9,21 @@ export enum QuestionTemplateSortField {
   ID = 'id',
   TITLE = 'title',
   ANSWER_TYPE = 'answerType',
+  COMPELTECE_ID = 'competenceId',
+  IS_FOR_SELFASSESSMENT = 'isForSelfassessment',
   STATUS = 'status',
+  POSITION_IDS = 'positionIds',
   CREATED_AT = 'createdAt',
   UPDATED_AT = 'updatedAt',
 }
 
 export type QuestionTemplateSearchQuery = {
-  competenceId?: number;
-  positionId?: number;
-  status?: QuestionTemplateStatus;
+  title?: string;
   answerType?: AnswerType;
+  competenceId?: number;
   isForSelfassessment?: boolean;
-  search?: string;
+  status?: QuestionTemplateStatus;
+  positionIds?: number[];
   sortBy?: QuestionTemplateSortField;
   sortDirection?: SortDirection;
 };
@@ -31,6 +34,7 @@ export type QuestionTemplateUpdatePayload = Partial<{
   competenceId: number;
   isForSelfassessment: boolean;
   status: QuestionTemplateStatus;
+  positionIds: number[];
 }>;
 
 export interface QuestionTemplateRepositoryPort {

@@ -51,6 +51,7 @@ export class QuestionTemplateService {
       answerType: command.answerType,
       isForSelfassessment: command.isForSelfassessment ?? false,
       status: command.status ?? QuestionTemplateStatus.ACTIVE,
+      positionIds: command.positionIds ?? [],
     });
 
     const created = await this.questionTemplates.create(question);
@@ -87,6 +88,7 @@ export class QuestionTemplateService {
       ...(patch.answerType !== undefined ? { answerType: patch.answerType } : {}),
       ...(patch.isForSelfassessment !== undefined ? { isForSelfassessment: patch.isForSelfassessment } : {}),
       ...(patch.status !== undefined ? { status: patch.status } : {}),
+      ...(patch.positionIds !== undefined ? { positionIds: patch.positionIds } : {}),
     };
 
     await this.questionTemplates.updateById(id, payload);

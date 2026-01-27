@@ -56,9 +56,19 @@ export class ClusterRepository implements ClusterRepositoryPort {
   }
 
   private buildWhere(query: ClusterSearchQuery): Prisma.ClusterWhereInput {
-    const { competenceId } = query;
+    const { competenceId, lowerBound, upperBound, title, description, search } = query;
     return {
       ...(competenceId ? { competenceId } : {}),
+      ...(lowerBound ? { lowerBound } : {}),
+      ...(upperBound ? { upperBound } : {}),
+      ...(title ? { title: { contains: title, mode: 'insensitive' } } : {}),
+      ...(description ? { description: { contains: description, mode: 'insensitive' } } : {}),
+      ...(search ? { 
+        OR: [
+          { title: { contains: search, mode: 'insensitive' } }, 
+          { description: { contains: search, mode: 'insensitive' } }
+        ]
+      } : {}),
     };
   }
 

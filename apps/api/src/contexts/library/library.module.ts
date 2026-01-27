@@ -14,7 +14,7 @@ import { QUESTION_TEMPLATE_REPOSITORY } from './application/ports/question-templ
 import { POSITION_QUESTION_TEMPLATE_RELATION_REPOSITORY } from './application/ports/position-question-template-relation.repository.port';
 import { CompetencesController } from './presentation/http/controllers/competences.controller';
 import { ClustersController } from './presentation/http/controllers/clusters.controller';
-import { QuestionTemplatesController } from './presentation/http/controllers/questions.controller';
+import { QuestionTemplatesController } from './presentation/http/controllers/question-templates.controller';
 import { PositionCompetenceRelationRepository } from './infrastructure/prisma-repositories/position-competence-relation.repository';
 import { CompetenceQuestionTemplateRelationRepository } from './infrastructure/prisma-repositories/competence-question-template-relation.repository';
 import { POSITION_COMPETENCE_RELATION_REPOSITORY } from './application/ports/position-competence-relation.repository.port';

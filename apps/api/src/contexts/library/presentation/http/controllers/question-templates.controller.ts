@@ -13,15 +13,15 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { QuestionTemplateService } from '../../../application/services/question-template.service';
-import { CreateQuestionTemplateDto } from '../dto/questions/create-question-template.dto';
+import { CreateQuestionTemplateDto } from '../dto/question-templates/create-question-template.dto';
 import { QuestionTemplateResponse } from '../models/question-template.response';
 import { QuestionTemplateHttpMapper } from '../mappers/question-template.http.mapper';
-import { QuestionTemplateQueryDto } from '../dto/questions/question-template-query.dto';
-import { UpdateQuestionTemplateDto } from '../dto/questions/update-question-template.dto';
-import { AttachPositionQuestionTemplateDto } from '../dto/questions/attach-position-question-template.dto';
-import { AttachCompetenceQuestionTemplateDto } from '../dto/questions/attach-competence-question-template.dto';
+import { QuestionTemplateQueryDto } from '../dto/question-templates/question-template-query.dto';
+import { UpdateQuestionTemplateDto } from '../dto/question-templates/update-question-template.dto';
+import { AttachPositionQuestionTemplateDto } from '../dto/question-templates/attach-position-question-template.dto';
+import { AttachCompetenceQuestionTemplateDto } from '../dto/question-templates/attach-competence-question-template.dto';
 import {
   ApiCreateAndUpdateErrorResponses,
   ApiDeletionErrorResponses,
@@ -38,6 +38,7 @@ export class QuestionTemplatesController {
 
   @Post()
   @ApiOperation({ summary: 'Create question template' })
+  @ApiBody({ type: CreateQuestionTemplateDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: QuestionTemplateResponse })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateQuestionTemplateDto): Promise<QuestionTemplateResponse> {
@@ -54,6 +55,7 @@ export class QuestionTemplatesController {
 
   @Get()
   @ApiOperation({ summary: 'Search question templates' })
+  @ApiQuery({ type: QuestionTemplateQueryDto })
   @ApiResponse({ status: HttpStatus.OK, type: QuestionTemplateResponse, isArray: true })
   @ApiListReadErrorResponses()
   async search(@Query() query: QuestionTemplateQueryDto): Promise<QuestionTemplateResponse[]> {
@@ -63,6 +65,7 @@ export class QuestionTemplatesController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get question template by id' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.OK, type: QuestionTemplateResponse })
   @ApiReadErrorResponses()
   async getById(@Param('id') id: string): Promise<QuestionTemplateResponse> {
@@ -72,6 +75,8 @@ export class QuestionTemplatesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update question template' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
+  @ApiBody({ type: UpdateQuestionTemplateDto })
   @ApiResponse({ status: HttpStatus.OK, type: QuestionTemplateResponse })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateQuestionTemplateDto): Promise<QuestionTemplateResponse> {
@@ -82,6 +87,7 @@ export class QuestionTemplatesController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete question template' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async delete(@Param('id') id: string): Promise<void> {
@@ -90,6 +96,8 @@ export class QuestionTemplatesController {
 
   @Post(':id/positions')
   @ApiOperation({ summary: 'Attach question template to position' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
+  @ApiBody({ type: AttachPositionQuestionTemplateDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: QuestionTemplateResponse })
   @ApiCreateAndUpdateErrorResponses()
   async attachPosition(
@@ -103,6 +111,8 @@ export class QuestionTemplatesController {
   @Delete(':id/positions/:positionId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Detach question template from position' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
+  @ApiParam({ name: 'positionId', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async detachPosition(@Param('id') id: string, @Param('positionId') positionId: string): Promise<void> {
@@ -111,6 +121,7 @@ export class QuestionTemplatesController {
 
   @Get(':id/positions')
   @ApiOperation({ summary: 'List linked positions for the question template' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.OK, type: Number, isArray: true })
   @ApiListReadErrorResponses()
   async listPositions(@Param('id') id: string): Promise<number[]> {
@@ -119,6 +130,8 @@ export class QuestionTemplatesController {
 
   @Post(':id/competences')
   @ApiOperation({ summary: 'Attach question template to competence' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
+  @ApiBody({ type: AttachCompetenceQuestionTemplateDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: Number, isArray: true })
   @ApiCreateAndUpdateErrorResponses()
   async attachCompetence(
@@ -131,6 +144,8 @@ export class QuestionTemplatesController {
   @Delete(':id/competences/:competenceId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Detach question template from competence' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
+  @ApiParam({ name: 'competenceId', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async detachCompetence(@Param('id') id: string, @Param('competenceId') competenceId: string): Promise<void> {
@@ -139,6 +154,7 @@ export class QuestionTemplatesController {
 
   @Get(':id/competences')
   @ApiOperation({ summary: 'List linked competences for the question template' })
+  @ApiParam({ name: 'id', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.OK, type: Number, isArray: true })
   @ApiListReadErrorResponses()
   async listCompetences(@Param('id') id: string): Promise<number[]> {
