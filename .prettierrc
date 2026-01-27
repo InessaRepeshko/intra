@@ -3,5 +3,6 @@
   "trailingComma": "all",
   "tabWidth": 4,
   "useTabs": false,
-  "endOfLine": "crlf"
+  "endOfLine": "crlf",
+  "plugins": ["prettier-plugin-organize-imports"]
 }
