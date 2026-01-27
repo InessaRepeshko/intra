@@ -3,9 +3,13 @@ import { IsInt, Min } from 'class-validator';
 import { ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
 
 export class AttachPositionCompetenceDto {
-  @ApiProperty({ description: 'Position id to link', example: 5, type: 'number' })
-  @ToOptionalInt({ min: 1 })
-  @IsInt()
-  @Min(1)
-  positionId!: number;
+    @ApiProperty({
+        description: 'Position id to link',
+        example: 5,
+        type: 'number',
+    })
+    @ToOptionalInt({ min: 1 })
+    @IsInt()
+    @Min(1)
+    positionId!: number;
 }

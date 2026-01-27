@@ -33,7 +33,9 @@ export class CycleClusterAnalyticsDomain {
         this.updatedAt = props.updatedAt;
     }
 
-    static create(props: CycleClusterAnalyticsProps): CycleClusterAnalyticsDomain {
+    static create(
+        props: CycleClusterAnalyticsProps,
+    ): CycleClusterAnalyticsDomain {
         return new CycleClusterAnalyticsDomain(props);
     }
 }

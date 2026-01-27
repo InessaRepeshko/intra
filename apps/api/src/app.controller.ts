@@ -1,19 +1,19 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AppService } from './app.service';
 
 @Controller()
 @ApiTags('Home')
 export class AppController {
-  constructor(private readonly appService: AppService) { }
+    constructor(private readonly appService: AppService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Get home page' })
-  @ApiResponse({ status: 200, description: 'Home page' })
-  getHello(): string {
-    const message = this.appService.getHomePageMsg();
-    const apiDocsLink = this.appService.getApiDocsLink();
-    return `
+    @Get()
+    @ApiOperation({ summary: 'Get home page' })
+    @ApiResponse({ status: 200, description: 'Home page' })
+    getHello(): string {
+        const message = this.appService.getHomePageMsg();
+        const apiDocsLink = this.appService.getApiDocsLink();
+        return `
       <!DOCTYPE html>
       <html>
         <head>
@@ -26,5 +26,5 @@ export class AppController {
         </body>
       </html>
     `;
-  }
+    }
 }

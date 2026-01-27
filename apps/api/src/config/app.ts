@@ -1,5 +1,10 @@
-import { getEnvVarAsStr, getEnvVarAsInt } from './env-utils';
-import { VERSION, DOCUMENTATION_PREFIX, LOGO_FILENAME, PUBLIC_DIR_PATH } from './constants';
+import {
+    DOCUMENTATION_PREFIX,
+    LOGO_FILENAME,
+    PUBLIC_DIR_PATH,
+    VERSION,
+} from './constants';
+import { getEnvVarAsInt, getEnvVarAsStr } from './env-utils';
 
 export const getAppName = () => getEnvVarAsStr('APP_NAME');
 
@@ -25,9 +30,10 @@ export default () => {
             frontendProtocol,
             frontendHost,
             frontendPort,
-            frontendLink: frontendPort && nodeEnv !== 'production'
-                ? `${frontendProtocol}://${frontendHost}:${frontendPort}/`
-                : `${frontendProtocol}://${frontendHost}/`,
+            frontendLink:
+                frontendPort && nodeEnv !== 'production'
+                    ? `${frontendProtocol}://${frontendHost}:${frontendPort}/`
+                    : `${frontendProtocol}://${frontendHost}/`,
             nodeEnv,
             logo: {
                 path: PUBLIC_DIR_PATH,

@@ -1,8 +1,6 @@
 export {
-  ExposeWithGroup,
-  ExposeBasic,
-  ExposeConfidential,
-  ExposeSystemic,
+    ExposeBasic,
+    ExposeConfidential,
+    ExposeSystemic,
+    ExposeWithGroup,
 } from './serialisation.decorators';
-
-

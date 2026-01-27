@@ -1,7 +1,10 @@
-import { INestApplication } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
-export async function setupServer(app: INestApplication, configService: ConfigService): Promise<void> {
+export async function setupServer(
+    app: INestApplication,
+    configService: ConfigService,
+): Promise<void> {
     const port = configService.getOrThrow<number>('app.port');
     await app.listen(port);
 

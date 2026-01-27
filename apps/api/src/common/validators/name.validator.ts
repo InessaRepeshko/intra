@@ -1,6 +1,13 @@
-import { applyDecorators } from '@nestjs/common';
-import { IsNotEmpty, IsOptional, IsString, Length, Matches, ValidateIf } from 'class-validator';
 import { USER_CONSTRAINTS } from '@intra/shared-kernel';
+import { applyDecorators } from '@nestjs/common';
+import {
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    Length,
+    Matches,
+    ValidateIf,
+} from 'class-validator';
 
 export function IsName(
     isOptional: boolean,
@@ -8,10 +15,7 @@ export function IsName(
     minLength: number = USER_CONSTRAINTS.NAME.LENGTH.MIN,
     maxLength: number = USER_CONSTRAINTS.NAME.LENGTH.MAX,
 ) {
-    const baseDecorators = [
-        IsString(),
-        Length(minLength, maxLength),
-    ];
+    const baseDecorators = [IsString(), Length(minLength, maxLength)];
 
     if (allowNull) {
         return applyDecorators(
@@ -30,7 +34,10 @@ export function IsEnglishName(isOptional: boolean, allowNull: boolean = false) {
     const baseDecorators = [
         IsString(),
         allowNull ? IsOptional() : IsNotEmpty(),
-        Length(USER_CONSTRAINTS.NAME.LENGTH.MIN, USER_CONSTRAINTS.NAME.LENGTH.MAX),
+        Length(
+            USER_CONSTRAINTS.NAME.LENGTH.MIN,
+            USER_CONSTRAINTS.NAME.LENGTH.MAX,
+        ),
         Matches(USER_CONSTRAINTS.NAME.PATTERN),
     ];
 
@@ -55,9 +62,10 @@ export function IsEnglishNameWithNumbers(
 ) {
     const baseDecorators = [
         Matches(USER_CONSTRAINTS.EMAIL.PATTERN, {
-            message: 'Value can only contain English letters, numbers, and hyphens',
+            message:
+                'Value can only contain English letters, numbers, and hyphens',
         }),
-        Length(minLength, maxLength)
+        Length(minLength, maxLength),
     ];
 
     if (allowNull) {

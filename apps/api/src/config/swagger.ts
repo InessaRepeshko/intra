@@ -1,12 +1,9 @@
+import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { INestApplication } from '@nestjs/common';
-import { getAppName } from './app';
-import { DOCUMENTATION_PREFIX } from './constants';
-import { FAVICON_PATH } from './constants';
-import { getApiVersion } from './app';
-import { OPENAPI_PATH } from './constants';
+import { getApiVersion, getAppName } from './app';
+import { DOCUMENTATION_PREFIX, FAVICON_PATH, OPENAPI_PATH } from './constants';
 
 export function setupSwagger(app: INestApplication): void {
     const appName = getAppName();
@@ -25,20 +22,19 @@ export function setupSwagger(app: INestApplication): void {
             theme: 'dark',
             filter: true,
         },
-        customCss:
-            readFileSync(
-                join(
-                    process.cwd(),
-                    '..',
-                    '..',
-                    'node_modules',
-                    'swagger-ui-themes',
-                    'themes',
-                    '3.x',
-                    'theme-outline.css'
-                ),
-                'utf8'
+        customCss: readFileSync(
+            join(
+                process.cwd(),
+                '..',
+                '..',
+                'node_modules',
+                'swagger-ui-themes',
+                'themes',
+                '3.x',
+                'theme-outline.css',
             ),
+            'utf8',
+        ),
     });
 
     writeFileSync(OPENAPI_PATH, JSON.stringify(document, null, 2));

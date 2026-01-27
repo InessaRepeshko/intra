@@ -1,21 +1,29 @@
-import { Injectable } from '@nestjs/common';
 import { Prisma } from '@intra/database';
+import {
+    CycleClusterAnalyticsSearchQuery,
+    CycleClusterAnalyticsSortField,
+    SortDirection,
+    UpdateCycleClusterAnalyticsPayload,
+} from '@intra/shared-kernel';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import {
-    CycleClusterAnalyticsRepositoryPort,
     CYCLE_CLUSTER_ANALYTICS_REPOSITORY,
+    CycleClusterAnalyticsRepositoryPort,
 } from '../../application/ports/cycle-cluster-analytics.repository.port';
 import { CycleClusterAnalyticsDomain } from '../../domain/cycle-cluster-analytics.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
-import { SortDirection, CycleClusterAnalyticsSortField, CycleClusterAnalyticsSearchQuery, UpdateCycleClusterAnalyticsPayload } from '@intra/shared-kernel';
 
 @Injectable()
 export class CycleClusterAnalyticsRepository implements CycleClusterAnalyticsRepositoryPort {
-    readonly [CYCLE_CLUSTER_ANALYTICS_REPOSITORY] = CYCLE_CLUSTER_ANALYTICS_REPOSITORY;
+    readonly [CYCLE_CLUSTER_ANALYTICS_REPOSITORY] =
+        CYCLE_CLUSTER_ANALYTICS_REPOSITORY;
 
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService) {}
 
-    async upsert(analytics: CycleClusterAnalyticsDomain): Promise<CycleClusterAnalyticsDomain> {
+    async upsert(
+        analytics: CycleClusterAnalyticsDomain,
+    ): Promise<CycleClusterAnalyticsDomain> {
         const saved = await this.prisma.cycleClusterAnalytics.upsert({
             where: {
                 cycleId_clusterId: {
@@ -43,19 +51,31 @@ export class CycleClusterAnalyticsRepository implements CycleClusterAnalyticsRep
     }
 
     async findById(id: number): Promise<CycleClusterAnalyticsDomain | null> {
-        const item = await this.prisma.cycleClusterAnalytics.findUnique({ where: { id } });
-        return item ? Feedback360Mapper.toCycleClusterAnalyticsDomain(item) : null;
+        const item = await this.prisma.cycleClusterAnalytics.findUnique({
+            where: { id },
+        });
+        return item
+            ? Feedback360Mapper.toCycleClusterAnalyticsDomain(item)
+            : null;
     }
 
-    async search(query: CycleClusterAnalyticsSearchQuery): Promise<CycleClusterAnalyticsDomain[]> {
+    async search(
+        query: CycleClusterAnalyticsSearchQuery,
+    ): Promise<CycleClusterAnalyticsDomain[]> {
         const where = this.buildWhere(query);
         const orderBy = this.buildOrder(query);
 
-        const items = await this.prisma.cycleClusterAnalytics.findMany({ where, orderBy });
+        const items = await this.prisma.cycleClusterAnalytics.findMany({
+            where,
+            orderBy,
+        });
         return items.map(Feedback360Mapper.toCycleClusterAnalyticsDomain);
     }
 
-    async updateById(id: number, patch: UpdateCycleClusterAnalyticsPayload): Promise<CycleClusterAnalyticsDomain> {
+    async updateById(
+        id: number,
+        patch: UpdateCycleClusterAnalyticsPayload,
+    ): Promise<CycleClusterAnalyticsDomain> {
         const updated = await this.prisma.cycleClusterAnalytics.update({
             where: { id },
             data: patch,
@@ -68,8 +88,17 @@ export class CycleClusterAnalyticsRepository implements CycleClusterAnalyticsRep
         await this.prisma.cycleClusterAnalytics.delete({ where: { id } });
     }
 
-    private buildWhere(query: CycleClusterAnalyticsSearchQuery): Prisma.CycleClusterAnalyticsWhereInput {
-        const { cycleId, clusterId, employeesCount, minScore, maxScore, averageScore } = query;
+    private buildWhere(
+        query: CycleClusterAnalyticsSearchQuery,
+    ): Prisma.CycleClusterAnalyticsWhereInput {
+        const {
+            cycleId,
+            clusterId,
+            employeesCount,
+            minScore,
+            maxScore,
+            averageScore,
+        } = query;
         return {
             ...(cycleId ? { cycleId } : {}),
             ...(clusterId ? { clusterId } : {}),
@@ -80,7 +109,9 @@ export class CycleClusterAnalyticsRepository implements CycleClusterAnalyticsRep
         };
     }
 
-    private buildOrder(query: CycleClusterAnalyticsSearchQuery): Prisma.CycleClusterAnalyticsOrderByWithRelationInput[] {
+    private buildOrder(
+        query: CycleClusterAnalyticsSearchQuery,
+    ): Prisma.CycleClusterAnalyticsOrderByWithRelationInput[] {
         const field = query.sortBy ?? CycleClusterAnalyticsSortField.ID;
         const direction = query.sortDirection ?? SortDirection.ASC;
         return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];

@@ -1,40 +1,46 @@
 import { SortDirection } from '@intra/shared-kernel';
-import { TeamDomain } from '../../domain/team.domain';
 import { TeamMembershipDomain } from '../../domain/team-membership.domain';
+import { TeamDomain } from '../../domain/team.domain';
 
-export const ORGANISATION_TEAM_REPOSITORY = Symbol('ORGANISATION.TEAM_REPOSITORY');
+export const ORGANISATION_TEAM_REPOSITORY = Symbol(
+    'ORGANISATION.TEAM_REPOSITORY',
+);
 
 export enum TeamSortField {
-  ID = 'id',
-  TITLE = 'title',
-  DESCRIPTION = 'description',
-  HEAD_ID = 'headId',
-  CREATED_AT = 'createdAt',
-  UPDATED_AT = 'updatedAt',
+    ID = 'id',
+    TITLE = 'title',
+    DESCRIPTION = 'description',
+    HEAD_ID = 'headId',
+    CREATED_AT = 'createdAt',
+    UPDATED_AT = 'updatedAt',
 }
 
 export type TeamSearchQuery = {
-  search?: string;
-  headId?: number;
-  title?: string;
-  description?: string;
-  sortBy?: TeamSortField;
-  sortDirection?: SortDirection;
+    search?: string;
+    headId?: number;
+    title?: string;
+    description?: string;
+    sortBy?: TeamSortField;
+    sortDirection?: SortDirection;
 };
 
 export type TeamUpdatePayload = Partial<{
-  title: string;
-  description: string | null;
-  headId: number | null;
+    title: string;
+    description: string | null;
+    headId: number | null;
 }>;
 
 export interface TeamRepositoryPort {
-  create(team: TeamDomain): Promise<TeamDomain>;
-  findById(id: number): Promise<TeamDomain | null>;
-  search(query: TeamSearchQuery): Promise<TeamDomain[]>;
-  updateById(id: number, patch: TeamUpdatePayload): Promise<TeamDomain>;
-  deleteById(id: number): Promise<void>;
-  addMember(teamId: number, memberId: number, isPrimary?: boolean | null): Promise<TeamMembershipDomain>;
-  removeMember(teamId: number, memberId: number): Promise<void>;
-  listMembers(teamId: number): Promise<TeamMembershipDomain[]>;
+    create(team: TeamDomain): Promise<TeamDomain>;
+    findById(id: number): Promise<TeamDomain | null>;
+    search(query: TeamSearchQuery): Promise<TeamDomain[]>;
+    updateById(id: number, patch: TeamUpdatePayload): Promise<TeamDomain>;
+    deleteById(id: number): Promise<void>;
+    addMember(
+        teamId: number,
+        memberId: number,
+        isPrimary?: boolean | null,
+    ): Promise<TeamMembershipDomain>;
+    removeMember(teamId: number, memberId: number): Promise<void>;
+    listMembers(teamId: number): Promise<TeamMembershipDomain[]>;
 }

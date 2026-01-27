@@ -14,9 +14,16 @@ export enum SerialisationGroupValue {
 
 export const SERIALISATION_GROUPS = {
     BASIC: [SerialisationGroupValue.BASIC],
-    CONFIDENTIAL: [SerialisationGroupValue.BASIC, SerialisationGroupValue.CONFIDENTIAL],
+    CONFIDENTIAL: [
+        SerialisationGroupValue.BASIC,
+        SerialisationGroupValue.CONFIDENTIAL,
+    ],
     SYSTEMIC: [SerialisationGroupValue.BASIC, SerialisationGroupValue.SYSTEMIC],
-    PRIVATE: [SerialisationGroupValue.BASIC, SerialisationGroupValue.CONFIDENTIAL, SerialisationGroupValue.PRIVATE],
+    PRIVATE: [
+        SerialisationGroupValue.BASIC,
+        SerialisationGroupValue.CONFIDENTIAL,
+        SerialisationGroupValue.PRIVATE,
+    ],
 };
 
 /**
@@ -40,10 +47,10 @@ export function defineModelSerialisation<
  * @param keys - Keys from the object
  * @returns Object with the specified keys
  */
-export function pickGroup<const T extends Record<PropertyKey, unknown>, const K extends readonly (keyof T)[]>(
-    obj: T,
-    keys: K,
-): { [P in K[number]]: T[P] } {
+export function pickGroup<
+    const T extends Record<PropertyKey, unknown>,
+    const K extends readonly (keyof T)[],
+>(obj: T, keys: K): { [P in K[number]]: T[P] } {
     const out = {} as { [P in K[number]]: T[P] };
     for (const key of keys) {
         out[key] = obj[key];

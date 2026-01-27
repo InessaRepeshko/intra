@@ -14,7 +14,7 @@
         "build": "turbo run build --filter=!@intra/web",
         "clean": "rm -rf node_modules **/node_modules dist **/dist .turbo **/.turbo",
         "lint": "turbo run lint",
-        "format": "turbo run format --filter=@intra/api",
+        "format": "turbo run format",
         "// --- Docker Commands ---": "",
         "docker:up": "dotenv -e .env.development.local -- docker-compose up -d",
         "docker:view": "docker ps -a",

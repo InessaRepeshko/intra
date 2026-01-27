@@ -1,110 +1,126 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IdentityUserService } from 'src/contexts/identity/application/services/identity-user.service';
-import { TeamDomain } from '../../domain/team.domain';
 import { TeamMembershipDomain } from '../../domain/team-membership.domain';
+import { TeamDomain } from '../../domain/team.domain';
 import type { TeamRepositoryPort } from '../ports/team.repository.port';
 import {
-  ORGANISATION_TEAM_REPOSITORY,
-  TeamSearchQuery,
-  TeamUpdatePayload,
+    ORGANISATION_TEAM_REPOSITORY,
+    TeamSearchQuery,
+    TeamUpdatePayload,
 } from '../ports/team.repository.port';
 
 export type CreateTeamCommand = {
-  title: string;
-  description?: string | null;
-  headId?: number | null;
+    title: string;
+    description?: string | null;
+    headId?: number | null;
 };
 
 export type UpdateTeamCommand = Partial<CreateTeamCommand>;
 
 export type AddTeamMemberCommand = {
-  memberId: number;
-  isPrimary?: boolean | null;
+    memberId: number;
+    isPrimary?: boolean | null;
 };
 
 @Injectable()
 export class TeamService {
-  constructor(
-    @Inject(ORGANISATION_TEAM_REPOSITORY) private readonly teams: TeamRepositoryPort,
-    private readonly identityUsers: IdentityUserService,
-  ) { }
+    constructor(
+        @Inject(ORGANISATION_TEAM_REPOSITORY)
+        private readonly teams: TeamRepositoryPort,
+        private readonly identityUsers: IdentityUserService,
+    ) {}
 
-  async create(command: CreateTeamCommand): Promise<TeamDomain> {
-    if (command.headId !== undefined && command.headId !== null) {
-      await this.identityUsers.getById(command.headId);
-    }
-
-    const team = TeamDomain.create({
-      title: command.title,
-      description: command.description ?? null,
-      headId: command.headId ?? null,
-    });
-    return this.teams.create(team);
-  }
-
-  async search(query: TeamSearchQuery): Promise<TeamDomain[]> {
-    return this.teams.search(query);
-  }
-
-  async getById(id: number): Promise<TeamDomain> {
-    const team = await this.teams.findById(id);
-    if (!team) throw new NotFoundException('Team not found');
-    return team;
-  }
-
-  async update(id: number, patch: UpdateTeamCommand): Promise<TeamDomain> {
-    await this.getById(id);
-
-    if (patch.headId !== undefined && patch.headId !== null) {
-      await this.identityUsers.getById(patch.headId);
-    }
-
-    const payload: TeamUpdatePayload = {
-      ...patch,
-      ...(patch.description !== undefined ? { description: patch.description } : {}),
-    };
-
-    return this.teams.updateById(id, payload);
-  }
-
-  async delete(id: number): Promise<void> {
-    await this.getById(id);
-    await this.teams.deleteById(id);
-  }
-
-  async addMember(teamId: number, command: AddTeamMemberCommand, opts?: { withUser?: boolean }): Promise<TeamMembershipDomain> {
-    await this.getById(teamId);
-    const user = await this.identityUsers.getById(command.memberId);
-
-    const membership = await this.teams.addMember(teamId, command.memberId, command.isPrimary);
-    if (opts?.withUser) {
-      return membership.withUser(user);
-    }
-    return membership;
-  }
-
-  async removeMember(teamId: number, memberId: number): Promise<void> {
-    await this.getById(teamId);
-    await this.teams.removeMember(teamId, memberId);
-  }
-
-  async listMembers(teamId: number, opts?: { withUsers?: boolean }): Promise<TeamMembershipDomain[]> {
-    await this.getById(teamId);
-    const memberships = await this.teams.listMembers(teamId);
-
-    if (!opts?.withUsers) return memberships;
-
-    const withUsers = await Promise.all(
-      memberships.map(async (membership) => {
-        try {
-          const user = await this.identityUsers.getById(membership.memberId);
-          return membership.withUser(user);
-        } catch {
-          return membership;
+    async create(command: CreateTeamCommand): Promise<TeamDomain> {
+        if (command.headId !== undefined && command.headId !== null) {
+            await this.identityUsers.getById(command.headId);
         }
-      }),
-    );
 
-    return withUsers;
-  }
+        const team = TeamDomain.create({
+            title: command.title,
+            description: command.description ?? null,
+            headId: command.headId ?? null,
+        });
+        return this.teams.create(team);
+    }
+
+    async search(query: TeamSearchQuery): Promise<TeamDomain[]> {
+        return this.teams.search(query);
+    }
+
+    async getById(id: number): Promise<TeamDomain> {
+        const team = await this.teams.findById(id);
+        if (!team) throw new NotFoundException('Team not found');
+        return team;
+    }
+
+    async update(id: number, patch: UpdateTeamCommand): Promise<TeamDomain> {
+        await this.getById(id);
+
+        if (patch.headId !== undefined && patch.headId !== null) {
+            await this.identityUsers.getById(patch.headId);
+        }
+
+        const payload: TeamUpdatePayload = {
+            ...patch,
+            ...(patch.description !== undefined
+                ? { description: patch.description }
+                : {}),
+        };
+
+        return this.teams.updateById(id, payload);
+    }
+
+    async delete(id: number): Promise<void> {
+        await this.getById(id);
+        await this.teams.deleteById(id);
+    }
+
+    async addMember(
+        teamId: number,
+        command: AddTeamMemberCommand,
+        opts?: { withUser?: boolean },
+    ): Promise<TeamMembershipDomain> {
+        await this.getById(teamId);
+        const user = await this.identityUsers.getById(command.memberId);
+
+        const membership = await this.teams.addMember(
+            teamId,
+            command.memberId,
+            command.isPrimary,
+        );
+        if (opts?.withUser) {
+            return membership.withUser(user);
+        }
+        return membership;
+    }
+
+    async removeMember(teamId: number, memberId: number): Promise<void> {
+        await this.getById(teamId);
+        await this.teams.removeMember(teamId, memberId);
+    }
+
+    async listMembers(
+        teamId: number,
+        opts?: { withUsers?: boolean },
+    ): Promise<TeamMembershipDomain[]> {
+        await this.getById(teamId);
+        const memberships = await this.teams.listMembers(teamId);
+
+        if (!opts?.withUsers) return memberships;
+
+        const withUsers = await Promise.all(
+            memberships.map(async (membership) => {
+                try {
+                    const user = await this.identityUsers.getById(
+                        membership.memberId,
+                    );
+                    return membership.withUser(user);
+                } catch {
+                    return membership;
+                }
+            }),
+        );
+
+        return withUsers;
+    }
 }

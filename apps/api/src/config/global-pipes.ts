@@ -1,5 +1,4 @@
-import { INestApplication } from '@nestjs/common';
-import { ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 
 export function setupGlobalPipes(app: INestApplication): void {
     app.useGlobalPipes(
