@@ -1,9 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
-import { CycleStage } from '@intra/shared-kernel';
+import { CYCLE_CONSTRAINTS, CycleStage, CycleDto } from '@intra/shared-kernel';
 
-export class CycleResponse {
+export class CycleResponse implements CycleDto {
   @ApiProperty({ example: 1, description: 'Cycle id', type: 'number', required: true })
   @Expose()
   id!: number;
@@ -52,12 +51,11 @@ export class CycleResponse {
   @Expose()
   endDate!: Date;
 
-  @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Cycle created at', type: 'string', format: 'date-time', required: false })
+  @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Cycle created at', type: 'string', format: 'date-time' })
   @Expose()
-  createdAt?: Date;
+  createdAt!: Date;
 
-  @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Cycle updated at', type: 'string', format: 'date-time', required: false })
+  @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Cycle updated at', type: 'string', format: 'date-time' })
   @Expose()
-  updatedAt?: Date;
+  updatedAt!: Date;
 }
-

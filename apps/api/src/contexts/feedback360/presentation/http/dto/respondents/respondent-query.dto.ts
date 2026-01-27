@@ -1,9 +1,7 @@
-import { RespondentCategory, ResponseStatus, SortDirection } from "@intra/shared-kernel";
+import { RespondentCategory, ResponseStatus, SortDirection, RESPONDENT_CONSTRAINTS, RespondentSortField } from "@intra/shared-kernel";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { IsDate, IsEnum, IsInt, IsOptional, IsString, MinLength, MaxLength, Min } from "class-validator";
 import { ToOptionalDate, ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from "src/common/transforms/query-sanitize.transform";
-import { RESPONDENT_CONSTRAINTS } from "@intra/shared-kernel";
-import { RespondentSortField } from "src/contexts/feedback360/application/ports/respondent.repository.port";
 
 export class RespondentQueryDto {
     @ApiPropertyOptional({ example: 1, description: 'Filter by cycle id', type: 'number' })

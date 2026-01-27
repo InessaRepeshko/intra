@@ -3,14 +3,16 @@ import { Prisma } from '@intra/database';
 import { PrismaService } from 'src/database/prisma.service';
 import {
   REVIEW_REPOSITORY,
-  ReviewRepositoryPort,
-  ReviewSearchQuery,
-  ReviewSortField,
-  ReviewUpdatePayload,
+  ReviewRepositoryPort
 } from '../../application/ports/review.repository.port';
 import { ReviewDomain } from '../../domain/review.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
-import { SortDirection } from '@intra/shared-kernel';
+import {
+  SortDirection,
+  ReviewSearchQuery,
+  ReviewSortField,
+  UpdateReviewPayload,
+} from '@intra/shared-kernel';
 
 @Injectable()
 export class ReviewRepository implements ReviewRepositoryPort {
@@ -55,7 +57,7 @@ export class ReviewRepository implements ReviewRepositoryPort {
     return items.map(Feedback360Mapper.toReviewDomain);
   }
 
-  async updateById(id: number, patch: ReviewUpdatePayload): Promise<ReviewDomain> {
+  async updateById(id: number, patch: UpdateReviewPayload): Promise<ReviewDomain> {
     const updated = await this.prisma.review.update({
       where: { id },
       data: {

@@ -1,9 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Max, MaxLength, Min, MinLength, ValidateIf } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { RespondentCategory } from '@intra/shared-kernel';
-import { AnswerType } from '@intra/shared-kernel';
-import { ANSWER_CONSTRAINTS } from '@intra/shared-kernel';
+import { RespondentCategory, AnswerType, ANSWER_CONSTRAINTS } from '@intra/shared-kernel';
 
 export class CreateAnswerDto {
   @ApiProperty({ example: 12, description: 'Question id from review', type: 'number', required: true })

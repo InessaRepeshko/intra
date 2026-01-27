@@ -32,8 +32,8 @@ export class Feedback360HttpMapper {
     view.approvalDeadline = domain.approvalDeadline ?? null;
     view.responseDeadline = domain.responseDeadline ?? null;
     view.endDate = domain.endDate;
-    view.createdAt = domain.createdAt;
-    view.updatedAt = domain.updatedAt;
+    view.createdAt = domain.createdAt!;
+    view.updatedAt = domain.updatedAt!;
     return view;
   }
 
@@ -56,8 +56,8 @@ export class Feedback360HttpMapper {
     view.cycleId = domain.cycleId ?? null;
     view.stage = domain.stage;
     view.reportId = domain.reportId ?? null;
-    view.createdAt = domain.createdAt;
-    view.updatedAt = domain.updatedAt;
+    view.createdAt = domain.createdAt!;
+    view.updatedAt = domain.updatedAt!;
     return view;
   }
 
@@ -70,7 +70,7 @@ export class Feedback360HttpMapper {
     view.answerType = domain.answerType;
     view.competenceId = domain.competenceId ?? null;
     view.isForSelfassessment = domain.isForSelfassessment;
-    view.createdAt = domain.createdAt;
+    view.createdAt = domain.createdAt!;
     return view;
   }
 
@@ -84,7 +84,7 @@ export class Feedback360HttpMapper {
     view.competenceId = domain.competenceId;
     view.competenceTitle = domain.competenceTitle;
     view.isForSelfassessment = domain.isForSelfassessment;
-    view.createdAt = domain.createdAt;
+    view.createdAt = domain.createdAt!;
     return view;
   }
 
@@ -97,7 +97,7 @@ export class Feedback360HttpMapper {
     view.answerType = domain.answerType;
     view.numericalValue = domain.numericalValue ?? null;
     view.textValue = domain.textValue ?? null;
-    view.createdAt = domain.createdAt;
+    view.createdAt = domain.createdAt!;
     return view;
   }
 
@@ -118,8 +118,8 @@ export class Feedback360HttpMapper {
     view.invitedAt = domain.invitedAt ?? null;
     view.canceledAt = domain.canceledAt ?? null;
     view.respondedAt = domain.respondedAt ?? null;
-    view.createdAt = domain.createdAt;
-    view.updatedAt = domain.updatedAt;
+    view.createdAt = domain.createdAt!;
+    view.updatedAt = domain.updatedAt!;
     return view;
   }
 
@@ -133,7 +133,7 @@ export class Feedback360HttpMapper {
     view.positionTitle = domain.positionTitle;
     view.teamId = domain.teamId ?? null;
     view.teamTitle = domain.teamTitle ?? null;
-    view.createdAt = domain.createdAt;
+    view.createdAt = domain.createdAt!;
     return view;
   }
 
@@ -146,8 +146,8 @@ export class Feedback360HttpMapper {
     view.reviewId = domain.reviewId ?? null;
     view.score = domain.score;
     view.answersCount = domain.answersCount;
-    view.createdAt = domain.createdAt;
-    view.updatedAt = domain.updatedAt;
+    view.createdAt = domain.createdAt!;
+    view.updatedAt = domain.updatedAt!;
     return view;
   }
 
@@ -160,8 +160,8 @@ export class Feedback360HttpMapper {
     view.minScore = domain.minScore;
     view.maxScore = domain.maxScore;
     view.averageScore = domain.averageScore;
-    view.createdAt = domain.createdAt;
-    view.updatedAt = domain.updatedAt;
+    view.createdAt = domain.createdAt!;
+    view.updatedAt = domain.updatedAt!;
     return view;
   }
 }

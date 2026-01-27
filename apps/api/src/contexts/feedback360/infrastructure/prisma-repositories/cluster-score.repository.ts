@@ -3,13 +3,11 @@ import { PrismaService } from 'src/database/prisma.service';
 import {
   CLUSTER_SCORE_REPOSITORY,
   ClusterScoreRepositoryPort,
-  ClusterScoreSearchQuery,
-  ClusterScoreSortField,
 } from '../../application/ports/cluster-score.repository.port';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
 import { Prisma } from '@intra/database';
-import { SortDirection } from '@intra/shared-kernel';
+import { SortDirection, ClusterScoreSearchQuery, ClusterScoreSortField } from '@intra/shared-kernel';
 
 @Injectable()
 export class ClusterScoreRepository implements ClusterScoreRepositoryPort {

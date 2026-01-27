@@ -69,7 +69,7 @@
             "description": "Search by first name or last name or email (contains, case insensitive)",
             "schema": {
               "minimum": 1,
-              "maximum": 100,
+              "maximum": 302,
               "example": "Valerii",
               "type": "string"
             }
@@ -249,7 +249,7 @@
             "in": "query",
             "schema": {
               "minimum": 1,
-              "maximum": 100,
+              "maximum": 302,
               "example": "Valerii",
               "type": "string"
             }
@@ -708,7 +708,7 @@
             "description": "Search by title or description (contains, case-insensitive)",
             "schema": {
               "minimum": 1,
-              "maximum": 255,
+              "maximum": 1000,
               "example": "Engineering Team",
               "type": "string"
             }
@@ -788,7 +788,7 @@
             "in": "query",
             "schema": {
               "minimum": 1,
-              "maximum": 255,
+              "maximum": 1000,
               "example": "Engineering Team",
               "type": "string"
             }
@@ -1188,7 +1188,7 @@
             "description": "Search by title or description (contains, case-insensitive)",
             "schema": {
               "minimum": 1,
-              "maximum": 255,
+              "maximum": 1000,
               "example": "Senior",
               "type": "string"
             }
@@ -1257,7 +1257,7 @@
             "in": "query",
             "schema": {
               "minimum": 1,
-              "maximum": 255,
+              "maximum": 1000,
               "example": "Senior",
               "type": "string"
             }
@@ -1655,12 +1655,50 @@
         "operationId": "CompetencesController_search",
         "parameters": [
           {
+            "name": "code",
+            "required": false,
+            "in": "query",
+            "description": "Search by code (contains, case-insensitive)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "example": "TECH",
+              "type": "string"
+            }
+          },
+          {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "description": "Search by title (contains, case-insensitive)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 255,
+              "example": "tech",
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Search by description (contains, case-insensitive)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "tech",
+              "type": "string"
+            }
+          },
+          {
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search by title or code",
+            "description": "Search by title or code (contains, case-insensitive)",
             "schema": {
-              "example": "Engineering",
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "tech",
               "type": "string"
             }
           },
@@ -1668,13 +1706,16 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
+            "description": "Sort by field",
             "schema": {
+              "default": "id",
               "example": "title",
               "type": "string",
               "enum": [
                 "id",
                 "code",
                 "title",
+                "description",
                 "createdAt",
                 "updatedAt"
               ]
@@ -1684,13 +1725,85 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
+            "description": "Sort direction",
             "schema": {
+              "default": "asc",
               "example": "asc",
               "type": "string",
               "enum": [
                 "asc",
                 "desc"
               ]
+            }
+          },
+          {
+            "description": "Search by code (contains, case-insensitive)",
+            "required": false,
+            "name": "code",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "example": "TECH",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Search by title (contains, case-insensitive)",
+            "required": false,
+            "name": "title",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 255,
+              "example": "tech",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Search by description (contains, case-insensitive)",
+            "required": false,
+            "name": "description",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "tech",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Search by title or code (contains, case-insensitive)",
+            "required": false,
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "tech",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort by field",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "title",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "asc",
+              "type": "string"
             }
           }
         ],
@@ -1727,7 +1840,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -1762,7 +1875,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -1813,7 +1926,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -1849,7 +1962,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -1903,7 +2016,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -1940,7 +2053,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           },
           {
@@ -1948,7 +2061,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -1984,7 +2097,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2038,7 +2151,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2075,7 +2188,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           },
           {
@@ -2083,7 +2196,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2160,18 +2273,80 @@
             "name": "competenceId",
             "required": false,
             "in": "query",
-            "description": "Filter by competence id",
+            "description": "Filter by competence id (contains, case-insensitive)",
             "schema": {
               "example": 2,
               "type": "number"
             }
           },
           {
+            "name": "lowerBound",
+            "required": false,
+            "in": "query",
+            "description": "Filter by lower bound (contains, case-insensitive)",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "name": "upperBound",
+            "required": false,
+            "in": "query",
+            "description": "Filter by upper bound (contains, case-insensitive)",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "description": "Filter by title (contains, case-insensitive)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 255,
+              "example": "beginer",
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Filter by description (contains, case-insensitive)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "beginer",
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by title or description (contains, case-insensitive)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "beginer",
+              "type": "string"
+            }
+          },
+          {
             "name": "sortBy",
             "required": false,
             "in": "query",
+            "description": "Sort by field",
             "schema": {
-              "example": "createdAt",
+              "default": "id",
+              "example": "title",
               "type": "string",
               "enum": [
                 "id",
@@ -2189,13 +2364,107 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
+            "description": "Sort direction",
             "schema": {
-              "example": "asc",
+              "default": "asc",
+              "example": "desc",
               "type": "string",
               "enum": [
                 "asc",
                 "desc"
               ]
+            }
+          },
+          {
+            "description": "Filter by competence id (contains, case-insensitive)",
+            "required": false,
+            "name": "competenceId",
+            "in": "query",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by lower bound (contains, case-insensitive)",
+            "required": false,
+            "name": "lowerBound",
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by upper bound (contains, case-insensitive)",
+            "required": false,
+            "name": "upperBound",
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by title (contains, case-insensitive)",
+            "required": false,
+            "name": "title",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 255,
+              "example": "beginer",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by description (contains, case-insensitive)",
+            "required": false,
+            "name": "description",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "beginer",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Search by title or description (contains, case-insensitive)",
+            "required": false,
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "beginer",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort by field",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "title",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string"
             }
           }
         ],
@@ -2232,7 +2501,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2267,7 +2536,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2318,7 +2587,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2392,6 +2661,18 @@
         "operationId": "QuestionTemplatesController_search",
         "parameters": [
           {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "description": "Search in title",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "features",
+              "type": "string"
+            }
+          },
+          {
             "name": "competenceId",
             "required": false,
             "in": "query",
@@ -2402,19 +2683,26 @@
             }
           },
           {
-            "name": "positionId",
+            "name": "positionIds",
             "required": false,
             "in": "query",
             "description": "Filter by position id",
             "schema": {
-              "example": 5,
-              "type": "number"
+              "example": [
+                2,
+                3
+              ],
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
             }
           },
           {
             "name": "status",
             "required": false,
             "in": "query",
+            "description": "Question template status",
             "schema": {
               "example": "ACTIVE",
               "type": "string",
@@ -2428,6 +2716,7 @@
             "name": "answerType",
             "required": false,
             "in": "query",
+            "description": "Answer type",
             "schema": {
               "example": "TEXT_FIELD",
               "type": "string",
@@ -2448,20 +2737,10 @@
             }
           },
           {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search in title",
-            "schema": {
-              "maximum": 1000,
-              "example": "features",
-              "type": "string"
-            }
-          },
-          {
             "name": "sortBy",
             "required": false,
             "in": "query",
+            "description": "Sort by field",
             "schema": {
               "example": "title",
               "type": "string",
@@ -2469,7 +2748,10 @@
                 "id",
                 "title",
                 "answerType",
+                "competenceId",
+                "isForSelfassessment",
                 "status",
+                "positionIds",
                 "createdAt",
                 "updatedAt"
               ]
@@ -2479,6 +2761,7 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
+            "description": "Sort direction",
             "schema": {
               "example": "asc",
               "type": "string",
@@ -2486,6 +2769,94 @@
                 "asc",
                 "desc"
               ]
+            }
+          },
+          {
+            "description": "Search in title",
+            "required": false,
+            "name": "title",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "features",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by competence id",
+            "required": false,
+            "name": "competenceId",
+            "in": "query",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by position id",
+            "required": false,
+            "name": "positionIds",
+            "in": "query",
+            "schema": {
+              "example": [
+                2,
+                3
+              ],
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "required": false,
+            "description": "Question template status",
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "example": "ACTIVE",
+              "type": "string"
+            }
+          },
+          {
+            "required": false,
+            "description": "Answer type",
+            "name": "answerType",
+            "in": "query",
+            "schema": {
+              "example": "TEXT_FIELD",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter self assessment question templates",
+            "required": false,
+            "name": "isForSelfassessment",
+            "in": "query",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "required": false,
+            "description": "Sort by field",
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "example": "title",
+              "type": "string"
+            }
+          },
+          {
+            "required": false,
+            "description": "Sort direction",
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "example": "asc",
+              "type": "string"
             }
           }
         ],
@@ -2522,7 +2893,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2557,7 +2928,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2608,7 +2979,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2644,7 +3015,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2695,7 +3066,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2732,7 +3103,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           },
           {
@@ -2740,7 +3111,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2776,7 +3147,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2830,7 +3201,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2867,7 +3238,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           },
           {
@@ -2875,7 +3246,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2979,7 +3350,7 @@
             "description": "Search by title/description",
             "schema": {
               "minimum": 1,
-              "maximum": 255,
+              "maximum": 1000,
               "example": "Q1",
               "type": "string"
             }
@@ -3161,7 +3532,7 @@
             "in": "query",
             "schema": {
               "minimum": 1,
-              "maximum": 255,
+              "maximum": 1000,
               "example": "Q1",
               "type": "string"
             }
@@ -6924,12 +7295,26 @@
             "description": "Role description",
             "minimum": 1,
             "maximum": 1000
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T10:00:00.000Z",
+            "description": "Role creation date",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-01-02T10:00:00.000Z",
+            "description": "Role update date",
+            "format": "date-time"
           }
         },
         "required": [
           "code",
           "title",
-          "description"
+          "description",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "CreateTeamDto": {
@@ -7206,7 +7591,7 @@
         "type": "object",
         "properties": {
           "code": {
-            "type": "object",
+            "type": "string",
             "description": "Optional competence code",
             "example": "ENG-001",
             "nullable": true,
@@ -7221,7 +7606,7 @@
             "maximum": 255
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Competence description",
             "example": "Ability to deliver high-quality software",
             "nullable": true,
@@ -7238,29 +7623,37 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Competence id"
           },
           "code": {
-            "type": "object",
-            "example": "ENG-001",
-            "nullable": true
+            "type": "string",
+            "example": "COMM",
+            "nullable": true,
+            "description": "Competence code"
           },
           "title": {
             "type": "string",
-            "example": "Engineering excellence"
+            "example": "Communication",
+            "description": "Competence title"
           },
           "description": {
-            "type": "object",
-            "example": "Ability to deliver high-quality software",
-            "nullable": true
+            "type": "string",
+            "example": "Shares context clearly and adapts message to the audience.",
+            "nullable": true,
+            "description": "Competence description"
           },
           "createdAt": {
             "type": "string",
-            "example": "2024-01-01T10:00:00.000Z"
+            "example": "2024-01-01T10:00:00.000Z",
+            "format": "date-time",
+            "description": "Creation date"
           },
           "updatedAt": {
             "type": "string",
-            "example": "2024-01-02T10:00:00.000Z"
+            "example": "2024-01-02T10:00:00.000Z",
+            "format": "date-time",
+            "description": "Update date"
           }
         },
         "required": [
@@ -7274,7 +7667,7 @@
         "type": "object",
         "properties": {
           "code": {
-            "type": "object",
+            "type": "string",
             "description": "Optional competence code",
             "example": "ENG-001",
             "nullable": true,
@@ -7289,7 +7682,7 @@
             "maximum": 255
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Competence description",
             "example": "Ability to deliver high-quality software",
             "nullable": true,
@@ -7335,22 +7728,30 @@
           "lowerBound": {
             "type": "number",
             "description": "Lower bound of the cluster",
-            "example": 0
+            "example": 0,
+            "minimum": 0,
+            "maximum": 5
           },
           "upperBound": {
             "type": "number",
             "description": "Upper bound of the cluster",
-            "example": 1
+            "example": 1,
+            "minimum": 0,
+            "maximum": 5
           },
           "title": {
             "type": "string",
             "description": "Title of the cluster level",
-            "example": "Beginner"
+            "example": "Beginner",
+            "minimum": 1,
+            "maximum": 255
           },
           "description": {
             "type": "string",
             "description": "Description of the cluster level",
-            "example": "Initial level of competence development"
+            "example": "Initial level of competence development",
+            "minimum": 1,
+            "maximum": 1000
           }
         },
         "required": [
@@ -7366,35 +7767,53 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Cluster id"
           },
           "competenceId": {
             "type": "number",
-            "example": 2
+            "example": 2,
+            "description": "Competence id"
           },
           "lowerBound": {
             "type": "number",
-            "example": 0
+            "example": 0,
+            "description": "Lower bound of the cluster",
+            "minimum": 0,
+            "maximum": 5
           },
           "upperBound": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Upper bound of the cluster",
+            "minimum": 0,
+            "maximum": 5
           },
           "title": {
             "type": "string",
-            "example": "Beginner"
+            "example": "Beginner",
+            "description": "Title of the cluster level",
+            "minimum": 1,
+            "maximum": 255
           },
           "description": {
             "type": "string",
-            "example": "Initial level of competence development"
+            "example": "Initial level of competence development",
+            "description": "Description of the cluster level",
+            "minimum": 1,
+            "maximum": 1000
           },
           "createdAt": {
             "type": "string",
-            "example": "2024-01-01T10:00:00.000Z"
+            "format": "date-time",
+            "example": "2024-01-01T10:00:00.000Z",
+            "description": "Creation date of the cluster"
           },
           "updatedAt": {
             "type": "string",
-            "example": "2024-01-02T10:00:00.000Z"
+            "format": "date-time",
+            "example": "2024-01-02T10:00:00.000Z",
+            "description": "Last update date of the cluster"
           }
         },
         "required": [
@@ -7419,22 +7838,30 @@
           "lowerBound": {
             "type": "number",
             "description": "Lower bound of the cluster",
-            "example": 0
+            "example": 0,
+            "minimum": 0,
+            "maximum": 5
           },
           "upperBound": {
             "type": "number",
             "description": "Upper bound of the cluster",
-            "example": 1
+            "example": 1,
+            "minimum": 0,
+            "maximum": 5
           },
           "title": {
             "type": "string",
             "description": "Title of the cluster level",
-            "example": "Beginner"
+            "example": "Beginner",
+            "minimum": 1,
+            "maximum": 255
           },
           "description": {
             "type": "string",
             "description": "Description of the cluster level",
-            "example": "Initial level of competence development"
+            "example": "Initial level of competence development",
+            "minimum": 1,
+            "maximum": 1000
           }
         }
       },
@@ -7459,7 +7886,8 @@
               "NUMERICAL_SCALE",
               "TEXT_FIELD"
             ],
-            "example": "NUMERICAL_SCALE"
+            "example": "NUMERICAL_SCALE",
+            "description": "Answer type"
           },
           "isForSelfassessment": {
             "type": "boolean",
@@ -7499,15 +7927,20 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Question template id"
           },
           "competenceId": {
             "type": "number",
-            "example": 2
+            "example": 2,
+            "description": "Competence id the question template belongs to"
           },
           "title": {
             "type": "string",
-            "example": "Delivers features on time"
+            "example": "Delivers features on time",
+            "description": "Question template title",
+            "minimum": 1,
+            "maximum": 1000
           },
           "answerType": {
             "type": "string",
@@ -7515,11 +7948,13 @@
               "NUMERICAL_SCALE",
               "TEXT_FIELD"
             ],
-            "example": "NUMERICAL_SCALE"
+            "example": "NUMERICAL_SCALE",
+            "description": "Answer type"
           },
           "isForSelfassessment": {
             "type": "boolean",
-            "example": false
+            "example": false,
+            "description": "Is this question template for self assessment"
           },
           "status": {
             "type": "string",
@@ -7527,14 +7962,15 @@
               "ARCHIVE",
               "ACTIVE"
             ],
-            "example": "ACTIVE"
+            "example": "ACTIVE",
+            "description": "Question template status"
           },
           "positionIds": {
             "example": [
-              1,
               2,
               3
             ],
+            "description": "Positions this question template is linked to",
             "type": "array",
             "items": {
               "type": "number"
@@ -7542,11 +7978,15 @@
           },
           "createdAt": {
             "type": "string",
-            "example": "2024-01-01T10:00:00.000Z"
+            "format": "date-time",
+            "example": "2024-01-01T10:00:00.000Z",
+            "description": "Question template creation date"
           },
           "updatedAt": {
             "type": "string",
-            "example": "2024-01-02T10:00:00.000Z"
+            "format": "date-time",
+            "example": "2024-01-02T10:00:00.000Z",
+            "description": "Question template update date"
           }
         },
         "required": [
@@ -7556,7 +7996,9 @@
           "answerType",
           "isForSelfassessment",
           "status",
-          "positionIds"
+          "positionIds",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "UpdateQuestionTemplateDto": {
@@ -7580,7 +8022,8 @@
               "NUMERICAL_SCALE",
               "TEXT_FIELD"
             ],
-            "example": "NUMERICAL_SCALE"
+            "example": "NUMERICAL_SCALE",
+            "description": "Answer type"
           },
           "isForSelfassessment": {
             "type": "boolean",
@@ -7827,7 +8270,9 @@
           "stage",
           "isActive",
           "startDate",
-          "endDate"
+          "endDate",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "UpdateCycleDto": {
@@ -8178,7 +8623,9 @@
           "rateePositionTitle",
           "hrId",
           "hrFullName",
-          "stage"
+          "stage",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "UpdateReviewDto": {
@@ -8378,7 +8825,8 @@
           "answerType",
           "competenceId",
           "competenceTitle",
-          "isForSelfassessment"
+          "isForSelfassessment",
+          "createdAt"
         ]
       },
       "CreateAnswerDto": {
@@ -8494,7 +8942,8 @@
           "reviewId",
           "questionId",
           "respondentCategory",
-          "answerType"
+          "answerType",
+          "createdAt"
         ]
       },
       "CreateRespondentDto": {
@@ -8728,7 +9177,9 @@
           "category",
           "responseStatus",
           "positionId",
-          "positionTitle"
+          "positionTitle",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "UpdateRespondentDto": {
@@ -8940,7 +9391,8 @@
           "reviewerId",
           "fullName",
           "positionId",
-          "positionTitle"
+          "positionTitle",
+          "createdAt"
         ]
       },
       "CreateQuestionDto": {
@@ -9046,7 +9498,8 @@
           "id",
           "title",
           "answerType",
-          "isForSelfassessment"
+          "isForSelfassessment",
+          "createdAt"
         ]
       },
       "UpsertClusterScoreDto": {
@@ -9154,7 +9607,9 @@
           "rateeId",
           "reviewId",
           "score",
-          "answersCount"
+          "answersCount",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "UpsertCycleClusterAnalyticsDto": {
@@ -9272,7 +9727,9 @@
           "employeesCount",
           "minScore",
           "maxScore",
-          "averageScore"
+          "averageScore",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "UpdateCycleClusterAnalyticsDto": {

@@ -3,26 +3,9 @@ import { CycleClusterAnalyticsDomain } from '../../domain/cycle-cluster-analytic
 import {
     CYCLE_CLUSTER_ANALYTICS_REPOSITORY,
     CycleClusterAnalyticsRepositoryPort,
-    CycleClusterAnalyticsSearchQuery,
-    CycleClusterAnalyticsUpdatePayload,
 } from '../ports/cycle-cluster-analytics.repository.port';
 import { CycleService } from './cycle.service';
-
-export type UpsertCycleClusterAnalyticsCommand = {
-    cycleId: number;
-    clusterId: number;
-    employeesCount: number;
-    minScore: number;
-    maxScore: number;
-    averageScore: number;
-};
-
-export type UpdateCycleClusterAnalyticsCommand = Partial<{
-    employeesCount: number;
-    minScore: number;
-    maxScore: number;
-    averageScore: number;
-}>;
+import { CycleClusterAnalyticsSearchQuery, UpdateCycleClusterAnalyticsPayload, UpsertCycleClusterAnalyticsPayload } from '@intra/shared-kernel';
 
 @Injectable()
 export class CycleClusterAnalyticsService {
@@ -32,17 +15,17 @@ export class CycleClusterAnalyticsService {
         private readonly cycles: CycleService,
     ) { }
 
-    async upsert(command: UpsertCycleClusterAnalyticsCommand): Promise<CycleClusterAnalyticsDomain> {
-        await this.cycles.getById(command.cycleId);
-        await this.validateScores(command.minScore, command.maxScore, command.averageScore);
+    async upsert(payload: UpsertCycleClusterAnalyticsPayload): Promise<CycleClusterAnalyticsDomain> {
+        await this.cycles.getById(payload.cycleId);
+        await this.validateScores(payload.minScore, payload.maxScore, payload.averageScore);
 
         const domain = CycleClusterAnalyticsDomain.create({
-            cycleId: command.cycleId,
-            clusterId: command.clusterId,
-            employeesCount: command.employeesCount,
-            minScore: command.minScore,
-            maxScore: command.maxScore,
-            averageScore: command.averageScore,
+            cycleId: payload.cycleId,
+            clusterId: payload.clusterId,
+            employeesCount: payload.employeesCount,
+            minScore: payload.minScore,
+            maxScore: payload.maxScore,
+            averageScore: payload.averageScore,
         });
 
         return this.analytics.upsert(domain);
@@ -58,7 +41,7 @@ export class CycleClusterAnalyticsService {
         return item;
     }
 
-    async update(id: number, patch: UpdateCycleClusterAnalyticsCommand): Promise<CycleClusterAnalyticsDomain> {
+    async update(id: number, patch: UpdateCycleClusterAnalyticsPayload): Promise<CycleClusterAnalyticsDomain> {
         const current = await this.getById(id);
 
         const minScore = patch.minScore ?? current.minScore;
@@ -67,7 +50,7 @@ export class CycleClusterAnalyticsService {
 
         await this.validateScores(minScore, maxScore, averageScore);
 
-        const payload: CycleClusterAnalyticsUpdatePayload = {
+        const payload: UpdateCycleClusterAnalyticsPayload = {
             ...(patch.employeesCount !== undefined ? { employeesCount: patch.employeesCount } : {}),
             ...(patch.minScore !== undefined ? { minScore: patch.minScore } : {}),
             ...(patch.maxScore !== undefined ? { maxScore: patch.maxScore } : {}),

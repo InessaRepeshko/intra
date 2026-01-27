@@ -15,8 +15,8 @@ export class UserHttpMapper {
     view.teamId = domain.teamId ?? null;
     view.managerId = domain.managerId ?? null;
     view.roles = domain.roles;
-    view.createdAt = domain.createdAt;
-    view.updatedAt = domain.updatedAt;
+    view.createdAt = domain.createdAt!;
+    view.updatedAt = domain.updatedAt!;
     return view;
   }
 }

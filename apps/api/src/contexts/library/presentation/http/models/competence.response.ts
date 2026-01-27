@@ -20,9 +20,9 @@ export class CompetenceResponse {
 
   @ApiProperty({ example: '2024-01-01T10:00:00.000Z', type: 'string', format: 'date-time', description: 'Creation date' })
   @Expose()
-  createdAt?: Date;
+  createdAt!: Date;
 
   @ApiProperty({ example: '2024-01-02T10:00:00.000Z', type: 'string', format: 'date-time', description: 'Update date' })
   @Expose()
-  updatedAt?: Date;
+  updatedAt!: Date;
 }

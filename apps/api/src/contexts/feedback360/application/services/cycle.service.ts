@@ -2,28 +2,10 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
   CYCLE_REPOSITORY,
   CycleRepositoryPort,
-  CycleSearchQuery,
-  CycleUpdatePayload,
 } from '../ports/cycle.repository.port';
 import { CycleDomain } from '../../domain/cycle.domain';
-import { CycleStage } from '@intra/shared-kernel';
+import { CycleStage, UpdateCyclePayload, CycleSearchQuery, CreateCyclePayload } from '@intra/shared-kernel';
 import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
-
-export type CreateCycleCommand = {
-  title: string;
-  description?: string;
-  hrId: number;
-  minRespondentsThreshold?: number;
-  stage?: CycleStage;
-  isActive?: boolean;
-  startDate: Date;
-  reviewDeadline?: Date;
-  approvalDeadline?: Date;
-  responseDeadline?: Date;
-  endDate: Date;
-};
-
-export type UpdateCycleCommand = Partial<CreateCycleCommand>;
 
 @Injectable()
 export class CycleService {
@@ -32,19 +14,19 @@ export class CycleService {
     private readonly cycles: CycleRepositoryPort
   ) { }
 
-  async create(command: CreateCycleCommand): Promise<CycleDomain> {
+  async create(payload: CreateCyclePayload): Promise<CycleDomain> {
     const cycle = CycleDomain.create({
-      title: command.title,
-      description: command.description,
-      hrId: command.hrId,
-      stage: command.stage ?? CycleStage.NEW,
-      minRespondentsThreshold: command.minRespondentsThreshold ?? CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN,
-      isActive: command.isActive ?? true,
-      startDate: command.startDate,
-      reviewDeadline: command.reviewDeadline,
-      approvalDeadline: command.approvalDeadline,
-      responseDeadline: command.responseDeadline,
-      endDate: command.endDate,
+      title: payload.title,
+      description: payload.description,
+      hrId: payload.hrId,
+      stage: payload.stage ?? CycleStage.NEW,
+      minRespondentsThreshold: payload.minRespondentsThreshold ?? CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN,
+      isActive: payload.isActive ?? true,
+      startDate: payload.startDate,
+      reviewDeadline: payload.reviewDeadline,
+      approvalDeadline: payload.approvalDeadline,
+      responseDeadline: payload.responseDeadline,
+      endDate: payload.endDate,
     });
 
     const created = await this.cycles.create(cycle);
@@ -61,10 +43,10 @@ export class CycleService {
     return cycle;
   }
 
-  async update(id: number, patch: UpdateCycleCommand): Promise<CycleDomain> {
+  async update(id: number, patch: UpdateCyclePayload): Promise<CycleDomain> {
     await this.getById(id);
 
-    const payload: CycleUpdatePayload = {
+    const payload: UpdateCyclePayload = {
       ...(patch.title !== undefined ? { title: patch.title } : {}),
       ...(patch.description !== undefined ? { description: patch.description } : {}),
       ...(patch.hrId !== undefined ? { hrId: patch.hrId } : {}),

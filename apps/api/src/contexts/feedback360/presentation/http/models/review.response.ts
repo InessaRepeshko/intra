@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { REVIEW_CONSTRAINTS, ReviewStage } from '@intra/shared-kernel';
+import { REVIEW_CONSTRAINTS, ReviewStage, ReviewDto } from '@intra/shared-kernel';
 
-export class ReviewResponse {
+export class ReviewResponse implements ReviewDto {
   @ApiProperty({ example: 1, description: 'Review id', type: 'number', required: true })
   @Expose()
   id!: number;
@@ -71,11 +71,11 @@ export class ReviewResponse {
   @Expose()
   reportId?: number | null;
 
-  @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time', required: false })
+  @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time' })
   @Expose()
-  createdAt?: Date;
+  createdAt!: Date;
 
-  @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Updated at', type: 'string', format: 'date-time', required: false })
+  @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Updated at', type: 'string', format: 'date-time' })
   @Expose()
-  updatedAt?: Date;
+  updatedAt!: Date;
 }

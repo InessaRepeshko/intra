@@ -1,10 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsDate, IsEnum, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
-import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
+import { CYCLE_CONSTRAINTS, CycleStage, SortDirection, CycleSortField } from '@intra/shared-kernel';
 import { ToOptionalBool, ToOptionalDate, ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { CycleStage } from '@intra/shared-kernel';
-import { CycleSortField } from 'src/contexts/feedback360/application/ports/cycle.repository.port';
-import { SortDirection } from '@intra/shared-kernel';
 
 export class CycleQueryDto {
   @ApiPropertyOptional({ description: 'Filter by title', example: 'Q1', type: 'string', minimum: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, maximum: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX })

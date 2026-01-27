@@ -3,13 +3,11 @@ import { PrismaService } from 'src/database/prisma.service';
 import {
   REVIEWER_REPOSITORY,
   ReviewerRepositoryPort,
-  ReviewerSearchQuery,
-  ReviewerSortField,
 } from '../../application/ports/reviewer.repository.port';
 import { ReviewerDomain } from '../../domain/reviewer.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
 import { Prisma } from '@intra/database';
-import { SortDirection } from '@intra/shared-kernel';
+import { SortDirection, ReviewerSearchQuery, ReviewerSortField, } from '@intra/shared-kernel';
 
 @Injectable()
 export class ReviewerRepository implements ReviewerRepositoryPort {

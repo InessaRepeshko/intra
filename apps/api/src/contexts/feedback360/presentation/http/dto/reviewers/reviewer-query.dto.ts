@@ -1,8 +1,7 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsEnum, IsInt, IsNumber, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
-import { RespondentCategory, REVIEWER_CONSTRAINTS, SortDirection } from "@intra/shared-kernel";
+import { IsEnum, IsInt, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { REVIEWER_CONSTRAINTS, SortDirection, ReviewerSortField } from "@intra/shared-kernel";
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from "src/common/transforms/query-sanitize.transform";
-import { ReviewerSortField } from "src/contexts/feedback360/application/ports/reviewer.repository.port";
 
 export class ReviewerQueryDto {
     @ApiPropertyOptional({ example: 1, description: 'Review id', type: 'number' })

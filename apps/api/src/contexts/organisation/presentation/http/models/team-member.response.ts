@@ -21,7 +21,7 @@ export class TeamMemberResponse {
 
   @ApiProperty({ type: 'string', format: 'date-time', example: '2024-01-02T10:00:00.000Z', description: 'Team member created at' })
   @Expose()
-  createdAt?: Date;
+  createdAt!: Date;
 
   @ApiProperty({ type: () => UserResponse, required: false, description: 'User data' })
   @Expose()

@@ -1,8 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 import { ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { REVIEW_CONSTRAINTS } from '@intra/shared-kernel';
-import { ReviewStage } from '@intra/shared-kernel';
+import { REVIEW_CONSTRAINTS, ReviewStage } from '@intra/shared-kernel';
 
 export class CreateReviewDto {
   @ApiProperty({ example: 10, description: 'Ratee id', type: 'number', required: true })

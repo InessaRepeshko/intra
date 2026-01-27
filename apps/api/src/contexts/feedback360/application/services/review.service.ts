@@ -1,22 +1,17 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { AnswerType } from '@intra/shared-kernel';
 import { QuestionTemplateService } from 'src/contexts/library/application/services/question-template.service';
 import { CompetenceService } from 'src/contexts/library/application/services/competence.service';
 import {
   REVIEW_REPOSITORY,
   ReviewRepositoryPort,
-  ReviewSearchQuery,
-  ReviewUpdatePayload,
 } from '../ports/review.repository.port';
 import {
   QUESTION_REPOSITORY as REVIEW_QUESTION_REPOSITORY,
   QuestionRepositoryPort,
-  QuestionSearchQuery,
 } from '../ports/question.repository.port';
 import {
   REVIEW_QUESTION_RELATION_REPOSITORY,
   ReviewQuestionRelationRepositoryPort,
-  ReviewQuestionRelationSearchQuery,
 } from '../ports/review-question-relation.repository.port';
 import {
   ANSWER_REPOSITORY,
@@ -25,110 +20,42 @@ import {
 import {
   RESPONDENT_REPOSITORY,
   RespondentRepositoryPort,
-  RespondentUpdatePayload,
-  RespondentSearchQuery,
 } from '../ports/respondent.repository.port';
 import {
   REVIEWER_REPOSITORY,
   ReviewerRepositoryPort,
-  ReviewerSearchQuery,
 } from '../ports/reviewer.repository.port';
 import {
   CLUSTER_SCORE_REPOSITORY,
   ClusterScoreRepositoryPort,
-  ClusterScoreSearchQuery,
 } from '../ports/cluster-score.repository.port';
 import { ReviewDomain } from '../../domain/review.domain';
-import { ReviewStage } from '@intra/shared-kernel';
 import { QuestionDomain } from '../../domain/question.domain';
 import { ReviewQuestionRelationDomain } from '../../domain/review-question-relation.domain';
 import { AnswerDomain } from '../../domain/answer.domain';
-import { RespondentCategory } from '@intra/shared-kernel';
 import { RespondentDomain } from '../../domain/respondent.domain';
-import { ResponseStatus } from '@intra/shared-kernel';
 import { ReviewerDomain } from '../../domain/reviewer.domain';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
 import { CycleService } from './cycle.service';
-
-export type CreateReviewCommand = {
-  rateeId: number;
-  rateeFullName: string,
-  rateePositionId: number;
-  rateePositionTitle: string;
-  hrId: number;
-  hrFullName: string,
-  hrNote?: string;
-  teamId?: number | null;
-  teamTitle?: string | null;
-  managerId?: number | null;
-  managerFullName?: string | null,
-  managerPositionId?: number | null,
-  managerPositionTitle?: string | null,
-  cycleId?: number | null;
-  stage?: ReviewStage;
-  reportId?: number | null;
-};
-
-export type UpdateReviewCommand = Partial<CreateReviewCommand>;
-
-export type CreateQuestionCommand = {
-  cycleId?: number | null;
-  questionTemplateId?: number | null;
-  title?: string;
-  answerType?: AnswerType;
-  competenceId?: number | null;
-  isForSelfassessment?: boolean | null;
-};
-
-export type AddQuestionToReviewCommand = {
-  reviewId: number;
-  questionId: number;
-};
-
-export type AddAnswerCommand = {
-  reviewId: number;
-  questionId: number;
-  respondentCategory: RespondentCategory;
-  answerType: AnswerType;
-  numericalValue?: number | null;
-  textValue?: string | null;
-};
-
-export type AddRespondentCommand = {
-  reviewId: number;
-  respondentId: number;
-  fullName: string;
-  category: RespondentCategory;
-  responseStatus?: ResponseStatus;
-  respondentNote?: string | null;
-  hrNote?: string | null;
-  positionId: number;
-  positionTitle: string;
-  teamId?: number | null;
-  teamTitle?: string | null;
-  invitedAt?: Date | null;
-  canceledAt?: Date | null;
-  respondedAt?: Date | null;
-};
-
-export type AddReviewerCommand = {
-  reviewId: number;
-  reviewerId: number;
-  fullName: string;
-  positionId: number;
-  positionTitle: string;
-  teamId?: number | null;
-  teamTitle?: string | null;
-};
-
-export type UpsertClusterScoreCommand = {
-  cycleId?: number | null;
-  clusterId: number;
-  rateeId: number;
-  reviewId: number;
-  score: number;
-  answersCount?: number;
-};
+import {
+  ReviewStage,
+  ClusterScoreSearchQuery,
+  CreateAnswerPayload,
+  RespondentCategory,
+  UpsertClusterScorePayload,
+  QuestionSearchQuery,
+  CreateQuestionPayload,
+  RespondentSearchQuery,
+  AddQuestionToReviewPayload,
+  AddRespondentPayload,
+  UpdateRespondentPayload,
+  ReviewQuestionRelationSearchQuery,
+  CreateReviewPayload,
+  ReviewSearchQuery,
+  UpdateReviewPayload,
+  AddReviewerPayload,
+  ReviewerSearchQuery,
+} from '@intra/shared-kernel';
 
 @Injectable()
 export class ReviewService {
@@ -150,28 +77,28 @@ export class ReviewService {
     private readonly cycles: CycleService,
   ) { }
 
-  async create(command: CreateReviewCommand): Promise<ReviewDomain> {
-    if (command.cycleId) {
-      await this.cycles.getById(command.cycleId);
+  async create(payload: CreateReviewPayload): Promise<ReviewDomain> {
+    if (payload.cycleId) {
+      await this.cycles.getById(payload.cycleId);
     }
 
     const review = ReviewDomain.create({
-      rateeId: command.rateeId,
-      rateeFullName: command.rateeFullName,
-      rateePositionId: command.rateePositionId,
-      rateePositionTitle: command.rateePositionTitle,
-      hrId: command.hrId,
-      hrFullName: command.hrFullName,
-      hrNote: command.hrNote,
-      teamId: command.teamId ?? null,
-      teamTitle: command.teamTitle ?? null,
-      managerId: command.managerId ?? null,
-      managerFullName: command.managerFullName ?? null,
-      managerPositionId: command.managerPositionId ?? null,
-      managerPositionTitle: command.managerPositionTitle ?? null,
-      cycleId: command.cycleId ?? null,
-      stage: command.stage ?? ReviewStage.VERIFICATION_BY_HR,
-      reportId: command.reportId ?? null,
+      rateeId: payload.rateeId,
+      rateeFullName: payload.rateeFullName,
+      rateePositionId: payload.rateePositionId,
+      rateePositionTitle: payload.rateePositionTitle,
+      hrId: payload.hrId,
+      hrFullName: payload.hrFullName,
+      hrNote: payload.hrNote,
+      teamId: payload.teamId ?? null,
+      teamTitle: payload.teamTitle ?? null,
+      managerId: payload.managerId ?? null,
+      managerFullName: payload.managerFullName ?? null,
+      managerPositionId: payload.managerPositionId ?? null,
+      managerPositionTitle: payload.managerPositionTitle ?? null,
+      cycleId: payload.cycleId ?? null,
+      stage: payload.stage ?? ReviewStage.VERIFICATION_BY_HR,
+      reportId: payload.reportId ?? null,
     });
 
     const created = await this.reviews.create(review);
@@ -188,14 +115,14 @@ export class ReviewService {
     return review;
   }
 
-  async update(id: number, patch: UpdateReviewCommand): Promise<ReviewDomain> {
+  async update(id: number, patch: UpdateReviewPayload): Promise<ReviewDomain> {
     await this.getById(id);
 
     if (patch.cycleId) {
       await this.cycles.getById(patch.cycleId);
     }
 
-    const payload: ReviewUpdatePayload = {
+    const payload: UpdateReviewPayload = {
       ...(patch.rateeId !== undefined ? { rateeId: patch.rateeId } : {}),
       ...(patch.rateeFullName !== undefined ? { rateeFullName: patch.rateeFullName } : {}),
       ...(patch.rateePositionId !== undefined ? { rateePositionId: patch.rateePositionId } : {}),
@@ -223,27 +150,27 @@ export class ReviewService {
     await this.reviews.deleteById(id);
   }
 
-  async createQuestion(command: CreateQuestionCommand): Promise<QuestionDomain> {
-    if (command.cycleId) {
-      await this.cycles.getById(command.cycleId);
+  async createQuestion(payload: CreateQuestionPayload): Promise<QuestionDomain> {
+    if (payload.cycleId) {
+      await this.cycles.getById(payload.cycleId);
     }
 
-    const baseQuestion = command.questionTemplateId ? await this.questionTemplates.getById(command.questionTemplateId) : null;
+    const baseQuestion = payload.questionTemplateId ? await this.questionTemplates.getById(payload.questionTemplateId) : null;
 
-    const title = command.title ?? baseQuestion?.title;
-    const answerType = command.answerType ?? baseQuestion?.answerType;
+    const title = payload.title ?? baseQuestion?.title;
+    const answerType = payload.answerType ?? baseQuestion?.answerType;
 
     if (!title || !answerType) {
       throw new NotFoundException('Base question data is required to create review question');
     }
 
     const question = QuestionDomain.create({
-      cycleId: command.cycleId ?? null,
-      questionTemplateId: command.questionTemplateId ?? null,
+      cycleId: payload.cycleId ?? null,
+      questionTemplateId: payload.questionTemplateId ?? null,
       title,
       answerType,
-      competenceId: command.competenceId ?? baseQuestion?.competenceId ?? null,
-      isForSelfassessment: command.isForSelfassessment ?? baseQuestion?.isForSelfassessment ?? false,
+      competenceId: payload.competenceId ?? baseQuestion?.competenceId ?? null,
+      isForSelfassessment: payload.isForSelfassessment ?? baseQuestion?.isForSelfassessment ?? false,
     });
 
     return this.questions.create(question);
@@ -257,13 +184,13 @@ export class ReviewService {
     await this.questions.deleteById(id);
   }
 
-  async attachQuestion(command: AddQuestionToReviewCommand): Promise<ReviewQuestionRelationDomain> {
-    await this.getById(command.reviewId);
-    const question = await this.questionTemplates.getById(command.questionId);
+  async attachQuestion(payload: AddQuestionToReviewPayload): Promise<ReviewQuestionRelationDomain> {
+    await this.getById(payload.reviewId);
+    const question = await this.questionTemplates.getById(payload.questionId);
     const competence = await this.competences.getById(question.competenceId);
 
     const relation = ReviewQuestionRelationDomain.create({
-      reviewId: command.reviewId,
+      reviewId: payload.reviewId,
       questionId: question.id!,
       questionTitle: question.title,
       answerType: question.answerType,
@@ -285,16 +212,16 @@ export class ReviewService {
     await this.questionRelations.unlink(reviewId, questionId);
   }
 
-  async addAnswer(command: AddAnswerCommand): Promise<AnswerDomain> {
-    await this.getById(command.reviewId);
+  async addAnswer(payload: CreateAnswerPayload): Promise<AnswerDomain> {
+    await this.getById(payload.reviewId);
 
     const answer = AnswerDomain.create({
-      reviewId: command.reviewId,
-      questionId: command.questionId,
-      respondentCategory: command.respondentCategory,
-      answerType: command.answerType,
-      numericalValue: command.numericalValue ?? null,
-      textValue: command.textValue ?? null,
+      reviewId: payload.reviewId,
+      questionId: payload.questionId,
+      respondentCategory: payload.respondentCategory,
+      answerType: payload.answerType,
+      numericalValue: payload.numericalValue ?? null,
+      textValue: payload.textValue ?? null,
     });
 
     return this.answers.create(answer);
@@ -305,30 +232,30 @@ export class ReviewService {
     return this.answers.list({ reviewId: reviewId, respondentCategory });
   }
 
-  async addRespondent(command: AddRespondentCommand): Promise<RespondentDomain> {
-    await this.getById(command.reviewId);
+  async addRespondent(payload: AddRespondentPayload): Promise<RespondentDomain> {
+    await this.getById(payload.reviewId);
 
     const relation = RespondentDomain.create({
-      reviewId: command.reviewId,
-      respondentId: command.respondentId,
-      fullName: command.fullName,
-      category: command.category,
-      responseStatus: command.responseStatus,
-      respondentNote: command.respondentNote,
-      hrNote: command.hrNote,
-      positionId: command.positionId,
-      positionTitle: command.positionTitle,
-      teamId: command.teamId,
-      teamTitle: command.teamTitle,
-      invitedAt: command.invitedAt,
-      canceledAt: command.canceledAt,
-      respondedAt: command.respondedAt,
+      reviewId: payload.reviewId,
+      respondentId: payload.respondentId,
+      fullName: payload.fullName,
+      category: payload.category,
+      responseStatus: payload.responseStatus,
+      respondentNote: payload.respondentNote,
+      hrNote: payload.hrNote,
+      positionId: payload.positionId,
+      positionTitle: payload.positionTitle,
+      teamId: payload.teamId,
+      teamTitle: payload.teamTitle,
+      invitedAt: payload.invitedAt,
+      canceledAt: payload.canceledAt,
+      respondedAt: payload.respondedAt,
     });
 
     return this.respondents.create(relation);
   }
 
-  async updateRespondent(id: number, patch: RespondentUpdatePayload): Promise<RespondentDomain> {
+  async updateRespondent(id: number, patch: UpdateRespondentPayload): Promise<RespondentDomain> {
     return this.respondents.updateById(id, patch);
   }
 
@@ -341,16 +268,16 @@ export class ReviewService {
     await this.respondents.deleteById(id);
   }
 
-  async addReviewer(command: AddReviewerCommand): Promise<ReviewerDomain> {
-    await this.getById(command.reviewId);
+  async addReviewer(payload: AddReviewerPayload): Promise<ReviewerDomain> {
+    await this.getById(payload.reviewId);
     const relation = ReviewerDomain.create({
-      reviewId: command.reviewId,
-      reviewerId: command.reviewerId,
-      fullName: command.fullName,
-      positionId: command.positionId,
-      positionTitle: command.positionTitle,
-      teamId: command.teamId,
-      teamTitle: command.teamTitle,
+      reviewId: payload.reviewId,
+      reviewerId: payload.reviewerId,
+      fullName: payload.fullName,
+      positionId: payload.positionId,
+      positionTitle: payload.positionTitle,
+      teamId: payload.teamId,
+      teamTitle: payload.teamTitle,
     });
     return this.reviewers.create(relation);
   }
@@ -364,18 +291,18 @@ export class ReviewService {
     await this.reviewers.deleteById(id);
   }
 
-  async upsertClusterScore(command: UpsertClusterScoreCommand): Promise<ClusterScoreDomain> {
-    if (command.cycleId) {
-      await this.cycles.getById(command.cycleId);
+  async upsertClusterScore(payload: UpsertClusterScorePayload): Promise<ClusterScoreDomain> {
+    if (payload.cycleId) {
+      await this.cycles.getById(payload.cycleId);
     }
 
     const score = ClusterScoreDomain.create({
-      cycleId: command.cycleId ?? null,
-      clusterId: command.clusterId,
-      rateeId: command.rateeId,
-      reviewId: command.reviewId,
-      score: command.score,
-      answersCount: command.answersCount ?? 1,
+      cycleId: payload.cycleId ?? null,
+      clusterId: payload.clusterId,
+      rateeId: payload.rateeId,
+      reviewId: payload.reviewId,
+      score: payload.score,
+      answersCount: payload.answersCount ?? 1,
     });
 
     return this.clusterScores.upsert(score);

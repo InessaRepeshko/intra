@@ -4,12 +4,10 @@ import { PrismaService } from 'src/database/prisma.service';
 import {
   QUESTION_REPOSITORY,
   QuestionRepositoryPort,
-  QuestionSearchQuery,
-  QuestionSortField,
 } from '../../application/ports/question.repository.port';
 import { QuestionDomain } from '../../domain/question.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
-import { SortDirection } from '@intra/shared-kernel';
+import { SortDirection, QuestionSearchQuery, QuestionSortField } from '@intra/shared-kernel';
 
 @Injectable()
 export class QuestionRepository implements QuestionRepositoryPort {

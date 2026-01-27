@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { CLUSTER_SCORE_CONSTRAINTS } from '@intra/shared-kernel';
+import { CLUSTER_SCORE_CONSTRAINTS, ClusterScoreDto } from '@intra/shared-kernel';
 
-export class ClusterScoreResponse {
+export class ClusterScoreResponse implements ClusterScoreDto {
   @ApiProperty({ example: 1, description: 'Cluster score id', type: 'number', required: true })
   @Expose()
   id!: number;
@@ -31,11 +31,11 @@ export class ClusterScoreResponse {
   @Expose()
   answersCount!: number;
 
-  @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time', required: false })
+  @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time' })
   @Expose()
-  createdAt?: Date;
+  createdAt!: Date;
 
-  @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Updated at', type: 'string', format: 'date-time', required: false })
+  @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Updated at', type: 'string', format: 'date-time' })
   @Expose()
-  updatedAt?: Date;
+  updatedAt!: Date;
 }

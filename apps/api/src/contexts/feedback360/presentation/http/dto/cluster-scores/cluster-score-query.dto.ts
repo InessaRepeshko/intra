@@ -1,9 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsInt, IsOptional } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, Min, Max } from 'class-validator';
 import { ToOptionalEnum, ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
-import { ClusterScoreSortField } from 'src/contexts/feedback360/application/ports/cluster-score.repository.port';
-import { CLUSTER_SCORE_CONSTRAINTS, SortDirection } from '@intra/shared-kernel';
-import { Min, Max } from 'class-validator';
+import { CLUSTER_SCORE_CONSTRAINTS, SortDirection, ClusterScoreSortField } from '@intra/shared-kernel';
 
 export class ClusterScoreQueryDto {
   @ApiPropertyOptional({ example: 1, description: 'Filter by cycle ID', type: 'number' })

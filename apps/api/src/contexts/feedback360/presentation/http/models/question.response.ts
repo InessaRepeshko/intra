@@ -1,9 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { AnswerType } from '@intra/shared-kernel';
-import { QUESTION_CONSTRAINTS } from '@intra/shared-kernel';
+import { AnswerType, QUESTION_CONSTRAINTS, QuestionDto } from '@intra/shared-kernel';
 
-export class QuestionResponse {
+export class QuestionResponse implements QuestionDto {
   @ApiProperty({ example: 5, description: 'Question id', type: 'number', required: true })
   @Expose()
   id!: number;
@@ -32,7 +31,7 @@ export class QuestionResponse {
   @Expose()
   isForSelfassessment!: boolean;
 
-  @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time', required: false })
+  @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time' })
   @Expose()
-  createdAt?: Date;
+  createdAt!: Date;
 }

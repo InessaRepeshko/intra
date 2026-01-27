@@ -1,8 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsDate, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, MinLength, ValidateIf } from 'class-validator';
-import { CYCLE_CONSTRAINTS } from '@intra/shared-kernel';
+import { CYCLE_CONSTRAINTS, CycleStage, isAnonymityThresholdMet } from '@intra/shared-kernel';
 import { ToOptionalBool, ToOptionalDate, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { CycleStage, isAnonymityThresholdMet } from '@intra/shared-kernel';
 
 export class CreateCycleDto {
   @ApiProperty({ example: 'Q1 2025', description: 'Cycle name (contains, case-insensitive)', type: 'string', minimum: CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, maximum: CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX, required: true })

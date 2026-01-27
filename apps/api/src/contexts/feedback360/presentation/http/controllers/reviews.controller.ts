@@ -38,7 +38,6 @@ import { CreateReviewerDto } from '../dto/reviewers/create-reviewer.dto';
 import { ReviewerResponse } from '../models/reviewer.response';
 import { RespondentCategory } from '@intra/shared-kernel';
 import { ReviewQuestionRelationQueryDto } from '../dto/review-question-relations/review-question-relation-query.dto';
-import { ReviewerSearchQuery } from 'src/contexts/feedback360/application/ports/reviewer.repository.port';
 import { ReviewerQueryDto } from '../dto/reviewers/reviewer-query.dto';
 import { RespondentQueryDto } from '../dto/respondents/respondent-query.dto';
 

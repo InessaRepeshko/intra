@@ -1,8 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { AnswerType, QUESTION_CONSTRAINTS } from '@intra/shared-kernel';
+import { AnswerType, QUESTION_CONSTRAINTS, ReviewQuestionRelationDto } from '@intra/shared-kernel';
 
-export class ReviewQuestionRelationResponse {
+export class ReviewQuestionRelationResponse implements ReviewQuestionRelationDto {
   @ApiProperty({ example: 1, description: 'Review question relation id', type: 'number', required: true })
   @Expose()
   id!: number;
@@ -35,7 +35,7 @@ export class ReviewQuestionRelationResponse {
   @Expose()
   isForSelfassessment!: boolean;
 
-  @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time', required: false })
+  @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time' })
   @Expose()
-  createdAt?: Date;
+  createdAt!: Date;
 }

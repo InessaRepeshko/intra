@@ -4,13 +4,10 @@ import { PrismaService } from 'src/database/prisma.service';
 import {
   CYCLE_REPOSITORY,
   CycleRepositoryPort,
-  CycleSearchQuery,
-  CycleSortField,
-  CycleUpdatePayload,
 } from '../../application/ports/cycle.repository.port';
 import { CycleDomain } from '../../domain/cycle.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
-import { SortDirection } from '@intra/shared-kernel';
+import { SortDirection, UpdateCyclePayload, CycleSearchQuery, CycleSortField } from '@intra/shared-kernel';
 
 @Injectable()
 export class CycleRepository implements CycleRepositoryPort {
@@ -55,7 +52,7 @@ export class CycleRepository implements CycleRepositoryPort {
     return items.map(Feedback360Mapper.toCycleDomain);
   }
 
-  async updateById(id: number, patch: CycleUpdatePayload): Promise<CycleDomain> {
+  async updateById(id: number, patch: UpdateCyclePayload): Promise<CycleDomain> {
     const updated = await this.prisma.cycle.update({
       where: { id },
       data: {

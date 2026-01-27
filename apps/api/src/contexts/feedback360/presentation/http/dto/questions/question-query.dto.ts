@@ -1,10 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsInt, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { ToOptionalBool, ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { AnswerType } from '@intra/shared-kernel';
-import { QuestionSortField } from 'src/contexts/feedback360/application/ports/question.repository.port';
-import { SortDirection } from '@intra/shared-kernel';
-import { QUESTION_CONSTRAINTS } from '@intra/shared-kernel';
+import { AnswerType, SortDirection, QuestionSortField, QUESTION_CONSTRAINTS } from '@intra/shared-kernel';
 
 export class QuestionQueryDto {
   @ApiPropertyOptional({ example: 1, description: 'Filter by cycle id', type: 'number' })

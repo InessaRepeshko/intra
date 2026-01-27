@@ -17,9 +17,9 @@ export class PositionResponse {
 
   @ApiProperty({ type: 'string', format: 'date-time', example: '2024-01-01T10:00:00.000Z', description: 'Position created at' })
   @Expose()
-  createdAt?: Date;
+  createdAt!: Date;
 
   @ApiProperty({ type: 'string', format: 'date-time', example: '2024-01-02T10:00:00.000Z', description: 'Position updated at' })
   @Expose()
-  updatedAt?: Date;
+  updatedAt!: Date;
 }

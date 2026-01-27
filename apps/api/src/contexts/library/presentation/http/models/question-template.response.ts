@@ -33,12 +33,12 @@ export class QuestionTemplateResponse {
   @Expose()
   positionIds!: number[];
 
-  @ApiPropertyOptional({ type: 'string', format: 'date-time', example: '2024-01-01T10:00:00.000Z', description: 'Question template creation date' })
+  @ApiProperty({ type: 'string', format: 'date-time', example: '2024-01-01T10:00:00.000Z', description: 'Question template creation date' })
   @Expose()
-  createdAt?: Date;
+  createdAt!: Date;
 
-  @ApiPropertyOptional({ type: 'string', format: 'date-time', example: '2024-01-02T10:00:00.000Z', description: 'Question template update date' })
+  @ApiProperty({ type: 'string', format: 'date-time', example: '2024-01-02T10:00:00.000Z', description: 'Question template update date' })
   @Expose()
-  updatedAt?: Date;
+  updatedAt!: Date;
 }
 

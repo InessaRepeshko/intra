@@ -7,8 +7,8 @@ export class PositionHttpMapper {
     view.id = domain.id!;
     view.title = domain.title;
     view.description = domain.description;
-    view.createdAt = domain.createdAt;
-    view.updatedAt = domain.updatedAt;
+    view.createdAt = domain.createdAt!;
+    view.updatedAt = domain.updatedAt!;
     return view;
   }
 }

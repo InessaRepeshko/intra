@@ -3,14 +3,11 @@ import { Prisma } from '@intra/database';
 import { PrismaService } from 'src/database/prisma.service';
 import {
     CycleClusterAnalyticsRepositoryPort,
-    CycleClusterAnalyticsSearchQuery,
-    CycleClusterAnalyticsSortField,
-    CycleClusterAnalyticsUpdatePayload,
     CYCLE_CLUSTER_ANALYTICS_REPOSITORY,
 } from '../../application/ports/cycle-cluster-analytics.repository.port';
 import { CycleClusterAnalyticsDomain } from '../../domain/cycle-cluster-analytics.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
-import { SortDirection } from '@intra/shared-kernel';
+import { SortDirection, CycleClusterAnalyticsSortField, CycleClusterAnalyticsSearchQuery, UpdateCycleClusterAnalyticsPayload } from '@intra/shared-kernel';
 
 @Injectable()
 export class CycleClusterAnalyticsRepository implements CycleClusterAnalyticsRepositoryPort {
@@ -58,7 +55,7 @@ export class CycleClusterAnalyticsRepository implements CycleClusterAnalyticsRep
         return items.map(Feedback360Mapper.toCycleClusterAnalyticsDomain);
     }
 
-    async updateById(id: number, patch: CycleClusterAnalyticsUpdatePayload): Promise<CycleClusterAnalyticsDomain> {
+    async updateById(id: number, patch: UpdateCycleClusterAnalyticsPayload): Promise<CycleClusterAnalyticsDomain> {
         const updated = await this.prisma.cycleClusterAnalytics.update({
             where: { id },
             data: patch,

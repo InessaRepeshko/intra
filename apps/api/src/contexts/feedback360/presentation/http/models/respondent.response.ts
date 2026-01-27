@@ -1,9 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { RESPONDENT_CONSTRAINTS, RespondentCategory } from '@intra/shared-kernel';
-import { ResponseStatus } from '@intra/shared-kernel';
+import { RESPONDENT_CONSTRAINTS, RespondentCategory, ResponseStatus, RespondentDto } from '@intra/shared-kernel';
 
-export class RespondentResponse {
+export class RespondentResponse implements RespondentDto {
   @ApiProperty({ example: 1, description: 'Respondent id', type: 'number', required: true })
   @Expose()
   id!: number;
@@ -64,11 +63,11 @@ export class RespondentResponse {
   @Expose()
   respondedAt?: Date | null;
 
-  @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time', required: false })
+  @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time' })
   @Expose()
-  createdAt?: Date;
+  createdAt!: Date;
 
-  @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Updated at', type: 'string', format: 'date-time', required: false })
+  @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Updated at', type: 'string', format: 'date-time' })
   @Expose()
-  updatedAt?: Date;
+  updatedAt!: Date;
 }

@@ -1,11 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsOptional, IsString, MinLength, MaxLength } from 'class-validator';
 import { ToOptionalBool, ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { AnswerType } from '@intra/shared-kernel';
-import { SortDirection } from '@intra/shared-kernel';
-import { ReviewQuestionRelationSortField } from 'src/contexts/feedback360/application/ports/review-question-relation.repository.port';
-import { QUESTION_CONSTRAINTS } from '@intra/shared-kernel';
-import { MinLength, MaxLength } from 'class-validator';
+import { AnswerType, SortDirection, ReviewQuestionRelationSortField, QUESTION_CONSTRAINTS } from '@intra/shared-kernel';
 
 export class ReviewQuestionRelationQueryDto {
     @ApiPropertyOptional({ example: 1, description: 'Review id', type: 'number' })

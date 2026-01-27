@@ -3,12 +3,10 @@ import { PrismaService } from 'src/database/prisma.service';
 import {
   ANSWER_REPOSITORY,
   AnswerRepositoryPort,
-  AnswerSearchQuery,
-  AnswerSortField,
 } from '../../application/ports/answer.repository.port';
 import { AnswerDomain } from '../../domain/answer.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
-import { SortDirection } from '@intra/shared-kernel';
+import { SortDirection, AnswerSearchQuery, AnswerSortField } from '@intra/shared-kernel';
 import { Prisma } from '@intra/database';
 
 @Injectable()

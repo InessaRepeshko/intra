@@ -2,15 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import {
   RESPONDENT_REPOSITORY,
-  RespondentRepositoryPort,
-  RespondentSearchQuery,
-  RespondentSortField,
-  RespondentUpdatePayload,
+  RespondentRepositoryPort
 } from '../../application/ports/respondent.repository.port';
 import { RespondentDomain } from '../../domain/respondent.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
 import { Prisma } from '@intra/database';
-import { SortDirection } from '@intra/shared-kernel';
+import {
+  SortDirection,
+  RespondentSearchQuery,
+  RespondentSortField,
+  UpdateRespondentPayload,
+} from '@intra/shared-kernel';
 
 @Injectable()
 export class RespondentRepository implements RespondentRepositoryPort {
@@ -50,7 +52,7 @@ export class RespondentRepository implements RespondentRepositoryPort {
     return relations.map(Feedback360Mapper.toRespondentDomain);
   }
 
-  async updateById(id: number, patch: RespondentUpdatePayload): Promise<RespondentDomain> {
+  async updateById(id: number, patch: UpdateRespondentPayload): Promise<RespondentDomain> {
     const updated = await this.prisma.respondent.update({
       where: { id },
       data: {

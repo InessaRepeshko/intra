@@ -11,8 +11,8 @@ export class TeamHttpMapper {
     view.title = domain.title;
     view.description = domain.description;
     view.headId = domain.headId;
-    view.createdAt = domain.createdAt;
-    view.updatedAt = domain.updatedAt;
+    view.createdAt = domain.createdAt!;
+    view.updatedAt = domain.updatedAt!;
     return view;
   }
 
@@ -22,7 +22,7 @@ export class TeamHttpMapper {
     view.teamId = domain.teamId;
     view.memberId = domain.memberId;
     view.isPrimary = domain.isPrimary;
-    view.createdAt = domain.createdAt;
+    view.createdAt = domain.createdAt!;
     if (domain.user) {
       view.user = UserHttpMapper.toResponse(domain.user);
     }

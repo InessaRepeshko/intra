@@ -1,8 +1,8 @@
-import { REVIEWER_CONSTRAINTS } from '@intra/shared-kernel';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
+import { REVIEWER_CONSTRAINTS, ReviewerDto } from '@intra/shared-kernel';
 
-export class ReviewerResponse {
+export class ReviewerResponse implements ReviewerDto {
   @ApiProperty({ example: 1, description: 'Reviewer id', type: 'number', required: true })
   @Expose()
   id!: number;
@@ -35,7 +35,7 @@ export class ReviewerResponse {
   @Expose()
   teamTitle?: string | null;
 
-  @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time', required: false })
+  @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time' })
   @Expose()
-  createdAt?: Date;
+  createdAt!: Date;
 }

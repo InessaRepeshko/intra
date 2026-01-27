@@ -11,8 +11,8 @@ export class QuestionTemplateHttpMapper {
     view.isForSelfassessment = domain.isForSelfassessment;
     view.status = domain.status;
     view.positionIds = domain.positionIds;
-    view.createdAt = domain.createdAt;
-    view.updatedAt = domain.updatedAt;
+    view.createdAt = domain.createdAt!;
+    view.updatedAt = domain.updatedAt!;
     return view;
   }
 }

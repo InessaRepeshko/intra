@@ -4,12 +4,10 @@ import { PrismaService } from 'src/database/prisma.service';
 import {
   REVIEW_QUESTION_RELATION_REPOSITORY,
   ReviewQuestionRelationRepositoryPort,
-  ReviewQuestionRelationSearchQuery,
-  ReviewQuestionRelationSortField,
 } from '../../application/ports/review-question-relation.repository.port';
 import { ReviewQuestionRelationDomain } from '../../domain/review-question-relation.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
-import { SortDirection } from '@intra/shared-kernel';
+import { SortDirection, ReviewQuestionRelationSearchQuery, ReviewQuestionRelationSortField } from '@intra/shared-kernel';
 
 @Injectable()
 export class ReviewQuestionRelationRepository implements ReviewQuestionRelationRepositoryPort {

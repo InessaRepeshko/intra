@@ -1,8 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS } from '@intra/shared-kernel';
+import { CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS, ClusterScoreAnalyticsDto } from '@intra/shared-kernel';
 
-export class CycleClusterAnalyticsResponse {
+export class CycleClusterAnalyticsResponse implements ClusterScoreAnalyticsDto {
     @ApiProperty({ example: 1, description: 'Cycle cluster analytics id', type: 'number', required: true })
     @Expose()
     id!: number;
@@ -31,11 +31,11 @@ export class CycleClusterAnalyticsResponse {
     @Expose()
     averageScore!: number;
 
-    @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time', required: false })
+    @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time' })
     @Expose()
-    createdAt?: Date;
+    createdAt!: Date;
 
-    @ApiPropertyOptional({ example: '2025-01-01T00:00:00.000Z', description: 'Updated at', type: 'string', format: 'date-time', required: false })
+    @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Updated at', type: 'string', format: 'date-time' })
     @Expose()
-    updatedAt?: Date;
+    updatedAt!: Date;
 }

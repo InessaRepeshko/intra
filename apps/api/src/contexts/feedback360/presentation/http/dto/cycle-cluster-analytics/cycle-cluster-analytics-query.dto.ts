@@ -1,8 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
 import { ToOptionalEnum, ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
-import { CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS, SortDirection } from '@intra/shared-kernel';
-import { CycleClusterAnalyticsSortField } from '../../../../application/ports/cycle-cluster-analytics.repository.port';
+import { CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS, SortDirection, CycleClusterAnalyticsSortField } from '@intra/shared-kernel';
 
 export class CycleClusterAnalyticsQueryDto {
     @ApiPropertyOptional({ example: 1, description: 'Filter by cycle ID', type: 'number' })

@@ -1,9 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
-import { RESPONDENT_CONSTRAINTS } from '@intra/shared-kernel';
+import { RESPONDENT_CONSTRAINTS, ResponseStatus, RespondentCategory } from '@intra/shared-kernel';
 import { ToOptionalDate, ToOptionalEnum, ToOptionalInt, ToOptionalTrimmedString } from 'src/common/transforms/query-sanitize.transform';
-import { RespondentCategory } from '@intra/shared-kernel';
-import { ResponseStatus } from '@intra/shared-kernel';
 
 export class CreateRespondentDto {
   @ApiProperty({ example: 7, description: 'Respondent id', type: 'number', required: true })
