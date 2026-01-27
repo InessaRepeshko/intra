@@ -13,7 +13,7 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TeamService } from '../../../application/services/team.service';
 import { CreateTeamDto } from '../dto/teams/create-team.dto';
 import { UpdateTeamDto } from '../dto/teams/update-team.dto';
@@ -33,6 +33,7 @@ export class TeamsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a team' })
+  @ApiBody({ type: CreateTeamDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: TeamResponse })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateTeamDto): Promise<TeamResponse> {
@@ -46,6 +47,7 @@ export class TeamsController {
 
   @Get()
   @ApiOperation({ summary: 'Search teams' })
+  @ApiQuery({ type: TeamQueryDto })
   @ApiResponse({ status: HttpStatus.OK, type: TeamResponse, isArray: true })
   @ApiListReadErrorResponses()
   async search(@Query() query: TeamQueryDto): Promise<TeamResponse[]> {
@@ -55,6 +57,7 @@ export class TeamsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a team by id' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of team' })
   @ApiResponse({ status: HttpStatus.OK, type: TeamResponse })
   @ApiReadErrorResponses()
   async getById(@Param('id') id: string): Promise<TeamResponse> {
@@ -64,6 +67,8 @@ export class TeamsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a team' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of team' })
+  @ApiBody({ type: UpdateTeamDto }) 
   @ApiResponse({ status: HttpStatus.OK, type: TeamResponse })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateTeamDto): Promise<TeamResponse> {
@@ -74,6 +79,7 @@ export class TeamsController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a team' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of team' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async delete(@Param('id') id: string): Promise<void> {
@@ -82,15 +88,22 @@ export class TeamsController {
 
   @Post(':id/members')
   @ApiOperation({ summary: 'Add a member to a team' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of team' })
+  @ApiBody({ type: AddTeamMemberDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: TeamMemberResponse })
   @ApiCreateAndUpdateErrorResponses()
   async addMember(@Param('id') id: string, @Body() dto: AddTeamMemberDto): Promise<TeamMemberResponse> {
-    const membership = await this.service.addMember(Number(id), { memberId: dto.memberId, isPrimary: dto.isPrimary }, { withUser: true });
+    const membership = await this.service.addMember(
+      Number(id), 
+      { memberId: dto.memberId, isPrimary: dto.isPrimary }, 
+      { withUser: true }
+    );
     return TeamHttpMapper.toMemberResponse(membership);
   }
 
   @Get(':id/members')
   @ApiOperation({ summary: 'Get the team members' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of team' })
   @ApiResponse({ status: HttpStatus.OK, type: [TeamMemberResponse] })
   @ApiListReadErrorResponses()
   async listMembers(@Param('id') id: string): Promise<TeamMemberResponse[]> {
@@ -101,6 +114,8 @@ export class TeamsController {
   @Delete(':id/members/:memberId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a member from a team' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of team' })
+  @ApiParam({ name: 'memberId', type: 'number', description: 'Id of member' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async removeMember(@Param('id') id: string, @Param('memberId') memberId: string): Promise<void> {

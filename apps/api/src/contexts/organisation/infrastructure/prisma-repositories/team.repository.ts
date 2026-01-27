@@ -31,10 +31,7 @@ export class TeamRepository implements TeamRepositoryPort {
     const where = this.buildWhere(query);
     const orderBy = this.buildOrder(query);
 
-    const items = await this.prisma.team.findMany({
-      where,
-      orderBy,
-    });
+    const items = await this.prisma.team.findMany({ where, orderBy });
 
     return items.map(OrganisationMapper.toTeamDomain);
   }
@@ -91,14 +88,16 @@ export class TeamRepository implements TeamRepositoryPort {
   }
 
   private buildWhere(query: TeamSearchQuery): Prisma.TeamWhereInput {
-    const { search, headId } = query;
+    const { search, headId, title, description } = query;
     return {
+      ...(title ? { title } : {}),
+      ...(description ? { description } : {}),
       ...(headId !== undefined ? { headId } : {}),
       ...(search
         ? {
           OR: [
-            { title: { contains: search } },
-            { description: { contains: search } },
+            { title: { contains: search, mode: 'insensitive' } },
+            { description: { contains: search, mode: 'insensitive' } },
           ],
         }
         : {}),

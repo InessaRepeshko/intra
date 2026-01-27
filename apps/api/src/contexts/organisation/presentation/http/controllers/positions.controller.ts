@@ -13,7 +13,7 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PositionService } from '../../../application/services/position.service';
 import { PositionHierarchyService } from '../../../application/services/position-hierarchy.service';
 import { CreatePositionDto } from '../dto/positions/create-position.dto';
@@ -36,6 +36,7 @@ export class PositionsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a position' })
+  @ApiBody({ type: CreatePositionDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: PositionResponse })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreatePositionDto): Promise<PositionResponse> {
@@ -45,6 +46,7 @@ export class PositionsController {
 
   @Get()
   @ApiOperation({ summary: 'Search positions' })
+  @ApiQuery({ type: PositionQueryDto })
   @ApiResponse({ status: HttpStatus.OK, type: PositionResponse, isArray: true })
   @ApiListReadErrorResponses()
   async search(@Query() query: PositionQueryDto): Promise<PositionResponse[]> {
@@ -54,6 +56,7 @@ export class PositionsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a position by id' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of position' })
   @ApiResponse({ status: HttpStatus.OK, type: PositionResponse })
   @ApiReadErrorResponses()
   async getById(@Param('id') id: string): Promise<PositionResponse> {
@@ -63,6 +66,8 @@ export class PositionsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a position' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of position' })
+  @ApiBody({ type: UpdatePositionDto })
   @ApiResponse({ status: HttpStatus.OK, type: PositionResponse })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdatePositionDto): Promise<PositionResponse> {
@@ -73,6 +78,7 @@ export class PositionsController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a position' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of position' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async delete(@Param('id') id: string): Promise<void> {
@@ -81,6 +87,8 @@ export class PositionsController {
 
   @Post(':id/subordinates')
   @ApiOperation({ summary: 'Add a subordinate position' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of position' })
+  @ApiBody({ type: CreatePositionLinkDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: PositionResponse })
   @ApiCreateAndUpdateErrorResponses()
   async linkSubordinate(@Param('id') id: string, @Body() dto: CreatePositionLinkDto): Promise<PositionResponse> {
@@ -92,6 +100,8 @@ export class PositionsController {
   @Delete(':id/subordinates/:subordinateId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a subordinate position' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of position' })
+  @ApiParam({ name: 'subordinateId', type: 'number', description: 'Id of subordinate position' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async unlinkSubordinate(@Param('id') id: string, @Param('subordinateId') subordinateId: string): Promise<void> {
@@ -100,6 +110,7 @@ export class PositionsController {
 
   @Get(':id/subordinates')
   @ApiOperation({ summary: 'List subordinate positions' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of superior position' })
   @ApiResponse({ status: HttpStatus.OK, type: [PositionResponse] })
   @ApiListReadErrorResponses()
   async listSubordinates(@Param('id') id: string): Promise<PositionResponse[]> {
@@ -109,6 +120,7 @@ export class PositionsController {
 
   @Get(':id/superiors')
   @ApiOperation({ summary: 'List superior positions' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of subordinate position' })
   @ApiResponse({ status: HttpStatus.OK, type: [PositionResponse] })
   @ApiListReadErrorResponses()
   async listSuperiors(@Param('id') id: string): Promise<PositionResponse[]> {

@@ -66,7 +66,7 @@
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search by first name or last name or email",
+            "description": "Search by first name or last name or email (contains, case insensitive)",
             "schema": {
               "minimum": 1,
               "maximum": 100,
@@ -78,7 +78,7 @@
             "name": "firstName",
             "required": false,
             "in": "query",
-            "description": "User's first name",
+            "description": "User's first name (contains, case insensitive)",
             "schema": {
               "minimum": 1,
               "maximum": 100,
@@ -90,7 +90,7 @@
             "name": "secondName",
             "required": false,
             "in": "query",
-            "description": "User's second name",
+            "description": "User's second name (contains, case insensitive)",
             "schema": {
               "minimum": 1,
               "maximum": 100,
@@ -102,7 +102,7 @@
             "name": "lastName",
             "required": false,
             "in": "query",
-            "description": "User's last name",
+            "description": "User's last name (contains, case insensitive)",
             "schema": {
               "minimum": 1,
               "maximum": 100,
@@ -114,7 +114,7 @@
             "name": "fullName",
             "required": false,
             "in": "query",
-            "description": "User's full name",
+            "description": "User's full name (contains, case insensitive)",
             "schema": {
               "minimum": 1,
               "maximum": 302,
@@ -241,6 +241,163 @@
                 "desc"
               ]
             }
+          },
+          {
+            "description": "Search by first name or last name or email (contains, case insensitive)",
+            "required": false,
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "example": "Valerii",
+              "type": "string"
+            }
+          },
+          {
+            "description": "User's first name (contains, case insensitive)",
+            "required": false,
+            "name": "firstName",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "example": "Valerii",
+              "type": "string"
+            }
+          },
+          {
+            "description": "User's second name (contains, case insensitive)",
+            "required": false,
+            "name": "secondName",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "example": "Valeriiovych",
+              "type": "string"
+            }
+          },
+          {
+            "description": "User's last name (contains, case insensitive)",
+            "required": false,
+            "name": "lastName",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "example": "Velychko",
+              "type": "string"
+            }
+          },
+          {
+            "description": "User's full name (contains, case insensitive)",
+            "required": false,
+            "name": "fullName",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 302,
+              "example": "Valerii Valeriiovych Velychko",
+              "type": "string"
+            }
+          },
+          {
+            "description": "User's email",
+            "required": false,
+            "name": "email",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "example": "valerii.velychko@example.com",
+              "type": "string"
+            }
+          },
+          {
+            "description": "User's status",
+            "required": false,
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "default": "ACTIVE",
+              "example": "ACTIVE",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Team ID",
+            "required": false,
+            "name": "teamId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Position ID",
+            "required": false,
+            "name": "positionId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Manager ID",
+            "required": false,
+            "name": "managerId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "User's roles",
+            "required": false,
+            "name": "roles",
+            "in": "query",
+            "schema": {
+              "example": [
+                "EMPLOYEE",
+                "HR"
+              ],
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ADMIN",
+                  "HR",
+                  "MANAGER",
+                  "EMPLOYEE"
+                ]
+              }
+            }
+          },
+          {
+            "description": "Sorting field",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "lastName",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sorting direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -261,7 +418,7 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "Search users",
+        "summary": "Search users (default sort ascending by id)",
         "tags": [
           "Identity / Users"
         ]
@@ -275,8 +432,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of user",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -310,8 +468,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of user",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -361,8 +520,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of user",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -397,8 +557,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of user",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -517,10 +678,34 @@
         "operationId": "TeamsController_search",
         "parameters": [
           {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "description": "Title of team (contains, case-insensitive)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 255,
+              "example": "Engineering Team",
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Description of team (contains, case-insensitive)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "Responsible for product development",
+              "type": "string"
+            }
+          },
+          {
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search by title or description",
+            "description": "Search by title or description (contains, case-insensitive)",
             "schema": {
               "minimum": 1,
               "maximum": 255,
@@ -564,12 +749,80 @@
             "description": "Sorting direction",
             "schema": {
               "default": "asc",
-              "example": "desc",
+              "example": "asc",
               "type": "string",
               "enum": [
                 "asc",
                 "desc"
               ]
+            }
+          },
+          {
+            "description": "Title of team (contains, case-insensitive)",
+            "required": false,
+            "name": "title",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 255,
+              "example": "Engineering Team",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Description of team (contains, case-insensitive)",
+            "required": false,
+            "name": "description",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "Responsible for product development",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Search by title or description (contains, case-insensitive)",
+            "required": false,
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 255,
+              "example": "Engineering Team",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Id of team leader",
+            "required": false,
+            "name": "headId",
+            "in": "query",
+            "schema": {
+              "example": 12,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Sorting field",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "title",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sorting direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "asc",
+              "type": "string"
             }
           }
         ],
@@ -605,8 +858,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of team",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -640,8 +894,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of team",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -691,8 +946,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of team",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -727,8 +983,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of team",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -778,8 +1035,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of team",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -815,16 +1073,18 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of team",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           },
           {
             "name": "memberId",
             "required": true,
             "in": "path",
+            "description": "Id of member",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -898,14 +1158,38 @@
         "operationId": "PositionsController_search",
         "parameters": [
           {
-            "name": "search",
+            "name": "title",
             "required": false,
             "in": "query",
-            "description": "Search by title or description",
+            "description": "Search by title (contains, case-insensitive)",
             "schema": {
               "minimum": 1,
               "maximum": 255,
               "example": "Senior Backend Engineer",
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Search by description (contains, case-insensitive)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "Backend development, architecture design, code reviews",
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by title or description (contains, case-insensitive)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 255,
+              "example": "Senior",
               "type": "string"
             }
           },
@@ -941,6 +1225,64 @@
                 "desc"
               ]
             }
+          },
+          {
+            "description": "Search by title (contains, case-insensitive)",
+            "required": false,
+            "name": "title",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 255,
+              "example": "Senior Backend Engineer",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Search by description (contains, case-insensitive)",
+            "required": false,
+            "name": "description",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": "Backend development, architecture design, code reviews",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Search by title or description (contains, case-insensitive)",
+            "required": false,
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 255,
+              "example": "Senior",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sorting field",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "title",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sorting direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -975,8 +1317,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of position",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -1010,8 +1353,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of position",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -1061,8 +1405,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of position",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -1097,8 +1442,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of position",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -1148,8 +1494,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of superior position",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -1185,16 +1532,18 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of position",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           },
           {
             "name": "subordinateId",
             "required": true,
             "in": "path",
+            "description": "Id of subordinate position",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -1229,8 +1578,9 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of subordinate position",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -6593,7 +6943,7 @@
             "minimum": 1
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Team description",
             "example": "Responsible for product development",
             "nullable": true,
@@ -6601,7 +6951,7 @@
             "minimum": 1
           },
           "headId": {
-            "type": "object",
+            "type": "number",
             "description": "Id of team leader",
             "example": 12,
             "nullable": true
@@ -6616,29 +6966,41 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Id of team"
           },
           "title": {
             "type": "string",
-            "example": "Engineering Team"
+            "example": "Engineering Team",
+            "description": "Title of team",
+            "minimum": 1,
+            "maximum": 255
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "example": "Responsible for product development",
-            "nullable": true
+            "nullable": true,
+            "description": "Description of team",
+            "minimum": 1,
+            "maximum": 1000
           },
           "headId": {
-            "type": "object",
+            "type": "number",
             "example": 10,
-            "nullable": true
+            "nullable": true,
+            "description": "Id of team leader"
           },
           "createdAt": {
             "type": "string",
-            "example": "2024-01-01T10:00:00.000Z"
+            "format": "date-time",
+            "example": "2024-01-01T10:00:00.000Z",
+            "description": "Date of team creation"
           },
           "updatedAt": {
             "type": "string",
-            "example": "2024-01-02T10:00:00.000Z"
+            "format": "date-time",
+            "example": "2024-01-02T10:00:00.000Z",
+            "description": "Date of team update"
           }
         },
         "required": [
@@ -6661,7 +7023,7 @@
             "minimum": 1
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Team description",
             "example": "Responsible for product development",
             "nullable": true,
@@ -6669,7 +7031,7 @@
             "minimum": 1
           },
           "headId": {
-            "type": "object",
+            "type": "number",
             "description": "Id of team leader",
             "example": 12,
             "nullable": true
@@ -6699,26 +7061,37 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 101
+            "example": 101,
+            "description": "Team member id"
           },
           "teamId": {
             "type": "number",
-            "example": 3
+            "example": 3,
+            "description": "Team id"
           },
           "memberId": {
             "type": "number",
-            "example": 42
+            "example": 42,
+            "description": "Member id"
           },
           "isPrimary": {
             "type": "boolean",
-            "example": false
+            "example": false,
+            "description": "Is primary member"
           },
           "createdAt": {
             "type": "string",
-            "example": "2024-01-02T10:00:00.000Z"
+            "format": "date-time",
+            "example": "2024-01-02T10:00:00.000Z",
+            "description": "Team member created at"
           },
           "user": {
-            "$ref": "#/components/schemas/UserResponse"
+            "description": "User data",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserResponse"
+              }
+            ]
           }
         },
         "required": [
@@ -6740,7 +7113,7 @@
             "minimum": 1
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Position description",
             "example": "Backend development, architecture design, code reviews",
             "nullable": true,
@@ -6757,24 +7130,35 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 1
+            "example": 1,
+            "description": "Position id"
           },
           "title": {
             "type": "string",
-            "example": "Senior Backend Engineer"
+            "example": "Senior Backend Engineer",
+            "description": "Position title",
+            "minimum": 1,
+            "maximum": 255
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "example": "Backend development, architecture design, code reviews",
-            "nullable": true
+            "nullable": true,
+            "description": "Position description",
+            "minimum": 1,
+            "maximum": 1000
           },
           "createdAt": {
             "type": "string",
-            "example": "2024-01-01T10:00:00.000Z"
+            "format": "date-time",
+            "example": "2024-01-01T10:00:00.000Z",
+            "description": "Position created at"
           },
           "updatedAt": {
             "type": "string",
-            "example": "2024-01-02T10:00:00.000Z"
+            "format": "date-time",
+            "example": "2024-01-02T10:00:00.000Z",
+            "description": "Position updated at"
           }
         },
         "required": [
@@ -6796,7 +7180,7 @@
             "minimum": 1
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Position description",
             "example": "Backend development, architecture design, code reviews",
             "nullable": true,

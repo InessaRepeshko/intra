@@ -1,3 +1,4 @@
+import { SortDirection } from '@intra/shared-kernel';
 import { PositionHierarchyDomain } from '../../domain/position-hierarchy.domain';
 
 export const ORGANISATION_POSITION_HIERARCHY_REPOSITORY = Symbol('ORGANISATION.POSITION_HIERARCHY_REPOSITORY');

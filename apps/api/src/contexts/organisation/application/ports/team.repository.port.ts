@@ -16,6 +16,8 @@ export enum TeamSortField {
 export type TeamSearchQuery = {
   search?: string;
   headId?: number;
+  title?: string;
+  description?: string;
   sortBy?: TeamSortField;
   sortDirection?: SortDirection;
 };

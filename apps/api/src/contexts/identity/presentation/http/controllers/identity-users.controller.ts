@@ -14,7 +14,7 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IdentityUserService } from '../../../application/services/identity-user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -33,6 +33,7 @@ export class IdentityUsersController {
 
   @Post()
   @ApiOperation({ summary: 'Create a user' })
+  @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: HttpStatus.CREATED, type: UserResponse })
   @ApiCreateAndUpdateErrorResponses()
   async create(@Body() dto: CreateUserDto): Promise<UserResponse> {
@@ -53,7 +54,8 @@ export class IdentityUsersController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Search users' })
+  @ApiOperation({ summary: 'Search users (default sort ascending by id)' })
+  @ApiQuery({ type: UserQueryDto })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponse, isArray: true })
   @ApiListReadErrorResponses()
   async search(@Query() query: UserQueryDto): Promise<UserResponse[]> {
@@ -65,6 +67,7 @@ export class IdentityUsersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a user by id' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of user' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponse })
   @ApiReadErrorResponses()
   async getById(@Param('id') id: string): Promise<UserResponse> {
@@ -74,6 +77,8 @@ export class IdentityUsersController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a user' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of user' })
+  @ApiBody({ type: UpdateUserDto })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponse })
   @ApiCreateAndUpdateErrorResponses()
   async update(@Param('id') id: string, @Body() dto: UpdateUserDto): Promise<UserResponse> {
@@ -92,6 +97,8 @@ export class IdentityUsersController {
 
   @Put(':id/roles')
   @ApiOperation({ summary: 'Change the user roles (full replacement)' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of user' })
+  @ApiBody({ type: AssignRolesDto })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponse })
   @ApiCreateAndUpdateErrorResponses()
   async replaceRoles(@Param('id') id: string, @Body() dto: AssignRolesDto): Promise<UserResponse> {
@@ -102,6 +109,7 @@ export class IdentityUsersController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a user' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Id of user' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiDeletionErrorResponses()
   async delete(@Param('id') id: string): Promise<void> {

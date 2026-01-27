@@ -12,6 +12,8 @@ export enum PositionSortField {
 }
 
 export type PositionSearchQuery = {
+  title?: string;
+  description?: string;
   search?: string;
   sortBy?: PositionSortField;
   sortDirection?: SortDirection;

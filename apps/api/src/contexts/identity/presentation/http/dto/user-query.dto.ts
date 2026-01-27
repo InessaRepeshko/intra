@@ -9,7 +9,7 @@ import { USER_CONSTRAINTS } from '@intra/shared-kernel';
 import { IsEnglishName } from 'src/common/validators/name.validator';
 
 export class UserQueryDto {
-  @ApiPropertyOptional({ description: `Search by first name or last name or email`, minimum: USER_CONSTRAINTS.NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Valerii' })
+  @ApiPropertyOptional({ description: `Search by first name or last name or email (contains, case insensitive)`, minimum: USER_CONSTRAINTS.NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Valerii' })
   @IsOptional()
   @ToOptionalTrimmedString()
   @IsString()
@@ -17,7 +17,7 @@ export class UserQueryDto {
   @MaxLength(USER_CONSTRAINTS.NAME.LENGTH.MAX)
   search?: string;
 
-  @ApiPropertyOptional({ description: `User's first name`, minimum: USER_CONSTRAINTS.NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Valerii', type: 'string' })
+  @ApiPropertyOptional({ description: `User's first name (contains, case insensitive)`, minimum: USER_CONSTRAINTS.NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Valerii', type: 'string' })
   @IsOptional()
   @ToOptionalTrimmedString({ min: USER_CONSTRAINTS.NAME.LENGTH.MIN, max: USER_CONSTRAINTS.NAME.LENGTH.MAX })
   @IsEnglishName(false)
@@ -26,7 +26,7 @@ export class UserQueryDto {
   @MaxLength(USER_CONSTRAINTS.NAME.LENGTH.MAX)
   firstName?: string;
 
-  @ApiPropertyOptional({ description: `User's second name`, minimum: USER_CONSTRAINTS.NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Valeriiovych', type: 'string' })
+  @ApiPropertyOptional({ description: `User's second name (contains, case insensitive)`, minimum: USER_CONSTRAINTS.NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Valeriiovych', type: 'string' })
   @IsOptional()
   @ToOptionalTrimmedString({ min: USER_CONSTRAINTS.NAME.LENGTH.MIN, max: USER_CONSTRAINTS.NAME.LENGTH.MAX })
   @IsEnglishName(true, true)
@@ -35,7 +35,7 @@ export class UserQueryDto {
   @MaxLength(USER_CONSTRAINTS.NAME.LENGTH.MAX)
   secondName?: string;
 
-  @ApiPropertyOptional({ description: `User's last name`, minimum: USER_CONSTRAINTS.NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Velychko', type: 'string' })
+  @ApiPropertyOptional({ description: `User's last name (contains, case insensitive)`, minimum: USER_CONSTRAINTS.NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.NAME.LENGTH.MAX, example: 'Velychko', type: 'string' })
   @IsOptional()
   @ToOptionalTrimmedString({ min: USER_CONSTRAINTS.NAME.LENGTH.MIN, max: USER_CONSTRAINTS.NAME.LENGTH.MAX })
   @IsEnglishName(false)
@@ -44,7 +44,7 @@ export class UserQueryDto {
   @MaxLength(USER_CONSTRAINTS.NAME.LENGTH.MAX)
   lastName?: string;
 
-  @ApiPropertyOptional({ description: `User's full name`, minimum: USER_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.FULL_NAME.LENGTH.MAX, example: 'Valerii Valeriiovych Velychko', type: 'string' })
+  @ApiPropertyOptional({ description: `User's full name (contains, case insensitive)`, minimum: USER_CONSTRAINTS.FULL_NAME.LENGTH.MIN, maximum: USER_CONSTRAINTS.FULL_NAME.LENGTH.MAX, example: 'Valerii Valeriiovych Velychko', type: 'string' })
   @IsOptional()
   @ToOptionalTrimmedString({ min: USER_CONSTRAINTS.FULL_NAME.LENGTH.MIN, max: USER_CONSTRAINTS.FULL_NAME.LENGTH.MAX })
   @IsEnglishName(false)
@@ -95,13 +95,13 @@ export class UserQueryDto {
   @IsEnum(IdentityRole, { each: true })
   roles?: IdentityRole[];
 
-  @ApiPropertyOptional({ description: 'Sorting field', enum: UserSortField, default: UserSortField.ID, example: UserSortField.LAST_NAME })
+  @ApiPropertyOptional({ description: 'Sorting field', enum: UserSortField, default: UserSortField.ID, example: UserSortField.LAST_NAME, type: 'string' })
   @IsOptional()
   @ToOptionalEnum(UserSortField)
   @IsEnum(UserSortField)
   sortBy?: UserSortField;
 
-  @ApiPropertyOptional({ description: 'Sorting direction', enum: SortDirection, default: SortDirection.ASC, example: SortDirection.DESC })
+  @ApiPropertyOptional({ description: 'Sorting direction', enum: SortDirection, default: SortDirection.ASC, example: SortDirection.DESC, type: 'string' })
   @IsOptional()
   @ToOptionalEnum(SortDirection)
   @IsEnum(SortDirection)

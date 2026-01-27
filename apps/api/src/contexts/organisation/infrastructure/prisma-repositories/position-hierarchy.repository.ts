@@ -12,15 +12,13 @@ export class PositionHierarchyRepository implements PositionHierarchyRepositoryP
   async link(superiorPositionId: number, subordinatePositionId: number): Promise<PositionHierarchyDomain> {
     try {
       const created = await this.prisma.positionHierarchy.create({
-        data: { superiorPositionId: superiorPositionId, subordinatePositionId: subordinatePositionId },
+        data: { superiorPositionId, subordinatePositionId },
       });
       return OrganisationMapper.toPositionHierarchyDomain(created);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const existing = await this.prisma.positionHierarchy.findUnique({
-          where: {
-            superiorPositionId_subordinatePositionId: { superiorPositionId: superiorPositionId, subordinatePositionId: subordinatePositionId },
-          },
+          where: { superiorPositionId_subordinatePositionId: { superiorPositionId, subordinatePositionId } },
         });
         if (existing) return OrganisationMapper.toPositionHierarchyDomain(existing);
       }
@@ -30,13 +28,13 @@ export class PositionHierarchyRepository implements PositionHierarchyRepositoryP
 
   async unlink(superiorPositionId: number, subordinatePositionId: number): Promise<void> {
     await this.prisma.positionHierarchy.deleteMany({
-      where: { superiorPositionId: superiorPositionId, subordinatePositionId: subordinatePositionId },
+      where: { superiorPositionId, subordinatePositionId },
     });
   }
 
   async listSubordinates(superiorPositionId: number): Promise<PositionHierarchyDomain[]> {
     const relations = await this.prisma.positionHierarchy.findMany({
-      where: { superiorPositionId: superiorPositionId },
+      where: { superiorPositionId },
       orderBy: { createdAt: 'desc' },
     });
     return relations.map(OrganisationMapper.toPositionHierarchyDomain);
@@ -44,7 +42,7 @@ export class PositionHierarchyRepository implements PositionHierarchyRepositoryP
 
   async listSuperiors(subordinatePositionId: number): Promise<PositionHierarchyDomain[]> {
     const relations = await this.prisma.positionHierarchy.findMany({
-      where: { subordinatePositionId: subordinatePositionId },
+      where: { subordinatePositionId },
       orderBy: { createdAt: 'desc' },
     });
     return relations.map(OrganisationMapper.toPositionHierarchyDomain);

@@ -55,15 +55,19 @@ export class PositionRepository implements PositionRepositoryPort {
   }
 
   private buildWhere(query: PositionSearchQuery): Prisma.PositionWhereInput {
-    const { search } = query;
-    return search
-      ? {
-        OR: [
-          { title: { contains: search } },
-          { description: { contains: search } },
-        ],
-      }
-      : {};
+    const { search, title, description } = query;
+    return {
+      ...(search
+        ? {
+          OR: [
+            { title: { contains: search, mode: 'insensitive' } },
+            { description: { contains: search, mode: 'insensitive' } },
+          ],
+        }
+        : {}),
+      ...(title ? { title: { contains: title, mode: 'insensitive' } } : {}),
+      ...(description ? { description: { contains: description, mode: 'insensitive' } } : {}),
+    };
   }
 
   private buildOrder(query: PositionSearchQuery): Prisma.PositionOrderByWithRelationInput[] {
