@@ -1,8 +1,17 @@
-import { IdentityRole, ROLE_CONSTRAINTS } from '@intra/shared-kernel';
+import { IdentityRole, ROLE_CONSTRAINTS, RoleDto } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class RoleResponse {
+export class RoleResponse implements RoleDto {
+    @ApiProperty({
+        example: 1,
+        description: 'Role id',
+        type: 'number',
+        required: true,
+    })
+    @Expose()
+    id!: number;
+
     @ApiProperty({
         enum: IdentityRole,
         example: IdentityRole.MANAGER,

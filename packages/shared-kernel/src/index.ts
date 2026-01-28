@@ -11,6 +11,14 @@ export { USER_CONSTRAINTS } from './identity/constraints/user.constraints';
 export { IdentityRole, IDENTITY_ROLES } from './identity/enums/identity-role.enum';
 export { IdentityStatus, IDENTITY_STATUSES } from './identity/enums/identity-status.enum';
 
+export type { RoleDto } from './identity/dto/role/role-dto.interface';
+
+export type { UserDto } from './identity/dto/user/user-dto.interface';
+export      { UserSortField } from './identity/enums/user-sort-field.enum';
+export type { UserSearchQuery } from './identity/dto/user/user-search-query.type';
+export type { CreateUserPayload } from './identity/dto/user/create-user-payload.type';
+export type { UpdateUserPayload } from './identity/dto/user/update-user-payload.type';
+
 /* Library */
 export { CLUSTER_CONSTRAINTS } from './library/constraints/cluster.constraints';
 export { COMPETENCE_CONSTRAINTS } from './library/constraints/competence.constraints';

@@ -2,11 +2,12 @@ import {
     IdentityRole,
     IdentityStatus,
     USER_CONSTRAINTS,
+    UserDto,
 } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class UserResponse {
+export class UserResponse implements UserDto {
     @ApiProperty({ example: 1, description: 'User ID', type: 'number' })
     @Expose()
     id!: number;
@@ -75,11 +76,10 @@ export class UserResponse {
     @ApiProperty({
         type: Number,
         example: 1,
-        nullable: true,
         description: 'User position ID',
     })
     @Expose()
-    positionId!: number | null;
+    positionId!: number;
 
     @ApiProperty({
         type: Number,

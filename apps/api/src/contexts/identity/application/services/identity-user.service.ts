@@ -1,4 +1,10 @@
-import { IdentityRole, IdentityStatus } from '@intra/shared-kernel';
+import {
+    CreateUserPayload,
+    IdentityRole,
+    IdentityStatus,
+    UpdateUserPayload,
+    UserSearchQuery,
+} from '@intra/shared-kernel';
 import {
     BadRequestException,
     Inject,
@@ -9,27 +15,9 @@ import { UserDomain } from '../../domain/user.domain';
 import type { RoleRepositoryPort } from '../ports/role.repository.port';
 import { IDENTITY_ROLE_REPOSITORY } from '../ports/role.repository.port';
 import type { UserRepositoryPort } from '../ports/user.repository.port';
-import {
-    IDENTITY_USER_REPOSITORY,
-    UserSearchQuery,
-    UserUpdatePayload,
-} from '../ports/user.repository.port';
+import { IDENTITY_USER_REPOSITORY } from '../ports/user.repository.port';
 
-export type CreateUserCommand = {
-    firstName: string;
-    secondName?: string;
-    lastName: string;
-    fullName?: string;
-    email: string;
-    passwordHash?: string;
-    status?: IdentityStatus;
-    positionId: number;
-    teamId?: number | null;
-    managerId?: number | null;
-    roles?: IdentityRole[];
-};
-
-export type UpdateUserCommand = Partial<Omit<CreateUserCommand, 'email'>>;
+export type UpdateUserCommand = Partial<Omit<CreateUserPayload, 'email'>>;
 
 const PASSWORD_PLACEHOLDER = '__external_auth__';
 
@@ -42,25 +30,25 @@ export class IdentityUserService {
         private readonly roles: RoleRepositoryPort,
     ) {}
 
-    async create(command: CreateUserCommand): Promise<UserDomain> {
+    async create(payload: CreateUserPayload): Promise<UserDomain> {
         const user = UserDomain.create({
-            firstName: command.firstName,
-            secondName: command.secondName,
-            lastName: command.lastName,
+            firstName: payload.firstName,
+            secondName: payload.secondName,
+            lastName: payload.lastName,
             fullName:
-                command.fullName ??
+                payload.fullName ??
                 this.buildFullName(
-                    command.firstName,
-                    command.secondName,
-                    command.lastName,
+                    payload.firstName,
+                    payload.secondName,
+                    payload.lastName,
                 ),
-            email: command.email,
-            passwordHash: command.passwordHash ?? PASSWORD_PLACEHOLDER,
-            status: command.status ?? IdentityStatus.ACTIVE,
-            positionId: command.positionId,
-            teamId: command.teamId ?? null,
-            managerId: command.managerId ?? null,
-            roles: command.roles ?? [],
+            email: payload.email,
+            passwordHash: payload.passwordHash ?? PASSWORD_PLACEHOLDER,
+            status: payload.status ?? IdentityStatus.ACTIVE,
+            positionId: payload.positionId,
+            teamId: payload.teamId ?? null,
+            managerId: payload.managerId ?? null,
+            roles: payload.roles ?? [],
         });
 
         return this.users.create(user);
@@ -94,7 +82,7 @@ export class IdentityUserService {
               )
             : undefined;
 
-        const payload: UserUpdatePayload = {
+        const payload: UpdateUserPayload = {
             ...patch,
             ...(fullName !== undefined ? { fullName } : {}),
         };

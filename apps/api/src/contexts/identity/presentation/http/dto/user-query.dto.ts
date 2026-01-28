@@ -3,6 +3,7 @@ import {
     IdentityStatus,
     SortDirection,
     USER_CONSTRAINTS,
+    UserSortField,
 } from '@intra/shared-kernel';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
@@ -23,7 +24,6 @@ import {
 } from 'src/common/transforms/query-sanitize.transform';
 import { IsEmail } from 'src/common/validators/email.validator';
 import { IsEnglishName } from 'src/common/validators/name.validator';
-import { UserSortField } from '../../../application/ports/user.repository.port';
 
 export class UserQueryDto {
     @ApiPropertyOptional({

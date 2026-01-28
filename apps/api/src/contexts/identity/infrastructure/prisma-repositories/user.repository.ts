@@ -1,13 +1,14 @@
 import { IdentityStatus, Prisma } from '@intra/database';
-import { IdentityRole, SortDirection } from '@intra/shared-kernel';
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
 import {
-    UserRepositoryPort,
+    IdentityRole,
+    SortDirection,
+    UpdateUserPayload,
     UserSearchQuery,
     UserSortField,
-    UserUpdatePayload,
-} from '../../application/ports/user.repository.port';
+} from '@intra/shared-kernel';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
+import { UserRepositoryPort } from '../../application/ports/user.repository.port';
 import { UserDomain } from '../../domain/user.domain';
 import { IdentityMapper, UserWithRoles } from './identity.mapper';
 
@@ -75,7 +76,7 @@ export class UserRepository implements UserRepositoryPort {
 
     async updateById(
         id: number,
-        patch: UserUpdatePayload,
+        patch: UpdateUserPayload,
     ): Promise<UserDomain> {
         const updated = await this.prisma.user.update({
             where: { id },
