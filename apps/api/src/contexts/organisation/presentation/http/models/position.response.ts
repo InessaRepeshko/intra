@@ -1,8 +1,8 @@
-import { POSITION_CONSTRAINTS } from '@intra/shared-kernel';
+import { POSITION_CONSTRAINTS, PositionDto } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class PositionResponse {
+export class PositionResponse implements PositionDto {
     @ApiProperty({ example: 1, type: 'number', description: 'Position id' })
     @Expose()
     id!: number;

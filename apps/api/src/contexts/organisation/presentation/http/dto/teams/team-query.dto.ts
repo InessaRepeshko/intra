@@ -1,4 +1,8 @@
-import { SortDirection, TEAM_CONSTRAINTS } from '@intra/shared-kernel';
+import {
+    SortDirection,
+    TEAM_CONSTRAINTS,
+    TeamSortField,
+} from '@intra/shared-kernel';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
     IsEnum,
@@ -13,7 +17,6 @@ import {
     ToOptionalInt,
     ToOptionalTrimmedString,
 } from 'src/common/transforms/query-sanitize.transform';
-import { TeamSortField } from '../../../../application/ports/team.repository.port';
 
 export class TeamQueryDto {
     @ApiPropertyOptional({

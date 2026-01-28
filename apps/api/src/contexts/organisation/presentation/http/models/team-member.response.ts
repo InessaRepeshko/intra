@@ -1,8 +1,9 @@
+import { TeamMemberDto } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { UserResponse } from 'src/contexts/identity/presentation/http/models/user.response';
 
-export class TeamMemberResponse {
+export class TeamMemberResponse implements TeamMemberDto {
     @ApiProperty({
         example: 101,
         type: 'number',

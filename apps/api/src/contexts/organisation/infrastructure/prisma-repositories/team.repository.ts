@@ -1,13 +1,13 @@
 import { Prisma } from '@intra/database';
-import { SortDirection } from '@intra/shared-kernel';
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
 import {
-    TeamRepositoryPort,
+    SortDirection,
     TeamSearchQuery,
     TeamSortField,
-    TeamUpdatePayload,
-} from '../../application/ports/team.repository.port';
+    UpdateTeamPayload,
+} from '@intra/shared-kernel';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
+import { TeamRepositoryPort } from '../../application/ports/team.repository.port';
 import type { TeamMembershipDomain } from '../../domain/team-membership.domain';
 import type { TeamDomain } from '../../domain/team.domain';
 import { OrganisationMapper } from './organisation.mapper';
@@ -43,7 +43,7 @@ export class TeamRepository implements TeamRepositoryPort {
 
     async updateById(
         id: number,
-        patch: TeamUpdatePayload,
+        patch: UpdateTeamPayload,
     ): Promise<TeamDomain> {
         const updated = await this.prisma.team.update({
             where: { id },
@@ -108,8 +108,17 @@ export class TeamRepository implements TeamRepositoryPort {
     private buildWhere(query: TeamSearchQuery): Prisma.TeamWhereInput {
         const { search, headId, title, description } = query;
         return {
-            ...(title ? { title } : {}),
-            ...(description ? { description } : {}),
+            ...(title
+                ? { title: { contains: title, mode: 'insensitive' } }
+                : {}),
+            ...(description
+                ? {
+                      description: {
+                          contains: description,
+                          mode: 'insensitive',
+                      },
+                  }
+                : {}),
             ...(headId !== undefined ? { headId } : {}),
             ...(search
                 ? {

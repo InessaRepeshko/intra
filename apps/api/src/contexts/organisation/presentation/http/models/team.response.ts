@@ -1,8 +1,8 @@
-import { TEAM_CONSTRAINTS } from '@intra/shared-kernel';
+import { TEAM_CONSTRAINTS, TeamDto } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class TeamResponse {
+export class TeamResponse implements TeamDto {
     @ApiProperty({ example: 1, type: 'number', description: 'Id of team' })
     @Expose()
     id!: number;

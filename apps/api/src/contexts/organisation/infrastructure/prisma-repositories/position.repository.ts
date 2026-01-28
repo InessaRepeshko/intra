@@ -1,13 +1,13 @@
 import { Prisma } from '@intra/database';
-import { SortDirection } from '@intra/shared-kernel';
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
 import {
-    PositionRepositoryPort,
     PositionSearchQuery,
     PositionSortField,
-    PositionUpdatePayload,
-} from '../../application/ports/position.repository.port';
+    SortDirection,
+    UpdatePositionPayload,
+} from '@intra/shared-kernel';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
+import { PositionRepositoryPort } from '../../application/ports/position.repository.port';
 import { PositionDomain } from '../../domain/position.domain';
 import { OrganisationMapper } from './organisation.mapper';
 
@@ -44,7 +44,7 @@ export class PositionRepository implements PositionRepositoryPort {
 
     async updateById(
         id: number,
-        patch: PositionUpdatePayload,
+        patch: UpdatePositionPayload,
     ): Promise<PositionDomain> {
         const updated = await this.prisma.position.update({
             where: { id },

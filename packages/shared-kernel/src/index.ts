@@ -5,6 +5,21 @@ export { SortDirection } from './common/enums/sort-direction.enum';
 export { TEAM_CONSTRAINTS } from './organisation/constraints/team.constraints';
 export { POSITION_CONSTRAINTS } from './organisation/constraints/position.constraints';
 
+export type { PositionDto } from './organisation/dto/position/position-dto.interface';
+export      { PositionSortField } from './organisation/enums/position-sort-field.enum';
+export type { PositionSearchQuery } from './organisation/dto/position/position-search-query.type';
+export type { CreatePositionPayload } from './organisation/dto/position/create-position-payload.type';
+export type { UpdatePositionPayload } from './organisation/dto/position/update-position-payload.type';
+
+export type { TeamMemberDto } from './organisation/dto/team-member/team-member-dto.interface';
+
+export type { TeamDto } from './organisation/dto/team/team-dto.interface';
+export      { TeamSortField } from './organisation/enums/team-sort-field.enum';
+export type { TeamSearchQuery } from './organisation/dto/team/team-search-query.type';
+export type { CreateTeamPayload } from './organisation/dto/team/create-team-payload.type';
+export type { UpdateTeamPayload } from './organisation/dto/team/update-team-payload.type';
+export type { AddTeamMemberPayload } from './organisation/dto/team/add-member-payload.type';
+
 /* Identity */
 export { ROLE_CONSTRAINTS } from './identity/constraints/role.constraints';
 export { USER_CONSTRAINTS } from './identity/constraints/user.constraints';
@@ -32,27 +47,17 @@ export type { ClusterSearchQuery } from './library/dto/cluster/cluster-search-qu
 export type { CreateClusterPayload } from './library/dto/cluster/create-cluster-payload.type';
 export type { UpdateClusterPayload } from './library/dto/cluster/update-cluster-payload.type';
 
-
-
-
 export type { CompetenceDto } from './library/dto/competence/competence-dto.interface';
 export      { CompetenceSortField } from './library/enums/competence-sort-field.enum';
 export type { CompetenceSearchQuery } from './library/dto/competence/competence-search-query.type';
 export type { CreateCompetencePayload } from './library/dto/competence/create-competence-payload.type';
 export type { UpdateCompetencePayload } from './library/dto/competence/update-competence-payload.type';
 
-
-
 export type { QuestionTemplateDto } from './library/dto/question-template/question-template-dto.interface';
 export      { QuestionTemplateSortField } from './library/enums/question-template-sort-field.enum';
 export type { QuestionTemplateSearchQuery } from './library/dto/question-template/question-template-search-query.type';
 export type { CreateQuestionTemplatePayload } from './library/dto/question-template/create-question-template-payload.type';
 export type { UpdateQuestionTemplatePayload } from './library/dto/question-template/update-question-template-payload.type';
-
-
-
-
-
 
 /* Feedback360 */
 export { ANSWER_CONSTRAINTS } from './feedback360/constraints/answer.constraints';

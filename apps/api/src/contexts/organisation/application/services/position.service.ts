@@ -1,18 +1,12 @@
+import {
+    CreatePositionPayload,
+    PositionSearchQuery,
+    UpdatePositionPayload,
+} from '@intra/shared-kernel';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PositionDomain } from '../../domain/position.domain';
 import type { PositionRepositoryPort } from '../ports/position.repository.port';
-import {
-    ORGANISATION_POSITION_REPOSITORY,
-    PositionSearchQuery,
-    PositionUpdatePayload,
-} from '../ports/position.repository.port';
-
-export type CreatePositionCommand = {
-    title: string;
-    description?: string | null;
-};
-
-export type UpdatePositionCommand = Partial<CreatePositionCommand>;
+import { ORGANISATION_POSITION_REPOSITORY } from '../ports/position.repository.port';
 
 @Injectable()
 export class PositionService {
@@ -21,10 +15,10 @@ export class PositionService {
         private readonly positions: PositionRepositoryPort,
     ) {}
 
-    async create(command: CreatePositionCommand): Promise<PositionDomain> {
+    async create(payload: CreatePositionPayload): Promise<PositionDomain> {
         const position = PositionDomain.create({
-            title: command.title,
-            description: command.description ?? null,
+            title: payload.title,
+            description: payload.description ?? null,
         });
         return this.positions.create(position);
     }
@@ -41,10 +35,10 @@ export class PositionService {
 
     async update(
         id: number,
-        patch: UpdatePositionCommand,
+        patch: UpdatePositionPayload,
     ): Promise<PositionDomain> {
         await this.getById(id);
-        const payload: PositionUpdatePayload = {
+        const payload: UpdatePositionPayload = {
             ...patch,
             ...(patch.description !== undefined
                 ? { description: patch.description }

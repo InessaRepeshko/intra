@@ -1,4 +1,4 @@
-import { SortDirection } from '@intra/shared-kernel';
+import { TeamSearchQuery, UpdateTeamPayload } from '@intra/shared-kernel';
 import { TeamMembershipDomain } from '../../domain/team-membership.domain';
 import { TeamDomain } from '../../domain/team.domain';
 
@@ -6,35 +6,11 @@ export const ORGANISATION_TEAM_REPOSITORY = Symbol(
     'ORGANISATION.TEAM_REPOSITORY',
 );
 
-export enum TeamSortField {
-    ID = 'id',
-    TITLE = 'title',
-    DESCRIPTION = 'description',
-    HEAD_ID = 'headId',
-    CREATED_AT = 'createdAt',
-    UPDATED_AT = 'updatedAt',
-}
-
-export type TeamSearchQuery = {
-    search?: string;
-    headId?: number;
-    title?: string;
-    description?: string;
-    sortBy?: TeamSortField;
-    sortDirection?: SortDirection;
-};
-
-export type TeamUpdatePayload = Partial<{
-    title: string;
-    description: string | null;
-    headId: number | null;
-}>;
-
 export interface TeamRepositoryPort {
     create(team: TeamDomain): Promise<TeamDomain>;
     findById(id: number): Promise<TeamDomain | null>;
     search(query: TeamSearchQuery): Promise<TeamDomain[]>;
-    updateById(id: number, patch: TeamUpdatePayload): Promise<TeamDomain>;
+    updateById(id: number, patch: UpdateTeamPayload): Promise<TeamDomain>;
     deleteById(id: number): Promise<void>;
     addMember(
         teamId: number,

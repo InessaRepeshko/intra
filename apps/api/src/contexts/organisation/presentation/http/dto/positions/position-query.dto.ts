@@ -1,4 +1,8 @@
-import { POSITION_CONSTRAINTS, SortDirection } from '@intra/shared-kernel';
+import {
+    POSITION_CONSTRAINTS,
+    PositionSortField,
+    SortDirection,
+} from '@intra/shared-kernel';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
     IsEnum,
@@ -11,7 +15,6 @@ import {
     ToOptionalEnum,
     ToOptionalTrimmedString,
 } from 'src/common/transforms/query-sanitize.transform';
-import { PositionSortField } from '../../../../application/ports/position.repository.port';
 
 export class PositionQueryDto {
     @ApiPropertyOptional({

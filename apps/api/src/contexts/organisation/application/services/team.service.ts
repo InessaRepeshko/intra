@@ -1,26 +1,15 @@
+import {
+    AddTeamMemberPayload,
+    CreateTeamPayload,
+    TeamSearchQuery,
+    UpdateTeamPayload,
+} from '@intra/shared-kernel';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IdentityUserService } from 'src/contexts/identity/application/services/identity-user.service';
 import { TeamMembershipDomain } from '../../domain/team-membership.domain';
 import { TeamDomain } from '../../domain/team.domain';
 import type { TeamRepositoryPort } from '../ports/team.repository.port';
-import {
-    ORGANISATION_TEAM_REPOSITORY,
-    TeamSearchQuery,
-    TeamUpdatePayload,
-} from '../ports/team.repository.port';
-
-export type CreateTeamCommand = {
-    title: string;
-    description?: string | null;
-    headId?: number | null;
-};
-
-export type UpdateTeamCommand = Partial<CreateTeamCommand>;
-
-export type AddTeamMemberCommand = {
-    memberId: number;
-    isPrimary?: boolean | null;
-};
+import { ORGANISATION_TEAM_REPOSITORY } from '../ports/team.repository.port';
 
 @Injectable()
 export class TeamService {
@@ -30,15 +19,15 @@ export class TeamService {
         private readonly identityUsers: IdentityUserService,
     ) {}
 
-    async create(command: CreateTeamCommand): Promise<TeamDomain> {
-        if (command.headId !== undefined && command.headId !== null) {
-            await this.identityUsers.getById(command.headId);
+    async create(payload: CreateTeamPayload): Promise<TeamDomain> {
+        if (payload.headId !== undefined && payload.headId !== null) {
+            await this.identityUsers.getById(payload.headId);
         }
 
         const team = TeamDomain.create({
-            title: command.title,
-            description: command.description ?? null,
-            headId: command.headId ?? null,
+            title: payload.title,
+            description: payload.description ?? null,
+            headId: payload.headId ?? null,
         });
         return this.teams.create(team);
     }
@@ -53,14 +42,14 @@ export class TeamService {
         return team;
     }
 
-    async update(id: number, patch: UpdateTeamCommand): Promise<TeamDomain> {
+    async update(id: number, patch: UpdateTeamPayload): Promise<TeamDomain> {
         await this.getById(id);
 
         if (patch.headId !== undefined && patch.headId !== null) {
             await this.identityUsers.getById(patch.headId);
         }
 
-        const payload: TeamUpdatePayload = {
+        const payload: UpdateTeamPayload = {
             ...patch,
             ...(patch.description !== undefined
                 ? { description: patch.description }
@@ -77,16 +66,16 @@ export class TeamService {
 
     async addMember(
         teamId: number,
-        command: AddTeamMemberCommand,
+        payload: AddTeamMemberPayload,
         opts?: { withUser?: boolean },
     ): Promise<TeamMembershipDomain> {
         await this.getById(teamId);
-        const user = await this.identityUsers.getById(command.memberId);
+        const user = await this.identityUsers.getById(payload.memberId);
 
         const membership = await this.teams.addMember(
             teamId,
-            command.memberId,
-            command.isPrimary,
+            payload.memberId,
+            payload.isPrimary,
         );
         if (opts?.withUser) {
             return membership.withUser(user);
