@@ -1,13 +1,13 @@
 import { Prisma } from '@intra/database';
-import { SortDirection } from '@intra/shared-kernel';
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
 import {
-    CompetenceRepositoryPort,
     CompetenceSearchQuery,
     CompetenceSortField,
-    CompetenceUpdatePayload,
-} from '../../application/ports/competence.repository.port';
+    SortDirection,
+    UpdateCompetencePayload,
+} from '@intra/shared-kernel';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
+import { CompetenceRepositoryPort } from '../../application/ports/competence.repository.port';
 import { CompetenceDomain } from '../../domain/competence.domain';
 import { LibraryMapper } from './library.mapper';
 
@@ -44,7 +44,7 @@ export class CompetenceRepository implements CompetenceRepositoryPort {
 
     async updateById(
         id: number,
-        patch: CompetenceUpdatePayload,
+        patch: UpdateCompetencePayload,
     ): Promise<CompetenceDomain> {
         const updated = await this.prisma.competence.update({
             where: { id },

@@ -1,4 +1,9 @@
 import {
+    ClusterSearchQuery,
+    CreateClusterPayload,
+    UpdateClusterPayload,
+} from '@intra/shared-kernel';
+import {
     BadRequestException,
     Inject,
     Injectable,
@@ -8,20 +13,8 @@ import { ClusterDomain } from '../../domain/cluster.domain';
 import {
     CLUSTER_REPOSITORY,
     ClusterRepositoryPort,
-    ClusterSearchQuery,
-    ClusterUpdatePayload,
 } from '../ports/cluster.repository.port';
 import { CompetenceService } from './competence.service';
-
-export type CreateClusterCommand = {
-    competenceId: number;
-    lowerBound: number;
-    upperBound: number;
-    title: string;
-    description: string;
-};
-
-export type UpdateClusterCommand = Partial<CreateClusterCommand>;
 
 @Injectable()
 export class ClusterService {
@@ -31,16 +24,16 @@ export class ClusterService {
         private readonly competences: CompetenceService,
     ) {}
 
-    async create(command: CreateClusterCommand): Promise<ClusterDomain> {
-        await this.ensureBounds(command.lowerBound, command.upperBound);
-        await this.competences.getById(command.competenceId);
+    async create(payload: CreateClusterPayload): Promise<ClusterDomain> {
+        await this.ensureBounds(payload.lowerBound, payload.upperBound);
+        await this.competences.getById(payload.competenceId);
 
         const cluster = ClusterDomain.create({
-            competenceId: command.competenceId,
-            lowerBound: command.lowerBound,
-            upperBound: command.upperBound,
-            title: command.title,
-            description: command.description,
+            competenceId: payload.competenceId,
+            lowerBound: payload.lowerBound,
+            upperBound: payload.upperBound,
+            title: payload.title,
+            description: payload.description,
         });
 
         return this.clusters.create(cluster);
@@ -58,7 +51,7 @@ export class ClusterService {
 
     async update(
         id: number,
-        patch: UpdateClusterCommand,
+        patch: UpdateClusterPayload,
     ): Promise<ClusterDomain> {
         const current = await this.getById(id);
 
@@ -72,7 +65,7 @@ export class ClusterService {
             await this.ensureBounds(lower, upper);
         }
 
-        const payload: ClusterUpdatePayload = {
+        const payload: UpdateClusterPayload = {
             ...(patch.competenceId !== undefined
                 ? { competenceId: patch.competenceId }
                 : {}),

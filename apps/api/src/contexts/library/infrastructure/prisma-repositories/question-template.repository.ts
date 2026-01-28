@@ -1,13 +1,13 @@
 import { Prisma } from '@intra/database';
-import { SortDirection } from '@intra/shared-kernel';
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
 import {
-    QuestionTemplateRepositoryPort,
     QuestionTemplateSearchQuery,
     QuestionTemplateSortField,
-    QuestionTemplateUpdatePayload,
-} from '../../application/ports/question-template.repository.port';
+    SortDirection,
+    UpdateQuestionTemplatePayload,
+} from '@intra/shared-kernel';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
+import { QuestionTemplateRepositoryPort } from '../../application/ports/question-template.repository.port';
 import { QuestionTemplateDomain } from '../../domain/question-template.domain';
 import { LibraryMapper } from './library.mapper';
 
@@ -65,7 +65,7 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
 
     async updateById(
         id: number,
-        patch: QuestionTemplateUpdatePayload,
+        patch: UpdateQuestionTemplatePayload,
     ): Promise<QuestionTemplateDomain> {
         const updated = await this.prisma.questionTemplate.update({
             where: { id },

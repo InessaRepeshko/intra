@@ -1,4 +1,8 @@
-import { CLUSTER_CONSTRAINTS, SortDirection } from '@intra/shared-kernel';
+import {
+    CLUSTER_CONSTRAINTS,
+    ClusterSortField,
+    SortDirection,
+} from '@intra/shared-kernel';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
     IsEnum,
@@ -15,11 +19,10 @@ import {
     ToOptionalInt,
     ToOptionalTrimmedString,
 } from 'src/common/transforms/query-sanitize.transform';
-import { ClusterSortField } from 'src/contexts/library/application/ports/cluster.repository.port';
 
 export class ClusterQueryDto {
     @ApiPropertyOptional({
-        description: 'Filter by competence id (contains, case-insensitive)',
+        description: 'Filter by competence id',
         example: 2,
         type: 'number',
     })
@@ -30,7 +33,7 @@ export class ClusterQueryDto {
     competenceId?: number;
 
     @ApiPropertyOptional({
-        description: 'Filter by lower bound (contains, case-insensitive)',
+        description: 'Filter by lower bound',
         example: 2,
         type: 'number',
         minimum: CLUSTER_CONSTRAINTS.SCORE.MIN,
@@ -47,7 +50,7 @@ export class ClusterQueryDto {
     lowerBound?: number;
 
     @ApiPropertyOptional({
-        description: 'Filter by upper bound (contains, case-insensitive)',
+        description: 'Filter by upper bound',
         example: 2,
         type: 'number',
         minimum: CLUSTER_CONSTRAINTS.SCORE.MIN,

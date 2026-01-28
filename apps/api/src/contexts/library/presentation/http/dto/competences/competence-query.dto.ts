@@ -1,11 +1,14 @@
-import { COMPETENCE_CONSTRAINTS, SortDirection } from '@intra/shared-kernel';
+import {
+    COMPETENCE_CONSTRAINTS,
+    CompetenceSortField,
+    SortDirection,
+} from '@intra/shared-kernel';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import {
     ToOptionalEnum,
     ToOptionalTrimmedString,
 } from 'src/common/transforms/query-sanitize.transform';
-import { CompetenceSortField } from 'src/contexts/library/application/ports/competence.repository.port';
 
 export class CompetenceQueryDto {
     @ApiPropertyOptional({

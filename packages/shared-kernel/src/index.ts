@@ -26,6 +26,34 @@ export { QUESTION_TEMPLATE_CONSTRAINTS } from './library/constraints/question.co
 export { AnswerType, ANSWER_TYPES } from './library/enums/answer-type.enum';
 export { QuestionTemplateStatus, QUESTION_TEMPLATE_STATUSES } from './library/enums/question-template-status.enum';
 
+export type { ClusterDto } from './library/dto/cluster/cluster-dto.interface';
+export      { ClusterSortField } from './library/enums/cluster-sort-field.enum';
+export type { ClusterSearchQuery } from './library/dto/cluster/cluster-search-query.type';
+export type { CreateClusterPayload } from './library/dto/cluster/create-cluster-payload.type';
+export type { UpdateClusterPayload } from './library/dto/cluster/update-cluster-payload.type';
+
+
+
+
+export type { CompetenceDto } from './library/dto/competence/competence-dto.interface';
+export      { CompetenceSortField } from './library/enums/competence-sort-field.enum';
+export type { CompetenceSearchQuery } from './library/dto/competence/competence-search-query.type';
+export type { CreateCompetencePayload } from './library/dto/competence/create-competence-payload.type';
+export type { UpdateCompetencePayload } from './library/dto/competence/update-competence-payload.type';
+
+
+
+export type { QuestionTemplateDto } from './library/dto/question-template/question-template-dto.interface';
+export      { QuestionTemplateSortField } from './library/enums/question-template-sort-field.enum';
+export type { QuestionTemplateSearchQuery } from './library/dto/question-template/question-template-search-query.type';
+export type { CreateQuestionTemplatePayload } from './library/dto/question-template/create-question-template-payload.type';
+export type { UpdateQuestionTemplatePayload } from './library/dto/question-template/update-question-template-payload.type';
+
+
+
+
+
+
 /* Feedback360 */
 export { ANSWER_CONSTRAINTS } from './feedback360/constraints/answer.constraints';
 export { CLUSTER_SCORE_CONSTRAINTS } from './feedback360/constraints/cluster-score.constraints';

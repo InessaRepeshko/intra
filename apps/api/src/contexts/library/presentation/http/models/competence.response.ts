@@ -1,7 +1,8 @@
+import { CompetenceDto } from '@intra/shared-kernel';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class CompetenceResponse {
+export class CompetenceResponse implements CompetenceDto {
     @ApiProperty({ example: 1, type: 'number', description: 'Competence id' })
     @Expose()
     id!: number;

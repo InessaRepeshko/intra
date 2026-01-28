@@ -1,3 +1,8 @@
+import {
+    CompetenceSearchQuery,
+    CreateCompetencePayload,
+    UpdateCompetencePayload,
+} from '@intra/shared-kernel';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PositionService } from 'src/contexts/organisation/application/services/position.service';
 import { CompetenceDomain } from '../../domain/competence.domain';
@@ -8,8 +13,6 @@ import {
 import {
     COMPETENCE_REPOSITORY,
     CompetenceRepositoryPort,
-    CompetenceSearchQuery,
-    CompetenceUpdatePayload,
 } from '../ports/competence.repository.port';
 import {
     POSITION_COMPETENCE_RELATION_REPOSITORY,
@@ -19,14 +22,6 @@ import {
     QUESTION_TEMPLATE_REPOSITORY,
     QuestionTemplateRepositoryPort,
 } from '../ports/question-template.repository.port';
-
-export type CreateCompetenceCommand = {
-    code?: string | null;
-    title: string;
-    description?: string | null;
-};
-
-export type UpdateCompetenceCommand = Partial<CreateCompetenceCommand>;
 
 @Injectable()
 export class CompetenceService {
@@ -42,11 +37,11 @@ export class CompetenceService {
         private readonly positions: PositionService,
     ) {}
 
-    async create(command: CreateCompetenceCommand): Promise<CompetenceDomain> {
+    async create(payload: CreateCompetencePayload): Promise<CompetenceDomain> {
         const competence = CompetenceDomain.create({
-            code: command.code ?? null,
-            title: command.title,
-            description: command.description ?? null,
+            code: payload.code ?? null,
+            title: payload.title,
+            description: payload.description ?? null,
         });
         return this.competences.create(competence);
     }
@@ -63,10 +58,10 @@ export class CompetenceService {
 
     async update(
         id: number,
-        patch: UpdateCompetenceCommand,
+        patch: UpdateCompetencePayload,
     ): Promise<CompetenceDomain> {
         await this.getById(id);
-        const payload: CompetenceUpdatePayload = {
+        const payload: UpdateCompetencePayload = {
             ...(patch.code !== undefined ? { code: patch.code } : {}),
             ...(patch.title !== undefined ? { title: patch.title } : {}),
             ...(patch.description !== undefined

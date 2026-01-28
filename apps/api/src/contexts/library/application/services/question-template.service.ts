@@ -1,4 +1,9 @@
-import { AnswerType, QuestionTemplateStatus } from '@intra/shared-kernel';
+import {
+    CreateQuestionTemplatePayload,
+    QuestionTemplateSearchQuery,
+    QuestionTemplateStatus,
+    UpdateQuestionTemplatePayload,
+} from '@intra/shared-kernel';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PositionService } from 'src/contexts/organisation/application/services/position.service';
 import { QuestionTemplateDomain } from '../../domain/question-template.domain';
@@ -13,22 +18,8 @@ import {
 import {
     QUESTION_TEMPLATE_REPOSITORY,
     QuestionTemplateRepositoryPort,
-    QuestionTemplateSearchQuery,
-    QuestionTemplateUpdatePayload,
 } from '../ports/question-template.repository.port';
 import { CompetenceService } from './competence.service';
-
-export type CreateQuestionTemplateCommand = {
-    competenceId: number;
-    title: string;
-    answerType: AnswerType;
-    isForSelfassessment?: boolean;
-    status?: QuestionTemplateStatus;
-    positionIds?: number[];
-};
-
-export type UpdateQuestionTemplateCommand =
-    Partial<CreateQuestionTemplateCommand>;
 
 @Injectable()
 export class QuestionTemplateService {
@@ -44,23 +35,23 @@ export class QuestionTemplateService {
     ) {}
 
     async create(
-        command: CreateQuestionTemplateCommand,
+        payload: CreateQuestionTemplatePayload,
     ): Promise<QuestionTemplateDomain> {
-        await this.competences.getById(command.competenceId);
+        await this.competences.getById(payload.competenceId);
 
         const question = QuestionTemplateDomain.create({
-            competenceId: command.competenceId,
-            title: command.title,
-            answerType: command.answerType,
-            isForSelfassessment: command.isForSelfassessment ?? false,
-            status: command.status ?? QuestionTemplateStatus.ACTIVE,
-            positionIds: command.positionIds ?? [],
+            competenceId: payload.competenceId,
+            title: payload.title,
+            answerType: payload.answerType,
+            isForSelfassessment: payload.isForSelfassessment ?? false,
+            status: payload.status ?? QuestionTemplateStatus.ACTIVE,
+            positionIds: payload.positionIds ?? [],
         });
 
         const created = await this.questionTemplates.create(question);
 
-        const positionIds = command.positionIds
-            ? Array.from(new Set(command.positionIds))
+        const positionIds = payload.positionIds
+            ? Array.from(new Set(payload.positionIds))
             : [];
         if (positionIds.length) {
             await this.ensurePositionsExist(positionIds);
@@ -88,7 +79,7 @@ export class QuestionTemplateService {
 
     async update(
         id: number,
-        patch: UpdateQuestionTemplateCommand,
+        patch: UpdateQuestionTemplatePayload,
     ): Promise<QuestionTemplateDomain> {
         const current = await this.getById(id);
 
@@ -96,7 +87,7 @@ export class QuestionTemplateService {
             await this.competences.getById(patch.competenceId);
         }
 
-        const payload: QuestionTemplateUpdatePayload = {
+        const payload: UpdateQuestionTemplatePayload = {
             ...(patch.competenceId !== undefined
                 ? { competenceId: patch.competenceId }
                 : {}),

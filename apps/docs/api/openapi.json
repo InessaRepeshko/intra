@@ -2273,7 +2273,7 @@
             "name": "competenceId",
             "required": false,
             "in": "query",
-            "description": "Filter by competence id (contains, case-insensitive)",
+            "description": "Filter by competence id",
             "schema": {
               "example": 2,
               "type": "number"
@@ -2283,7 +2283,7 @@
             "name": "lowerBound",
             "required": false,
             "in": "query",
-            "description": "Filter by lower bound (contains, case-insensitive)",
+            "description": "Filter by lower bound",
             "schema": {
               "minimum": 0,
               "maximum": 5,
@@ -2295,7 +2295,7 @@
             "name": "upperBound",
             "required": false,
             "in": "query",
-            "description": "Filter by upper bound (contains, case-insensitive)",
+            "description": "Filter by upper bound",
             "schema": {
               "minimum": 0,
               "maximum": 5,
@@ -2376,7 +2376,7 @@
             }
           },
           {
-            "description": "Filter by competence id (contains, case-insensitive)",
+            "description": "Filter by competence id",
             "required": false,
             "name": "competenceId",
             "in": "query",
@@ -2386,7 +2386,7 @@
             }
           },
           {
-            "description": "Filter by lower bound (contains, case-insensitive)",
+            "description": "Filter by lower bound",
             "required": false,
             "name": "lowerBound",
             "in": "query",
@@ -2398,7 +2398,7 @@
             }
           },
           {
-            "description": "Filter by upper bound (contains, case-insensitive)",
+            "description": "Filter by upper bound",
             "required": false,
             "name": "upperBound",
             "in": "query",
@@ -7099,7 +7099,6 @@
           "positionId": {
             "type": "number",
             "example": 1,
-            "nullable": true,
             "description": "User position ID"
           },
           "teamId": {
@@ -7270,6 +7269,11 @@
       "RoleResponse": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "Role id"
+          },
           "code": {
             "type": "string",
             "enum": [
@@ -7310,6 +7314,7 @@
           }
         },
         "required": [
+          "id",
           "code",
           "title",
           "description",

@@ -1,13 +1,13 @@
 import { Prisma } from '@intra/database';
-import { SortDirection } from '@intra/shared-kernel';
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
 import {
-    ClusterRepositoryPort,
     ClusterSearchQuery,
     ClusterSortField,
-    ClusterUpdatePayload,
-} from '../../application/ports/cluster.repository.port';
+    SortDirection,
+    UpdateClusterPayload,
+} from '@intra/shared-kernel';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
+import { ClusterRepositoryPort } from '../../application/ports/cluster.repository.port';
 import { ClusterDomain } from '../../domain/cluster.domain';
 import { LibraryMapper } from './library.mapper';
 
@@ -44,7 +44,7 @@ export class ClusterRepository implements ClusterRepositoryPort {
 
     async updateById(
         id: number,
-        patch: ClusterUpdatePayload,
+        patch: UpdateClusterPayload,
     ): Promise<ClusterDomain> {
         const updated = await this.prisma.cluster.update({
             where: { id },

@@ -1,12 +1,13 @@
 import {
     AnswerType,
     QUESTION_TEMPLATE_CONSTRAINTS,
+    QuestionTemplateDto,
     QuestionTemplateStatus,
 } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class QuestionTemplateResponse {
+export class QuestionTemplateResponse implements QuestionTemplateDto {
     @ApiProperty({
         example: 1,
         description: 'Question template id',

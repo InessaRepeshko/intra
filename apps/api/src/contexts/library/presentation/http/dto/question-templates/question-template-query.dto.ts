@@ -1,6 +1,7 @@
 import {
     AnswerType,
     QUESTION_TEMPLATE_CONSTRAINTS,
+    QuestionTemplateSortField,
     QuestionTemplateStatus,
     SortDirection,
 } from '@intra/shared-kernel';
@@ -23,7 +24,6 @@ import {
     ToOptionalIntArray,
     ToOptionalTrimmedString,
 } from 'src/common/transforms/query-sanitize.transform';
-import { QuestionTemplateSortField } from 'src/contexts/library/application/ports/question-template.repository.port';
 
 export class QuestionTemplateQueryDto {
     @ApiPropertyOptional({

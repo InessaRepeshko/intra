@@ -1,8 +1,8 @@
-import { CLUSTER_CONSTRAINTS } from '@intra/shared-kernel';
+import { CLUSTER_CONSTRAINTS, ClusterDto } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class ClusterResponse {
+export class ClusterResponse implements ClusterDto {
     @ApiProperty({ example: 1, description: 'Cluster id', type: 'number' })
     @Expose()
     id!: number;

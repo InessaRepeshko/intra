@@ -1,45 +1,12 @@
 import {
-    AnswerType,
-    QuestionTemplateStatus,
-    SortDirection,
+    QuestionTemplateSearchQuery,
+    UpdateQuestionTemplatePayload,
 } from '@intra/shared-kernel';
 import { QuestionTemplateDomain } from '../../domain/question-template.domain';
 
 export const QUESTION_TEMPLATE_REPOSITORY = Symbol(
     'LIBRARY.QUESTION_TEMPLATE_REPOSITORY',
 );
-
-export enum QuestionTemplateSortField {
-    ID = 'id',
-    TITLE = 'title',
-    ANSWER_TYPE = 'answerType',
-    COMPELTECE_ID = 'competenceId',
-    IS_FOR_SELFASSESSMENT = 'isForSelfassessment',
-    STATUS = 'status',
-    POSITION_IDS = 'positionIds',
-    CREATED_AT = 'createdAt',
-    UPDATED_AT = 'updatedAt',
-}
-
-export type QuestionTemplateSearchQuery = {
-    title?: string;
-    answerType?: AnswerType;
-    competenceId?: number;
-    isForSelfassessment?: boolean;
-    status?: QuestionTemplateStatus;
-    positionIds?: number[];
-    sortBy?: QuestionTemplateSortField;
-    sortDirection?: SortDirection;
-};
-
-export type QuestionTemplateUpdatePayload = Partial<{
-    title: string;
-    answerType: AnswerType;
-    competenceId: number;
-    isForSelfassessment: boolean;
-    status: QuestionTemplateStatus;
-    positionIds: number[];
-}>;
 
 export interface QuestionTemplateRepositoryPort {
     create(question: QuestionTemplateDomain): Promise<QuestionTemplateDomain>;
@@ -49,7 +16,7 @@ export interface QuestionTemplateRepositoryPort {
     ): Promise<QuestionTemplateDomain[]>;
     updateById(
         id: number,
-        patch: QuestionTemplateUpdatePayload,
+        patch: UpdateQuestionTemplatePayload,
     ): Promise<QuestionTemplateDomain>;
     deleteById(id: number): Promise<void>;
 }
