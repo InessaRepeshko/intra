@@ -6,3 +6,5 @@ export enum CompetenceSortField {
     CREATED_AT = 'createdAt',
     UPDATED_AT = 'updatedAt',
 }
+
+export const COMPETENCE_SORT_FIELDS = Object.values(CompetenceSortField);

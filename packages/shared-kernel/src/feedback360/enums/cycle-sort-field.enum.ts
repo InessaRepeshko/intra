@@ -14,3 +14,5 @@ export enum CycleSortField {
     CREATED_AT = 'createdAt',
     UPDATED_AT = 'updatedAt',
 }
+
+export const CYCLE_SORT_FIELDS = Object.values(CycleSortField);

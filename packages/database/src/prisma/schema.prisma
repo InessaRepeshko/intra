@@ -207,6 +207,7 @@ model Competence {
   reviewQuestions           Question[]
   reviewQuestionRelations   ReviewQuestionRelation[]
   clusters                  Cluster[]
+  reportAnalytics           ReportAnalytics[]
 
   @@map("library_competences")
 }
@@ -423,6 +424,8 @@ model Question {
   competence              Competence?              @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   answers                 Answer[]
   reviewQuestionRelations ReviewQuestionRelation[]
+  reportComments          ReportComment[]
+  reportAnalytics         ReportAnalytics[]
 
   @@index([cycleId])
   @@index([questionTemplateId])
@@ -596,6 +599,7 @@ model Report {
   id                           Int      @id @default(autoincrement())
   reviewId                     Int      @unique() @map("review_id")
   cycleId                      Int?     @map("cycle_id")
+  respondentCount              Int      @map("respondent_count")
   turnoutOfTeam                Float?   @map("turnout_of_team")
   turnoutOfOther               Float?   @map("turnout_of_other")
   totalAverageBySelfAssessment Float?   @map("total_average_by_self_assessment")
@@ -619,35 +623,43 @@ model ReportAnalytics {
   id                      Int        @id @default(autoincrement())
   reportId                Int        @map("report_id")
   entityType              EntityType @map("entity_type")
-  entityId                Int?       @map("entity_id")
-  entityTitle             String     @map("entity_title") @db.Text
+  questionId              Int?       @map("question_id")
+  questionTitle           String?    @map("question_title") @db.Text
+  competenceId            Int?       @map("competence_id")
+  competenceTitle         String?    @map("competence_title") @db.Text
   averageBySelfAssessment Float?     @map("average_by_self_assessment")
   averageByTeam           Float?     @map("average_by_team")
   averageByOther          Float?     @map("average_by_other")
   deltaBySelfAssessment   Float?     @map("delta_by_self_assessment")
   deltaByTeam             Float?     @map("delta_by_team")
   deltaByOther            Float?     @map("delta_by_other")
-  dimension               String?    @map("dimension") @db.VarChar(255)
   createdAt               DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
 
-  report Report @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  report     Report      @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question   Question?   @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  competence Competence? @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([reportId, entityType, entityId])
   @@index([reportId])
+  @@index([questionId])
+  @@index([competenceId])
   @@map("reporting_analytics")
 }
 
 model ReportComment {
   id                 Int                @id @default(autoincrement())
   reportId           Int                @map("report_id")
-  comment            String?            @db.Text
-  commentSentiment   CommentSentiment   @default(POSITIVE) @map("comment_sentiment")
-  numberOfMentions   Int?               @map("number_of_mentions")
+  questionId         Int                @map("question_id")
+  questionTitle      String             @map("question_title") @db.Text
+  comment            String             @db.Text
   respondentCategory RespondentCategory @map("respondent_category")
+  commentSentiment   CommentSentiment?  @default(POSITIVE) @map("comment_sentiment")
+  numberOfMentions   Int                @map("number_of_mentions")
   createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamp(0)
 
-  report Report @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  report   Report    @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question Question? @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([reportId])
+  @@index([questionId])
   @@map("reporting_comments")
 }

@@ -9,3 +9,5 @@ export enum ReviewQuestionRelationSortField {
     IS_FOR_SELFASSESSMENT = 'isForSelfassessment',
     CREATED_AT = 'createdAt',
 }
+
+export const REVIEW_QUESTION_RELATION_SORT_FIELDS = Object.values(ReviewQuestionRelationSortField);

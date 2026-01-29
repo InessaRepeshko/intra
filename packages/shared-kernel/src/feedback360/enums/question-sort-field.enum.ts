@@ -8,3 +8,5 @@ export enum QuestionSortField {
     IS_FOR_SELFASSESSMENT = 'isForSelfassessment',
     CREATED_AT = 'createdAt',
 }
+
+export const QUESTION_SORT_FIELDS = Object.values(QuestionSortField);

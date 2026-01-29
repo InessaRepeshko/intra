@@ -5,6 +5,7 @@ export type ReportProps = {
     id?: number;
     reviewId: number;
     cycleId?: number | null;
+    respondentCount: number;
     turnoutOfTeam?: number | null;
     turnoutOfOther?: number | null;
     totalAverageBySelfAssessment?: number | null;
@@ -13,15 +14,16 @@ export type ReportProps = {
     totalDeltaBySelfAssessment?: number | null;
     totalDeltaByTeam?: number | null;
     totalDeltaByOthers?: number | null;
-    analytics?: ReportAnalyticsDomain[];
-    comments?: ReportCommentDomain[];
     createdAt?: Date;
+    analytics: ReportAnalyticsDomain[];
+    comments?: ReportCommentDomain[];
 };
 
 export class ReportDomain {
     readonly id?: number;
     readonly reviewId: number;
     readonly cycleId?: number | null;
+    readonly respondentCount: number;
     readonly turnoutOfTeam?: number | null;
     readonly turnoutOfOther?: number | null;
     readonly totalAverageBySelfAssessment?: number | null;
@@ -30,14 +32,15 @@ export class ReportDomain {
     readonly totalDeltaBySelfAssessment?: number | null;
     readonly totalDeltaByTeam?: number | null;
     readonly totalDeltaByOthers?: number | null;
-    readonly analytics: ReportAnalyticsDomain[];
-    readonly comments: ReportCommentDomain[];
     readonly createdAt?: Date;
+    readonly analytics: ReportAnalyticsDomain[];
+    readonly comments?: ReportCommentDomain[];
 
     private constructor(props: ReportProps) {
         this.id = props.id;
         this.reviewId = props.reviewId;
         this.cycleId = props.cycleId ?? null;
+        this.respondentCount = props.respondentCount;
         this.turnoutOfTeam = props.turnoutOfTeam ?? null;
         this.turnoutOfOther = props.turnoutOfOther ?? null;
         this.totalAverageBySelfAssessment =
@@ -48,9 +51,9 @@ export class ReportDomain {
             props.totalDeltaBySelfAssessment ?? null;
         this.totalDeltaByTeam = props.totalDeltaByTeam ?? null;
         this.totalDeltaByOthers = props.totalDeltaByOthers ?? null;
+        this.createdAt = props.createdAt;
         this.analytics = props.analytics ?? [];
         this.comments = props.comments ?? [];
-        this.createdAt = props.createdAt;
     }
 
     static create(props: ReportProps): ReportDomain {

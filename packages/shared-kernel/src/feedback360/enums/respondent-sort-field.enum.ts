@@ -17,3 +17,5 @@ export enum RespondentSortField {
     CREATED_AT = 'createdAt',
     UPDATED_AT = 'updatedAt',
 }
+
+export const RESPONDENT_SORT_FIELDS = Object.values(RespondentSortField);

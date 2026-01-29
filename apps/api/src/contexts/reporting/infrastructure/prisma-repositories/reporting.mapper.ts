@@ -23,6 +23,7 @@ export class ReportingMapper {
             id: report.id,
             reviewId: report.reviewId,
             cycleId: report.cycleId,
+            respondentCount: report.respondentCount,
             turnoutOfTeam: report.turnoutOfTeam,
             turnoutOfOther: report.turnoutOfOther,
             totalAverageBySelfAssessment:
@@ -33,9 +34,9 @@ export class ReportingMapper {
                 report.totalDeltaBySelfAssessment,
             totalDeltaByTeam: report.totalDeltaByTeam,
             totalDeltaByOthers: report.totalDeltaByOthers,
+            createdAt: report.createdAt,
             analytics: report.analytics.map(this.toReportAnalyticsDomain),
             comments: report.comments.map(this.toReportCommentDomain),
-            createdAt: report.createdAt,
         });
     }
 
@@ -46,15 +47,16 @@ export class ReportingMapper {
             id: analytics.id,
             reportId: analytics.reportId,
             entityType: analytics.entityType as EntityType,
-            entityId: analytics.entityId,
-            entityTitle: analytics.entityTitle,
+            questionId: analytics.questionId,
+            questionTitle: analytics.questionTitle,
+            competenceId: analytics.competenceId,
+            competenceTitle: analytics.competenceTitle,
             averageBySelfAssessment: analytics.averageBySelfAssessment,
             averageByTeam: analytics.averageByTeam,
             averageByOther: analytics.averageByOther,
             deltaBySelfAssessment: analytics.deltaBySelfAssessment,
             deltaByTeam: analytics.deltaByTeam,
             deltaByOther: analytics.deltaByOther,
-            dimension: analytics.dimension,
             createdAt: analytics.createdAt,
         });
     }
@@ -65,10 +67,12 @@ export class ReportingMapper {
         return ReportCommentDomain.create({
             id: comment.id,
             reportId: comment.reportId,
+            questionId: comment.questionId,
+            questionTitle: comment.questionTitle,
             comment: comment.comment,
+            respondentCategory: comment.respondentCategory as RespondentCategory,
             commentSentiment: comment.commentSentiment as CommentSentiment,
             numberOfMentions: comment.numberOfMentions,
-            respondentCategory: comment.respondentCategory as RespondentCategory,
             createdAt: comment.createdAt,
         });
     }

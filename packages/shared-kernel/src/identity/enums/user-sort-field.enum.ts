@@ -13,3 +13,5 @@ export enum UserSortField {
     UPDATED_AT = 'updatedAt',
     ROLES = 'roles',
 }
+
+export const USER_SORT_FIELDS = Object.values(UserSortField);

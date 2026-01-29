@@ -6,29 +6,35 @@ import {
 export type ReportCommentProps = {
     id?: number;
     reportId: number;
-    comment?: string | null;
-    commentSentiment?: CommentSentiment;
-    numberOfMentions?: number | null;
+    questionId: number;
+    questionTitle: string;
+    comment: string;
     respondentCategory: RespondentCategory;
+    commentSentiment?: CommentSentiment | null;
+    numberOfMentions: number;
     createdAt?: Date;
 };
 
 export class ReportCommentDomain {
     readonly id?: number;
     readonly reportId: number;
-    readonly comment?: string | null;
-    readonly commentSentiment: CommentSentiment;
-    readonly numberOfMentions?: number | null;
+    readonly questionId: number;
+    readonly questionTitle: string;
+    readonly comment: string;
     readonly respondentCategory: RespondentCategory;
+    readonly commentSentiment?: CommentSentiment | null;
+    readonly numberOfMentions: number;
     readonly createdAt?: Date;
 
     private constructor(props: ReportCommentProps) {
         this.id = props.id;
         this.reportId = props.reportId;
-        this.comment = props.comment ?? null;
-        this.commentSentiment = props.commentSentiment ?? CommentSentiment.POSITIVE;
-        this.numberOfMentions = props.numberOfMentions ?? null;
+        this.questionId = props.questionId;
+        this.questionTitle = props.questionTitle;
+        this.comment = props.comment;
         this.respondentCategory = props.respondentCategory;
+        this.commentSentiment = props.commentSentiment ?? null;
+        this.numberOfMentions = props.numberOfMentions;
         this.createdAt = props.createdAt;
     }
 

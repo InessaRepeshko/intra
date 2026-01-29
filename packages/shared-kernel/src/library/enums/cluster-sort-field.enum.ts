@@ -8,3 +8,5 @@ export enum ClusterSortField {
     CREATED_AT = 'createdAt',
     UPDATED_AT = 'updatedAt',
 }
+
+export const CLUSTER_SORT_FIELDS = Object.values(ClusterSortField);

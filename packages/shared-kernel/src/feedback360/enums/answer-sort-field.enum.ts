@@ -8,3 +8,5 @@ export enum AnswerSortField {
     TEXT_VALUE = 'textValue',
     CREATED_AT = 'createdAt',
 }
+
+export const ANSWER_SORT_FIELDS = Object.values(AnswerSortField);

@@ -9,3 +9,5 @@ export enum QuestionTemplateSortField {
     CREATED_AT = 'createdAt',
     UPDATED_AT = 'updatedAt',
 }
+
+export const QUESTION_TEMPLATE_SORT_FIELDS = Object.values(QuestionTemplateSortField);

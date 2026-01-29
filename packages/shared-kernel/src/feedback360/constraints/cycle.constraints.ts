@@ -15,6 +15,6 @@ export const CYCLE_CONSTRAINTS = {
         },
     },
     ANONYMITY_THRESHOLD: {
-        MIN: 3
+        MIN: GLOBAL_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN,
     },
 };

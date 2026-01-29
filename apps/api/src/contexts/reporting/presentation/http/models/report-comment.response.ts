@@ -2,30 +2,45 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
     CommentSentiment,
     RespondentCategory,
+    REPORT_COMMENT_CONSTRAINTS,
 } from '@intra/shared-kernel';
+import { ReportCommentDto } from '@intra/shared-kernel';
+import { Expose } from 'class-transformer';
 
-export class ReportCommentResponse {
-    @ApiProperty()
+export class ReportCommentResponse implements ReportCommentDto {
+    @ApiProperty({ example: 1, description: 'Comment id', type: 'number', required: true, nullable: false })
+    @Expose()
     id!: number;
 
-    @ApiProperty()
+    @ApiProperty({ example: 1, description: 'Report id', type: 'number', required: true, nullable: false })
+    @Expose()
     reportId!: number;
 
-    @ApiProperty({ required: false, nullable: true })
-    comment?: string | null;
+    @ApiProperty({ example: 1, description: 'Question id', type: 'number', required: true, nullable: false })
+    @Expose()
+    questionId!: number;
 
-    @ApiProperty({
-        enum: CommentSentiment,
-        description: 'Detected sentiment of the comment',
-    })
-    commentSentiment!: CommentSentiment;
+    @ApiProperty({ example: 'Question title', description: 'Question title', type: 'string', required: true, nullable: false, minimum: REPORT_COMMENT_CONSTRAINTS.TITLE.LENGTH.MIN, maximum: REPORT_COMMENT_CONSTRAINTS.TITLE.LENGTH.MAX })
+    @Expose()
+    questionTitle!: string;
 
-    @ApiProperty({ required: false, type: 'number', nullable: true })
-    numberOfMentions?: number | null;
+    @ApiProperty({ example: 'Comment', description: 'Comment', type: 'string', required: true, nullable: false, minimum: REPORT_COMMENT_CONSTRAINTS.COMMENT.LENGTH.MIN, maximum: REPORT_COMMENT_CONSTRAINTS.COMMENT.LENGTH.MAX })
+    @Expose()
+    comment!: string;
 
-    @ApiProperty({ enum: RespondentCategory })
+    @ApiProperty({ enum: RespondentCategory, description: 'Respondent category', type: 'string', required: true, nullable: false })
+    @Expose()
     respondentCategory!: RespondentCategory;
 
-    @ApiProperty()
+    @ApiProperty({ enum: CommentSentiment, description: 'Comment sentiment', type: 'string', required: false, nullable: true })
+    @Expose()
+    commentSentiment?: CommentSentiment | null;
+
+    @ApiProperty({ example: 3, description: 'Number of mentions', type: 'number', required: true, nullable: false, minimum: 1 })
+    @Expose()
+    numberOfMentions!: number;
+
+    @ApiProperty({ example: '2025-01-01T00:00:00.000Z', description: 'Created at', type: 'string', format: 'date-time' })
+    @Expose()
     createdAt!: Date;
 }

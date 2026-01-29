@@ -122,6 +122,7 @@ Table library_competences {
   reviewQuestions feedback360_questions [not null]
   reviewQuestionRelations feedback360_review_question_relations [not null]
   clusters library_clusters [not null]
+  reportAnalytics reporting_analytics [not null]
 }
 
 Table library_clusters {
@@ -267,6 +268,8 @@ Table feedback360_questions {
   competence library_competences
   answers feedback360_answers [not null]
   reviewQuestionRelations feedback360_review_question_relations [not null]
+  reportComments reporting_comments [not null]
+  reportAnalytics reporting_analytics [not null]
 }
 
 Table feedback360_review_question_relations {
@@ -392,6 +395,7 @@ Table reporting_reports {
   id Int [pk, increment]
   reviewId Int [unique, not null]
   cycleId Int
+  respondentCount Int [not null]
   turnoutOfTeam Float
   turnoutOfOther Float
   totalAverageBySelfAssessment Float
@@ -411,32 +415,34 @@ Table reporting_analytics {
   id Int [pk, increment]
   reportId Int [not null]
   entityType EntityType [not null]
-  entityId Int
-  entityTitle String [not null]
+  questionId Int
+  questionTitle String
+  competenceId Int
+  competenceTitle String
   averageBySelfAssessment Float
   averageByTeam Float
   averageByOther Float
   deltaBySelfAssessment Float
   deltaByTeam Float
   deltaByOther Float
-  dimension String
   createdAt DateTime [default: `now()`, not null]
   report reporting_reports [not null]
-
-  indexes {
-    (reportId, entityType, entityId) [unique]
-  }
+  question feedback360_questions
+  competence library_competences
 }
 
 Table reporting_comments {
   id Int [pk, increment]
   reportId Int [not null]
-  comment String
-  commentSentiment CommentSentiment [not null, default: 'POSITIVE']
-  numberOfMentions Int
+  questionId Int [not null]
+  questionTitle String [not null]
+  comment String [not null]
   respondentCategory RespondentCategory [not null]
+  commentSentiment CommentSentiment [default: 'POSITIVE']
+  numberOfMentions Int [not null]
   createdAt DateTime [default: `now()`, not null]
   report reporting_reports [not null]
+  question feedback360_questions
 }
 
 Enum IdentityRole {
@@ -600,4 +606,10 @@ Ref: reporting_reports.cycleId > feedback360_cycles.id [delete: No Action]
 
 Ref: reporting_analytics.reportId > reporting_reports.id [delete: No Action]
 
+Ref: reporting_analytics.questionId > feedback360_questions.id [delete: No Action]
+
+Ref: reporting_analytics.competenceId > library_competences.id [delete: No Action]
+
 Ref: reporting_comments.reportId > reporting_reports.id [delete: No Action]
+
+Ref: reporting_comments.questionId > feedback360_questions.id [delete: No Action]
