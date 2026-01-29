@@ -16,7 +16,8 @@
             "@intra/shared-kernel/*": [
                 "src/*"
             ]
-        }
+        },
+        "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo"
     },
     "include": [
         "src/**/*"

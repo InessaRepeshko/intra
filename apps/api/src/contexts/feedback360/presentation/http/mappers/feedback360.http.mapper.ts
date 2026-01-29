@@ -1,6 +1,6 @@
 import { AnswerDomain } from '../../../domain/answer.domain';
-import { ClusterScoreDomain } from '../../../domain/cluster-score.domain';
 import { ClusterScoreAnalyticsDomain } from '../../../domain/cluster-score-analytics.domain';
+import { ClusterScoreDomain } from '../../../domain/cluster-score.domain';
 import { CycleDomain } from '../../../domain/cycle.domain';
 import { QuestionDomain } from '../../../domain/question.domain';
 import { RespondentDomain } from '../../../domain/respondent.domain';
@@ -8,8 +8,8 @@ import { ReviewQuestionRelationDomain } from '../../../domain/review-question-re
 import { ReviewDomain } from '../../../domain/review.domain';
 import { ReviewerDomain } from '../../../domain/reviewer.domain';
 import { AnswerResponse } from '../models/answer.response';
-import { ClusterScoreResponse } from '../models/cluster-score.response';
 import { ClusterScoreAnalyticsResponse } from '../models/cluster-score-analytics.response';
+import { ClusterScoreResponse } from '../models/cluster-score.response';
 import { CycleResponse } from '../models/cycle.response';
 import { QuestionResponse } from '../models/question.response';
 import { RespondentResponse } from '../models/respondent.response';

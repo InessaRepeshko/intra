@@ -22,7 +22,7 @@ export class ClusterScoreAnalyticsService {
         @Inject(CLUSTER_SCORE_ANALYTICS_REPOSITORY)
         private readonly analytics: ClusterScoreAnalyticsRepositoryPort,
         private readonly cycles: CycleService,
-    ) { }
+    ) {}
 
     async upsert(
         payload: UpsertClusterScoreAnalyticsPayload,

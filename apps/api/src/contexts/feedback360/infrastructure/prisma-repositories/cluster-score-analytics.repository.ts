@@ -19,7 +19,7 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
     readonly [CLUSTER_SCORE_ANALYTICS_REPOSITORY] =
         CLUSTER_SCORE_ANALYTICS_REPOSITORY;
 
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService) {}
 
     async upsert(
         analytics: ClusterScoreAnalyticsDomain,

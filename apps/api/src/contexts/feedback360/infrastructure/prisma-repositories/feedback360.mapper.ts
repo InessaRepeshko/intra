@@ -2,8 +2,8 @@ import {
     Answer as PrismaAnswer,
     AnswerType as PrismaAnswerType,
     ClusterScore as PrismaClusterScore,
-    Cycle as PrismaCycle,
     ClusterScoreAnalytics as PrismaClusterScoreAnalytics,
+    Cycle as PrismaCycle,
     CycleStage as PrismaCycleStage,
     Question as PrismaQuestion,
     Respondent as PrismaRespondent,
@@ -22,8 +22,8 @@ import {
     ReviewStage,
 } from '@intra/shared-kernel';
 import { AnswerDomain } from '../../domain/answer.domain';
-import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
 import { ClusterScoreAnalyticsDomain } from '../../domain/cluster-score-analytics.domain';
+import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
 import { CycleDomain } from '../../domain/cycle.domain';
 import { QuestionDomain } from '../../domain/question.domain';
 import { RespondentDomain } from '../../domain/respondent.domain';

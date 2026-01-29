@@ -39,7 +39,7 @@ import { ClusterScoreAnalyticsResponse } from '../models/cluster-score-analytics
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ClusterScoreAnalyticsResponse })
 export class ClusterScoreAnalyticsController {
-    constructor(private readonly service: ClusterScoreAnalyticsService) { }
+    constructor(private readonly service: ClusterScoreAnalyticsService) {}
 
     @Post()
     @ApiOperation({ summary: 'Create or update cluster score analytics' })
