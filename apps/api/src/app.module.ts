@@ -11,6 +11,7 @@ import { IdentityModule } from './contexts/identity/identity.module';
 import { LibraryModule } from './contexts/library/library.module';
 import { OrganisationModule } from './contexts/organisation/organisation.module';
 import { DatabaseModule } from './database/database.module';
+import { ReportingModule } from './contexts/reporting/reporting.module';
 
 @Module({
     imports: [
@@ -27,6 +28,7 @@ import { DatabaseModule } from './database/database.module';
         OrganisationModule,
         LibraryModule,
         Feedback360Module,
+        ReportingModule,
     ],
     controllers: [AppController],
     providers: [AppService],

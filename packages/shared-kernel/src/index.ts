@@ -123,3 +123,7 @@ export type { ReviewerDto } from './feedback360/dto/reviewer/reviewer-dto.interf
 export { ReviewerSortField } from './feedback360/enums/reviewer-sort-field.enum';
 export type { ReviewerSearchQuery } from './feedback360/dto/reviewer/reviewer-search-query.type';
 export type { AddReviewerPayload } from './feedback360/dto/reviewer/add-reviewer-payload.type';
+
+/* Reporting */
+export { EntityType, ENTITY_TYPES } from './reporting/enums/entity-type.enum';
+export { CommentSentiment, COMMENT_SENTIMENTS } from './reporting/enums/comment-sentiment.enum';
