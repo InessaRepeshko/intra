@@ -1,9 +1,9 @@
-import { CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS } from '@intra/shared-kernel';
+import { CLUSTER_SCORE_ANALYTICS_CONSTRAINTS } from '@intra/shared-kernel';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsInt, IsNumber, IsOptional, Max, Min } from 'class-validator';
 import { ToOptionalInt } from 'src/common/transforms/query-sanitize.transform';
 
-export class UpdateCycleClusterAnalyticsDto {
+export class UpdateClusterScoreAnalyticsDto {
     @ApiPropertyOptional({
         example: 45,
         description: 'Number of employees in this cluster',
@@ -21,53 +21,53 @@ export class UpdateCycleClusterAnalyticsDto {
         example: 3.5,
         description: 'Minimum score',
         type: 'number',
-        minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        maximum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
         required: false,
     })
     @ToOptionalInt({
-        min: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        max: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        min: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        max: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
     })
     @IsOptional()
     @IsNumber()
-    @Min(CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN)
-    @Max(CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX)
+    @Min(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN)
+    @Max(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX)
     minScore?: number;
 
     @ApiPropertyOptional({
         example: 9.5,
         description: 'Maximum score',
         type: 'number',
-        minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        maximum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
         required: false,
     })
     @ToOptionalInt({
-        min: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        max: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        min: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        max: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
     })
     @IsOptional()
     @IsNumber()
-    @Min(CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN)
-    @Max(CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX)
+    @Min(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN)
+    @Max(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX)
     maxScore?: number;
 
     @ApiPropertyOptional({
         example: 6.8,
         description: 'Average score',
         type: 'number',
-        minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        maximum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
         required: false,
     })
     @ToOptionalInt({
-        min: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        max: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        min: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        max: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
     })
     @IsOptional()
     @IsNumber()
-    @Min(CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN)
-    @Max(CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX)
+    @Min(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN)
+    @Max(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX)
     averageScore?: number;
 }

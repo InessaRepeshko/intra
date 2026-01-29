@@ -1,4 +1,4 @@
-export type UpsertCycleClusterAnalyticsPayload = {
+export type UpsertClusterScoreAnalyticsPayload = {
     cycleId: number;
     clusterId: number;
     employeesCount: number;

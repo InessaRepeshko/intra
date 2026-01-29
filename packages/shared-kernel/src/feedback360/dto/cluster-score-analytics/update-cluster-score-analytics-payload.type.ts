@@ -1,4 +1,4 @@
-export type UpdateCycleClusterAnalyticsPayload = Partial<{
+export type UpdateClusterScoreAnalyticsPayload = Partial<{
     employeesCount: number;
     minScore: number;
     maxScore: number;

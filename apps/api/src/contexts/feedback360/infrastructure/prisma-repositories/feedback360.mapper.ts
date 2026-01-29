@@ -3,7 +3,7 @@ import {
     AnswerType as PrismaAnswerType,
     ClusterScore as PrismaClusterScore,
     Cycle as PrismaCycle,
-    CycleClusterAnalytics as PrismaCycleClusterAnalytics,
+    ClusterScoreAnalytics as PrismaClusterScoreAnalytics,
     CycleStage as PrismaCycleStage,
     Question as PrismaQuestion,
     Respondent as PrismaRespondent,
@@ -23,7 +23,7 @@ import {
 } from '@intra/shared-kernel';
 import { AnswerDomain } from '../../domain/answer.domain';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
-import { CycleClusterAnalyticsDomain } from '../../domain/cycle-cluster-analytics.domain';
+import { ClusterScoreAnalyticsDomain } from '../../domain/cluster-score-analytics.domain';
 import { CycleDomain } from '../../domain/cycle.domain';
 import { QuestionDomain } from '../../domain/question.domain';
 import { RespondentDomain } from '../../domain/respondent.domain';
@@ -166,10 +166,10 @@ export class Feedback360Mapper {
         });
     }
 
-    static toCycleClusterAnalyticsDomain(
-        analytics: PrismaCycleClusterAnalytics,
-    ): CycleClusterAnalyticsDomain {
-        return CycleClusterAnalyticsDomain.create({
+    static toClusterScoreAnalyticsDomain(
+        analytics: PrismaClusterScoreAnalytics,
+    ): ClusterScoreAnalyticsDomain {
+        return ClusterScoreAnalyticsDomain.create({
             id: analytics.id,
             cycleId: analytics.cycleId,
             clusterId: analytics.clusterId,

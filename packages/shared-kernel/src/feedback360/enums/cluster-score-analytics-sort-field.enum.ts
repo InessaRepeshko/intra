@@ -1,4 +1,4 @@
-export enum CycleClusterAnalyticsSortField {
+export enum ClusterScoreAnalyticsSortField {
     ID = 'id',
     CYCLE_ID = 'cycleId',
     CLUSTER_ID = 'clusterId',

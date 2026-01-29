@@ -2,7 +2,7 @@ import { PrismaClient } from '@intra/database';
 import type { ReviewMap } from './reviews';
 import type { CycleMap } from './cycles';
 
-export default async function seedCycleClusterAnalytics(
+export default async function seedClusterScoreAnalytics(
     prisma: PrismaClient,
     reviewMap: ReviewMap,
     cycleMap: CycleMap,
@@ -51,7 +51,7 @@ export default async function seedCycleClusterAnalytics(
             const employeesCount = clusterScores.length;
 
             // Check if analytics already exist
-            const existing = await prisma.cycleClusterAnalytics.findUnique({
+            const existing = await prisma.clusterScoreAnalytics.findUnique({
                 where: {
                     cycleId_clusterId: {
                         cycleId: cycle.id,
@@ -62,7 +62,7 @@ export default async function seedCycleClusterAnalytics(
 
             if (existing) {
                 // Update existing analytics
-                await prisma.cycleClusterAnalytics.update({
+                await prisma.clusterScoreAnalytics.update({
                     where: { id: existing.id },
                     data: {
                         employeesCount,
@@ -74,7 +74,7 @@ export default async function seedCycleClusterAnalytics(
                 console.log(`✅ Updated analytics for ${cluster.competence.code} (${cluster.lowerBound}-${cluster.upperBound}) in cycle "${cycle.title}": ${employeesCount} employees`);
             } else {
                 // Create new analytics
-                await prisma.cycleClusterAnalytics.create({
+                await prisma.clusterScoreAnalytics.create({
                     data: {
                         cycleId: cycle.id,
                         clusterId: cluster.id,

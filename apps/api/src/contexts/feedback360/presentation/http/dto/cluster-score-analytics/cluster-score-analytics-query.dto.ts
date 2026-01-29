@@ -1,6 +1,6 @@
 import {
-    CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS,
-    CycleClusterAnalyticsSortField,
+    CLUSTER_SCORE_ANALYTICS_CONSTRAINTS,
+    ClusterScoreAnalyticsSortField,
     SortDirection,
 } from '@intra/shared-kernel';
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -10,7 +10,7 @@ import {
     ToOptionalInt,
 } from 'src/common/transforms/query-sanitize.transform';
 
-export class CycleClusterAnalyticsQueryDto {
+export class ClusterScoreAnalyticsQueryDto {
     @ApiPropertyOptional({
         example: 1,
         description: 'Filter by cycle ID',
@@ -47,64 +47,64 @@ export class CycleClusterAnalyticsQueryDto {
         example: 5,
         description: 'Filter by min score',
         type: 'number',
-        minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        maximum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
     })
     @ToOptionalInt({
-        min: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        max: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        min: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        max: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
     })
     @IsOptional()
     @IsInt()
-    @Min(CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN)
-    @Max(CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX)
+    @Min(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN)
+    @Max(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX)
     minScore?: number;
 
     @ApiPropertyOptional({
         example: 5,
         description: 'Filter by max score',
         type: 'number',
-        minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        maximum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
     })
     @ToOptionalInt({
-        min: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        max: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        min: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        max: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
     })
     @IsOptional()
     @IsInt()
-    @Min(CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN)
-    @Max(CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX)
+    @Min(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN)
+    @Max(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX)
     maxScore?: number;
 
     @ApiPropertyOptional({
         example: 5,
         description: 'Filter by average score',
         type: 'number',
-        minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        maximum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
     })
     @ToOptionalInt({
-        min: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        max: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        min: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        max: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
     })
     @IsOptional()
     @IsInt()
-    @Min(CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN)
-    @Max(CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX)
+    @Min(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN)
+    @Max(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX)
     averageScore?: number;
 
     @ApiPropertyOptional({
-        example: CycleClusterAnalyticsSortField.AVERAGE_SCORE,
-        enum: CycleClusterAnalyticsSortField,
+        example: ClusterScoreAnalyticsSortField.AVERAGE_SCORE,
+        enum: ClusterScoreAnalyticsSortField,
         description: 'Sort by field',
         type: 'string',
-        default: CycleClusterAnalyticsSortField.ID,
+        default: ClusterScoreAnalyticsSortField.ID,
     })
-    @ToOptionalEnum(CycleClusterAnalyticsSortField)
+    @ToOptionalEnum(ClusterScoreAnalyticsSortField)
     @IsOptional()
-    @IsEnum(CycleClusterAnalyticsSortField)
-    sortBy?: CycleClusterAnalyticsSortField;
+    @IsEnum(ClusterScoreAnalyticsSortField)
+    sortBy?: ClusterScoreAnalyticsSortField;
 
     @ApiPropertyOptional({
         example: SortDirection.DESC,

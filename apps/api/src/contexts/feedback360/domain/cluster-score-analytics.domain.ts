@@ -1,4 +1,4 @@
-export type CycleClusterAnalyticsProps = {
+export type ClusterScoreAnalyticsProps = {
     id?: number;
     cycleId: number;
     clusterId: number;
@@ -10,7 +10,7 @@ export type CycleClusterAnalyticsProps = {
     updatedAt?: Date;
 };
 
-export class CycleClusterAnalyticsDomain {
+export class ClusterScoreAnalyticsDomain {
     readonly id?: number;
     readonly cycleId: number;
     readonly clusterId: number;
@@ -21,7 +21,7 @@ export class CycleClusterAnalyticsDomain {
     readonly createdAt?: Date;
     readonly updatedAt?: Date;
 
-    private constructor(props: CycleClusterAnalyticsProps) {
+    private constructor(props: ClusterScoreAnalyticsProps) {
         this.id = props.id;
         this.cycleId = props.cycleId;
         this.clusterId = props.clusterId;
@@ -34,8 +34,8 @@ export class CycleClusterAnalyticsDomain {
     }
 
     static create(
-        props: CycleClusterAnalyticsProps,
-    ): CycleClusterAnalyticsDomain {
-        return new CycleClusterAnalyticsDomain(props);
+        props: ClusterScoreAnalyticsProps,
+    ): ClusterScoreAnalyticsDomain {
+        return new ClusterScoreAnalyticsDomain(props);
     }
 }

@@ -27,7 +27,7 @@ Table identity_users {
   responses feedback360_respondents [not null]
   reviewsAsReviewer feedback360_reviewers [not null]
   reviewsAsManager feedback360_reviews [not null]
-  clusterScores feedback360_clusters_scores [not null]
+  clusterScores feedback360_cluster_scores [not null]
   answers feedback360_answers [not null]
 }
 
@@ -133,8 +133,8 @@ Table library_clusters {
   description String [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
-  clusterScores feedback360_clusters_scores [not null]
-  cycleClusterAnalytics feedback360_cycle_cluster_analytics [not null]
+  clusterScores feedback360_cluster_scores [not null]
+  clusterScoreAnalytics feedback360_cluster_score_analytics [not null]
   competence library_competences [not null]
 
   indexes {
@@ -212,8 +212,8 @@ Table feedback360_cycles {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   hr identity_users [not null]
-  clusterScores feedback360_clusters_scores [not null]
-  cycleClusterAnalytics feedback360_cycle_cluster_analytics [not null]
+  clusterScores feedback360_cluster_scores [not null]
+  clusterScoreAnalytics feedback360_cluster_score_analytics [not null]
   reviews feedback360_reviews [not null]
   reports reporting_reports [not null]
   reviewQuestions feedback360_questions [not null]
@@ -250,7 +250,7 @@ Table feedback360_reviews {
   report reporting_reports
   respondents feedback360_respondents [not null]
   reviewers feedback360_reviewers [not null]
-  clusterScores feedback360_clusters_scores [not null]
+  clusterScores feedback360_cluster_scores [not null]
 }
 
 Table feedback360_questions {
@@ -303,7 +303,7 @@ Table feedback360_answers {
   userId Int
 }
 
-Table feedback360_clusters_scores {
+Table feedback360_cluster_scores {
   id Int [pk, increment]
   cycleId Int
   clusterId Int [not null]
@@ -323,7 +323,7 @@ Table feedback360_clusters_scores {
   }
 }
 
-Table feedback360_cycle_cluster_analytics {
+Table feedback360_cluster_score_analytics {
   id Int [pk, increment]
   cycleId Int [not null]
   clusterId Int [not null]
@@ -568,17 +568,17 @@ Ref: feedback360_answers.reviewId > feedback360_reviews.id [delete: No Action]
 
 Ref: feedback360_answers.userId > identity_users.id
 
-Ref: feedback360_clusters_scores.rateeId > identity_users.id [delete: No Action]
+Ref: feedback360_cluster_scores.rateeId > identity_users.id [delete: No Action]
 
-Ref: feedback360_clusters_scores.cycleId > feedback360_cycles.id [delete: No Action]
+Ref: feedback360_cluster_scores.cycleId > feedback360_cycles.id [delete: No Action]
 
-Ref: feedback360_clusters_scores.clusterId > library_clusters.id [delete: No Action]
+Ref: feedback360_cluster_scores.clusterId > library_clusters.id [delete: No Action]
 
-Ref: feedback360_clusters_scores.reviewId > feedback360_reviews.id [delete: No Action]
+Ref: feedback360_cluster_scores.reviewId > feedback360_reviews.id [delete: No Action]
 
-Ref: feedback360_cycle_cluster_analytics.cycleId > feedback360_cycles.id [delete: No Action]
+Ref: feedback360_cluster_score_analytics.cycleId > feedback360_cycles.id [delete: No Action]
 
-Ref: feedback360_cycle_cluster_analytics.clusterId > library_clusters.id [delete: No Action]
+Ref: feedback360_cluster_score_analytics.clusterId > library_clusters.id [delete: No Action]
 
 Ref: feedback360_respondents.respondentId > identity_users.id [delete: No Action]
 

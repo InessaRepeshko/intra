@@ -1,11 +1,11 @@
 import {
-    CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS,
+    CLUSTER_SCORE_ANALYTICS_CONSTRAINTS,
     ClusterScoreAnalyticsDto,
 } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class CycleClusterAnalyticsResponse implements ClusterScoreAnalyticsDto {
+export class ClusterScoreAnalyticsResponse implements ClusterScoreAnalyticsDto {
     @ApiProperty({
         example: 1,
         description: 'Cycle cluster analytics id',
@@ -38,7 +38,7 @@ export class CycleClusterAnalyticsResponse implements ClusterScoreAnalyticsDto {
         description: 'Number of employees in this cluster',
         type: 'number',
         required: true,
-        minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.EMPLOYEES_COUNT.MIN,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.EMPLOYEES_COUNT.MIN,
     })
     @Expose()
     employeesCount!: number;
@@ -48,8 +48,8 @@ export class CycleClusterAnalyticsResponse implements ClusterScoreAnalyticsDto {
         description: 'Minimum score in this cluster',
         type: 'number',
         required: true,
-        minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        maximum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
     })
     @Expose()
     minScore!: number;
@@ -59,8 +59,8 @@ export class CycleClusterAnalyticsResponse implements ClusterScoreAnalyticsDto {
         description: 'Maximum score in this cluster',
         type: 'number',
         required: true,
-        minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        maximum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
     })
     @Expose()
     maxScore!: number;
@@ -70,8 +70,8 @@ export class CycleClusterAnalyticsResponse implements ClusterScoreAnalyticsDto {
         description: 'Average score in this cluster',
         type: 'number',
         required: true,
-        minimum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MIN,
-        maximum: CYCLE_CLUSTER_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
     })
     @Expose()
     averageScore!: number;

@@ -222,7 +222,7 @@ model Cluster {
   updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
   clusterScores         ClusterScore[]
-  cycleClusterAnalytics CycleClusterAnalytics[]
+  clusterScoreAnalytics ClusterScoreAnalytics[]
   competence            Competence              @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([competenceId, lowerBound, upperBound])
@@ -352,7 +352,7 @@ model Cycle {
 
   hr                    User                    @relation("managed_cycles", fields: [hrId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   clusterScores         ClusterScore[]
-  cycleClusterAnalytics CycleClusterAnalytics[]
+  clusterScoreAnalytics ClusterScoreAnalytics[]
   reviews               Review[]
   reports               Report[]
   reviewQuestions       Question[]
@@ -495,10 +495,10 @@ model ClusterScore {
   @@index([clusterId])
   @@index([rateeId])
   @@index([reviewId])
-  @@map("feedback360_clusters_scores")
+  @@map("feedback360_cluster_scores")
 }
 
-model CycleClusterAnalytics {
+model ClusterScoreAnalytics {
   id             Int      @id @default(autoincrement())
   cycleId        Int      @map("cycle_id")
   clusterId      Int      @map("cluster_id")
@@ -515,7 +515,7 @@ model CycleClusterAnalytics {
   @@unique([cycleId, clusterId])
   @@index([cycleId])
   @@index([clusterId])
-  @@map("feedback360_cycle_cluster_analytics")
+  @@map("feedback360_cluster_score_analytics")
 }
 
 model Respondent {

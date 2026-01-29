@@ -1,7 +1,7 @@
 import {
-    CycleClusterAnalyticsSearchQuery,
-    UpdateCycleClusterAnalyticsPayload,
-    UpsertCycleClusterAnalyticsPayload,
+    ClusterScoreAnalyticsSearchQuery,
+    UpdateClusterScoreAnalyticsPayload,
+    UpsertClusterScoreAnalyticsPayload,
 } from '@intra/shared-kernel';
 import {
     BadRequestException,
@@ -9,24 +9,24 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { CycleClusterAnalyticsDomain } from '../../domain/cycle-cluster-analytics.domain';
+import { ClusterScoreAnalyticsDomain } from '../../domain/cluster-score-analytics.domain';
 import {
-    CYCLE_CLUSTER_ANALYTICS_REPOSITORY,
-    CycleClusterAnalyticsRepositoryPort,
-} from '../ports/cycle-cluster-analytics.repository.port';
+    CLUSTER_SCORE_ANALYTICS_REPOSITORY,
+    ClusterScoreAnalyticsRepositoryPort,
+} from '../ports/cluster-score-analytics.repository.port';
 import { CycleService } from './cycle.service';
 
 @Injectable()
-export class CycleClusterAnalyticsService {
+export class ClusterScoreAnalyticsService {
     constructor(
-        @Inject(CYCLE_CLUSTER_ANALYTICS_REPOSITORY)
-        private readonly analytics: CycleClusterAnalyticsRepositoryPort,
+        @Inject(CLUSTER_SCORE_ANALYTICS_REPOSITORY)
+        private readonly analytics: ClusterScoreAnalyticsRepositoryPort,
         private readonly cycles: CycleService,
-    ) {}
+    ) { }
 
     async upsert(
-        payload: UpsertCycleClusterAnalyticsPayload,
-    ): Promise<CycleClusterAnalyticsDomain> {
+        payload: UpsertClusterScoreAnalyticsPayload,
+    ): Promise<ClusterScoreAnalyticsDomain> {
         await this.cycles.getById(payload.cycleId);
         await this.validateScores(
             payload.minScore,
@@ -34,7 +34,7 @@ export class CycleClusterAnalyticsService {
             payload.averageScore,
         );
 
-        const domain = CycleClusterAnalyticsDomain.create({
+        const domain = ClusterScoreAnalyticsDomain.create({
             cycleId: payload.cycleId,
             clusterId: payload.clusterId,
             employeesCount: payload.employeesCount,
@@ -47,12 +47,12 @@ export class CycleClusterAnalyticsService {
     }
 
     async search(
-        query: CycleClusterAnalyticsSearchQuery,
-    ): Promise<CycleClusterAnalyticsDomain[]> {
+        query: ClusterScoreAnalyticsSearchQuery,
+    ): Promise<ClusterScoreAnalyticsDomain[]> {
         return this.analytics.search(query);
     }
 
-    async getById(id: number): Promise<CycleClusterAnalyticsDomain> {
+    async getById(id: number): Promise<ClusterScoreAnalyticsDomain> {
         const item = await this.analytics.findById(id);
         if (!item)
             throw new NotFoundException('Cycle cluster analytics not found');
@@ -61,8 +61,8 @@ export class CycleClusterAnalyticsService {
 
     async update(
         id: number,
-        patch: UpdateCycleClusterAnalyticsPayload,
-    ): Promise<CycleClusterAnalyticsDomain> {
+        patch: UpdateClusterScoreAnalyticsPayload,
+    ): Promise<ClusterScoreAnalyticsDomain> {
         const current = await this.getById(id);
 
         const minScore = patch.minScore ?? current.minScore;
@@ -71,7 +71,7 @@ export class CycleClusterAnalyticsService {
 
         await this.validateScores(minScore, maxScore, averageScore);
 
-        const payload: UpdateCycleClusterAnalyticsPayload = {
+        const payload: UpdateClusterScoreAnalyticsPayload = {
             ...(patch.employeesCount !== undefined
                 ? { employeesCount: patch.employeesCount }
                 : {}),
