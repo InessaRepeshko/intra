@@ -33,4 +33,28 @@ export class ReportRepository implements ReportRepositoryPort {
 
         return report ? ReportingMapper.toReportDomain(report) : null;
     }
+
+    async create(domain: ReportDomain): Promise<ReportDomain> {
+        const created = await this.prisma.report.create({
+            data: {
+                reviewId: domain.reviewId,
+                cycleId: domain.cycleId,
+                respondentCount: domain.respondentCount,
+                turnoutOfTeam: domain.turnoutOfTeam,
+                turnoutOfOther: domain.turnoutOfOther,
+                totalAverageBySelfAssessment: domain.totalAverageBySelfAssessment,
+                totalAverageByTeam: domain.totalAverageByTeam,
+                totalAverageByOthers: domain.totalAverageByOthers,
+                totalDeltaBySelfAssessment: domain.totalDeltaBySelfAssessment,
+                totalDeltaByTeam: domain.totalDeltaByTeam,
+                totalDeltaByOthers: domain.totalDeltaByOthers,
+            },
+            include: {
+                analytics: { orderBy: { id: 'asc' } },
+                comments: { orderBy: { id: 'asc' } },
+            },
+        });
+
+        return ReportingMapper.toReportDomain(created);
+    }
 }

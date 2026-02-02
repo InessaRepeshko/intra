@@ -19,6 +19,7 @@ import {
     UpsertClusterScorePayload,
 } from '@intra/shared-kernel';
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PrismaService } from 'src/database/prisma.service';
 import { CompetenceService } from 'src/contexts/library/application/services/competence.service';
 import { QuestionTemplateService } from 'src/contexts/library/application/services/question-template.service';
@@ -93,8 +94,7 @@ export class ReviewService {
         private readonly questionTemplates: QuestionTemplateService,
         private readonly competences: CompetenceService,
         private readonly cycles: CycleService,
-        // TODO: Inject EventEmitter2 when @nestjs/event-emitter is installed
-        // private readonly eventEmitter: EventEmitter2,
+        private readonly eventEmitter: EventEmitter2,
     ) { }
 
     async create(payload: CreateReviewPayload): Promise<ReviewDomain> {
@@ -451,18 +451,17 @@ export class ReviewService {
         });
 
         // Emit event for other modules to react
-        // TODO: Uncomment when EventEmitter2 is installed
-        // this.eventEmitter.emit(
-        //     'review.stage.changed',
-        //     new ReviewStageChangedEvent(
-        //         reviewId,
-        //         currentStage,
-        //         nextStage,
-        //         actorId,
-        //         actorName,
-        //         reason,
-        //     ),
-        // );
+        this.eventEmitter.emit(
+            'review.stage.changed',
+            new ReviewStageChangedEvent(
+                reviewId,
+                currentStage,
+                nextStage,
+                actorId,
+                actorName,
+                reason,
+            ),
+        );
     }
 
     /**

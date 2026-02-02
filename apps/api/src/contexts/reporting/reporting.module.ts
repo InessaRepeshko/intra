@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { DatabaseModule } from 'src/database/database.module';
+import { Feedback360Module } from '../feedback360/feedback360.module';
 import { REPORT_REPOSITORY } from './application/ports/report.repository.port';
 import { REPORT_ANALYTICS_REPOSITORY } from './application/ports/report-analytics.repository.port';
 import { REPORT_COMMENT_REPOSITORY } from './application/ports/report-comment.repository.port';
+import { ReviewStageListener } from './application/listeners/review-stage.listener';
 import { ReportingService } from './application/services/reporting.service';
 import { ReportAnalyticsService } from './application/services/report-analytics.service';
 import { ReportCommentService } from './application/services/report-comment.service';
@@ -14,13 +17,18 @@ import { ReportAnalyticsController } from './presentation/http/controllers/repor
 import { ReportCommentController } from './presentation/http/controllers/report-comment.controller';
 
 @Module({
-    imports: [DatabaseModule],
+    imports: [
+        EventEmitterModule.forRoot(),
+        DatabaseModule,
+        Feedback360Module,
+    ],
     controllers: [
         ReportingController,
         ReportAnalyticsController,
         ReportCommentController,
     ],
     providers: [
+        ReviewStageListener,
         ReportingService,
         ReportAnalyticsService,
         ReportCommentService,

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { DatabaseModule } from 'src/database/database.module';
 import { LibraryModule } from '../library/library.module';
@@ -33,7 +34,12 @@ import { QuestionsController } from './presentation/http/controllers/questions.c
 import { ReviewController } from './presentation/http/controllers/reviews.controller';
 
 @Module({
-    imports: [ScheduleModule.forRoot(), DatabaseModule, LibraryModule],
+    imports: [
+        EventEmitterModule.forRoot(),
+        ScheduleModule.forRoot(),
+        DatabaseModule,
+        LibraryModule,
+    ],
     controllers: [
         CyclesController,
         ReviewController,
@@ -79,6 +85,12 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
             useExisting: ReviewStageHistoryRepository,
         },
     ],
-    exports: [CycleService, ReviewService, ClusterScoreAnalyticsService],
+    exports: [
+        CycleService,
+        ReviewService,
+        ClusterScoreAnalyticsService,
+        RespondentRepository,
+        ClusterScoreRepository,
+    ],
 })
 export class Feedback360Module { }
