@@ -45,7 +45,7 @@ export class IdentityUserService {
             email: payload.email,
             passwordHash: payload.passwordHash ?? PASSWORD_PLACEHOLDER,
             status: payload.status ?? IdentityStatus.ACTIVE,
-            positionId: payload.positionId,
+            positionId: payload.positionId ?? null,
             teamId: payload.teamId ?? null,
             managerId: payload.managerId ?? null,
             roles: payload.roles ?? [],
@@ -65,6 +65,13 @@ export class IdentityUserService {
         const user = await this.users.findById(id, opts);
         if (!user) throw new NotFoundException('User not found');
         return user;
+    }
+
+    async findByEmail(
+        email: string,
+        opts?: { withRoles?: boolean },
+    ): Promise<UserDomain | null> {
+        return this.users.findByEmail(email, opts);
     }
 
     async update(id: number, patch: UpdateUserCommand): Promise<UserDomain> {
@@ -112,6 +119,81 @@ export class IdentityUserService {
         }
 
         return this.users.replaceRoles(userId, uniqueRoles);
+    }
+
+    async upsertExternalUser(payload: {
+        email: string;
+        firstName?: string;
+        lastName?: string;
+        fullName?: string;
+        secondName?: string | null;
+        roles?: IdentityRole[];
+        status?: IdentityStatus;
+    }): Promise<UserDomain> {
+        const existing = await this.users.findByEmail(payload.email, {
+            withRoles: true,
+        });
+
+        const fallbackName = this.buildNamesFromPayload(payload);
+        const firstName = payload.firstName ?? fallbackName.firstName;
+        const lastName = payload.lastName ?? fallbackName.lastName;
+        const fullName =
+            payload.fullName ??
+            this.buildFullName(firstName, payload.secondName, lastName);
+
+        if (existing) {
+            const patch: UpdateUserPayload = {
+                firstName,
+                secondName: payload.secondName ?? existing.secondName ?? null,
+                lastName,
+                fullName,
+                status: payload.status ?? IdentityStatus.ACTIVE,
+            };
+
+            const updated = await this.users.updateById(existing.id!, patch);
+            const shouldUpdateRoles = payload.roles?.length;
+            if (shouldUpdateRoles) {
+                return this.replaceRoles(
+                    updated.id!,
+                    payload.roles ?? [IdentityRole.EMPLOYEE],
+                );
+            }
+            return updated;
+        }
+
+        const roles = payload.roles ?? [IdentityRole.EMPLOYEE];
+
+        const createdUser = UserDomain.create({
+            firstName,
+            secondName: payload.secondName ?? null,
+            lastName,
+            fullName,
+            email: payload.email,
+            passwordHash: PASSWORD_PLACEHOLDER,
+            status: payload.status ?? IdentityStatus.ACTIVE,
+            positionId: null,
+            teamId: null,
+            managerId: null,
+            roles,
+        });
+
+        return this.users.create(createdUser);
+    }
+
+    private buildNamesFromPayload(payload: {
+        email: string;
+        firstName?: string;
+        lastName?: string;
+    }): { firstName: string; lastName: string } {
+        if (payload.firstName && payload.lastName) {
+            return { firstName: payload.firstName, lastName: payload.lastName };
+        }
+        const [localPart] = payload.email.split('@');
+        const clean = localPart.replace(/[._-]+/g, ' ').trim();
+        const parts = clean.split(' ').filter(Boolean);
+        const firstName = payload.firstName ?? parts[0] ?? localPart;
+        const lastName = payload.lastName ?? parts.slice(1).join(' ') || 'User';
+        return { firstName, lastName };
     }
 
     private buildFullName(

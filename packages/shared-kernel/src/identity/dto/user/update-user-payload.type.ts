@@ -7,7 +7,7 @@ export type UpdateUserPayload = Partial<{
     fullName: string;
     passwordHash: string;
     status: IdentityStatus;
-    positionId: number;
+    positionId: number | null;
     teamId: number | null;
     managerId: number | null;
 }>;

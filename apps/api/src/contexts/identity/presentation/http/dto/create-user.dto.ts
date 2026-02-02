@@ -138,12 +138,13 @@ export class CreateUserDto {
         description: `Position ID`,
         type: 'number',
         example: 1,
+        nullable: true,
     })
     @IsOptional()
     @ToOptionalInt({ min: 1 })
     @IsInt()
     @IsPositive()
-    positionId!: number;
+    positionId?: number | null;
 
     @ApiPropertyOptional({
         description: `Team ID`,

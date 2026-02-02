@@ -9,7 +9,7 @@ export type UserProps = {
     email: string;
     passwordHash: string;
     status?: IdentityStatus;
-    positionId: number;
+    positionId?: number | null;
     teamId?: number | null;
     managerId?: number | null;
     createdAt?: Date;
@@ -26,7 +26,7 @@ export class UserDomain {
     readonly email: string;
     readonly passwordHash: string;
     readonly status: IdentityStatus;
-    readonly positionId: number;
+    readonly positionId?: number | null;
     readonly teamId?: number | null;
     readonly managerId?: number | null;
     readonly createdAt?: Date;
@@ -48,7 +48,7 @@ export class UserDomain {
         this.email = props.email;
         this.passwordHash = props.passwordHash;
         this.status = props.status ?? IdentityStatus.ACTIVE;
-        this.positionId = props.positionId;
+        this.positionId = props.positionId ?? null;
         this.teamId = props.teamId ?? null;
         this.managerId = props.managerId ?? null;
         this.createdAt = props.createdAt;

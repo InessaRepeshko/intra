@@ -77,9 +77,10 @@ export class UserResponse implements UserDto {
         type: Number,
         example: 1,
         description: 'User position ID',
+        nullable: true,
     })
     @Expose()
-    positionId!: number;
+    positionId!: number | null;
 
     @ApiProperty({
         type: Number,

@@ -35,7 +35,8 @@
     "dependencies": {
         "@intra/database": "workspace:*",
         "@intra/shared-kernel": "workspace:*",
-        "@nestjs/event-emitter": "^3.0.1"
+        "@nestjs/event-emitter": "^3.0.1",
+        "better-auth": "^1.4.18"
     },
     "devDependencies": {
         "@nestjs/schedule": "^6.1.0"

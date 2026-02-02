@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import appConfig from './config/app';
 import databaseConfig from './config/database';
 import { Feedback360Module } from './contexts/feedback360/feedback360.module';
+import { AuthModule } from './contexts/auth/auth.module';
 import { IdentityModule } from './contexts/identity/identity.module';
 import { LibraryModule } from './contexts/library/library.module';
 import { OrganisationModule } from './contexts/organisation/organisation.module';
@@ -24,6 +25,7 @@ import { ReportingModule } from './contexts/reporting/reporting.module';
             serveRoot: '/public',
         }),
         DatabaseModule,
+        AuthModule,
         IdentityModule,
         OrganisationModule,
         LibraryModule,

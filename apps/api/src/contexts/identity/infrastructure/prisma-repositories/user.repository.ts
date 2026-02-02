@@ -26,7 +26,7 @@ export class UserRepository implements UserRepositoryPort {
                 email: user.email,
                 passwordHash: user.passwordHash,
                 status: user.status as IdentityStatus,
-                positionId: user.positionId,
+                positionId: user.positionId ?? null,
                 teamId: user.teamId,
                 managerId: user.managerId,
                 ...(user.roles.length
@@ -53,6 +53,18 @@ export class UserRepository implements UserRepositoryPort {
     ): Promise<UserDomain | null> {
         const user = await this.prisma.user.findUnique({
             where: { id },
+            include: this.withRolesInclude(opts?.withRoles),
+        });
+
+        return user ? IdentityMapper.toUserDomain(user) : null;
+    }
+
+    async findByEmail(
+        email: string,
+        opts?: { withRoles?: boolean },
+    ): Promise<UserDomain | null> {
+        const user = await this.prisma.user.findUnique({
+            where: { email },
             include: this.withRolesInclude(opts?.withRoles),
         });
 
@@ -184,7 +196,7 @@ export class UserRepository implements UserRepositoryPort {
                 : {}),
             ...(status ? { status } : {}),
             ...(teamId ? { teamId } : {}),
-            ...(positionId ? { positionId } : {}),
+            ...(positionId !== undefined ? { positionId } : {}),
             ...(managerId ? { managerId } : {}),
             ...(roles?.length
                 ? { userRoles: { some: { roleCode: { in: roles } } } }

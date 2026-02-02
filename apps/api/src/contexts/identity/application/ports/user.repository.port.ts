@@ -13,6 +13,10 @@ export interface UserRepositoryPort {
         id: number,
         opts?: { withRoles?: boolean },
     ): Promise<UserDomain | null>;
+    findByEmail(
+        email: string,
+        opts?: { withRoles?: boolean },
+    ): Promise<UserDomain | null>;
     search(query: UserSearchQuery): Promise<UserDomain[]>;
     updateById(id: number, patch: UpdateUserPayload): Promise<UserDomain>;
     deleteById(id: number): Promise<void>;

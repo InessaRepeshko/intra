@@ -9,7 +9,7 @@ export interface UserDto {
     fullName: string | null;
     email: string;
     status: IdentityStatus;
-    positionId: number;
+    positionId: number | null;
     teamId: number | null;
     managerId: number | null;
     roles: IdentityRole[];

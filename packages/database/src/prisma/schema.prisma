@@ -43,7 +43,7 @@ model User {
   email        String         @unique @db.VarChar(100)
   passwordHash String         @map("password_hash") @db.VarChar(300)
   status       IdentityStatus @default(ACTIVE)
-  positionId   Int            @map("position_id")
+  positionId   Int?           @map("position_id")
   teamId       Int?           @map("team_id")
   managerId    Int?           @map("manager_id")
   createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
