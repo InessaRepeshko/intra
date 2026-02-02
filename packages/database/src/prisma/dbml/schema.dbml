@@ -11,7 +11,7 @@ Table identity_users {
   email String [unique, not null]
   passwordHash String [not null]
   status IdentityStatus [not null, default: 'ACTIVE']
-  positionId Int [not null]
+  positionId Int
   teamId Int
   managerId Int
   createdAt DateTime [default: `now()`, not null]

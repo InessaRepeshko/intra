@@ -89,8 +89,8 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
         CycleService,
         ReviewService,
         ClusterScoreAnalyticsService,
-        RespondentRepository,
-        ClusterScoreRepository,
+        RESPONDENT_REPOSITORY,
+        CLUSTER_SCORE_REPOSITORY,
     ],
 })
 export class Feedback360Module { }

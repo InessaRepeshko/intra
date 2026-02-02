@@ -16,6 +16,75 @@
         ]
       }
     },
+    "/auth/google": {
+      "get": {
+        "operationId": "AuthController_googleLogin",
+        "parameters": [],
+        "responses": {
+          "302": {
+            "description": "Redirects to Google OAuth2 login page"
+          }
+        },
+        "summary": "Initiate Google OAuth2 login",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "operationId": "AuthController_googleCallback",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string",
+                      "example": "1"
+                    },
+                    "session": {
+                      "type": "object",
+                      "description": "Session data"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Handle Google OAuth2 callback",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "operationId": "AuthController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The current user profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get current user profile",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/identity/users": {
       "post": {
         "operationId": "IdentityUsersController_create",
@@ -7229,94 +7298,6 @@
   "servers": [],
   "components": {
     "schemas": {
-      "CreateUserDto": {
-        "type": "object",
-        "properties": {
-          "firstName": {
-            "type": "string",
-            "description": "User's first name",
-            "minimum": 1,
-            "maximum": 100,
-            "example": "Valerii"
-          },
-          "secondName": {
-            "type": "string",
-            "description": "User's second name",
-            "minimum": 1,
-            "maximum": 100,
-            "example": "Valeriiovych"
-          },
-          "lastName": {
-            "type": "string",
-            "description": "User's last name",
-            "minimum": 1,
-            "maximum": 100,
-            "example": "Velychko"
-          },
-          "fullName": {
-            "type": "string",
-            "description": "User's full name",
-            "minimum": 1,
-            "maximum": 302,
-            "example": "Valerii Velychko"
-          },
-          "email": {
-            "type": "string",
-            "description": "User's email",
-            "minimum": 1,
-            "maximum": 100,
-            "example": "valerii.velychko@example.com"
-          },
-          "passwordHash": {
-            "type": "string",
-            "description": "Precomputed password hash or placeholder for external authentication",
-            "example": "__external_auth__",
-            "maximum": 300
-          },
-          "status": {
-            "type": "string",
-            "description": "User's status",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE"
-            ],
-            "default": "ACTIVE",
-            "example": "ACTIVE"
-          },
-          "positionId": {
-            "type": "number",
-            "description": "Position ID",
-            "example": 1
-          },
-          "teamId": {
-            "type": "number",
-            "description": "Team ID",
-            "example": 10,
-            "nullable": true
-          },
-          "managerId": {
-            "type": "number",
-            "description": "Manager ID",
-            "example": 2,
-            "nullable": true
-          },
-          "roles": {
-            "description": "User's roles",
-            "example": [
-              "MANAGER"
-            ],
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "firstName",
-          "lastName",
-          "email"
-        ]
-      },
       "UserResponse": {
         "type": "object",
         "properties": {
@@ -7374,7 +7355,8 @@
           "positionId": {
             "type": "number",
             "example": 1,
-            "description": "User position ID"
+            "description": "User position ID",
+            "nullable": true
           },
           "teamId": {
             "type": "number",
@@ -7431,6 +7413,95 @@
           "roles",
           "createdAt",
           "updatedAt"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "User's first name",
+            "minimum": 1,
+            "maximum": 100,
+            "example": "Valerii"
+          },
+          "secondName": {
+            "type": "string",
+            "description": "User's second name",
+            "minimum": 1,
+            "maximum": 100,
+            "example": "Valeriiovych"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User's last name",
+            "minimum": 1,
+            "maximum": 100,
+            "example": "Velychko"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "User's full name",
+            "minimum": 1,
+            "maximum": 302,
+            "example": "Valerii Velychko"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "minimum": 1,
+            "maximum": 100,
+            "example": "valerii.velychko@example.com"
+          },
+          "passwordHash": {
+            "type": "string",
+            "description": "Precomputed password hash or placeholder for external authentication",
+            "example": "__external_auth__",
+            "maximum": 300
+          },
+          "status": {
+            "type": "string",
+            "description": "User's status",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "default": "ACTIVE",
+            "example": "ACTIVE"
+          },
+          "positionId": {
+            "type": "number",
+            "description": "Position ID",
+            "example": 1,
+            "nullable": true
+          },
+          "teamId": {
+            "type": "number",
+            "description": "Team ID",
+            "example": 10,
+            "nullable": true
+          },
+          "managerId": {
+            "type": "number",
+            "description": "Manager ID",
+            "example": 2,
+            "nullable": true
+          },
+          "roles": {
+            "description": "User's roles",
+            "example": [
+              "MANAGER"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "email"
         ]
       },
       "UpdateUserDto": {
@@ -7490,7 +7561,8 @@
           "positionId": {
             "type": "number",
             "description": "Position ID",
-            "example": 1
+            "example": 1,
+            "nullable": true
           },
           "teamId": {
             "type": "number",
