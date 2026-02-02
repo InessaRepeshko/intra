@@ -4029,7 +4029,10 @@
                 "SELF_ASSESSMENT",
                 "WAITING_TO_START",
                 "IN_PROGRESS",
-                "RESEARCH",
+                "PREPARING_REPORT",
+                "PROCESSING_BY_HR",
+                "PUBLISHED",
+                "ANALYSIS",
                 "FINISHED"
               ]
             }
@@ -5968,6 +5971,44 @@
         ]
       }
     },
+    "/feedback360/reviews/{id}/force-complete": {
+      "post": {
+        "description": "Manually transition review to PREPARING_REPORT stage, even if some responses are pending",
+        "operationId": "ReviewController_forceComplete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Review id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review stage changed to PREPARING_REPORT"
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Force complete Review (HR only)",
+        "tags": [
+          "Feedback360 / Reviews"
+        ]
+      }
+    },
     "/feedback360/questions": {
       "post": {
         "operationId": "QuestionsController_create",
@@ -6943,6 +6984,44 @@
         ]
       }
     },
+    "/reporting/reports/{id}": {
+      "get": {
+        "operationId": "ReportingController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Report identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get report by id",
+        "tags": [
+          "Reporting / Reports"
+        ]
+      }
+    },
     "/reporting/reports/review/{reviewId}": {
       "get": {
         "operationId": "ReportingController_getByReviewId",
@@ -6978,6 +7057,164 @@
         "summary": "Get report by review id",
         "tags": [
           "Reporting / Reports"
+        ]
+      }
+    },
+    "/reporting/analytics/report/{reportId}": {
+      "get": {
+        "operationId": "ReportAnalyticsController_getByReportId",
+        "parameters": [
+          {
+            "name": "reportId",
+            "required": true,
+            "in": "path",
+            "description": "Report identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportAnalyticsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get analytics by report id",
+        "tags": [
+          "Reporting / Analytics"
+        ]
+      }
+    },
+    "/reporting/analytics/{id}": {
+      "get": {
+        "operationId": "ReportAnalyticsController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Analytics identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportAnalyticsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get analytics by id",
+        "tags": [
+          "Reporting / Analytics"
+        ]
+      }
+    },
+    "/reporting/comments/report/{reportId}": {
+      "get": {
+        "operationId": "ReportCommentController_getByReportId",
+        "parameters": [
+          {
+            "name": "reportId",
+            "required": true,
+            "in": "path",
+            "description": "Report identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportCommentResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get comments by report id",
+        "tags": [
+          "Reporting / Comments"
+        ]
+      }
+    },
+    "/reporting/comments/{id}": {
+      "get": {
+        "operationId": "ReportCommentController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Comment identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportCommentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get comment by id",
+        "tags": [
+          "Reporting / Comments"
         ]
       }
     }
@@ -8501,7 +8738,10 @@
               "SELF_ASSESSMENT",
               "WAITING_TO_START",
               "IN_PROGRESS",
-              "RESEARCH",
+              "PREPARING_REPORT",
+              "PROCESSING_BY_HR",
+              "PUBLISHED",
+              "ANALYSIS",
               "FINISHED"
             ],
             "example": "VERIFICATION_BY_HR",
@@ -8633,7 +8873,10 @@
               "SELF_ASSESSMENT",
               "WAITING_TO_START",
               "IN_PROGRESS",
-              "RESEARCH",
+              "PREPARING_REPORT",
+              "PROCESSING_BY_HR",
+              "PUBLISHED",
+              "ANALYSIS",
               "FINISHED"
             ],
             "example": "VERIFICATION_BY_HR",
@@ -8775,7 +9018,10 @@
               "SELF_ASSESSMENT",
               "WAITING_TO_START",
               "IN_PROGRESS",
-              "RESEARCH",
+              "PREPARING_REPORT",
+              "PROCESSING_BY_HR",
+              "PUBLISHED",
+              "ANALYSIS",
               "FINISHED"
             ],
             "example": "VERIFICATION_BY_HR",

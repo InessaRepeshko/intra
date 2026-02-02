@@ -13,6 +13,7 @@ import {
     Reviewer as PrismaReviewer,
     ReviewQuestionRelation as PrismaReviewQuestionRelation,
     ReviewStage as PrismaReviewStage,
+    ReviewStageHistory as PrismaReviewStageHistory,
 } from '@intra/database';
 import {
     AnswerType,
@@ -29,6 +30,7 @@ import { QuestionDomain } from '../../domain/question.domain';
 import { RespondentDomain } from '../../domain/respondent.domain';
 import { ReviewQuestionRelationDomain } from '../../domain/review-question-relation.domain';
 import { ReviewDomain } from '../../domain/review.domain';
+import { ReviewStageHistoryDomain } from '../../domain/review-stage-history.domain';
 import { ReviewerDomain } from '../../domain/reviewer.domain';
 
 export class Feedback360Mapper {
@@ -228,5 +230,20 @@ export class Feedback360Mapper {
 
     static fromPrismaAnswerType(prismaType: PrismaAnswerType): AnswerType {
         return prismaType.toString() as AnswerType;
+    }
+
+    static toReviewStageHistoryDomain(
+        history: PrismaReviewStageHistory,
+    ): ReviewStageHistoryDomain {
+        return ReviewStageHistoryDomain.create({
+            id: history.id,
+            reviewId: history.reviewId,
+            fromStage: history.fromStage as ReviewStage,
+            toStage: history.toStage as ReviewStage,
+            changedById: history.changedById,
+            changedByName: history.changedByName,
+            reason: history.reason,
+            createdAt: history.createdAt,
+        });
     }
 }

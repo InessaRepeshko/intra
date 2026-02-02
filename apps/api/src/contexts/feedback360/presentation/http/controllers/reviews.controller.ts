@@ -53,7 +53,7 @@ import { ReviewerResponse } from '../models/reviewer.response';
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ReviewResponse })
 export class ReviewController {
-    constructor(private readonly reviews: ReviewService) {}
+    constructor(private readonly reviews: ReviewService) { }
 
     @Post()
     @ApiOperation({ summary: 'Create Review' })
@@ -359,5 +359,30 @@ export class ReviewController {
         @Param('relationId') relationId: string,
     ): Promise<void> {
         await this.reviews.removeReviewer(Number(relationId));
+    }
+
+    /**
+     * MANUAL TRIGGER: HR force-completes a review
+     * Transitions review to PREPARING_REPORT regardless of pending responses
+     */
+    @Post(':id/force-complete')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: 'Force complete Review (HR only)',
+        description:
+            'Manually transition review to PREPARING_REPORT stage, even if some responses are pending',
+    })
+    @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Review stage changed to PREPARING_REPORT',
+    })
+    @ApiCreateAndUpdateErrorResponses()
+    async forceComplete(@Param('id') id: string): Promise<{ message: string }> {
+        // TODO: Add HR role guard when authentication is implemented
+        await this.reviews.forceCompleteReview(Number(id));
+        return {
+            message: `Review ${id} has been force-completed and moved to PREPARING_REPORT stage`,
+        };
     }
 }

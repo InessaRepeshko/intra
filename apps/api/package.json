@@ -33,7 +33,11 @@
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
     },
     "dependencies": {
+        "@intra/database": "workspace:*",
         "@intra/shared-kernel": "workspace:*",
-        "@intra/database": "workspace:*"
+        "@nestjs/event-emitter": "^3.0.1"
+    },
+    "devDependencies": {
+        "@nestjs/schedule": "^6.1.0"
     }
 }

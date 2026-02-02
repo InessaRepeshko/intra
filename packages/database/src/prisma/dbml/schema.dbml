@@ -29,6 +29,7 @@ Table identity_users {
   reviewsAsManager feedback360_reviews [not null]
   clusterScores feedback360_cluster_scores [not null]
   answers feedback360_answers [not null]
+  stageChangeHistory feedback360_review_stage_history [not null]
 }
 
 Table identity_roles {
@@ -252,6 +253,7 @@ Table feedback360_reviews {
   respondents feedback360_respondents [not null]
   reviewers feedback360_reviewers [not null]
   clusterScores feedback360_cluster_scores [not null]
+  reviewStageHistories feedback360_review_stage_history [not null]
 }
 
 Table feedback360_questions {
@@ -391,6 +393,19 @@ Table feedback360_reviewers {
   }
 }
 
+Table feedback360_review_stage_history {
+  id Int [pk, increment]
+  reviewId Int [not null]
+  fromStage ReviewStage [not null]
+  toStage ReviewStage [not null]
+  changedById Int
+  changedByName String
+  reason String
+  createdAt DateTime [default: `now()`, not null]
+  review feedback360_reviews [not null]
+  changedBy identity_users
+}
+
 Table reporting_reports {
   id Int [pk, increment]
   reviewId Int [unique, not null]
@@ -490,7 +505,10 @@ Enum ReviewStage {
   SELF_ASSESSMENT
   WAITING_TO_START
   IN_PROGRESS
-  RESEARCH
+  PREPARING_REPORT
+  PROCESSING_BY_HR
+  PUBLISHED
+  ANALYSIS
   FINISHED
 }
 
@@ -599,6 +617,10 @@ Ref: feedback360_reviewers.reviewerId > identity_users.id [delete: No Action]
 Ref: feedback360_reviewers.reviewId > feedback360_reviews.id [delete: No Action]
 
 Ref: feedback360_reviewers.teamId > org_teams.id [delete: No Action]
+
+Ref: feedback360_review_stage_history.reviewId > feedback360_reviews.id [delete: Cascade]
+
+Ref: feedback360_review_stage_history.changedById > identity_users.id [delete: Set Null]
 
 Ref: reporting_reports.reviewId - feedback360_reviews.id [delete: No Action]
 
