@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { DatabaseModule } from 'src/database/database.module';
+import { AuthModule } from '../auth/auth.module';
+import { IdentityModule } from '../identity/identity.module';
 import { LibraryModule } from '../library/library.module';
 import { ANSWER_REPOSITORY } from './application/ports/answer.repository.port';
 import { CLUSTER_SCORE_ANALYTICS_REPOSITORY } from './application/ports/cluster-score-analytics.repository.port';
@@ -39,6 +41,8 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
         ScheduleModule.forRoot(),
         DatabaseModule,
         LibraryModule,
+        AuthModule,
+        IdentityModule,
     ],
     controllers: [
         CyclesController,

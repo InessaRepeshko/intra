@@ -1,5 +1,8 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { EntityType } from '@intra/shared-kernel';
+import {
+    EntityType,
+    REPORTING_ANALYTICS_TARGET_SCORE,
+} from '@intra/shared-kernel';
 import {
     REPORT_REPOSITORY,
     ReportRepositoryPort,
@@ -156,15 +159,17 @@ export class ReportingService {
                 data as any;
 
             const average = this.calculateAverage(clusterScores);
-            const baseline = 5.0; // Expected baseline score
+            const baseline = REPORTING_ANALYTICS_TARGET_SCORE;
             const delta = average !== null ? average - baseline : null;
 
             analytics.push(
                 ReportAnalyticsDomain.create({
                     reportId: 0, // Will be set when persisted
-                    entityType: EntityType.COMPETENCE,
+                    entityType: EntityType.CLUSTER,
                     questionId: null,
-                    questionTitle: clusterTitle,
+                    questionTitle: null,
+                    clusterId,
+                    clusterTitle,
                     competenceId: competenceId,
                     competenceTitle: competenceTitle,
                     averageBySelfAssessment: null, // Would need category breakdown

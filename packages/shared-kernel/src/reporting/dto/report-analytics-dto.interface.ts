@@ -6,6 +6,8 @@ export interface ReportAnalyticsDto {
     entityType: EntityType;
     questionId?: number | null;
     questionTitle?: string | null;
+    clusterId?: number | null;
+    clusterTitle?: string | null;
     competenceId?: number | null;
     competenceTitle?: string | null;
     averageBySelfAssessment?: number | null;

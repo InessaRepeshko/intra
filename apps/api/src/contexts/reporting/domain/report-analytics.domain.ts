@@ -6,6 +6,8 @@ export type ReportAnalyticsProps = {
     entityType: EntityType;
     questionId: number | null;
     questionTitle: string | null;
+    clusterId: number | null;
+    clusterTitle: string | null;
     competenceId: number | null;
     competenceTitle: string | null;
     averageBySelfAssessment?: number | null;
@@ -23,6 +25,8 @@ export class ReportAnalyticsDomain {
     readonly entityType: EntityType;
     readonly questionId: number | null;
     readonly questionTitle: string | null;
+    readonly clusterId: number | null;
+    readonly clusterTitle: string | null;
     readonly competenceId: number | null;
     readonly competenceTitle: string | null;
     readonly averageBySelfAssessment?: number | null;
@@ -39,6 +43,8 @@ export class ReportAnalyticsDomain {
         this.entityType = props.entityType;
         this.questionId = props.questionId ?? null;
         this.questionTitle = props.questionTitle ?? null;
+        this.clusterId = props.clusterId ?? null;
+        this.clusterTitle = props.clusterTitle ?? null;
         this.competenceId = props.competenceId ?? null;
         this.competenceTitle = props.competenceTitle ?? null;
         this.averageBySelfAssessment = props.averageBySelfAssessment ?? null;

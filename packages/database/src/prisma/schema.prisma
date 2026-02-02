@@ -225,6 +225,7 @@ model Cluster {
 
   clusterScores         ClusterScore[]
   clusterScoreAnalytics ClusterScoreAnalytics[]
+  reportAnalytics       ReportAnalytics[]
   competence            Competence              @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([competenceId, lowerBound, upperBound])
@@ -608,6 +609,7 @@ model ReviewStageHistory {
 enum EntityType {
   QUESTION   @map("question")
   COMPETENCE @map("competence")
+  CLUSTER    @map("cluster")
 
   @@map("reporting_entity_type")
 }
@@ -649,6 +651,8 @@ model ReportAnalytics {
   entityType              EntityType @map("entity_type")
   questionId              Int?       @map("question_id")
   questionTitle           String?    @map("question_title") @db.Text
+  clusterId               Int?       @map("cluster_id")
+  clusterTitle            String?    @map("cluster_title") @db.Text
   competenceId            Int?       @map("competence_id")
   competenceTitle         String?    @map("competence_title") @db.Text
   averageBySelfAssessment Float?     @map("average_by_self_assessment")
@@ -661,10 +665,12 @@ model ReportAnalytics {
 
   report     Report      @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   question   Question?   @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cluster    Cluster?    @relation(fields: [clusterId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   competence Competence? @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([reportId])
   @@index([questionId])
+  @@index([clusterId])
   @@index([competenceId])
   @@map("reporting_analytics")
 }

@@ -130,6 +130,7 @@ export { CommentSentiment, COMMENT_SENTIMENTS } from './reporting/enums/comment-
 export { REPORT_CONSTRAINTS } from './reporting/constraints/report.constraints';
 export { REPORT_ANALYTICS_CONSTRAINTS } from './reporting/constraints/report-analytics.constraints';
 export { REPORT_COMMENT_CONSTRAINTS } from './reporting/constraints/report-comments.constraints';
+export { REPORTING_ANALYTICS_TARGET_SCORE } from './reporting/constants/reporting.config';
 
 export type { ReportDto } from './reporting/dto/report-dto.interface';
 

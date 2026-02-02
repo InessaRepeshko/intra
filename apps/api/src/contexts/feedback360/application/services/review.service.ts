@@ -511,16 +511,16 @@ export class ReviewService {
      * MANUAL TRIGGER: HR force-completes a review
      * Transitions review to PREPARING_REPORT regardless of pending responses
      */
-    async forceCompleteReview(reviewId: number): Promise<void> {
-        // TODO: Get HR user info from request context when auth is implemented
-        const hrActorId = SYSTEM_ACTOR_ID;
-        const hrActorName = 'HR Manager';
-
+    async forceCompleteReview(
+        reviewId: number,
+        actorId: number,
+        actorName: string,
+    ): Promise<void> {
         await this.changeStage(
             reviewId,
             ReviewStage.PREPARING_REPORT,
-            hrActorId,
-            hrActorName,
+            actorId,
+            actorName,
             TRANSITION_REASONS.HR_FORCE_COMPLETION,
         );
     }

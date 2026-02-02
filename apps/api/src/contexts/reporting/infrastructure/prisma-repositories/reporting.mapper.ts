@@ -49,6 +49,8 @@ export class ReportingMapper {
             entityType: analytics.entityType as EntityType,
             questionId: analytics.questionId,
             questionTitle: analytics.questionTitle,
+            clusterId: analytics.clusterId,
+            clusterTitle: analytics.clusterTitle,
             competenceId: analytics.competenceId,
             competenceTitle: analytics.competenceTitle,
             averageBySelfAssessment: analytics.averageBySelfAssessment,

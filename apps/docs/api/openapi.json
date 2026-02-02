@@ -10142,9 +10142,10 @@
             "type": "string",
             "enum": [
               "question",
-              "competence"
+              "competence",
+              "cluster"
             ],
-            "example": "question",
+            "example": "cluster",
             "description": "Entity type"
           },
           "questionId": {
@@ -10157,6 +10158,20 @@
             "type": "string",
             "example": "Listens actively before responding.",
             "description": "Question title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "clusterId": {
+            "type": "number",
+            "example": 1,
+            "description": "Cluster ID",
+            "nullable": true
+          },
+          "clusterTitle": {
+            "type": "string",
+            "example": "Communication",
+            "description": "Cluster title",
             "nullable": true,
             "minimum": 1,
             "maximum": 255

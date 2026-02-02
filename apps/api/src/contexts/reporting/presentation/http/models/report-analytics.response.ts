@@ -9,7 +9,7 @@ export class ReportAnalyticsResponse implements ReportAnalyticsDto {
     @ApiProperty({ example: 1, description: 'Report ID', required: true, type: 'number' })
     reportId!: number;
 
-    @ApiProperty({ enum: EntityType, example: EntityType.QUESTION, description: 'Entity type', required: true })
+    @ApiProperty({ enum: EntityType, example: EntityType.CLUSTER, description: 'Entity type', required: true })
     entityType!: EntityType;
 
     @ApiProperty({ example: 1, description: 'Question ID', required: false, type: 'number', nullable: true })
@@ -17,6 +17,12 @@ export class ReportAnalyticsResponse implements ReportAnalyticsDto {
 
     @ApiProperty({ example: 'Listens actively before responding.', description: 'Question title', required: false, type: 'string', nullable: true, minimum: REPORT_ANALYTICS_CONSTRAINTS.ENTITY_TITLE.LENGTH.MIN, maximum: REPORT_ANALYTICS_CONSTRAINTS.ENTITY_TITLE.LENGTH.MAX })
     questionTitle?: string | null;
+
+    @ApiProperty({ example: 1, description: 'Cluster ID', required: false, type: 'number', nullable: true })
+    clusterId?: number | null;
+
+    @ApiProperty({ example: 'Communication', description: 'Cluster title', required: false, type: 'string', nullable: true, minimum: REPORT_ANALYTICS_CONSTRAINTS.ENTITY_TITLE.LENGTH.MIN, maximum: REPORT_ANALYTICS_CONSTRAINTS.ENTITY_TITLE.LENGTH.MAX })
+    clusterTitle?: string | null;
 
     @ApiProperty({ example: 1, description: 'Competence ID', required: false, type: 'number', nullable: true })
     competenceId?: number | null;

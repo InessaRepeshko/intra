@@ -1,0 +1,1 @@
+export const REPORTING_ANALYTICS_TARGET_SCORE = 5.0;

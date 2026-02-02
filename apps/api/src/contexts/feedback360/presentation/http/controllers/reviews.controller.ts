@@ -12,6 +12,8 @@ import {
     Post,
     Query,
     SerializeOptions,
+    UnauthorizedException,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -47,6 +49,12 @@ import { RespondentResponse } from '../models/respondent.response';
 import { ReviewQuestionRelationResponse } from '../models/review-question-relation.response';
 import { ReviewResponse } from '../models/review.response';
 import { ReviewerResponse } from '../models/reviewer.response';
+import { AuthSessionGuard } from '../../../../auth/guards/auth-session.guard';
+import { RolesGuard } from '../../../../auth/guards/roles.guard';
+import { Roles } from '../../../../auth/decorators/roles.decorator';
+import { CurrentUser } from '../../../../auth/decorators/current-user.decorator';
+import { IdentityRole } from '@intra/shared-kernel';
+import { UserDomain } from '../../../../identity/domain/user.domain';
 
 @ApiTags('Feedback360 / Reviews')
 @Controller('feedback360/reviews')
@@ -378,9 +386,21 @@ export class ReviewController {
         description: 'Review stage changed to PREPARING_REPORT',
     })
     @ApiCreateAndUpdateErrorResponses()
-    async forceComplete(@Param('id') id: string): Promise<{ message: string }> {
-        // TODO: Add HR role guard when authentication is implemented
-        await this.reviews.forceCompleteReview(Number(id));
+    @UseGuards(AuthSessionGuard, RolesGuard)
+    @Roles(IdentityRole.HR, IdentityRole.ADMIN)
+    async forceComplete(
+        @Param('id') id: string,
+        @CurrentUser() user: UserDomain,
+    ): Promise<{ message: string }> {
+        if (!user?.id) {
+            throw new UnauthorizedException('User identifier is required');
+        }
+
+        await this.reviews.forceCompleteReview(
+            Number(id),
+            user.id!,
+            user.fullName,
+        );
         return {
             message: `Review ${id} has been force-completed and moved to PREPARING_REPORT stage`,
         };

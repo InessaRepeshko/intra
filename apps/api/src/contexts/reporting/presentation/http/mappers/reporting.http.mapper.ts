@@ -39,6 +39,8 @@ export class ReportingHttpMapper {
         response.entityType = analytics.entityType;
         response.questionId = analytics.questionId ?? null;
         response.questionTitle = analytics.questionTitle ?? null;
+        response.clusterId = analytics.clusterId ?? null;
+        response.clusterTitle = analytics.clusterTitle ?? null;
         response.competenceId = analytics.competenceId ?? null;
         response.competenceTitle = analytics.competenceTitle ?? null;
         response.averageBySelfAssessment =

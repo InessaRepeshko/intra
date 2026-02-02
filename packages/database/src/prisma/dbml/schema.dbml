@@ -137,6 +137,7 @@ Table library_clusters {
   updatedAt DateTime [default: `now()`, not null]
   clusterScores feedback360_cluster_scores [not null]
   clusterScoreAnalytics feedback360_cluster_score_analytics [not null]
+  reportAnalytics reporting_analytics [not null]
   competence library_competences [not null]
 
   indexes {
@@ -432,6 +433,8 @@ Table reporting_analytics {
   entityType EntityType [not null]
   questionId Int
   questionTitle String
+  clusterId Int
+  clusterTitle String
   competenceId Int
   competenceTitle String
   averageBySelfAssessment Float
@@ -443,6 +446,7 @@ Table reporting_analytics {
   createdAt DateTime [default: `now()`, not null]
   report reporting_reports [not null]
   question feedback360_questions
+  cluster library_clusters
   competence library_competences
 }
 
@@ -521,6 +525,7 @@ Enum RespondentCategory {
 Enum EntityType {
   QUESTION
   COMPETENCE
+  CLUSTER
 }
 
 Enum CommentSentiment {
@@ -629,6 +634,8 @@ Ref: reporting_reports.cycleId > feedback360_cycles.id [delete: No Action]
 Ref: reporting_analytics.reportId > reporting_reports.id [delete: No Action]
 
 Ref: reporting_analytics.questionId > feedback360_questions.id [delete: No Action]
+
+Ref: reporting_analytics.clusterId > library_clusters.id [delete: No Action]
 
 Ref: reporting_analytics.competenceId > library_competences.id [delete: No Action]
 
