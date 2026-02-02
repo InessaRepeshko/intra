@@ -10,7 +10,16 @@ export class ReportingService {
     constructor(
         @Inject(REPORT_REPOSITORY)
         private readonly reports: ReportRepositoryPort,
-    ) {}
+    ) { }
+
+    async getById(id: number): Promise<ReportDomain> {
+        const report = await this.reports.findById(id);
+        if (!report) {
+            throw new NotFoundException(`Report with id ${id} was not found`);
+        }
+
+        return report;
+    }
 
     async getByReviewId(reviewId: number): Promise<ReportDomain> {
         const report = await this.reports.findByReviewId(reviewId);

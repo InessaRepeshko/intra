@@ -24,7 +24,23 @@ import { ReportResponse } from '../models/report.response';
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ReportResponse })
 export class ReportingController {
-    constructor(private readonly reporting: ReportingService) {}
+    constructor(private readonly reporting: ReportingService) { }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Get report by id' })
+    @ApiParam({
+        name: 'id',
+        description: 'Report identifier',
+        type: 'number',
+    })
+    @ApiResponse({ status: HttpStatus.OK, type: ReportResponse })
+    @ApiReadErrorResponses()
+    async getById(
+        @Param('id', ParseIntPipe) id: number,
+    ): Promise<ReportResponse> {
+        const report = await this.reporting.getById(id);
+        return ReportingHttpMapper.toReportResponse(report);
+    }
 
     @Get('review/:reviewId')
     @ApiOperation({ summary: 'Get report by review id' })

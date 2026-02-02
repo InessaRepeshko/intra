@@ -8,7 +8,19 @@ import { ReportingMapper } from './reporting.mapper';
 export class ReportRepository implements ReportRepositoryPort {
     readonly [REPORT_REPOSITORY] = REPORT_REPOSITORY;
 
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(private readonly prisma: PrismaService) { }
+
+    async findById(id: number): Promise<ReportDomain | null> {
+        const report = await this.prisma.report.findUnique({
+            where: { id },
+            include: {
+                analytics: { orderBy: { id: 'asc' } },
+                comments: { orderBy: { id: 'asc' } },
+            },
+        });
+
+        return report ? ReportingMapper.toReportDomain(report) : null;
+    }
 
     async findByReviewId(reviewId: number): Promise<ReportDomain | null> {
         const report = await this.prisma.report.findUnique({
