@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "module": "commonjs",
@@ -30,4 +31,35 @@
         "dist",
         "**/*spec.ts"
     ]
+=======
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolvePackageJsonExports": false,
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "src/*": [
+        "src/*"
+      ],
+      "@intra/database": [
+        "../../packages/database/src/generated"
+      ],
+      "@intra/database/*": [
+        "../../packages/database/src/generated/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test",
+    "**/*spec.ts"
+  ]
+>>>>>>> origin/main
 }

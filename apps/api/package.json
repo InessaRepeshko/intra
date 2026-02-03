@@ -1,6 +1,7 @@
 {
     "name": "@intra/api",
     "version": "1.0.0",
+<<<<<<< HEAD
     "description": "Intra REST API",
     "private": true,
     "license": "MIT",
@@ -11,20 +12,38 @@
         "env:test": "dotenv -e ../../.env.test -v NODE_ENV=test",
         "env:prod": "dotenv -e ../../.env.production -v NODE_ENV=production",
         "// NestJS Commands": "",
+=======
+    "scripts": {
+        "env:dev": "dotenv -e ../../.env.development.local -v NODE_ENV=development",
+        "env:test": "dotenv -e ../../.env.test -v NODE_ENV=test",
+        "env:prod": "dotenv -e ../../.env.production -v NODE_ENV=production",
+        
+>>>>>>> origin/main
         "start": "pnpm env:dev -- nest start",
         "start:dev": "pnpm env:dev -- nest start --watch",
         "start:test": "pnpm env:test -- nest start",
         "start:debug": "pnpm env:dev -- nest start --debug --watch",
         "start:prod": "pnpm env:prod -- node ./dist/apps/api/src/main.js",
+<<<<<<< HEAD
         "// Database Commands": "",
         "refresh": "pnpm db:refresh -w @intra/database && pnpm start:dev",
         "refresh:test": "pnpm db:test:refresh -w @intra/database && pnpm start:test",
         "// Build Commands": "",
+=======
+
+        "refresh": "pnpm db:refresh -w @intra/database && pnpm start:dev",
+        "refresh:test": "pnpm db:test:refresh -w @intra/database && pnpm start:test",
+
+>>>>>>> origin/main
         "dev": "pnpm start:dev",
         "build": "nest build",
         "lint": "eslint \"{src,test}/**/*.ts\" --fix",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+<<<<<<< HEAD
         "// Testing Commands": "",
+=======
+
+>>>>>>> origin/main
         "test": "pnpm jest --clearCache && pnpm jest",
         "test:unit": "pnpm jest --watch --testMatch \"**/*.spec.ts\"",
         "test:e2e": "pnpm jest --watch --testMatch \"**/*.e2e-spec.ts\"",
@@ -33,7 +52,10 @@
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
     },
     "dependencies": {
+<<<<<<< HEAD
         "@intra/shared-kernel": "workspace:*",
+=======
+>>>>>>> origin/main
         "@intra/database": "workspace:*"
     }
 }

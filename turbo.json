@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "$schema": "https://turbo.build/schema.json",
     "tasks": {
         "build": {
@@ -126,4 +127,51 @@
             "cache": false
         }
     }
+=======
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+      "prisma:config": { "cache": false },
+      "prisma:dev": { "cache": false },
+      "prisma:test": { "cache": false },
+
+    "db:generate": {
+        "inputs": ["prisma/schema.prisma"],
+        "outputs": ["src/generated/**"],
+      "cache": true
+    },
+      "db:deploy": { "cache": false },
+      "db:create": { "cache": false },
+      "db:seed": { "cache": false },
+      "db:reset": { "cache": false },
+      "db:refresh": { "cache": false },
+
+      "db:test:deploy": { "cache": false },
+      "db:test:generate": { "cache": false },
+      "db:test:seed": { "cache": false },
+      "db:test:reset": { "cache": false },
+      "db:test:refresh": { "cache": false },
+
+    "build": {
+      "dependsOn": ["^build", "^db:generate"],
+      "outputs": [ "dist/**", "apps/api/dist/**", ".next/**", "!.next/cache/**"],
+      "cache": true
+    },
+    "format": { "cache": false },
+    "lint": { "outputs": [], "cache": true },
+    "test": { "dependsOn": ["build"], "outputs": [], "cache": true },
+    "test:unit": { "cache": false, "persistent": true },
+    "test:e2e": { "cache": false, "persistent": true },
+    "test:watch": { "cache": false, "persistent": true },
+    "test:cov": { "cache": false },
+    "test:debug": { "cache": false, "persistent": true },
+    "dev": { "cache": false, "persistent": true },
+    "start": { "cache": false },
+    "start:dev": { "cache": false, "persistent": true },
+    "start:test": { "cache": false },
+    "start:debug": { "cache": false, "persistent": true },
+    "start:prod": { "cache": false },
+    "refresh": { "cache": false },
+    "refresh:test": { "cache": false }
+  }
+>>>>>>> origin/main
 }
