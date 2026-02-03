@@ -12,6 +12,7 @@ import {
     BETTER_AUTH_INSTANCE,
     BetterAuthInstance,
 } from './better-auth.provider';
+import { LoginResponseDto } from './dto/login-response.dto';
 
 type BetterAuthResponse = any;
 
@@ -73,7 +74,7 @@ export class AuthService {
     async handleGoogleCallback(
         req: Request,
         res: Response,
-    ): Promise<{ userId: number; session: unknown }> {
+    ): Promise<LoginResponseDto> {
         const code = req.query.code as string | undefined;
         const state = req.query.state as string | undefined;
         if (!code) throw new BadRequestException('Missing code');
@@ -126,6 +127,53 @@ export class AuthService {
         });
         if (!session) return null;
         return { session };
+    }
+
+    /**
+     * Dev/Test login - allows authenticating as any user by email
+     * IMPORTANT: This should only be used in development/testing environments
+     */
+    async devLogin(email: string, res: Response): Promise<LoginResponseDto> {
+        // Check if not in production
+        if (this.isProd) {
+            throw new UnauthorizedException(
+                'Dev login is not available in production',
+            );
+        }
+
+        // Find user by email
+        const user = await this.identityUsers.findByEmail(email, {
+            withRoles: true,
+        });
+
+        if (!user) {
+            throw new UnauthorizedException(
+                `User with email ${email} not found`,
+            );
+        }
+
+        // Create a mock session using Better Auth
+        // We'll simulate a social login response
+        const betterAuthResponse = await this.auth.api.signInSocial({
+            body: {
+                provider: 'google',
+                idToken: {
+                    // For dev mode, we create a mock session
+                    token: `dev-token-${user.id}`,
+                    accessToken: `dev-access-${user.id}`,
+                },
+                callbackURL: this.getFrontendUrl(),
+                disableRedirect: true,
+            },
+            asResponse: true,
+        } as any);
+
+        await this.copySetCookies(betterAuthResponse as any, res);
+        const session = await this.tryParseResponseBody(
+            betterAuthResponse as any,
+        );
+
+        return { userId: user.id!, session };
     }
 
     private buildCallbackUrl(): string {

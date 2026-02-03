@@ -1,16 +1,17 @@
-import { AuthResponseDto } from '@intra/shared-kernel';
 import {
+    Body,
     ClassSerializerInterceptor,
     Controller,
     Get,
     HttpStatus,
+    Post,
     Req,
     Res,
     SerializeOptions,
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { UserDomain } from '../contexts/identity/domain/user.domain';
 import { UserHttpMapper } from '../contexts/identity/presentation/http/mappers/user.http.mapper';
@@ -18,6 +19,8 @@ import { UserResponse } from '../contexts/identity/presentation/http/models/user
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
+import { DevLoginRequestDto } from './dto/dev-login-request.dto';
+import { LoginResponseDto } from './dto/login-response.dto';
 import { AuthSessionGuard } from './guards/auth-session.guard';
 import { RolesGuard } from './guards/roles.guard';
 
@@ -76,9 +79,8 @@ export class AuthController {
     async googleCallback(
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
-    ): Promise<AuthResponseDto> {
-        const result = await this.authService.handleGoogleCallback(req, res);
-        return { userId: result.userId, session: result.session };
+    ): Promise<LoginResponseDto> {
+        return this.authService.handleGoogleCallback(req, res);
     }
 
     @Get('me')
@@ -94,5 +96,43 @@ export class AuthController {
     })
     async me(@CurrentUser() user: UserDomain): Promise<UserResponse> {
         return UserHttpMapper.toResponse(user);
+    }
+
+    @Post('dev/login')
+    @Public()
+    @ApiOperation({
+        summary: 'Dev/Test login - authenticate as any user',
+        description:
+            'Development endpoint to quickly login as any registered user by email. Only available in non-production environments.',
+    })
+    @ApiBody({
+        type: DevLoginRequestDto,
+        description: 'User email for dev login',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Successfully logged in as the specified user',
+        type: LoginResponseDto,
+        schema: {
+            type: 'object',
+            properties: {
+                userId: { type: 'string', example: '1' },
+                session: { type: 'object', description: 'Session data' },
+            },
+        },
+    })
+    @ApiResponse({
+        status: HttpStatus.UNAUTHORIZED,
+        description: `
+            Possible reasons:
+            - Dev login is not available in production environment.
+            - User with the specified email does not exist.
+        `,
+    })
+    async devLogin(
+        @Body() dto: DevLoginRequestDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<LoginResponseDto> {
+        return this.authService.devLogin(dto.email, res);
     }
 }

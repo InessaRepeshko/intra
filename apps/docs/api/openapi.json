@@ -94,6 +94,56 @@
         ]
       }
     },
+    "/auth/dev/login": {
+      "post": {
+        "description": "Development endpoint to quickly login as any registered user by email. Only available in non-production environments.",
+        "operationId": "AuthController_devLogin",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "User email for dev login",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevLoginRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully logged in as the specified user",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "example": "1"
+                },
+                "session": {
+                  "type": "object",
+                  "description": "Session data"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "\n            Possible reasons:\n            - Dev login is not available in production environment.\n            - User with the specified email does not exist.\n        "
+          }
+        },
+        "summary": "Dev/Test login - authenticate as any user",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/identity/users": {
       "post": {
         "operationId": "IdentityUsersController_create",
@@ -7429,6 +7479,45 @@
           "roles",
           "createdAt",
           "updatedAt"
+        ]
+      },
+      "DevLoginRequestDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email of the user to login as (for development/testing)",
+            "example": "john.doe@intra.com",
+            "nullable": false,
+            "format": "email",
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "maximum": 100,
+            "minimum": 1
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "LoginResponseDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "number",
+            "description": "ID of the logged in user",
+            "example": 1,
+            "nullable": false
+          },
+          "session": {
+            "type": "object",
+            "description": "Session data",
+            "example": {},
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "userId",
+          "session"
         ]
       },
       "CreateUserDto": {
