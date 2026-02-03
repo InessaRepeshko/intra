@@ -17,7 +17,24 @@ export type UserProps = {
     roles?: IdentityRole[];
 };
 
-export class UserDomain {
+export interface UserInterface {
+    readonly id?: number;
+    readonly firstName: string;
+    readonly secondName?: string;
+    readonly lastName: string;
+    readonly fullName: string;
+    readonly email: string;
+    readonly passwordHash: string;
+    readonly status: IdentityStatus;
+    readonly positionId?: number | null;
+    readonly teamId?: number | null;
+    readonly managerId?: number | null;
+    readonly createdAt?: Date;
+    readonly updatedAt?: Date;
+    readonly roles: IdentityRole[];
+}
+
+export class UserDomain implements UserInterface {
     readonly id?: number;
     readonly firstName: string;
     readonly secondName?: string;

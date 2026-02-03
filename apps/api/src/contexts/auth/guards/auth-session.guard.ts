@@ -15,7 +15,7 @@ export class AuthSessionGuard implements CanActivate {
         private readonly authService: AuthService,
         private readonly identityUsers: IdentityUserService,
         private readonly reflector: Reflector,
-    ) {}
+    ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context
@@ -31,6 +31,7 @@ export class AuthSessionGuard implements CanActivate {
         const session = await this.authService.getSessionFromRequest(
             request as any,
         );
+
         if (!session?.session) {
             throw new UnauthorizedException('Unauthenticated');
         }

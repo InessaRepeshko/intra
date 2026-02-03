@@ -40,6 +40,8 @@ export class AuthService {
     private readonly clientId: string;
     private readonly clientSecret: string;
     private readonly isProd: boolean;
+    // Hardcoded password for development testing only
+    private readonly DEV_PASSWORD = 'dev_login_password_secret_123!';
 
     constructor(
         @Inject(BETTER_AUTH_INSTANCE)
@@ -118,8 +120,12 @@ export class AuthService {
     async getSessionFromRequest(req: Request): Promise<{
         session: unknown;
     } | null> {
+        let headers = req.headers;
+
+        this.fixDuplicateCookies(req);
+
         const session = await this.auth.api.getSession({
-            headers: req.headers as any,
+            headers: headers as any,
         });
         if (!session) return null;
         return { session };
@@ -263,7 +269,37 @@ export class AuthService {
         }
     }
 
-    async devLogin(email: string): Promise<{ userId: number; session: unknown }> {
+    private fixDuplicateCookies(req: Request) {
+        if (!req.headers.cookie?.includes('better-auth.session_token')) {
+            return;
+        }
+
+        const rawCookies = req.headers.cookie.split(';');
+        const sessionCookies: string[] = [];
+        const otherCookies: string[] = [];
+
+        rawCookies.forEach((c) => {
+            const trimmed = c.trim();
+            if (trimmed.startsWith('better-auth.session_token=')) {
+                sessionCookies.push(trimmed);
+            } else {
+                otherCookies.push(trimmed);
+            }
+        });
+
+        if (sessionCookies.length > 1) {
+            // Keep the longest one (likely the signed one)
+            const keptCookie = sessionCookies.sort(
+                (a, b) => b.length - a.length,
+            )[0];
+            req.headers.cookie = [...otherCookies, keptCookie].join('; ');
+        }
+    }
+
+    async devLogin(
+        email: string,
+        res: Response,
+    ): Promise<{ userId: number; session: unknown }> {
         if (this.isProd) {
             throw new UnauthorizedException('Dev login is disabled in production');
         }
@@ -273,7 +309,7 @@ export class AuthService {
             throw new NotFoundException(`User with email ${email} not found`);
         }
 
-        const password = 'dev_login_password_secret_123!';
+        const password = this.DEV_PASSWORD;
         const name = user.fullName || 'Dev User';
 
         // Try to sign up (if user relies on this auth provider for the first time)
@@ -283,9 +319,6 @@ export class AuthService {
                     email,
                     password,
                     name,
-                    data: {
-                        // pass any extra data if needed
-                    },
                 },
             });
         } catch {
@@ -299,6 +332,8 @@ export class AuthService {
             },
             asResponse: true,
         });
+
+        await this.copySetCookies(response as any, res);
 
         const session = await this.tryParseResponseBody(response);
         if (!session) {

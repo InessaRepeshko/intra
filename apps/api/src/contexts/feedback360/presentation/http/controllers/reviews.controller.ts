@@ -34,7 +34,8 @@ import { CurrentUser } from '../../../../auth/decorators/current-user.decorator'
 import { Roles } from '../../../../auth/decorators/roles.decorator';
 import { AuthSessionGuard } from '../../../../auth/guards/auth-session.guard';
 import { RolesGuard } from '../../../../auth/guards/roles.guard';
-import { UserDomain } from '../../../../identity/domain/user.domain';
+import { UserInterface } from '../../../../identity/domain/user.domain';
+
 import { ReviewService } from '../../../application/services/review.service';
 import { AnswerQueryDto } from '../dto/answers/answer-query.dto';
 import { CreateAnswerDto } from '../dto/answers/create-answer.dto';
@@ -60,7 +61,7 @@ import { ReviewerResponse } from '../models/reviewer.response';
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ReviewResponse })
 export class ReviewController {
-    constructor(private readonly reviews: ReviewService) {}
+    constructor(private readonly reviews: ReviewService) { }
 
     @Post()
     @ApiOperation({ summary: 'Create Review' })
@@ -389,7 +390,7 @@ export class ReviewController {
     @Roles(IdentityRole.HR, IdentityRole.ADMIN)
     async forceComplete(
         @Param('id') id: string,
-        @CurrentUser() user: UserDomain,
+        @CurrentUser() user: UserInterface,
     ): Promise<{ message: string }> {
         if (!user?.id) {
             throw new UnauthorizedException('User identifier is required');
@@ -397,7 +398,7 @@ export class ReviewController {
 
         await this.reviews.forceCompleteReview(
             Number(id),
-            user.id!,
+            user.id,
             user.fullName,
         );
         return {

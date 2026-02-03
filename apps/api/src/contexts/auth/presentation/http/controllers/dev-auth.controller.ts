@@ -47,26 +47,13 @@ export class DevAuthController {
     async devLogin(
         @Body('email') email: string,
         @Res({ passthrough: true }) res: Response,
-    ): Promise<any> {
+    ): Promise<{ userId: number; session: unknown }> {
         if (this.isProd) {
             throw new UnauthorizedException(
                 'Dev login is disabled in production',
             );
         }
 
-        const result = await this.authService.devLogin(email);
-
-        // Manually set better-auth.session_token cookie if available in session
-        const sessionAny = result.session as any;
-        if (sessionAny?.token) {
-            res.cookie('better-auth.session_token', sessionAny.token, {
-                httpOnly: true,
-                secure: this.isProd,
-                sameSite: 'lax',
-                path: '/',
-            });
-        }
-
-        return result;
+        return this.authService.devLogin(email, res);
     }
 }
