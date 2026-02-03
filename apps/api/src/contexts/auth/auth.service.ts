@@ -3,6 +3,7 @@ import {
     BadRequestException,
     Inject,
     Injectable,
+    NotFoundException,
     UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -260,5 +261,50 @@ export class AuthService {
         } catch {
             return null;
         }
+    }
+
+    async devLogin(email: string): Promise<{ userId: number; session: unknown }> {
+        if (this.isProd) {
+            throw new UnauthorizedException('Dev login is disabled in production');
+        }
+
+        const user = await this.identityUsers.findByEmail(email);
+        if (!user) {
+            throw new NotFoundException(`User with email ${email} not found`);
+        }
+
+        const password = 'dev_login_password_secret_123!';
+        const name = user.fullName || 'Dev User';
+
+        // Try to sign up (if user relies on this auth provider for the first time)
+        try {
+            await (this.auth as any).api.signUpEmail({
+                body: {
+                    email,
+                    password,
+                    name,
+                    data: {
+                        // pass any extra data if needed
+                    },
+                },
+            });
+        } catch {
+            // User likely already exists or other error, proceed to sign in
+        }
+
+        const response = await (this.auth as any).api.signInEmail({
+            body: {
+                email,
+                password,
+            },
+            asResponse: true,
+        });
+
+        const session = await this.tryParseResponseBody(response);
+        if (!session) {
+            throw new UnauthorizedException('Failed to create session');
+        }
+
+        return { userId: user.id!, session };
     }
 }

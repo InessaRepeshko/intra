@@ -29,7 +29,9 @@ export const betterAuthProvider: Provider = {
         return betterAuth({
             baseURL,
             secret,
-            emailAndPassword: { enabled: false },
+            emailAndPassword: {
+                enabled: config.get<string>('APP_NODE_ENV') !== 'production',
+            },
             socialProviders: {
                 google: {
                     clientId,

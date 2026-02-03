@@ -6,11 +6,12 @@ import { AuthService } from './auth.service';
 import { betterAuthProvider } from './better-auth.provider';
 import { AuthSessionGuard } from './guards/auth-session.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { DevAuthController } from './presentation/http/controllers/dev-auth.controller';
 
 @Module({
     imports: [ConfigModule, IdentityModule],
-    controllers: [AuthController],
+    controllers: [AuthController, DevAuthController],
     providers: [betterAuthProvider, AuthService, AuthSessionGuard, RolesGuard],
     exports: [AuthService, AuthSessionGuard, RolesGuard],
 })
-export class AuthModule {}
+export class AuthModule { }

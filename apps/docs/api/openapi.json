@@ -85,6 +85,39 @@
         ]
       }
     },
+    "/auth/dev/login": {
+      "post": {
+        "description": "Login as any user by email. Only available in NON-PRODUCTION environments.",
+        "operationId": "DevAuthController_devLogin",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "session": {
+                      "type": "object",
+                      "description": "Session data"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Dev Login (bypass password)",
+        "tags": [
+          "Auth [DEV]"
+        ]
+      }
+    },
     "/identity/users": {
       "post": {
         "operationId": "IdentityUsersController_create",
