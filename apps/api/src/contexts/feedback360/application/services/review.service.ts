@@ -18,16 +18,22 @@ import {
     UpdateReviewPayload,
     UpsertClusterScorePayload,
 } from '@intra/shared-kernel';
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Inject,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { PrismaService } from 'src/database/prisma.service';
 import { CompetenceService } from 'src/contexts/library/application/services/competence.service';
 import { QuestionTemplateService } from 'src/contexts/library/application/services/question-template.service';
+import { PrismaService } from 'src/database/prisma.service';
 import { AnswerDomain } from '../../domain/answer.domain';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
 import { QuestionDomain } from '../../domain/question.domain';
 import { RespondentDomain } from '../../domain/respondent.domain';
 import { ReviewQuestionRelationDomain } from '../../domain/review-question-relation.domain';
+import { ReviewStageHistoryDomain } from '../../domain/review-stage-history.domain';
 import { ReviewDomain } from '../../domain/review.domain';
 import { ReviewerDomain } from '../../domain/reviewer.domain';
 import {
@@ -68,7 +74,6 @@ import {
     REVIEWER_REPOSITORY,
     ReviewerRepositoryPort,
 } from '../ports/reviewer.repository.port';
-import { ReviewStageHistoryDomain } from '../../domain/review-stage-history.domain';
 import { CycleService } from './cycle.service';
 
 @Injectable()
@@ -95,7 +100,7 @@ export class ReviewService {
         private readonly competences: CompetenceService,
         private readonly cycles: CycleService,
         private readonly eventEmitter: EventEmitter2,
-    ) { }
+    ) {}
 
     async create(payload: CreateReviewPayload): Promise<ReviewDomain> {
         if (payload.cycleId) {

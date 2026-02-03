@@ -53,7 +53,7 @@ import { ReviewerResponse } from '../models/reviewer.response';
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ReviewResponse })
 export class ReviewController {
-    constructor(private readonly reviews: ReviewService) { }
+    constructor(private readonly reviews: ReviewService) {}
 
     @Post()
     @ApiOperation({ summary: 'Create Review' })

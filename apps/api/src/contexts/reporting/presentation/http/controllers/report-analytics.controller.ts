@@ -8,12 +8,7 @@ import {
     SerializeOptions,
     UseInterceptors,
 } from '@nestjs/common';
-import {
-    ApiOperation,
-    ApiParam,
-    ApiResponse,
-    ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 import { ReportAnalyticsService } from '../../../application/services/report-analytics.service';
 import { ReportingHttpMapper } from '../mappers/reporting.http.mapper';
@@ -24,9 +19,7 @@ import { ReportAnalyticsResponse } from '../models/report-analytics.response';
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ReportAnalyticsResponse })
 export class ReportAnalyticsController {
-    constructor(
-        private readonly analyticsService: ReportAnalyticsService,
-    ) { }
+    constructor(private readonly analyticsService: ReportAnalyticsService) {}
 
     @Get('report/:reportId')
     @ApiOperation({ summary: 'Get analytics by report id' })
@@ -44,11 +37,8 @@ export class ReportAnalyticsController {
     async getByReportId(
         @Param('reportId', ParseIntPipe) reportId: number,
     ): Promise<ReportAnalyticsResponse[]> {
-        const analytics =
-            await this.analyticsService.getByReportId(reportId);
-        return analytics.map(
-            ReportingHttpMapper.toReportAnalyticsResponse,
-        );
+        const analytics = await this.analyticsService.getByReportId(reportId);
+        return analytics.map(ReportingHttpMapper.toReportAnalyticsResponse);
     }
 
     @Get(':id')

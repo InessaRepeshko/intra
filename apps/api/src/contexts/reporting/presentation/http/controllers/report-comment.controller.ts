@@ -8,12 +8,7 @@ import {
     SerializeOptions,
     UseInterceptors,
 } from '@nestjs/common';
-import {
-    ApiOperation,
-    ApiParam,
-    ApiResponse,
-    ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 import { ReportCommentService } from '../../../application/services/report-comment.service';
 import { ReportingHttpMapper } from '../mappers/reporting.http.mapper';
@@ -24,7 +19,7 @@ import { ReportCommentResponse } from '../models/report-comment.response';
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ReportCommentResponse })
 export class ReportCommentController {
-    constructor(private readonly commentService: ReportCommentService) { }
+    constructor(private readonly commentService: ReportCommentService) {}
 
     @Get('report/:reportId')
     @ApiOperation({ summary: 'Get comments by report id' })

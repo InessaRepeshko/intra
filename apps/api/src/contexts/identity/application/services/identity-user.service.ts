@@ -83,10 +83,10 @@ export class IdentityUserService {
 
         const fullName = shouldUpdateFullName
             ? this.buildFullName(
-                patch.firstName ?? current.firstName,
-                patch.secondName ?? current.secondName,
-                patch.lastName ?? current.lastName,
-            )
+                  patch.firstName ?? current.firstName,
+                  patch.secondName ?? current.secondName,
+                  patch.lastName ?? current.lastName,
+              )
             : undefined;
 
         const payload: UpdateUserPayload = {
@@ -123,77 +123,37 @@ export class IdentityUserService {
 
     async upsertExternalUser(payload: {
         email: string;
-        firstName?: string;
-        lastName?: string;
-        fullName?: string;
-        secondName?: string | null;
-        roles?: IdentityRole[];
-        status?: IdentityStatus;
+        firstName: string;
+        lastName: string;
+        secondName: string | undefined;
     }): Promise<UserDomain> {
         const existing = await this.users.findByEmail(payload.email, {
             withRoles: true,
         });
 
-        const fallbackName = this.buildNamesFromPayload(payload);
-        const firstName = payload.firstName ?? fallbackName.firstName;
-        const lastName = payload.lastName ?? fallbackName.lastName;
-        const fullName =
-            payload.fullName ??
-            this.buildFullName(firstName, payload.secondName ?? undefined, lastName);
-
         if (existing) {
-            const patch: UpdateUserPayload = {
-                firstName,
-                secondName: payload.secondName ?? existing.secondName ?? null,
-                lastName,
-                fullName,
-                status: payload.status ?? IdentityStatus.ACTIVE,
-            };
-
-            const updated = await this.users.updateById(existing.id!, patch);
-            const shouldUpdateRoles = payload.roles?.length;
-            if (shouldUpdateRoles) {
-                return this.replaceRoles(
-                    updated.id!,
-                    payload.roles ?? [IdentityRole.EMPLOYEE],
-                );
-            }
-            return updated;
+            return existing;
         }
 
-        const roles = payload.roles ?? [IdentityRole.EMPLOYEE];
-
         const createdUser = UserDomain.create({
-            firstName,
-            secondName: payload.secondName ?? undefined,
-            lastName,
-            fullName,
+            firstName: payload.firstName,
+            secondName: payload.secondName,
+            lastName: payload.lastName,
+            fullName: this.buildFullName(
+                payload.firstName,
+                payload.secondName,
+                payload.lastName,
+            ),
             email: payload.email,
             passwordHash: PASSWORD_PLACEHOLDER,
-            status: payload.status ?? IdentityStatus.ACTIVE,
+            status: IdentityStatus.ACTIVE,
             positionId: null,
             teamId: null,
             managerId: null,
-            roles,
+            roles: [IdentityRole.EMPLOYEE],
         });
 
         return this.users.create(createdUser);
-    }
-
-    private buildNamesFromPayload(payload: {
-        email: string;
-        firstName?: string;
-        lastName?: string;
-    }): { firstName: string; lastName: string } {
-        if (payload.firstName && payload.lastName) {
-            return { firstName: payload.firstName, lastName: payload.lastName };
-        }
-        const [localPart] = payload.email.split('@');
-        const clean = localPart.replace(/[._-]+/g, ' ').trim();
-        const parts = clean.split(' ').filter(Boolean);
-        const firstName = payload.firstName ?? parts[0] ?? localPart;
-        const lastName = payload.lastName ?? (parts.slice(1).join(' ') || 'User');
-        return { firstName, lastName };
     }
 
     private buildFullName(

@@ -8,9 +8,9 @@ import {
     EntityType,
     RespondentCategory,
 } from '@intra/shared-kernel';
-import { ReportDomain } from '../../domain/report.domain';
 import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
 import { ReportCommentDomain } from '../../domain/report-comment.domain';
+import { ReportDomain } from '../../domain/report.domain';
 
 export class ReportingMapper {
     static toReportDomain(
@@ -26,12 +26,10 @@ export class ReportingMapper {
             respondentCount: report.respondentCount,
             turnoutOfTeam: report.turnoutOfTeam,
             turnoutOfOther: report.turnoutOfOther,
-            totalAverageBySelfAssessment:
-                report.totalAverageBySelfAssessment,
+            totalAverageBySelfAssessment: report.totalAverageBySelfAssessment,
             totalAverageByTeam: report.totalAverageByTeam,
             totalAverageByOthers: report.totalAverageByOthers,
-            totalDeltaBySelfAssessment:
-                report.totalDeltaBySelfAssessment,
+            totalDeltaBySelfAssessment: report.totalDeltaBySelfAssessment,
             totalDeltaByTeam: report.totalDeltaByTeam,
             totalDeltaByOthers: report.totalDeltaByOthers,
             createdAt: report.createdAt,
@@ -70,7 +68,8 @@ export class ReportingMapper {
             questionId: comment.questionId,
             questionTitle: comment.questionTitle,
             comment: comment.comment,
-            respondentCategory: comment.respondentCategory as RespondentCategory,
+            respondentCategory:
+                comment.respondentCategory as RespondentCategory,
             commentSentiment: comment.commentSentiment as CommentSentiment,
             numberOfMentions: comment.numberOfMentions,
             createdAt: comment.createdAt,

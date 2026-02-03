@@ -8,12 +8,11 @@ import { ReviewStageHistoryDomain } from '../../domain/review-stage-history.doma
 import { Feedback360Mapper } from './feedback360.mapper';
 
 @Injectable()
-export class ReviewStageHistoryRepository
-    implements ReviewStageHistoryRepositoryPort {
+export class ReviewStageHistoryRepository implements ReviewStageHistoryRepositoryPort {
     readonly [REVIEW_STAGE_HISTORY_REPOSITORY] =
         REVIEW_STAGE_HISTORY_REPOSITORY;
 
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService) {}
 
     async create(
         history: ReviewStageHistoryDomain,

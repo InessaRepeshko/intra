@@ -26,7 +26,8 @@ export class ReportingHttpMapper {
         response.analytics = report.analytics.map(
             this.toReportAnalyticsResponse,
         );
-        response.comments = report.comments?.map(this.toReportCommentResponse) ?? [];
+        response.comments =
+            report.comments?.map(this.toReportCommentResponse) ?? [];
         return response;
     }
 

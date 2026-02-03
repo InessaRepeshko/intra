@@ -120,7 +120,7 @@ export type { CreateReviewPayload } from './feedback360/dto/review/create-review
 export type { UpdateReviewPayload } from './feedback360/dto/review/update-review-payload.type';
 
 export type { ReviewerDto } from './feedback360/dto/reviewer/reviewer-dto.interface';
-export { ReviewerSortField, REVIEWER_SORT_FIELDS} from './feedback360/enums/reviewer-sort-field.enum';
+export { ReviewerSortField, REVIEWER_SORT_FIELDS } from './feedback360/enums/reviewer-sort-field.enum';
 export type { ReviewerSearchQuery } from './feedback360/dto/reviewer/reviewer-search-query.type';
 export type { AddReviewerPayload } from './feedback360/dto/reviewer/add-reviewer-payload.type';
 
@@ -136,3 +136,6 @@ export type { ReportDto } from './reporting/dto/report-dto.interface';
 export type { ReportCommentDto } from './reporting/dto/report-comment-dto.interface';
 
 export type { ReportAnalyticsDto } from './reporting/dto/report-analytics-dto.interface';
+
+/* Auth */
+export type { AuthResponseDto } from './auth/auth-response-dto.interface';

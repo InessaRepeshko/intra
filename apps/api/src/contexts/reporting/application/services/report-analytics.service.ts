@@ -1,16 +1,16 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
 import {
     REPORT_ANALYTICS_REPOSITORY,
     ReportAnalyticsRepositoryPort,
 } from '../ports/report-analytics.repository.port';
-import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
 
 @Injectable()
 export class ReportAnalyticsService {
     constructor(
         @Inject(REPORT_ANALYTICS_REPOSITORY)
         private readonly analytics: ReportAnalyticsRepositoryPort,
-    ) { }
+    ) {}
 
     async getByReportId(reportId: number): Promise<ReportAnalyticsDomain[]> {
         return this.analytics.findByReportId(reportId);

@@ -1,9 +1,15 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { EntityType } from '@intra/shared-kernel';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
-    REPORT_REPOSITORY,
-    ReportRepositoryPort,
-} from '../ports/report.repository.port';
+    CLUSTER_SCORE_REPOSITORY,
+    ClusterScoreRepositoryPort,
+} from '../../../feedback360/application/ports/cluster-score.repository.port';
+import {
+    RESPONDENT_REPOSITORY,
+    RespondentRepositoryPort,
+} from '../../../feedback360/application/ports/respondent.repository.port';
+import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
+import { ReportDomain } from '../../domain/report.domain';
 import {
     REPORT_ANALYTICS_REPOSITORY,
     ReportAnalyticsRepositoryPort,
@@ -13,15 +19,9 @@ import {
     ReportCommentRepositoryPort,
 } from '../ports/report-comment.repository.port';
 import {
-    RESPONDENT_REPOSITORY,
-    RespondentRepositoryPort,
-} from '../../../feedback360/application/ports/respondent.repository.port';
-import {
-    CLUSTER_SCORE_REPOSITORY,
-    ClusterScoreRepositoryPort,
-} from '../../../feedback360/application/ports/cluster-score.repository.port';
-import { ReportDomain } from '../../domain/report.domain';
-import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
+    REPORT_REPOSITORY,
+    ReportRepositoryPort,
+} from '../ports/report.repository.port';
 
 @Injectable()
 export class ReportingService {
@@ -38,7 +38,7 @@ export class ReportingService {
         private readonly respondents: RespondentRepositoryPort,
         @Inject(CLUSTER_SCORE_REPOSITORY)
         private readonly clusterScores: ClusterScoreRepositoryPort,
-    ) { }
+    ) {}
 
     async getById(id: number): Promise<ReportDomain> {
         const report = await this.reports.findById(id);
@@ -138,7 +138,8 @@ export class ReportingService {
             if (!acc[clusterId]) {
                 acc[clusterId] = {
                     scores: [],
-                    clusterTitle: score.cluster?.title || `Cluster ${clusterId}`,
+                    clusterTitle:
+                        score.cluster?.title || `Cluster ${clusterId}`,
                     competenceId: score.cluster?.competenceId || null,
                     competenceTitle: score.cluster?.competence?.title || null,
                 };
@@ -152,8 +153,12 @@ export class ReportingService {
 
         for (const [clusterIdStr, data] of Object.entries(scoresByCluster)) {
             const clusterId = Number(clusterIdStr);
-            const { scores: clusterScores, clusterTitle, competenceId, competenceTitle } =
-                data as any;
+            const {
+                scores: clusterScores,
+                clusterTitle,
+                competenceId,
+                competenceTitle,
+            } = data as any;
 
             const average = this.calculateAverage(clusterScores);
             const baseline = 5.0; // Expected baseline score
