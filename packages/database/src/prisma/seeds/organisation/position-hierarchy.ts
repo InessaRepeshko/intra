@@ -44,14 +44,32 @@ export const POSITION_HIERARCHY_SEED_DATA: PositionHierarchySeed[] = [
     { superiorPosition: 'Team Lead', subordinatePosition: 'Tech Lead' },
 
     // Software Engineering hierarchy
-    { superiorPosition: 'Tech Lead', subordinatePosition: 'Senior Software Engineer' },
-    { superiorPosition: 'Senior Software Engineer', subordinatePosition: 'Middle Software Engineer' },
-    { superiorPosition: 'Middle Software Engineer', subordinatePosition: 'Junior Software Engineer' },
+    {
+        superiorPosition: 'Tech Lead',
+        subordinatePosition: 'Senior Software Engineer',
+    },
+    {
+        superiorPosition: 'Senior Software Engineer',
+        subordinatePosition: 'Middle Software Engineer',
+    },
+    {
+        superiorPosition: 'Middle Software Engineer',
+        subordinatePosition: 'Junior Software Engineer',
+    },
 
     // QA hierarchy
-    { superiorPosition: 'Tech Lead', subordinatePosition: 'Senior QA Engineer' },
-    { superiorPosition: 'Senior QA Engineer', subordinatePosition: 'Middle QA Engineer' },
-    { superiorPosition: 'Middle QA Engineer', subordinatePosition: 'Junior QA Engineer' },
+    {
+        superiorPosition: 'Tech Lead',
+        subordinatePosition: 'Senior QA Engineer',
+    },
+    {
+        superiorPosition: 'Senior QA Engineer',
+        subordinatePosition: 'Middle QA Engineer',
+    },
+    {
+        superiorPosition: 'Middle QA Engineer',
+        subordinatePosition: 'Junior QA Engineer',
+    },
 
     // COO hierarchy - Operations
     { superiorPosition: 'COO', subordinatePosition: 'HR Director' },
@@ -64,8 +82,14 @@ export const POSITION_HIERARCHY_SEED_DATA: PositionHierarchySeed[] = [
 
     // CMO hierarchy - Marketing and Design
     { superiorPosition: 'CMO', subordinatePosition: 'Senior Designer' },
-    { superiorPosition: 'Senior Designer', subordinatePosition: 'Middle Designer' },
-    { superiorPosition: 'Middle Designer', subordinatePosition: 'Junior Designer' },
+    {
+        superiorPosition: 'Senior Designer',
+        subordinatePosition: 'Middle Designer',
+    },
+    {
+        superiorPosition: 'Middle Designer',
+        subordinatePosition: 'Junior Designer',
+    },
     { superiorPosition: 'CMO', subordinatePosition: 'Marketing Specialist' },
     { superiorPosition: 'CMO', subordinatePosition: 'Sales Specialist' },
 ];
@@ -76,10 +100,14 @@ export default async function seedPositionHierarchy(
 ): Promise<void> {
     for (const hierarchy of POSITION_HIERARCHY_SEED_DATA) {
         const superiorId = positionMap.get(hierarchy.superiorPosition)?.id;
-        const subordinateId = positionMap.get(hierarchy.subordinatePosition)?.id;
+        const subordinateId = positionMap.get(
+            hierarchy.subordinatePosition,
+        )?.id;
 
         if (!superiorId || !subordinateId) {
-            console.warn(`⚠️ Cannot create hierarchy: ${hierarchy.superiorPosition} -> ${hierarchy.subordinatePosition}`);
+            console.warn(
+                `⚠️ Cannot create hierarchy: ${hierarchy.superiorPosition} -> ${hierarchy.subordinatePosition}`,
+            );
             continue;
         }
 

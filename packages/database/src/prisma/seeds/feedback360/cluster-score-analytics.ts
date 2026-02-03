@@ -1,6 +1,6 @@
 import { PrismaClient } from '@intra/database';
-import type { ReviewMap } from './reviews';
 import type { CycleMap } from './cycles';
+import type { ReviewMap } from './reviews';
 
 export default async function seedClusterScoreAnalytics(
     prisma: PrismaClient,
@@ -44,10 +44,11 @@ export default async function seedClusterScoreAnalytics(
 
             if (clusterScores.length === 0) continue;
 
-            const scores = clusterScores.map(cs => cs.score);
+            const scores = clusterScores.map((cs) => cs.score);
             const minScore = Math.min(...scores);
             const maxScore = Math.max(...scores);
-            const averageScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+            const averageScore =
+                scores.reduce((a, b) => a + b, 0) / scores.length;
             const employeesCount = clusterScores.length;
 
             // Check if analytics already exist
@@ -71,7 +72,9 @@ export default async function seedClusterScoreAnalytics(
                         averageScore,
                     },
                 });
-                console.log(`✅ Updated analytics for ${cluster.competence.code} (${cluster.lowerBound}-${cluster.upperBound}) in cycle "${cycle.title}": ${employeesCount} employees`);
+                console.log(
+                    `✅ Updated analytics for ${cluster.competence.code} (${cluster.lowerBound}-${cluster.upperBound}) in cycle "${cycle.title}": ${employeesCount} employees`,
+                );
             } else {
                 // Create new analytics
                 await prisma.clusterScoreAnalytics.create({

@@ -10,4 +10,6 @@ export enum ClusterScoreAnalyticsSortField {
     UPDATED_AT = 'updatedAt',
 }
 
-export const CLUSTER_SCORE_ANALYTICS_SORT_FIELDS = Object.values(ClusterScoreAnalyticsSortField);
+export const CLUSTER_SCORE_ANALYTICS_SORT_FIELDS = Object.values(
+    ClusterScoreAnalyticsSortField,
+);

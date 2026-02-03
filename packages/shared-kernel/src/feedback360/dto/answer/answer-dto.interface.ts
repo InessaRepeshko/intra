@@ -1,5 +1,5 @@
-import { AnswerType } from "../../../library/enums/answer-type.enum";
-import { RespondentCategory } from "../../enums/respondent-category.enum";
+import { AnswerType } from '../../../library/enums/answer-type.enum';
+import { RespondentCategory } from '../../enums/respondent-category.enum';
 
 export interface AnswerDto {
     id: number;

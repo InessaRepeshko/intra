@@ -1,5 +1,5 @@
-import { IdentityRole } from "../../enums/identity-role.enum";
-import { IdentityStatus } from "../../enums/identity-status.enum";
+import { IdentityRole } from '../../enums/identity-role.enum';
+import { IdentityStatus } from '../../enums/identity-status.enum';
 
 export type CreateUserPayload = {
     firstName: string;
@@ -7,7 +7,7 @@ export type CreateUserPayload = {
     lastName: string;
     fullName?: string;
     email: string;
-    passwordHash?: string;
+    avatarUrl?: string | null;
     status?: IdentityStatus;
     positionId?: number | null;
     teamId?: number | null;

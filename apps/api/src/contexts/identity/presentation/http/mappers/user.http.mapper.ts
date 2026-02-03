@@ -10,6 +10,7 @@ export class UserHttpMapper {
         view.lastName = domain.lastName;
         view.fullName = domain.fullName ?? null;
         view.email = domain.email;
+        view.avatarUrl = domain.avatarUrl;
         view.status = domain.status;
         view.positionId = domain.positionId ?? null;
         view.teamId = domain.teamId ?? null;

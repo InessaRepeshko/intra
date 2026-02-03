@@ -1,5 +1,4 @@
-import { GLOBAL_CONSTRAINTS } from "../../common/constraints/global.constraints";
-
+import { GLOBAL_CONSTRAINTS } from '../../common/constraints/global.constraints';
 
 export const CYCLE_CONSTRAINTS = {
     TITLE: {

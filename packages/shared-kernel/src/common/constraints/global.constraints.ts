@@ -28,4 +28,4 @@ export const GLOBAL_CONSTRAINTS = {
         MIN: 0.0,
         MAX: 100.0,
     },
-}
+};

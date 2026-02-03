@@ -1,26 +1,26 @@
 import { PrismaClient } from '@intra/database';
 import { PrismaPg } from '@prisma/adapter-pg';
-import seedPositions from './organisation/positions';
-import seedPositionHierarchy from './organisation/position-hierarchy';
-import seedTeams from './organisation/teams';
+import seedAnswers from './feedback360/answers';
+import seedClusterScoreAnalytics from './feedback360/cluster-score-analytics';
+import seedClusterScores from './feedback360/cluster-scores';
+import seedCycles from './feedback360/cycles';
+import seedQuestions from './feedback360/questions';
+import seedRespondents from './feedback360/respondents';
+import seedReviewQuestionRelations from './feedback360/review-question-relations';
+import seedReviewers from './feedback360/reviewers';
+import seedReviews from './feedback360/reviews';
 import seedUserRoles from './identity/user-roles';
 import seedUsers from './identity/users';
-import seedTeamHeads from './organisation/team-heads';
 import seedClusters from './library/clusters';
-import seedCompetences from './library/competences';
-import seedQuestionTemplates from './library/question-templates';
 import seedCompetenceQuestionTemplateRelations from './library/competence-question-template-relations';
+import seedCompetences from './library/competences';
 import seedPositionCompetenceRelations from './library/position-competence-relations';
 import seedPositionQuestionTemplateRelations from './library/position-question-template-relations';
-import seedCycles from './feedback360/cycles';
-import seedReviews from './feedback360/reviews';
-import seedQuestions from './feedback360/questions';
-import seedReviewQuestionRelations from './feedback360/review-question-relations';
-import seedRespondents from './feedback360/respondents';
-import seedReviewers from './feedback360/reviewers';
-import seedAnswers from './feedback360/answers';
-import seedClusterScores from './feedback360/cluster-scores';
-import seedClusterScoreAnalytics from './feedback360/cluster-score-analytics';
+import seedQuestionTemplates from './library/question-templates';
+import seedPositionHierarchy from './organisation/position-hierarchy';
+import seedPositions from './organisation/positions';
+import seedTeamHeads from './organisation/team-heads';
+import seedTeams from './organisation/teams';
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({
@@ -65,7 +65,11 @@ async function main() {
     await seedPositionCompetenceRelations(prisma, positions);
     console.info('🔗 Position-competence relations');
 
-    await seedPositionQuestionTemplateRelations(prisma, questionTemplates, positions);
+    await seedPositionQuestionTemplateRelations(
+        prisma,
+        questionTemplates,
+        positions,
+    );
     console.info('🔗 Question template-position relations');
 
     await seedClusters(prisma);
@@ -109,4 +113,3 @@ main()
     .finally(async () => {
         await prisma.$disconnect();
     });
-

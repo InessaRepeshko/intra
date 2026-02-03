@@ -1,7 +1,6 @@
-import { PrismaClient, AnswerType as PrismaAnswerType } from '@intra/database';
-import { AnswerType } from '@intra/shared-kernel';
-import type { ReviewMap } from './reviews';
+import { PrismaClient } from '@intra/database';
 import type { QuestionMap } from './questions';
+import type { ReviewMap } from './reviews';
 
 export default async function seedReviewQuestionRelations(
     prisma: PrismaClient,
@@ -31,9 +30,9 @@ export default async function seedReviewQuestionRelations(
         }
 
         // Get competences for this position
-        const competenceCodes = review.position.competences.map(
-            (pc) => pc.competence.code
-        ).filter((code): code is string => code !== null);
+        const competenceCodes = review.position.competences
+            .map((pc) => pc.competence.code)
+            .filter((code): code is string => code !== null);
 
         // Get all questions for these competences
         const questions = await prisma.question.findMany({

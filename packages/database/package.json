@@ -33,6 +33,7 @@
         "db:test:refresh": "pnpm db:test:reset && pnpm db:test:generate && pnpm db:test:seed",
         "migrate": "pnpm db:create",
         "db:migrate": "pnpm db:create",
+        "format": "pnpm db:schema && pnpm prettier --write \"src/**/*.ts\"",
         "build": "pnpm tsc && pnpm prisma:config -- generate"
     },
     "dependencies": {

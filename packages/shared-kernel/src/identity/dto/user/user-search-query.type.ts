@@ -1,7 +1,7 @@
-import { IdentityRole } from "../../enums/identity-role.enum";
-import { IdentityStatus } from "../../enums/identity-status.enum";
-import { UserSortField } from "../../enums/user-sort-field.enum";
-import { SortDirection } from "../../../common/enums/sort-direction.enum";
+import { SortDirection } from '../../../common/enums/sort-direction.enum';
+import { IdentityRole } from '../../enums/identity-role.enum';
+import { IdentityStatus } from '../../enums/identity-status.enum';
+import { UserSortField } from '../../enums/user-sort-field.enum';
 
 export type UserSearchQuery = {
     search?: string;

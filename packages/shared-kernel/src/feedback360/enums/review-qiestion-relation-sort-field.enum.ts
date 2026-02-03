@@ -10,4 +10,6 @@ export enum ReviewQuestionRelationSortField {
     CREATED_AT = 'createdAt',
 }
 
-export const REVIEW_QUESTION_RELATION_SORT_FIELDS = Object.values(ReviewQuestionRelationSortField);
+export const REVIEW_QUESTION_RELATION_SORT_FIELDS = Object.values(
+    ReviewQuestionRelationSortField,
+);

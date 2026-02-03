@@ -1,5 +1,5 @@
-import { SortDirection } from "../../../common/enums/sort-direction.enum";
-import { TeamSortField } from "../../enums/team-sort-field.enum";
+import { SortDirection } from '../../../common/enums/sort-direction.enum';
+import { TeamSortField } from '../../enums/team-sort-field.enum';
 
 export type TeamSearchQuery = {
     search?: string;

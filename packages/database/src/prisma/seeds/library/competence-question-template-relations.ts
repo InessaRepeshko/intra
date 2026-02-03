@@ -1,6 +1,8 @@
 import type { PrismaClient } from '@intra/database';
 
-export default async function seedCompetenceQuestionTemplateRelations(prisma: PrismaClient) {
+export default async function seedCompetenceQuestionTemplateRelations(
+    prisma: PrismaClient,
+) {
     const questionTemplates = await prisma.questionTemplate.findMany();
 
     for (const qt of questionTemplates) {

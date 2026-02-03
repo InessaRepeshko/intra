@@ -1,4 +1,4 @@
-import { GLOBAL_CONSTRAINTS } from "../../common/constraints/global.constraints";
+import { GLOBAL_CONSTRAINTS } from '../../common/constraints/global.constraints';
 
 export const REPORT_COMMENT_CONSTRAINTS = {
     TITLE: {

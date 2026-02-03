@@ -1,4 +1,4 @@
-import { GLOBAL_CONSTRAINTS } from "../../common/constraints/global.constraints";
+import { GLOBAL_CONSTRAINTS } from '../../common/constraints/global.constraints';
 
 export const TEAM_CONSTRAINTS = {
     TITLE: {
@@ -13,4 +13,4 @@ export const TEAM_CONSTRAINTS = {
             MAX: GLOBAL_CONSTRAINTS.DESCRIPTION.LENGTH.MAX,
         },
     },
-}
+};

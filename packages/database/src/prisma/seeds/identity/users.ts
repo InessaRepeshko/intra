@@ -1,8 +1,10 @@
-import { PrismaClient, IdentityRole as PrismaIdentityRole } from '@intra/database';
-import { pbkdf2Sync, randomBytes } from 'crypto';
+import {
+    PrismaClient,
+    IdentityRole as PrismaIdentityRole,
+} from '@intra/database';
+import { IdentityRole } from '@intra/shared-kernel';
 import type { PositionMap } from '../organisation/positions';
 import type { TeamMap } from '../organisation/teams';
-import { IdentityRole } from '@intra/shared-kernel';
 
 export type UserMap = Map<string, { id: number }>;
 
@@ -15,11 +17,8 @@ export type UserSeed = {
     team: string;
     roles: IdentityRole[];
     managerEmail?: string | null;
-    password?: string;
     isPrimaryMember?: boolean;
 };
-
-export const DEFAULT_USER_PASSWORD = 'Str0ngP@ssw0rd!';
 
 export const USER_SEED_DATA: UserSeed[] = [
     // Head Office
@@ -287,15 +286,6 @@ function buildFullName(user: UserSeed): string {
     return `${user.firstName}${middle} ${user.lastName}`;
 }
 
-export function hashPassword(password: string): string {
-    const iterations = 120_000;
-    const keylen = 32;
-    const digest = 'sha256';
-    const salt = randomBytes(16).toString('hex');
-    const hash = pbkdf2Sync(password, salt, iterations, keylen, digest).toString('hex');
-    return `pbkdf2_sha256$${iterations}$${salt}$${hash}`;
-}
-
 export default async function seedUsers(
     prisma: PrismaClient,
     positionMap: PositionMap,
@@ -306,7 +296,6 @@ export default async function seedUsers(
     for (const user of USER_SEED_DATA) {
         const positionId = positionMap.get(user.position)?.id as number;
         const teamId = teamMap.get(user.team)?.id ?? null;
-        const passwordHash = hashPassword(user.password ?? DEFAULT_USER_PASSWORD);
         const fullName = buildFullName(user);
 
         const record = await prisma.user.upsert({
@@ -318,7 +307,6 @@ export default async function seedUsers(
                 fullName,
                 positionId,
                 teamId,
-                passwordHash,
             },
             create: {
                 firstName: user.firstName,
@@ -328,16 +316,19 @@ export default async function seedUsers(
                 email: user.email,
                 positionId,
                 teamId,
-                passwordHash,
             },
         });
 
         users.set(user.email, { id: record.id });
 
         for (const roleCode of user.roles) {
-            const code = roleCode.toString().toUpperCase() as unknown as PrismaIdentityRole;
+            const code = roleCode
+                .toString()
+                .toUpperCase() as unknown as PrismaIdentityRole;
             await prisma.userRole.upsert({
-                where: { userId_roleCode: { userId: record.id, roleCode: code } },
+                where: {
+                    userId_roleCode: { userId: record.id, roleCode: code },
+                },
                 update: {},
                 create: { userId: record.id, roleCode: code },
             });

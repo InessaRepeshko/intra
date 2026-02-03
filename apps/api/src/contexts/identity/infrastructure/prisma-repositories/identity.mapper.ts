@@ -26,7 +26,7 @@ export class IdentityMapper {
             lastName: user.lastName,
             fullName: user.fullName,
             email: user.email,
-            passwordHash: user.passwordHash,
+            avatarUrl: user.avatarUrl,
             status: user.status as IdentityStatus,
             positionId: user.positionId,
             teamId: user.teamId,

@@ -1,4 +1,4 @@
-import { IdentityStatus } from "../../enums/identity-status.enum";
+import { IdentityStatus } from '../../enums/identity-status.enum';
 
 export type UpdateUserPayload = Partial<{
     firstName: string;

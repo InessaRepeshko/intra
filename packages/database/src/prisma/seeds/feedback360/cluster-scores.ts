@@ -1,6 +1,6 @@
 import { PrismaClient } from '@intra/database';
-import type { ReviewMap } from './reviews';
 import type { CycleMap } from './cycles';
+import type { ReviewMap } from './reviews';
 
 export default async function seedClusterScores(
     prisma: PrismaClient,
@@ -41,7 +41,9 @@ export default async function seedClusterScores(
 
             if (!question?.competence || !answer.numericalValue) continue;
 
-            const data = competenceData.get(question.competence.id) || { scores: [] };
+            const data = competenceData.get(question.competence.id) || {
+                scores: [],
+            };
             data.scores.push(answer.numericalValue);
             competenceData.set(question.competence.id, data);
         }
@@ -51,19 +53,24 @@ export default async function seedClusterScores(
             const { scores } = data;
             if (scores.length === 0) continue;
 
-            const averageScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+            const averageScore =
+                scores.reduce((a, b) => a + b, 0) / scores.length;
             const answersCount = scores.length; // Count total answers instead of unique evaluators
 
-            const competence = competences.find(c => c.id === competenceId);
+            const competence = competences.find((c) => c.id === competenceId);
             if (!competence) continue;
 
             // Find the cluster that matches this score
-            const matchingCluster = competence.clusters.find(cluster =>
-                averageScore >= cluster.lowerBound && averageScore <= cluster.upperBound
+            const matchingCluster = competence.clusters.find(
+                (cluster) =>
+                    averageScore >= cluster.lowerBound &&
+                    averageScore <= cluster.upperBound,
             );
 
             if (!matchingCluster) {
-                console.warn(`⚠️ No cluster found for competence ${competence.title} with score ${averageScore}`);
+                console.warn(
+                    `⚠️ No cluster found for competence ${competence.title} with score ${averageScore}`,
+                );
                 continue;
             }
 

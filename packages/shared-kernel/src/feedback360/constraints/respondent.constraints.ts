@@ -1,4 +1,4 @@
-import { GLOBAL_CONSTRAINTS } from "../../common/constraints/global.constraints";
+import { GLOBAL_CONSTRAINTS } from '../../common/constraints/global.constraints';
 
 export const RESPONDENT_CONSTRAINTS = {
     FULL_NAME: {

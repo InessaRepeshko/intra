@@ -1,5 +1,3 @@
-import { EntityType } from "../enums/entity-type.enum";
-
 export interface ReportDto {
     id: number;
     reviewId: number;

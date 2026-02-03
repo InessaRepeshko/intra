@@ -1,5 +1,5 @@
-import { ClusterScoreSortField } from "../../enums/cluster-score-sort-field.enum";
-import { SortDirection } from "../../../common/enums/sort-direction.enum";
+import { SortDirection } from '../../../common/enums/sort-direction.enum';
+import { ClusterScoreSortField } from '../../enums/cluster-score-sort-field.enum';
 
 export type ClusterScoreSearchQuery = {
     cycleId?: number;

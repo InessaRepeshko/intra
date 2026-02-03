@@ -18,6 +18,7 @@
     "scripts": {
         "build": "tsc",
         "typecheck": "tsc --noEmit",
+        "format": "pnpm prettier --write \"src/**/*.ts\"",
         "lint": "eslint \"src/**/*.ts\""
     },
     "devDependencies": {

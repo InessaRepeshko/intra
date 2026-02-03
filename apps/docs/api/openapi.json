@@ -55,6 +55,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "\n            Possible reasons:\n            - Missing 'code' or 'state' parameters in the request query.\n            - Google profile is missing required 'given_name' (first name) or 'family_name' (last name).\n        "
+          },
+          "401": {
+            "description": "\n            Possible reasons:\n            - Invalid OAuth state (CSRF protection).\n            - Failed to exchange authorization code for tokens.\n            - Google did not return access or ID tokens.\n            - Failed to fetch user profile from Google.\n        "
           }
         },
         "summary": "Handle Google OAuth2 callback",
@@ -77,6 +83,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "User is not authenticated"
           }
         },
         "summary": "Get current user profile",
@@ -7343,6 +7352,12 @@
             "minimum": 1,
             "maximum": 100
           },
+          "avatarUrl": {
+            "type": "string",
+            "example": "https://lh3.googleusercontent.com/a/ACg8oc...",
+            "description": "User avatar URL",
+            "nullable": true
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -7406,6 +7421,7 @@
           "lastName",
           "fullName",
           "email",
+          "avatarUrl",
           "status",
           "positionId",
           "teamId",
@@ -7453,11 +7469,10 @@
             "maximum": 100,
             "example": "valerii.velychko@example.com"
           },
-          "passwordHash": {
+          "avatarUrl": {
             "type": "string",
-            "description": "Precomputed password hash or placeholder for external authentication",
-            "example": "__external_auth__",
-            "maximum": 300
+            "description": "User's avatar URL from external provider (Google)",
+            "example": "https://lh3.googleusercontent.com/a/ACg8oc..."
           },
           "status": {
             "type": "string",
@@ -7542,11 +7557,10 @@
             "maximum": 100,
             "example": "valerii.velychko@example.com"
           },
-          "passwordHash": {
+          "avatarUrl": {
             "type": "string",
-            "description": "Precomputed password hash or placeholder for external authentication",
-            "example": "__external_auth__",
-            "maximum": 300
+            "description": "User's avatar URL from external provider (Google)",
+            "example": "https://lh3.googleusercontent.com/a/ACg8oc..."
           },
           "status": {
             "type": "string",

@@ -1,4 +1,4 @@
-import { GLOBAL_CONSTRAINTS } from "../../common/constraints/global.constraints";
+import { GLOBAL_CONSTRAINTS } from '../../common/constraints/global.constraints';
 
 export const CLUSTER_CONSTRAINTS = {
     SCORE: {
@@ -17,4 +17,4 @@ export const CLUSTER_CONSTRAINTS = {
             MAX: GLOBAL_CONSTRAINTS.DESCRIPTION.LENGTH.MAX,
         },
     },
-}
+};

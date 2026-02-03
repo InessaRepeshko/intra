@@ -1,5 +1,5 @@
-import { SortDirection } from "../../../common/enums/sort-direction.enum";
-import { CompetenceSortField } from "../../enums/competence-sort-field.enum";
+import { SortDirection } from '../../../common/enums/sort-direction.enum';
+import { CompetenceSortField } from '../../enums/competence-sort-field.enum';
 
 export type CompetenceSearchQuery = {
     code?: string;

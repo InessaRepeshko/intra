@@ -1,4 +1,4 @@
-import { ReviewStage } from "../../enums/review-stage.enum";
+import { ReviewStage } from '../../enums/review-stage.enum';
 
 export interface ReviewDto {
     id: number;

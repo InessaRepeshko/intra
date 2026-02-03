@@ -1,7 +1,7 @@
-import { QuestionTemplateStatus } from "../../enums/question-template-status.enum";
-import { AnswerType } from "../../enums/answer-type.enum";
-import { QuestionTemplateSortField } from "../../enums/question-template-sort-field.enum";
-import { SortDirection } from "../../../common/enums/sort-direction.enum";
+import { SortDirection } from '../../../common/enums/sort-direction.enum';
+import { AnswerType } from '../../enums/answer-type.enum';
+import { QuestionTemplateSortField } from '../../enums/question-template-sort-field.enum';
+import { QuestionTemplateStatus } from '../../enums/question-template-status.enum';
 
 export type QuestionTemplateSearchQuery = {
     title?: string;

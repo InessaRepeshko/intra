@@ -7,7 +7,7 @@ export type UserProps = {
     lastName: string;
     fullName?: string;
     email: string;
-    passwordHash: string;
+    avatarUrl?: string | null;
     status?: IdentityStatus;
     positionId?: number | null;
     teamId?: number | null;
@@ -24,7 +24,7 @@ export class UserDomain {
     readonly lastName: string;
     readonly fullName: string;
     readonly email: string;
-    readonly passwordHash: string;
+    readonly avatarUrl: string | null;
     readonly status: IdentityStatus;
     readonly positionId?: number | null;
     readonly teamId?: number | null;
@@ -46,7 +46,7 @@ export class UserDomain {
                 props.lastName,
             );
         this.email = props.email;
-        this.passwordHash = props.passwordHash;
+        this.avatarUrl = props.avatarUrl ?? null;
         this.status = props.status ?? IdentityStatus.ACTIVE;
         this.positionId = props.positionId ?? null;
         this.teamId = props.teamId ?? null;

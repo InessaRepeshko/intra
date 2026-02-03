@@ -9,7 +9,7 @@ Table identity_users {
   lastName String [not null]
   fullName String [not null]
   email String [unique, not null]
-  passwordHash String [not null]
+  avatarUrl String
   status IdentityStatus [not null, default: 'ACTIVE']
   positionId Int
   teamId Int

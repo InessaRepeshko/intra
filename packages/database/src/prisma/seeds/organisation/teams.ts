@@ -62,21 +62,23 @@ export default async function seedTeams(
     const teams: TeamMap = new Map();
 
     for (const team of TEAM_SEED_DATA) {
-        const existing = await prisma.team.findFirst({ where: { title: team.title } });
+        const existing = await prisma.team.findFirst({
+            where: { title: team.title },
+        });
         const record = existing
             ? await prisma.team.update({
-                where: { id: existing.id },
-                data: {
-                    title: team.title,
-                    description: team.description ?? null,
-                },
-            })
+                  where: { id: existing.id },
+                  data: {
+                      title: team.title,
+                      description: team.description ?? null,
+                  },
+              })
             : await prisma.team.create({
-                data: {
-                    title: team.title,
-                    description: team.description ?? null,
-                },
-            });
+                  data: {
+                      title: team.title,
+                      description: team.description ?? null,
+                  },
+              });
 
         teams.set(team.title, { id: record.id });
     }

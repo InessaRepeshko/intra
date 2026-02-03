@@ -1,7 +1,7 @@
-import { RespondentSortField } from "../../enums/respondent-sort-field.enum";
-import { RespondentCategory } from "../../enums/respondent-category.enum";
-import { ResponseStatus } from "../../enums/response-status.enum";
-import { SortDirection } from "../../../common/enums/sort-direction.enum";
+import { SortDirection } from '../../../common/enums/sort-direction.enum';
+import { RespondentCategory } from '../../enums/respondent-category.enum';
+import { RespondentSortField } from '../../enums/respondent-sort-field.enum';
+import { ResponseStatus } from '../../enums/response-status.enum';
 
 export type RespondentSearchQuery = {
     reviewId?: number;

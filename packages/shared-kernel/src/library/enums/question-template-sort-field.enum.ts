@@ -10,4 +10,6 @@ export enum QuestionTemplateSortField {
     UPDATED_AT = 'updatedAt',
 }
 
-export const QUESTION_TEMPLATE_SORT_FIELDS = Object.values(QuestionTemplateSortField);
+export const QUESTION_TEMPLATE_SORT_FIELDS = Object.values(
+    QuestionTemplateSortField,
+);

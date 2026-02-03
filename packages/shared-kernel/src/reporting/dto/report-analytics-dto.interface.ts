@@ -1,4 +1,4 @@
-import { EntityType } from "../enums/entity-type.enum";
+import { EntityType } from '../enums/entity-type.enum';
 
 export interface ReportAnalyticsDto {
     id: number;

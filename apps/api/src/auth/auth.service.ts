@@ -112,6 +112,7 @@ export class AuthService {
             firstName: profile.given_name,
             lastName: profile.family_name,
             secondName: undefined,
+            avatarUrl: profile.picture,
         });
 
         return { userId: user.id!, session };

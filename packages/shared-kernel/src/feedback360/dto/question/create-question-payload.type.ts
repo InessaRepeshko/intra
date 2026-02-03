@@ -1,4 +1,4 @@
-import { AnswerType } from "../../../library/enums/answer-type.enum";
+import { AnswerType } from '../../../library/enums/answer-type.enum';
 
 export type CreateQuestionPayload = {
     cycleId?: number | null;

@@ -1,5 +1,5 @@
-import { RespondentCategory } from "../../enums/respondent-category.enum";
-import { ResponseStatus } from "../../enums/response-status.enum";
+import { RespondentCategory } from '../../enums/respondent-category.enum';
+import { ResponseStatus } from '../../enums/response-status.enum';
 
 export type UpdateRespondentPayload = Partial<{
     category: RespondentCategory;

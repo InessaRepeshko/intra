@@ -19,8 +19,6 @@ import { IDENTITY_USER_REPOSITORY } from '../ports/user.repository.port';
 
 export type UpdateUserCommand = Partial<Omit<CreateUserPayload, 'email'>>;
 
-const PASSWORD_PLACEHOLDER = '__external_auth__';
-
 @Injectable()
 export class IdentityUserService {
     constructor(
@@ -43,7 +41,7 @@ export class IdentityUserService {
                     payload.lastName,
                 ),
             email: payload.email,
-            passwordHash: payload.passwordHash ?? PASSWORD_PLACEHOLDER,
+            avatarUrl: payload.avatarUrl,
             status: payload.status ?? IdentityStatus.ACTIVE,
             positionId: payload.positionId ?? null,
             teamId: payload.teamId ?? null,
@@ -126,6 +124,7 @@ export class IdentityUserService {
         firstName: string;
         lastName: string;
         secondName: string | undefined;
+        avatarUrl?: string;
     }): Promise<UserDomain> {
         const existing = await this.users.findByEmail(payload.email, {
             withRoles: true,
@@ -145,7 +144,7 @@ export class IdentityUserService {
                 payload.lastName,
             ),
             email: payload.email,
-            passwordHash: PASSWORD_PLACEHOLDER,
+            avatarUrl: payload.avatarUrl,
             status: IdentityStatus.ACTIVE,
             positionId: null,
             teamId: null,

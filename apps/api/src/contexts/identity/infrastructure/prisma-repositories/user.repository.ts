@@ -24,7 +24,7 @@ export class UserRepository implements UserRepositoryPort {
                 lastName: user.lastName,
                 fullName: user.fullName,
                 email: user.email,
-                passwordHash: user.passwordHash,
+                avatarUrl: user.avatarUrl,
                 status: user.status as IdentityStatus,
                 positionId: user.positionId ?? null,
                 teamId: user.teamId,

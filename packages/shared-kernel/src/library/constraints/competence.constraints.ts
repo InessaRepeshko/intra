@@ -1,4 +1,4 @@
-import { GLOBAL_CONSTRAINTS } from '../../common/constraints/global.constraints'
+import { GLOBAL_CONSTRAINTS } from '../../common/constraints/global.constraints';
 
 export const COMPETENCE_CONSTRAINTS = {
     CODE: {
@@ -19,4 +19,4 @@ export const COMPETENCE_CONSTRAINTS = {
             MAX: GLOBAL_CONSTRAINTS.DESCRIPTION.LENGTH.MAX,
         },
     },
-}
+};
