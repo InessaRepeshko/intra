@@ -35,6 +35,12 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
+<<<<<<< HEAD
+.gemini
+.gemini/*
+
+=======
+>>>>>>> origin/main
 # dotenv environment variable files
 !*.example
 .env
@@ -70,12 +76,21 @@ node_modules/
 # Output files of NestJS and other applications
 dist/
 build/
+<<<<<<< HEAD
+**/dist
+**/build
+=======
+>>>>>>> origin/main
 # Local cache of Turborepo tasks - never push it
 .turbo/
 
 # --- Prisma ---
 # Generated client (if you use custom output in packages/database)
 packages/database/src/generated/*
+<<<<<<< HEAD
+packages/database/dist/generated/*
+=======
+>>>>>>> origin/main
 # !packages/database/src/generated/index.ts
 # Configuration files of the environment with passwords to the database
 .env

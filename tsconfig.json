@@ -12,6 +12,10 @@
     "allowSyntheticDefaultImports": true,
     "target": "ES2023",
     "sourceMap": true,
+<<<<<<< HEAD
+    "baseUrl": ".",
+    "paths": {},
+=======
     // "outDir": "./dist",
     "baseUrl": ".",
     "paths": {},
@@ -19,6 +23,7 @@
     //   "@intra/database": ["packages/database/src/generated"],
     //   "@intra/database/*": ["packages/database/src/generated/*"]
     // },
+>>>>>>> origin/main
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,

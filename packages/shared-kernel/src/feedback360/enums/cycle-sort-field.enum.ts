@@ -1,0 +1,16 @@
+export enum CycleSortField {
+    ID = 'id',
+    TITLE = 'title',
+    DESCRIPTION = 'description',
+    HR_ID = 'hrId',
+    MIN_RESPONDENTS_THRESHOLD = 'minRespondentsThreshold',
+    STAGE = 'stage',
+    IS_ACTIVE = 'isActive',
+    START_DATE = 'startDate',
+    REVIEW_DEADLINE = 'reviewDeadline',
+    APPROVAL_DEADLINE = 'approvalDeadline',
+    RESPONSE_DEADLINE = 'responseDeadline',
+    END_DATE = 'endDate',
+    CREATED_AT = 'createdAt',
+    UPDATED_AT = 'updatedAt',
+}

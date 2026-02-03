@@ -1,0 +1,603 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table identity_users {
+  id Int [pk, increment]
+  firstName String [not null]
+  secondName String
+  lastName String [not null]
+  fullName String [not null]
+  email String [unique, not null]
+  passwordHash String [not null]
+  status IdentityStatus [not null, default: 'ACTIVE']
+  positionId Int [not null]
+  teamId Int
+  managerId Int
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  userRoles identity_users_roles [not null]
+  teamHead org_teams [not null]
+  memberships org_team_memberships [not null]
+  manager identity_users
+  subordinates identity_users [not null]
+  managedCycles feedback360_cycles [not null]
+  managedReviews feedback360_reviews [not null]
+  reviewsAsRatee feedback360_reviews [not null]
+  responses feedback360_respondents [not null]
+  reviewsAsReviewer feedback360_reviewers [not null]
+  reviewsAsManager feedback360_reviews [not null]
+  clusterScores feedback360_cluster_scores [not null]
+  answers feedback360_answers [not null]
+}
+
+Table identity_roles {
+  id Int [pk, increment]
+  code IdentityRole [unique, not null]
+  title String [not null]
+  description String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  userRoles identity_users_roles [not null]
+}
+
+Table identity_users_roles {
+  id Int [pk, increment]
+  userId Int [not null]
+  roleCode IdentityRole [not null]
+  assignedAt DateTime [default: `now()`, not null]
+  user identity_users [not null]
+  role identity_roles [not null]
+
+  indexes {
+    (userId, roleCode) [unique]
+  }
+}
+
+Table org_teams {
+  id Int [pk, increment]
+  title String [not null]
+  description String
+  headId Int
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  memberships org_team_memberships [not null]
+  head identity_users
+  reviews feedback360_reviews [not null]
+  respondents feedback360_respondents [not null]
+  reviewers feedback360_reviewers [not null]
+}
+
+Table org_team_memberships {
+  id Int [pk, increment]
+  teamId Int [not null]
+  memberId Int [not null]
+  isPrimary Boolean [default: false]
+  createdAt DateTime [default: `now()`, not null]
+  team org_teams [not null]
+  member identity_users [not null]
+
+  indexes {
+    (teamId, memberId, isPrimary) [unique]
+  }
+}
+
+Table org_positions {
+  id Int [pk, increment]
+  title String [not null]
+  description String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  competences library_position_competence_relations [not null]
+  reviews feedback360_reviews [not null]
+  questionTemplateRelations library_position_question_template_relations [not null]
+  superiors org_position_hierarchies [not null]
+  subordinates org_position_hierarchies [not null]
+  respondents feedback360_respondents [not null]
+}
+
+Table org_position_hierarchies {
+  id Int [pk, increment]
+  superiorPositionId Int [not null]
+  subordinatePositionId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  superior org_positions [not null]
+  subordinate org_positions [not null]
+
+  indexes {
+    (superiorPositionId, subordinatePositionId) [unique]
+  }
+}
+
+Table library_competences {
+  id Int [pk, increment]
+  code String [unique]
+  title String [unique, not null]
+  description String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  positions library_position_competence_relations [not null]
+  questionTemplateRelations library_competence_question_template_relations [not null]
+  questionTemplates library_question_templates [not null]
+  reviewQuestions feedback360_questions [not null]
+  reviewQuestionRelations feedback360_review_question_relations [not null]
+  clusters library_clusters [not null]
+}
+
+Table library_clusters {
+  id Int [pk, increment]
+  competenceId Int [not null]
+  lowerBound Float [not null]
+  upperBound Float [not null]
+  title String [not null]
+  description String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  clusterScores feedback360_cluster_scores [not null]
+  clusterScoreAnalytics feedback360_cluster_score_analytics [not null]
+  competence library_competences [not null]
+
+  indexes {
+    (competenceId, lowerBound, upperBound) [unique]
+  }
+}
+
+Table library_question_templates {
+  id Int [pk, increment]
+  title String [not null]
+  answerType AnswerType [not null]
+  competenceId Int [not null]
+  isForSelfassessment Boolean [default: false]
+  status QuestionTemplateStatus [not null, default: 'ACTIVE']
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  competence library_competences [not null]
+  competences library_competence_question_template_relations [not null]
+  positionRelations library_position_question_template_relations [not null]
+  reviewQuestions feedback360_questions [not null]
+}
+
+Table library_position_question_template_relations {
+  id Int [pk, increment]
+  positionId Int [not null]
+  questionTemplateId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  position org_positions [not null]
+  questionTemplate library_question_templates [not null]
+
+  indexes {
+    (questionTemplateId, positionId) [unique]
+  }
+}
+
+Table library_position_competence_relations {
+  id Int [pk, increment]
+  positionId Int [not null]
+  competenceId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  position org_positions [not null]
+  competence library_competences [not null]
+
+  indexes {
+    (positionId, competenceId) [unique]
+  }
+}
+
+Table library_competence_question_template_relations {
+  id Int [pk, increment]
+  competenceId Int [not null]
+  questionTemplateId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  competence library_competences [not null]
+  questionTemplate library_question_templates [not null]
+
+  indexes {
+    (competenceId, questionTemplateId) [unique]
+  }
+}
+
+Table feedback360_cycles {
+  id Int [pk, increment]
+  title String [not null]
+  description String
+  hrId Int [not null]
+  stage CycleStage [not null, default: 'NEW']
+  isActive Boolean [default: true]
+  minRespondentsThreshold Int [not null, default: 3]
+  startDate DateTime [not null]
+  reviewDeadline DateTime
+  approvalDeadline DateTime
+  responseDeadline DateTime
+  endDate DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  hr identity_users [not null]
+  clusterScores feedback360_cluster_scores [not null]
+  clusterScoreAnalytics feedback360_cluster_score_analytics [not null]
+  reviews feedback360_reviews [not null]
+  reports reporting_reports [not null]
+  reviewQuestions feedback360_questions [not null]
+}
+
+Table feedback360_reviews {
+  id Int [pk, increment]
+  rateeId Int [not null]
+  rateeFullName String [not null]
+  rateePositionId Int [not null]
+  rateePositionTitle String [not null]
+  hrId Int [not null]
+  hrFullName String [not null]
+  hrNote String
+  teamId Int
+  teamTitle String
+  managerId Int
+  managerFullName String
+  managerPositionId Int
+  managerPositionTitle String
+  cycleId Int
+  reportId Int
+  stage ReviewStage [not null, default: 'VERIFICATION_BY_HR']
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  ratee identity_users [not null]
+  hr identity_users [not null]
+  cycle feedback360_cycles
+  position org_positions [not null]
+  team org_teams
+  manager identity_users
+  answers feedback360_answers [not null]
+  reviewQuestionRelations feedback360_review_question_relations [not null]
+  report reporting_reports
+  respondents feedback360_respondents [not null]
+  reviewers feedback360_reviewers [not null]
+  clusterScores feedback360_cluster_scores [not null]
+}
+
+Table feedback360_questions {
+  id Int [pk, increment]
+  cycleId Int
+  questionTemplateId Int
+  title String [not null]
+  answerType AnswerType [not null]
+  competenceId Int
+  isForSelfassessment Boolean [default: false]
+  createdAt DateTime [default: `now()`, not null]
+  cycle feedback360_cycles
+  questionTemplate library_question_templates
+  competence library_competences
+  answers feedback360_answers [not null]
+  reviewQuestionRelations feedback360_review_question_relations [not null]
+}
+
+Table feedback360_review_question_relations {
+  id Int [pk, increment]
+  reviewId Int [not null]
+  questionId Int [not null]
+  questionTitle String [not null]
+  answerType AnswerType [not null]
+  competenceId Int [not null]
+  competenceTitle String [not null]
+  isForSelfassessment Boolean [default: false]
+  createdAt DateTime [default: `now()`, not null]
+  review feedback360_reviews [not null]
+  question feedback360_questions [not null]
+  competence library_competences [not null]
+
+  indexes {
+    (reviewId, questionId) [unique]
+  }
+}
+
+Table feedback360_answers {
+  id Int [pk, increment]
+  reviewId Int [not null]
+  questionId Int [not null]
+  respondentCategory RespondentCategory [not null]
+  answerType AnswerType [not null, default: 'NUMERICAL_SCALE']
+  numericalValue Int
+  textValue String
+  createdAt DateTime [default: `now()`, not null]
+  question feedback360_questions [not null]
+  review feedback360_reviews [not null]
+  user identity_users
+  userId Int
+}
+
+Table feedback360_cluster_scores {
+  id Int [pk, increment]
+  cycleId Int
+  clusterId Int [not null]
+  rateeId Int [not null]
+  reviewId Int [not null]
+  score Float [not null]
+  answersCount Int [not null, default: 0]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  ratee identity_users [not null]
+  cycle feedback360_cycles
+  cluster library_clusters [not null]
+  review feedback360_reviews [not null]
+
+  indexes {
+    (clusterId, rateeId) [unique]
+  }
+}
+
+Table feedback360_cluster_score_analytics {
+  id Int [pk, increment]
+  cycleId Int [not null]
+  clusterId Int [not null]
+  employeesCount Int [not null, default: 0]
+  minScore Float [not null]
+  maxScore Float [not null]
+  averageScore Float [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  cycle feedback360_cycles [not null]
+  cluster library_clusters [not null]
+
+  indexes {
+    (cycleId, clusterId) [unique]
+  }
+}
+
+Table feedback360_respondents {
+  id Int [pk, increment]
+  reviewId Int [not null]
+  respondentId Int [not null]
+  fullName String [not null]
+  category RespondentCategory [not null]
+  responseStatus ResponseStatus [not null, default: 'PENDING']
+  respondentNote String
+  hrNote String
+  positionId Int [not null]
+  positionTitle String [not null]
+  teamId Int
+  teamTitle String
+  invitedAt DateTime
+  canceledAt DateTime
+  respondedAt DateTime
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  user identity_users [not null]
+  review feedback360_reviews [not null]
+  respondentPosition org_positions
+  respondentTeam org_teams
+
+  indexes {
+    (respondentId, reviewId) [unique]
+  }
+}
+
+Table feedback360_reviewers {
+  id Int [pk, increment]
+  reviewId Int [not null]
+  reviewerId Int [not null]
+  fullName String [not null]
+  positionId Int [not null]
+  positionTitle String [not null]
+  teamId Int
+  teamTitle String
+  createdAt DateTime [default: `now()`, not null]
+  user identity_users [not null]
+  review feedback360_reviews [not null]
+  team org_teams
+
+  indexes {
+    (reviewId, reviewerId) [unique]
+  }
+}
+
+Table reporting_reports {
+  id Int [pk, increment]
+  reviewId Int [unique, not null]
+  cycleId Int
+  turnoutOfTeam Float
+  turnoutOfOther Float
+  totalAverageBySelfAssessment Float
+  totalAverageByTeam Float
+  totalAverageByOthers Float
+  totalDeltaBySelfAssessment Float
+  totalDeltaByTeam Float
+  totalDeltaByOthers Float
+  createdAt DateTime [default: `now()`, not null]
+  review feedback360_reviews [not null]
+  cycle feedback360_cycles
+  analytics reporting_analytics [not null]
+  comments reporting_comments [not null]
+}
+
+Table reporting_analytics {
+  id Int [pk, increment]
+  reportId Int [not null]
+  entityType EntityType [not null]
+  entityId Int
+  entityTitle String [not null]
+  averageBySelfAssessment Float
+  averageByTeam Float
+  averageByOther Float
+  deltaBySelfAssessment Float
+  deltaByTeam Float
+  deltaByOther Float
+  dimension String
+  createdAt DateTime [default: `now()`, not null]
+  report reporting_reports [not null]
+
+  indexes {
+    (reportId, entityType, entityId) [unique]
+  }
+}
+
+Table reporting_comments {
+  id Int [pk, increment]
+  reportId Int [not null]
+  comment String
+  commentSentiment CommentSentiment [not null, default: 'POSITIVE']
+  numberOfMentions Int
+  respondentCategory RespondentCategory [not null]
+  createdAt DateTime [default: `now()`, not null]
+  report reporting_reports [not null]
+}
+
+Enum IdentityRole {
+  ADMIN
+  HR
+  MANAGER
+  EMPLOYEE
+}
+
+Enum IdentityStatus {
+  INACTIVE
+  ACTIVE
+}
+
+Enum AnswerType {
+  NUMERICAL_SCALE
+  TEXT_FIELD
+}
+
+Enum QuestionTemplateStatus {
+  ARCHIVE
+  ACTIVE
+}
+
+Enum CycleStage {
+  CANCELED
+  NEW
+  ACTIVE
+  FINISHED
+  ARCHIVED
+}
+
+Enum ResponseStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+}
+
+Enum ReviewStage {
+  CANCELED
+  VERIFICATION_BY_HR
+  VERIFICATION_BY_USER
+  REJECTED
+  SELF_ASSESSMENT
+  WAITING_TO_START
+  IN_PROGRESS
+  RESEARCH
+  FINISHED
+}
+
+Enum RespondentCategory {
+  SELF_ASSESSMENT
+  TEAM
+  OTHER
+}
+
+Enum EntityType {
+  QUESTION
+  COMPETENCE
+}
+
+Enum CommentSentiment {
+  NEGATIVE
+  POSITIVE
+}
+
+Ref: identity_users.managerId - identity_users.id [delete: No Action]
+
+Ref: identity_users_roles.userId > identity_users.id [delete: No Action]
+
+Ref: identity_users_roles.roleCode > identity_roles.code [delete: No Action]
+
+Ref: org_teams.headId > identity_users.id [delete: No Action]
+
+Ref: org_team_memberships.teamId > org_teams.id [delete: No Action]
+
+Ref: org_team_memberships.memberId > identity_users.id [delete: No Action]
+
+Ref: org_position_hierarchies.superiorPositionId > org_positions.id [delete: No Action]
+
+Ref: org_position_hierarchies.subordinatePositionId > org_positions.id [delete: No Action]
+
+Ref: library_clusters.competenceId > library_competences.id [delete: No Action]
+
+Ref: library_question_templates.competenceId > library_competences.id [delete: No Action]
+
+Ref: library_position_question_template_relations.positionId > org_positions.id [delete: No Action]
+
+Ref: library_position_question_template_relations.questionTemplateId > library_question_templates.id [delete: No Action]
+
+Ref: library_position_competence_relations.positionId > org_positions.id
+
+Ref: library_position_competence_relations.competenceId > library_competences.id
+
+Ref: library_competence_question_template_relations.competenceId > library_competences.id
+
+Ref: library_competence_question_template_relations.questionTemplateId > library_question_templates.id
+
+Ref: feedback360_cycles.hrId > identity_users.id [delete: No Action]
+
+Ref: feedback360_reviews.rateeId > identity_users.id [delete: No Action]
+
+Ref: feedback360_reviews.hrId > identity_users.id [delete: No Action]
+
+Ref: feedback360_reviews.cycleId > feedback360_cycles.id [delete: No Action]
+
+Ref: feedback360_reviews.rateePositionId > org_positions.id [delete: No Action]
+
+Ref: feedback360_reviews.teamId > org_teams.id [delete: No Action]
+
+Ref: feedback360_reviews.managerId > identity_users.id [delete: No Action]
+
+Ref: feedback360_questions.cycleId > feedback360_cycles.id [delete: No Action]
+
+Ref: feedback360_questions.questionTemplateId > library_question_templates.id [delete: No Action]
+
+Ref: feedback360_questions.competenceId > library_competences.id [delete: No Action]
+
+Ref: feedback360_review_question_relations.reviewId > feedback360_reviews.id [delete: No Action]
+
+Ref: feedback360_review_question_relations.questionId > feedback360_questions.id [delete: No Action]
+
+Ref: feedback360_review_question_relations.competenceId > library_competences.id [delete: No Action]
+
+Ref: feedback360_answers.questionId > feedback360_questions.id [delete: No Action]
+
+Ref: feedback360_answers.reviewId > feedback360_reviews.id [delete: No Action]
+
+Ref: feedback360_answers.userId > identity_users.id
+
+Ref: feedback360_cluster_scores.rateeId > identity_users.id [delete: No Action]
+
+Ref: feedback360_cluster_scores.cycleId > feedback360_cycles.id [delete: No Action]
+
+Ref: feedback360_cluster_scores.clusterId > library_clusters.id [delete: No Action]
+
+Ref: feedback360_cluster_scores.reviewId > feedback360_reviews.id [delete: No Action]
+
+Ref: feedback360_cluster_score_analytics.cycleId > feedback360_cycles.id [delete: No Action]
+
+Ref: feedback360_cluster_score_analytics.clusterId > library_clusters.id [delete: No Action]
+
+Ref: feedback360_respondents.respondentId > identity_users.id [delete: No Action]
+
+Ref: feedback360_respondents.reviewId > feedback360_reviews.id [delete: No Action]
+
+Ref: feedback360_respondents.positionId > org_positions.id [delete: No Action]
+
+Ref: feedback360_respondents.teamId > org_teams.id [delete: No Action]
+
+Ref: feedback360_reviewers.reviewerId > identity_users.id [delete: No Action]
+
+Ref: feedback360_reviewers.reviewId > feedback360_reviews.id [delete: No Action]
+
+Ref: feedback360_reviewers.teamId > org_teams.id [delete: No Action]
+
+Ref: reporting_reports.reviewId - feedback360_reviews.id [delete: No Action]
+
+Ref: reporting_reports.cycleId > feedback360_cycles.id [delete: No Action]
+
+Ref: reporting_analytics.reportId > reporting_reports.id [delete: No Action]
+
+Ref: reporting_comments.reportId > reporting_reports.id [delete: No Action]

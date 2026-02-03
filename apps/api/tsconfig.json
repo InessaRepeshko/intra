@@ -1,4 +1,37 @@
 {
+<<<<<<< HEAD
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "resolvePackageJsonExports": false,
+        "resolveJsonModule": true,
+        "outDir": "./dist",
+        "rootDir": "./",
+        "baseUrl": ".",
+        "declaration": true,
+        "sourceMap": true,
+        "paths": {
+            "src/*": [
+                "src/*"
+            ],
+            "@intra/api": [
+                "src/contexts"
+            ],
+            "@intra/api/*": [
+                "src/contexts/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*",
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "**/*spec.ts"
+    ]
+=======
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
@@ -28,4 +61,5 @@
     "test",
     "**/*spec.ts"
   ]
+>>>>>>> origin/main
 }

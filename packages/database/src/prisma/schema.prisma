@@ -1,0 +1,653 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+  output     = "../../dist/generated"
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+  schema   = "packages/database/src/prisma/schema.prisma"
+  output   = "./dbml"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/**
+ * ==================== Identity ====================
+ */
+
+enum IdentityRole {
+  ADMIN    @map("admin")
+  HR       @map("hr")
+  MANAGER  @map("manager")
+  EMPLOYEE @map("employee")
+
+  @@map("identity_role")
+}
+
+enum IdentityStatus {
+  INACTIVE @map("inactive")
+  ACTIVE   @map("active")
+
+  @@map("identity_status")
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  firstName    String         @map("first_name") @db.VarChar(100)
+  secondName   String?        @map("second_name") @db.VarChar(100)
+  lastName     String         @map("last_name") @db.VarChar(100)
+  fullName     String         @map("full_name") @db.VarChar(302)
+  email        String         @unique @db.VarChar(100)
+  passwordHash String         @map("password_hash") @db.VarChar(300)
+  status       IdentityStatus @default(ACTIVE)
+  positionId   Int            @map("position_id")
+  teamId       Int?           @map("team_id")
+  managerId    Int?           @map("manager_id")
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt    DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  // --- Identity ---
+  userRoles UserRole[]
+
+  // --- Organisation ---
+  teamHead     Team[]           @relation("team_head")
+  memberships  TeamMembership[] @relation("team_memberships")
+  manager      User?            @relation("user_hierarchy", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subordinates User[]           @relation("user_hierarchy")
+
+  // --- Feedback360 (HR/Admin side) ---
+  managedCycles  Cycle[]  @relation("managed_cycles")
+  managedReviews Review[] @relation("managed_reviews")
+
+  // --- Feedback360 (Participant side) ---
+  reviewsAsRatee    Review[]       @relation("reviews_as_ratee")
+  responses         Respondent[]   @relation("user_responses")
+  reviewsAsReviewer Reviewer[]     @relation("reviews_as_reviewer")
+  reviewsAsManager  Review[]       @relation("review_as_manager")
+  clusterScores     ClusterScore[] @relation("cluster_ratee_scores")
+  answers           Answer[]
+
+  @@index([managerId])
+  @@index([positionId])
+  @@index([teamId])
+  @@index([fullName])
+  @@index([status])
+  @@map("identity_users")
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  code        IdentityRole @unique
+  title       String       @db.VarChar(255)
+  description String?      @db.Text
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt   DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  userRoles UserRole[]
+
+  @@map("identity_roles")
+}
+
+model UserRole {
+  id         Int          @id @default(autoincrement())
+  userId     Int          @map("user_id")
+  roleCode   IdentityRole @map("role_code")
+  assignedAt DateTime     @default(now()) @map("assigned_at") @db.Timestamp(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role Role @relation(fields: [roleCode], references: [code], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([userId, roleCode])
+  @@index([roleCode])
+  @@index([userId])
+  @@map("identity_users_roles")
+}
+
+/**
+ * ==================== Organisation ====================
+ */
+
+model Team {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  description String?  @db.Text
+  headId      Int?     @map("head_id")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  memberships TeamMembership[]
+  head        User?            @relation("team_head", fields: [headId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reviews     Review[]
+  respondents Respondent[]
+  reviewers   Reviewer[]
+
+  @@index([headId])
+  @@map("org_teams")
+}
+
+model TeamMembership {
+  id        Int      @id @default(autoincrement())
+  teamId    Int      @map("team_id")
+  memberId  Int      @map("member_id")
+  isPrimary Boolean? @default(false) @map("is_primary")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  team   Team @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  member User @relation("team_memberships", fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([teamId, memberId, isPrimary])
+  @@index([teamId])
+  @@index([memberId])
+  @@map("org_team_memberships")
+}
+
+model Position {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  competences               PositionCompetenceRelation[]
+  reviews                   Review[]
+  questionTemplateRelations PositionQuestionTemplateRelation[]
+  superiors                 PositionHierarchy[]                @relation("superior_position")
+  subordinates              PositionHierarchy[]                @relation("subordinate_position")
+  respondents               Respondent[]
+
+  @@map("org_positions")
+}
+
+model PositionHierarchy {
+  id                    Int      @id @default(autoincrement())
+  superiorPositionId    Int      @map("superior_position_id")
+  subordinatePositionId Int      @map("subordinate_position_id")
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  superior    Position @relation("superior_position", fields: [superiorPositionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subordinate Position @relation("subordinate_position", fields: [subordinatePositionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([superiorPositionId, subordinatePositionId])
+  @@index([subordinatePositionId])
+  @@map("org_position_hierarchies")
+}
+
+/**
+ * ==================== Library ====================
+ */
+
+enum AnswerType {
+  NUMERICAL_SCALE @map("numerical_scale")
+  TEXT_FIELD      @map("text_field")
+
+  @@map("library_answer_type")
+}
+
+enum QuestionTemplateStatus {
+  ARCHIVE @map("archive")
+  ACTIVE  @map("active")
+
+  @@map("question_template_status")
+}
+
+model Competence {
+  id          Int      @id @default(autoincrement())
+  code        String?  @unique @db.VarChar(100)
+  title       String   @unique @db.VarChar(255)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  positions                 PositionCompetenceRelation[]
+  questionTemplateRelations CompetenceQuestionTemplateRelation[]
+  questionTemplates         QuestionTemplate[]
+  reviewQuestions           Question[]
+  reviewQuestionRelations   ReviewQuestionRelation[]
+  clusters                  Cluster[]
+
+  @@map("library_competences")
+}
+
+model Cluster {
+  id           Int      @id @default(autoincrement())
+  competenceId Int      @map("competence_id")
+  lowerBound   Float    @map("lower_bound")
+  upperBound   Float    @map("upper_bound")
+  title        String   @db.VarChar(255)
+  description  String   @db.Text
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  clusterScores         ClusterScore[]
+  clusterScoreAnalytics ClusterScoreAnalytics[]
+  competence            Competence              @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([competenceId, lowerBound, upperBound])
+  @@index([competenceId])
+  @@map("library_clusters")
+}
+
+model QuestionTemplate {
+  id                  Int                    @id @default(autoincrement())
+  title               String                 @db.Text
+  answerType          AnswerType             @map("answer_type")
+  competenceId        Int                    @map("competence_id")
+  isForSelfassessment Boolean?               @default(false) @map("is_for_selfassessment")
+  status              QuestionTemplateStatus @default(ACTIVE) @map("status")
+  createdAt           DateTime               @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt           DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  competence        Competence                           @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  competences       CompetenceQuestionTemplateRelation[]
+  positionRelations PositionQuestionTemplateRelation[]
+  reviewQuestions   Question[]
+
+  @@index([competenceId])
+  @@map("library_question_templates")
+}
+
+model PositionQuestionTemplateRelation {
+  id                 Int      @id @default(autoincrement())
+  positionId         Int      @map("position_id")
+  questionTemplateId Int      @map("question_template_id")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  position         Position         @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  questionTemplate QuestionTemplate @relation(fields: [questionTemplateId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([questionTemplateId, positionId])
+  @@index([positionId])
+  @@map("library_position_question_template_relations")
+}
+
+model PositionCompetenceRelation {
+  id           Int      @id @default(autoincrement())
+  positionId   Int      @map("position_id")
+  competenceId Int      @map("competence_id")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  position   Position   @relation(fields: [positionId], references: [id])
+  competence Competence @relation(fields: [competenceId], references: [id])
+
+  @@unique([positionId, competenceId])
+  @@map("library_position_competence_relations")
+}
+
+model CompetenceQuestionTemplateRelation {
+  id                 Int      @id @default(autoincrement())
+  competenceId       Int      @map("competence_id")
+  questionTemplateId Int      @map("question_template_id")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  competence       Competence       @relation(fields: [competenceId], references: [id])
+  questionTemplate QuestionTemplate @relation(fields: [questionTemplateId], references: [id])
+
+  @@unique([competenceId, questionTemplateId])
+  @@map("library_competence_question_template_relations")
+}
+
+/**
+ * ==================== Feedback360 ====================
+ */
+
+enum CycleStage {
+  CANCELED @map("canceled")
+  NEW      @map("new")
+  ACTIVE   @map("active")
+  FINISHED @map("finished")
+  ARCHIVED @map("archived")
+
+  @@map("feedback360_cycle_stage")
+}
+
+enum ResponseStatus {
+  PENDING     @map("pending")
+  IN_PROGRESS @map("in_progress")
+  COMPLETED   @map("completed")
+  CANCELED    @map("canceled")
+
+  @@map("feedback360_response_status")
+}
+
+enum ReviewStage {
+  CANCELED             @map("canceled")
+  VERIFICATION_BY_HR   @map("verification_by_hr")
+  VERIFICATION_BY_USER @map("verification_by_user")
+  REJECTED             @map("rejected")
+  SELF_ASSESSMENT      @map("self_assessment")
+  WAITING_TO_START     @map("waiting_to_start")
+  IN_PROGRESS          @map("in_progress")
+  RESEARCH             @map("research")
+  FINISHED             @map("finished")
+
+  @@map("feedback360_review_stage")
+}
+
+enum RespondentCategory {
+  SELF_ASSESSMENT @map("self_assessment")
+  TEAM            @map("team")
+  OTHER           @map("other")
+
+  @@map("feedback360_respondent_category")
+}
+
+model Cycle {
+  id                      Int        @id @default(autoincrement())
+  title                   String     @db.VarChar(255)
+  description             String?    @db.Text
+  hrId                    Int        @map("hr_id")
+  stage                   CycleStage @default(NEW)
+  isActive                Boolean?   @default(true) @map("is_active")
+  minRespondentsThreshold Int        @default(3) @map("min_respondents_threshold")
+  startDate               DateTime   @map("start_date") @db.Timestamp(0)
+  reviewDeadline          DateTime?  @map("review_deadline") @db.Timestamp(0)
+  approvalDeadline        DateTime?  @map("approval_deadline") @db.Timestamp(0)
+  responseDeadline        DateTime?  @map("response_deadline") @db.Timestamp(0)
+  endDate                 DateTime   @map("end_date") @db.Timestamp(0)
+  createdAt               DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt               DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  hr                    User                    @relation("managed_cycles", fields: [hrId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  clusterScores         ClusterScore[]
+  clusterScoreAnalytics ClusterScoreAnalytics[]
+  reviews               Review[]
+  reports               Report[]
+  reviewQuestions       Question[]
+
+  @@index([hrId])
+  @@index([stage])
+  @@map("feedback360_cycles")
+}
+
+model Review {
+  id                   Int         @id @default(autoincrement())
+  rateeId              Int         @map("ratee_id")
+  rateeFullName        String      @map("ratee_full_name") @db.VarChar(302)
+  rateePositionId      Int         @map("ratee_position_id")
+  rateePositionTitle   String      @map("ratee_position_title") @db.Text
+  hrId                 Int         @map("hr_id")
+  hrFullName           String      @map("hr_full_name") @db.VarChar(302)
+  hrNote               String?     @map("hr_note") @db.Text
+  teamId               Int?        @map("team_id")
+  teamTitle            String?     @map("team_title") @db.Text
+  managerId            Int?        @map("manager_id")
+  managerFullName      String?     @map("manager_full_name") @db.VarChar(302)
+  managerPositionId    Int?        @map("manager_position_id")
+  managerPositionTitle String?     @map("manager_position_title") @db.Text
+  cycleId              Int?        @map("cycle_id")
+  reportId             Int?        @map("report_id")
+  stage                ReviewStage @default(VERIFICATION_BY_HR)
+  createdAt            DateTime    @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt            DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  ratee    User     @relation("reviews_as_ratee", fields: [rateeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  hr       User     @relation("managed_reviews", fields: [hrId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cycle    Cycle?   @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  position Position @relation(fields: [rateePositionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  team     Team?    @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  manager  User?    @relation("review_as_manager", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  answers                 Answer[]
+  reviewQuestionRelations ReviewQuestionRelation[]
+  report                  Report?
+  respondents             Respondent[]
+  reviewers               Reviewer[]
+  clusterScores           ClusterScore[]
+
+  @@index([cycleId])
+  @@index([hrId])
+  @@index([rateePositionId])
+  @@index([teamId])
+  @@index([managerId])
+  @@index([rateeId])
+  @@index([stage])
+  @@index([createdAt])
+  @@map("feedback360_reviews")
+}
+
+model Question {
+  id                  Int        @id @default(autoincrement())
+  cycleId             Int?       @map("cycle_id")
+  questionTemplateId  Int?       @map("question_template_id")
+  title               String     @db.Text
+  answerType          AnswerType @map("answer_type")
+  competenceId        Int?       @map("competence_id")
+  isForSelfassessment Boolean?   @default(false) @map("is_for_selfassessment")
+  createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+
+  cycle                   Cycle?                   @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  questionTemplate        QuestionTemplate?        @relation(fields: [questionTemplateId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  competence              Competence?              @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  answers                 Answer[]
+  reviewQuestionRelations ReviewQuestionRelation[]
+
+  @@index([cycleId])
+  @@index([questionTemplateId])
+  @@index([competenceId])
+  @@map("feedback360_questions")
+}
+
+model ReviewQuestionRelation {
+  id                  Int        @id @default(autoincrement())
+  reviewId            Int        @map("review_id")
+  questionId          Int        @map("question_id")
+  questionTitle       String     @map("question_title") @db.Text
+  answerType          AnswerType @map("answer_type")
+  competenceId        Int        @map("competence_id")
+  competenceTitle     String     @map("competence_title") @db.Text
+  isForSelfassessment Boolean?   @default(false) @map("is_for_selfassessment")
+  createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+
+  review     Review     @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question   Question   @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  competence Competence @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([reviewId, questionId])
+  @@index([reviewId])
+  @@index([questionId])
+  @@index([competenceId])
+  @@map("feedback360_review_question_relations")
+}
+
+model Answer {
+  id                 Int                @id @default(autoincrement())
+  reviewId           Int                @map("review_id")
+  questionId         Int                @map("review_question_id")
+  respondentCategory RespondentCategory @map("respondent_category")
+  answerType         AnswerType         @default(NUMERICAL_SCALE) @map("answer_type")
+  numericalValue     Int?               @map("numerical_value") @db.SmallInt
+  textValue          String?            @map("text_value") @db.Text
+  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamp(0)
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  review   Review   @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user     User?    @relation(fields: [userId], references: [id])
+  userId   Int?
+
+  @@index([reviewId])
+  @@index([questionId])
+  @@index([respondentCategory])
+  @@index([createdAt])
+  @@map("feedback360_answers")
+}
+
+model ClusterScore {
+  id           Int      @id @default(autoincrement())
+  cycleId      Int?     @map("cycle_id")
+  clusterId    Int      @map("cluster_id")
+  rateeId      Int      @map("user_id")
+  reviewId     Int      @map("review_id")
+  score        Float
+  answersCount Int      @default(0) @map("answers_count")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  ratee   User    @relation("cluster_ratee_scores", fields: [rateeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cycle   Cycle?  @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cluster Cluster @relation(fields: [clusterId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  review  Review  @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([clusterId, rateeId])
+  @@index([cycleId])
+  @@index([clusterId])
+  @@index([rateeId])
+  @@index([reviewId])
+  @@map("feedback360_cluster_scores")
+}
+
+model ClusterScoreAnalytics {
+  id             Int      @id @default(autoincrement())
+  cycleId        Int      @map("cycle_id")
+  clusterId      Int      @map("cluster_id")
+  employeesCount Int      @default(0) @map("employees_count")
+  minScore       Float    @map("min_score")
+  maxScore       Float    @map("max_score")
+  averageScore   Float    @map("average_score")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  cycle   Cycle   @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cluster Cluster @relation(fields: [clusterId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([cycleId, clusterId])
+  @@index([cycleId])
+  @@index([clusterId])
+  @@map("feedback360_cluster_score_analytics")
+}
+
+model Respondent {
+  id             Int                @id @default(autoincrement())
+  reviewId       Int                @map("review_id")
+  respondentId   Int                @map("respondent_id")
+  fullName       String             @map("full_name") @db.VarChar(302)
+  category       RespondentCategory @map("category")
+  responseStatus ResponseStatus     @default(PENDING) @map("response_status")
+  respondentNote String?            @map("respondent_note") @db.Text
+  hrNote         String?            @map("hr_note") @db.Text
+  positionId     Int                @map("position_id")
+  positionTitle  String             @map("position_title") @db.Text
+  teamId         Int?               @map("team_id")
+  teamTitle      String?            @map("team_title") @db.Text
+  invitedAt      DateTime?          @map("invited_at") @db.Timestamp(0)
+  canceledAt     DateTime?          @map("canceled_at") @db.Timestamp(0)
+  respondedAt    DateTime?          @map("responded_at") @db.Timestamp(0)
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt      DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  user               User      @relation("user_responses", fields: [respondentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  review             Review    @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  respondentPosition Position? @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  respondentTeam     Team?     @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([respondentId, reviewId])
+  @@index([reviewId])
+  @@index([responseStatus])
+  @@index([respondentId])
+  @@index([positionId])
+  @@index([teamId])
+  @@index([respondentId, responseStatus])
+  @@map("feedback360_respondents")
+}
+
+model Reviewer {
+  id            Int      @id @default(autoincrement())
+  reviewId      Int      @map("review_id")
+  reviewerId    Int      @map("reviewer_id")
+  fullName      String   @map("full_name") @db.VarChar(302)
+  positionId    Int      @map("position_id")
+  positionTitle String   @map("position_title") @db.Text
+  teamId        Int?     @map("team_id")
+  teamTitle     String?  @map("team_title") @db.Text
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  user   User   @relation("reviews_as_reviewer", fields: [reviewerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  review Review @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  team   Team?  @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([reviewId, reviewerId])
+  @@index([reviewId])
+  @@index([reviewerId])
+  @@index([teamId])
+  @@map("feedback360_reviewers")
+}
+
+/**
+ * ==================== Reporting ====================
+ */
+
+enum EntityType {
+  QUESTION   @map("question")
+  COMPETENCE @map("competence")
+
+  @@map("reporting_entity_type")
+}
+
+enum CommentSentiment {
+  NEGATIVE @map("negative")
+  POSITIVE @map("positive")
+
+  @@map("reporting_comment_sentiment")
+}
+
+model Report {
+  id                           Int      @id @default(autoincrement())
+  reviewId                     Int      @unique() @map("review_id")
+  cycleId                      Int?     @map("cycle_id")
+  turnoutOfTeam                Float?   @map("turnout_of_team")
+  turnoutOfOther               Float?   @map("turnout_of_other")
+  totalAverageBySelfAssessment Float?   @map("total_average_by_self_assessment")
+  totalAverageByTeam           Float?   @map("total_average_by_team")
+  totalAverageByOthers         Float?   @map("total_average_by_others")
+  totalDeltaBySelfAssessment   Float?   @map("total_delta_by_self_assessment")
+  totalDeltaByTeam             Float?   @map("total_delta_by_team")
+  totalDeltaByOthers           Float?   @map("total_delta_by_others")
+  createdAt                    DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  review    Review            @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cycle     Cycle?            @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  analytics ReportAnalytics[]
+  comments  ReportComment[]
+
+  @@index([cycleId])
+  @@map("reporting_reports")
+}
+
+model ReportAnalytics {
+  id                      Int        @id @default(autoincrement())
+  reportId                Int        @map("report_id")
+  entityType              EntityType @map("entity_type")
+  entityId                Int?       @map("entity_id")
+  entityTitle             String     @map("entity_title") @db.Text
+  averageBySelfAssessment Float?     @map("average_by_self_assessment")
+  averageByTeam           Float?     @map("average_by_team")
+  averageByOther          Float?     @map("average_by_other")
+  deltaBySelfAssessment   Float?     @map("delta_by_self_assessment")
+  deltaByTeam             Float?     @map("delta_by_team")
+  deltaByOther            Float?     @map("delta_by_other")
+  dimension               String?    @map("dimension") @db.VarChar(255)
+  createdAt               DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+
+  report Report @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([reportId, entityType, entityId])
+  @@index([reportId])
+  @@map("reporting_analytics")
+}
+
+model ReportComment {
+  id                 Int                @id @default(autoincrement())
+  reportId           Int                @map("report_id")
+  comment            String?            @db.Text
+  commentSentiment   CommentSentiment   @default(POSITIVE) @map("comment_sentiment")
+  numberOfMentions   Int?               @map("number_of_mentions")
+  respondentCategory RespondentCategory @map("respondent_category")
+  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamp(0)
+
+  report Report @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([reportId])
+  @@map("reporting_comments")
+}

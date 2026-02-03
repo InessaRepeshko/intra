@@ -1,0 +1,26 @@
+{
+    "name": "@intra/shared-kernel",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Pure TypeScript business rules, constraints and enums for Intra monorepo",
+    "license": "MIT",
+    "author": "Inessa Repeshko",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js",
+            "require": "./dist/index.js"
+        }
+    },
+    "scripts": {
+        "build": "tsc",
+        "typecheck": "tsc --noEmit",
+        "lint": "eslint \"src/**/*.ts\""
+    },
+    "devDependencies": {
+        "typescript": "^5.7.3"
+    }
+}

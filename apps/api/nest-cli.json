@@ -1,4 +1,19 @@
 {
+<<<<<<< HEAD
+    "$schema": "https://json.schemastore.org/nest-cli",
+    "collection": "@nestjs/schematics",
+    "sourceRoot": "src",
+    "entryFile": "main",
+    "outDir": "./dist",
+    "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "./tsconfig.json",
+        "assets": [
+            "**/*.assets"
+        ],
+        "webpack": false
+    }
+=======
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
@@ -9,4 +24,5 @@
       "**/*.assets"
     ]
   }
+>>>>>>> origin/main
 }

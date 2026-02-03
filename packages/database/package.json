@@ -1,4 +1,55 @@
 {
+<<<<<<< HEAD
+    "name": "@intra/database",
+    "version": "1.0.0",
+    "description": "Shared Prisma schema, migrations and seeders for Intra database",
+    "private": true,
+    "license": "MIT",
+    "author": "Inessa Repeshko",
+    "main": "./dist/generated/index.js",
+    "types": "./dist/generated/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/generated/index.d.ts",
+            "import": "./dist/generated/index.js",
+            "default": "./dist/generated/index.js",
+            "require": "./dist/generated/index.js"
+        }
+    },
+    "scripts": {
+        "prisma:config": "prisma --config ./src/prisma/prisma.config.ts",
+        "prisma:dev": "dotenv -e ../../.env.development.local -- pnpm prisma:config",
+        "prisma:test": "dotenv -e ../../.env.test -- pnpm prisma:config",
+        "db:deploy": "pnpm prisma:dev -- migrate deploy",
+        "db:schema": "pnpm prisma validate --schema ./src/prisma/schema.prisma && pnpm prisma format --schema ./src/prisma/schema.prisma",
+        "db:create": "pnpm prisma:dev -- migrate dev",
+        "db:generate": "pnpm prisma:dev -- generate",
+        "db:seed": "pnpm prisma:dev -- db seed",
+        "db:reset": "pnpm prisma:dev -- migrate reset --force",
+        "db:refresh": "pnpm db:reset && pnpm db:generate && pnpm db:seed",
+        "db:test:deploy": "pnpm prisma:test -- migrate deploy",
+        "db:test:generate": "pnpm prisma:test -- generate",
+        "db:test:reset": "pnpm prisma:test -- migrate reset --force",
+        "db:test:seed": "pnpm prisma:test -- db seed",
+        "db:test:refresh": "pnpm db:test:reset && pnpm db:test:generate && pnpm db:test:seed",
+        "migrate": "pnpm db:create",
+        "db:migrate": "pnpm db:create",
+        "build": "pnpm tsc && pnpm prisma:config -- generate"
+    },
+    "dependencies": {
+        "@intra/shared-kernel": "workspace:*",
+        "@prisma/client": "^7.2.0",
+        "@prisma/adapter-pg": "^7.2.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.19.6",
+        "dotenv": "^17.2.3",
+        "dotenv-cli": "^7.4.4",
+        "prisma": "^7.2.0",
+        "tsx": "^4.21.0",
+        "typescript": "^5.7.3"
+    }
+=======
   "name": "@intra/database",
   "private": true,
   "version": "1.0.0",
@@ -32,4 +83,5 @@
     "migrate": "pnpm db:create",
     "db:migrate": "pnpm db:create"
   }
+>>>>>>> origin/main
 }

@@ -1,0 +1,28 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "rootDir": "./",
+        "baseUrl": ".",
+        "declaration": true,
+        "sourceMap": true,
+        "paths": {
+            "src/*": [
+                "src/*"
+            ],
+            "@intra/database": [
+                "dist/generated"
+            ],
+            "@intra/database/*": [
+                "dist/generated/*"
+            ],
+        }
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

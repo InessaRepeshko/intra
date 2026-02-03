@@ -1,0 +1,16 @@
+import { IdentityRole } from "../../enums/identity-role.enum";
+import { IdentityStatus } from "../../enums/identity-status.enum";
+
+export type CreateUserPayload = {
+    firstName: string;
+    secondName?: string;
+    lastName: string;
+    fullName?: string;
+    email: string;
+    passwordHash?: string;
+    status?: IdentityStatus;
+    positionId: number;
+    teamId?: number | null;
+    managerId?: number | null;
+    roles?: IdentityRole[];
+};
