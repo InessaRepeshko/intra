@@ -1,12 +1,12 @@
+import { ReviewStage } from '@intra/shared-kernel';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { ReviewStage } from '@intra/shared-kernel';
 import {
     SYSTEM_ACTOR_ID,
     TRANSITION_REASONS,
 } from '../constants/review-stage-transitions';
-import { ReviewService } from './review.service';
 import { CycleService } from './cycle.service';
+import { ReviewService } from './review.service';
 
 /**
  * Scheduled service for checking review deadlines
@@ -19,7 +19,7 @@ export class ReviewSchedulerService {
     constructor(
         private readonly reviewService: ReviewService,
         private readonly cycleService: CycleService,
-    ) { }
+    ) {}
 
     /**
      * SCHEDULED TRIGGER: Check for reviews past their deadline

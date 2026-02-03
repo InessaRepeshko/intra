@@ -10,12 +10,7 @@ import { RolesGuard } from './guards/roles.guard';
 @Module({
     imports: [ConfigModule, IdentityModule],
     controllers: [AuthController],
-    providers: [
-        betterAuthProvider,
-        AuthService,
-        AuthSessionGuard,
-        RolesGuard,
-    ],
+    providers: [betterAuthProvider, AuthService, AuthSessionGuard, RolesGuard],
     exports: [AuthService, AuthSessionGuard, RolesGuard],
 })
 export class AuthModule {}

@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
-import { REPORT_REPOSITORY, ReportRepositoryPort } from '../../application/ports/report.repository.port';
+import {
+    REPORT_REPOSITORY,
+    ReportRepositoryPort,
+} from '../../application/ports/report.repository.port';
 import { ReportDomain } from '../../domain/report.domain';
 import { ReportingMapper } from './reporting.mapper';
 
@@ -8,7 +11,7 @@ import { ReportingMapper } from './reporting.mapper';
 export class ReportRepository implements ReportRepositoryPort {
     readonly [REPORT_REPOSITORY] = REPORT_REPOSITORY;
 
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService) {}
 
     async findById(id: number): Promise<ReportDomain | null> {
         const report = await this.prisma.report.findUnique({
@@ -42,7 +45,8 @@ export class ReportRepository implements ReportRepositoryPort {
                 respondentCount: domain.respondentCount,
                 turnoutOfTeam: domain.turnoutOfTeam,
                 turnoutOfOther: domain.turnoutOfOther,
-                totalAverageBySelfAssessment: domain.totalAverageBySelfAssessment,
+                totalAverageBySelfAssessment:
+                    domain.totalAverageBySelfAssessment,
                 totalAverageByTeam: domain.totalAverageByTeam,
                 totalAverageByOthers: domain.totalAverageByOthers,
                 totalDeltaBySelfAssessment: domain.totalDeltaBySelfAssessment,

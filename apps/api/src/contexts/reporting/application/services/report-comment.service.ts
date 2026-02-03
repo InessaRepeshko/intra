@@ -1,16 +1,16 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ReportCommentDomain } from '../../domain/report-comment.domain';
 import {
     REPORT_COMMENT_REPOSITORY,
     ReportCommentRepositoryPort,
 } from '../ports/report-comment.repository.port';
-import { ReportCommentDomain } from '../../domain/report-comment.domain';
 
 @Injectable()
 export class ReportCommentService {
     constructor(
         @Inject(REPORT_COMMENT_REPOSITORY)
         private readonly comments: ReportCommentRepositoryPort,
-    ) { }
+    ) {}
 
     async getByReportId(reportId: number): Promise<ReportCommentDomain[]> {
         return this.comments.findByReportId(reportId);

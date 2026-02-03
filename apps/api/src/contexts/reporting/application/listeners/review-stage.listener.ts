@@ -1,6 +1,6 @@
+import { ReviewStage } from '@intra/shared-kernel';
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { ReviewStage } from '@intra/shared-kernel';
 import { ReviewStageChangedEvent } from '../../../feedback360/application/events/review-stage-changed.event';
 import { ReportingService } from '../services/reporting.service';
 
@@ -12,14 +12,16 @@ import { ReportingService } from '../services/reporting.service';
 export class ReviewStageListener {
     private readonly logger = new Logger(ReviewStageListener.name);
 
-    constructor(private readonly reportService: ReportingService) { }
+    constructor(private readonly reportService: ReportingService) {}
 
     /**
      * Handles review.stage.changed events
      * Triggers report generation when review transitions to PREPARING_REPORT
      */
     @OnEvent('review.stage.changed')
-    async handleReviewStageChanged(event: ReviewStageChangedEvent): Promise<void> {
+    async handleReviewStageChanged(
+        event: ReviewStageChangedEvent,
+    ): Promise<void> {
         this.logger.log(
             `Review ${event.reviewId} transitioned from ${event.fromStage} to ${event.toStage}`,
         );

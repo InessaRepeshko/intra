@@ -1,3 +1,4 @@
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     CanActivate,
     ExecutionContext,
@@ -5,7 +6,6 @@ import {
     UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { IdentityRole } from '@intra/shared-kernel';
 import { AuthenticatedRequest } from '../types/authenticated-request';
 
 @Injectable()

@@ -1,3 +1,4 @@
+import { IdentityRole, IdentityStatus } from '@intra/shared-kernel';
 import {
     BadRequestException,
     Inject,
@@ -5,7 +6,6 @@ import {
     UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IdentityRole, IdentityStatus } from '@intra/shared-kernel';
 import { randomUUID } from 'crypto';
 import { Request, Response } from 'express';
 import { IdentityUserService } from '../identity/application/services/identity-user.service';
@@ -47,7 +47,9 @@ export class AuthService {
         private readonly identityUsers: IdentityUserService,
     ) {
         this.clientId = this.config.getOrThrow<string>('GOOGLE_CLIENT_ID');
-        this.clientSecret = this.config.getOrThrow<string>('GOOGLE_CLIENT_SECRET');
+        this.clientSecret = this.config.getOrThrow<string>(
+            'GOOGLE_CLIENT_SECRET',
+        );
         this.isProd = this.config.get<string>('APP_NODE_ENV') === 'production';
     }
 
@@ -96,7 +98,9 @@ export class AuthService {
         } as any);
 
         await this.copySetCookies(betterAuthResponse as any, res);
-        const session = await this.tryParseResponseBody(betterAuthResponse as any);
+        const session = await this.tryParseResponseBody(
+            betterAuthResponse as any,
+        );
 
         const user = await this.identityUsers.upsertExternalUser({
             email: profile.email,
@@ -177,7 +181,9 @@ export class AuthService {
         return tokens;
     }
 
-    private async fetchGoogleProfile(accessToken: string): Promise<GoogleProfile> {
+    private async fetchGoogleProfile(
+        accessToken: string,
+    ): Promise<GoogleProfile> {
         const response = await fetch(
             'https://www.googleapis.com/oauth2/v3/userinfo',
             {

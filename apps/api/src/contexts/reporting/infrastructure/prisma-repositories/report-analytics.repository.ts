@@ -8,15 +8,12 @@ import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
 import { ReportingMapper } from './reporting.mapper';
 
 @Injectable()
-export class ReportAnalyticsRepository
-    implements ReportAnalyticsRepositoryPort {
+export class ReportAnalyticsRepository implements ReportAnalyticsRepositoryPort {
     readonly [REPORT_ANALYTICS_REPOSITORY] = REPORT_ANALYTICS_REPOSITORY;
 
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService) {}
 
-    async findByReportId(
-        reportId: number,
-    ): Promise<ReportAnalyticsDomain[]> {
+    async findByReportId(reportId: number): Promise<ReportAnalyticsDomain[]> {
         const analytics = await this.prisma.reportAnalytics.findMany({
             where: { reportId },
             orderBy: { id: 'asc' },
@@ -35,4 +32,3 @@ export class ReportAnalyticsRepository
             : null;
     }
 }
- 

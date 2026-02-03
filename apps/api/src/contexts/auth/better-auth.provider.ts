@@ -1,6 +1,6 @@
-import { betterAuth } from 'better-auth';
-import { ConfigService } from '@nestjs/config';
 import { Provider } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { betterAuth } from 'better-auth';
 
 export const BETTER_AUTH_INSTANCE = Symbol('BETTER_AUTH_INSTANCE');
 

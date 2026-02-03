@@ -8,5 +8,5 @@ export class ReviewStageChangedEvent {
         public readonly changedById?: number | null,
         public readonly changedByName?: string | null,
         public readonly reason?: string | null,
-    ) { }
+    ) {}
 }

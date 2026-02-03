@@ -1,7 +1,4 @@
-import {
-    CommentSentiment,
-    RespondentCategory,
-} from '@intra/shared-kernel';
+import { CommentSentiment, RespondentCategory } from '@intra/shared-kernel';
 
 export type ReportCommentProps = {
     id?: number;

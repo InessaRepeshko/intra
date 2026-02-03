@@ -1,4 +1,3 @@
-import { UserHttpMapper } from '../identity/presentation/http/mappers/user.http.mapper';
 import {
     ClassSerializerInterceptor,
     Controller,
@@ -12,13 +11,14 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
+import { UserDomain } from '../identity/domain/user.domain';
+import { UserHttpMapper } from '../identity/presentation/http/mappers/user.http.mapper';
+import { UserResponse } from '../identity/presentation/http/models/user.response';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
 import { AuthSessionGuard } from './guards/auth-session.guard';
 import { RolesGuard } from './guards/roles.guard';
-import { UserResponse } from '../identity/presentation/http/models/user.response';
-import { UserDomain } from '../identity/domain/user.domain';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -54,7 +54,10 @@ export class AuthController {
             },
         },
     })
-    async googleCallback(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    async googleCallback(
+        @Req() req: Request,
+        @Res({ passthrough: true }) res: Response,
+    ) {
         const result = await this.authService.handleGoogleCallback(req, res);
         return { userId: result.userId, session: result.session };
     }

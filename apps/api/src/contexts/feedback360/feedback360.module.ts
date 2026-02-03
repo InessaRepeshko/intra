@@ -12,8 +12,8 @@ import { CYCLE_REPOSITORY } from './application/ports/cycle.repository.port';
 import { QUESTION_REPOSITORY } from './application/ports/question.repository.port';
 import { RESPONDENT_REPOSITORY } from './application/ports/respondent.repository.port';
 import { REVIEW_QUESTION_RELATION_REPOSITORY } from './application/ports/review-question-relation.repository.port';
-import { REVIEW_REPOSITORY } from './application/ports/review.repository.port';
 import { REVIEW_STAGE_HISTORY_REPOSITORY } from './application/ports/review-stage-history.repository.port';
+import { REVIEW_REPOSITORY } from './application/ports/review.repository.port';
 import { REVIEWER_REPOSITORY } from './application/ports/reviewer.repository.port';
 import { ClusterScoreAnalyticsService } from './application/services/cluster-score-analytics.service';
 import { CycleService } from './application/services/cycle.service';
@@ -26,8 +26,8 @@ import { CycleRepository } from './infrastructure/prisma-repositories/cycle.repo
 import { QuestionRepository } from './infrastructure/prisma-repositories/question.repository';
 import { RespondentRepository } from './infrastructure/prisma-repositories/respondent.repository';
 import { ReviewQuestionRelationRepository } from './infrastructure/prisma-repositories/review-question-relation.repository';
-import { ReviewRepository } from './infrastructure/prisma-repositories/review.repository';
 import { ReviewStageHistoryRepository } from './infrastructure/prisma-repositories/review-stage-history.repository';
+import { ReviewRepository } from './infrastructure/prisma-repositories/review.repository';
 import { ReviewerRepository } from './infrastructure/prisma-repositories/reviewer.repository';
 import { ClusterScoreAnalyticsController } from './presentation/http/controllers/cluster-score-analytics.controller';
 import { ClusterScoresController } from './presentation/http/controllers/cluster-scores.controller';
@@ -97,4 +97,4 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
         CLUSTER_SCORE_REPOSITORY,
     ],
 })
-export class Feedback360Module { }
+export class Feedback360Module {}

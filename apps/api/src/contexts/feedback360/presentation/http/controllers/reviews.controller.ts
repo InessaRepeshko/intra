@@ -1,4 +1,4 @@
-import { RespondentCategory } from '@intra/shared-kernel';
+import { IdentityRole, RespondentCategory } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -30,6 +30,11 @@ import {
     ApiListReadErrorResponses,
     ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
+import { CurrentUser } from '../../../../auth/decorators/current-user.decorator';
+import { Roles } from '../../../../auth/decorators/roles.decorator';
+import { AuthSessionGuard } from '../../../../auth/guards/auth-session.guard';
+import { RolesGuard } from '../../../../auth/guards/roles.guard';
+import { UserDomain } from '../../../../identity/domain/user.domain';
 import { ReviewService } from '../../../application/services/review.service';
 import { AnswerQueryDto } from '../dto/answers/answer-query.dto';
 import { CreateAnswerDto } from '../dto/answers/create-answer.dto';
@@ -49,19 +54,13 @@ import { RespondentResponse } from '../models/respondent.response';
 import { ReviewQuestionRelationResponse } from '../models/review-question-relation.response';
 import { ReviewResponse } from '../models/review.response';
 import { ReviewerResponse } from '../models/reviewer.response';
-import { AuthSessionGuard } from '../../../../auth/guards/auth-session.guard';
-import { RolesGuard } from '../../../../auth/guards/roles.guard';
-import { Roles } from '../../../../auth/decorators/roles.decorator';
-import { CurrentUser } from '../../../../auth/decorators/current-user.decorator';
-import { IdentityRole } from '@intra/shared-kernel';
-import { UserDomain } from '../../../../identity/domain/user.domain';
 
 @ApiTags('Feedback360 / Reviews')
 @Controller('feedback360/reviews')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ReviewResponse })
 export class ReviewController {
-    constructor(private readonly reviews: ReviewService) { }
+    constructor(private readonly reviews: ReviewService) {}
 
     @Post()
     @ApiOperation({ summary: 'Create Review' })

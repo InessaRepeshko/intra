@@ -29,8 +29,8 @@ import { CycleDomain } from '../../domain/cycle.domain';
 import { QuestionDomain } from '../../domain/question.domain';
 import { RespondentDomain } from '../../domain/respondent.domain';
 import { ReviewQuestionRelationDomain } from '../../domain/review-question-relation.domain';
-import { ReviewDomain } from '../../domain/review.domain';
 import { ReviewStageHistoryDomain } from '../../domain/review-stage-history.domain';
+import { ReviewDomain } from '../../domain/review.domain';
 import { ReviewerDomain } from '../../domain/reviewer.domain';
 
 export class Feedback360Mapper {

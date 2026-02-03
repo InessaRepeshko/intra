@@ -11,7 +11,7 @@ import { ReportingMapper } from './reporting.mapper';
 export class ReportCommentRepository implements ReportCommentRepositoryPort {
     readonly [REPORT_COMMENT_REPOSITORY] = REPORT_COMMENT_REPOSITORY;
 
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService) {}
 
     async findByReportId(reportId: number): Promise<ReportCommentDomain[]> {
         const comments = await this.prisma.reportComment.findMany({

@@ -83,10 +83,10 @@ export class IdentityUserService {
 
         const fullName = shouldUpdateFullName
             ? this.buildFullName(
-                patch.firstName ?? current.firstName,
-                patch.secondName ?? current.secondName,
-                patch.lastName ?? current.lastName,
-            )
+                  patch.firstName ?? current.firstName,
+                  patch.secondName ?? current.secondName,
+                  patch.lastName ?? current.lastName,
+              )
             : undefined;
 
         const payload: UpdateUserPayload = {
@@ -139,7 +139,11 @@ export class IdentityUserService {
         const lastName = payload.lastName ?? fallbackName.lastName;
         const fullName =
             payload.fullName ??
-            this.buildFullName(firstName, payload.secondName ?? undefined, lastName);
+            this.buildFullName(
+                firstName,
+                payload.secondName ?? undefined,
+                lastName,
+            );
 
         if (existing) {
             const patch: UpdateUserPayload = {
@@ -192,7 +196,8 @@ export class IdentityUserService {
         const clean = localPart.replace(/[._-]+/g, ' ').trim();
         const parts = clean.split(' ').filter(Boolean);
         const firstName = payload.firstName ?? parts[0] ?? localPart;
-        const lastName = payload.lastName ?? (parts.slice(1).join(' ') || 'User');
+        const lastName =
+            payload.lastName ?? (parts.slice(1).join(' ') || 'User');
         return { firstName, lastName };
     }
 
