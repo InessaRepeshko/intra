@@ -152,26 +152,71 @@ export class AuthService {
             );
         }
 
-        // Create a mock session using Better Auth
-        // We'll simulate a social login response
-        const betterAuthResponse = await this.auth.api.signInSocial({
-            body: {
-                provider: 'google',
-                idToken: {
-                    // For dev mode, we create a mock session
-                    token: `dev-token-${user.id}`,
-                    accessToken: `dev-access-${user.id}`,
-                },
-                callbackURL: this.getFrontendUrl(),
-                disableRedirect: true,
-            },
-            asResponse: true,
-        } as any);
+        const ctx = await this.auth.$context;
+        const adapter = ctx.adapter;
 
-        await this.copySetCookies(betterAuthResponse as any, res);
-        const session = await this.tryParseResponseBody(
-            betterAuthResponse as any,
-        );
+        // 1. Find or create user in Better Auth storage
+        // We look up by email.
+        let baUser: any = await adapter.findOne({
+            model: 'user',
+            where: [{ field: 'email', value: email }],
+        });
+
+        if (!baUser) {
+            // Create user in Better Auth
+            // We use a random ID (or generic one) if we can't map to our Int ID easily
+            // But since this is dev login, we can just create a new record.
+            baUser = await adapter.create({
+                model: 'user',
+                data: {
+                    email: user.email,
+                    emailVerified: true,
+                    name: user.fullName,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                },
+            });
+        }
+
+        // 2. Create session
+        const token = randomUUID();
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
+
+        const session = await adapter.create({
+            model: 'session',
+            data: {
+                userId: baUser.id,
+                token: token,
+                expiresAt: expiresAt,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                ipAddress: '127.0.0.1',
+                userAgent: 'dev-login',
+            },
+        });
+
+        if (typeof ctx.createAuthCookie === 'function') {
+            const cookie: any = await ctx.createAuthCookie(token);
+            // cookie might be { name, value, attributes }
+            if (cookie && cookie.name && cookie.value) {
+                res.cookie(cookie.name, cookie.value, cookie.attributes as any);
+            } else {
+                // Fallback
+                res.cookie('better-auth.session_token', token, {
+                    httpOnly: true,
+                    secure: false,
+                    path: '/',
+                });
+            }
+        } else {
+            // Fallback
+            res.cookie('better-auth.session_token', token, {
+                httpOnly: true,
+                secure: false,
+                path: '/',
+            });
+        }
 
         return { userId: user.id!, session };
     }

@@ -1,6 +1,6 @@
 export enum CommentSentiment {
-    NEGATIVE = 'negative',
-    POSITIVE = 'positive',
+    NEGATIVE = 'NEGATIVE',
+    POSITIVE = 'POSITIVE',
 }
 
 export const COMMENT_SENTIMENTS = Object.values(CommentSentiment);

@@ -10294,10 +10294,10 @@
           "entityType": {
             "type": "string",
             "enum": [
-              "question",
-              "competence"
+              "QUESTION",
+              "COMPETENCE"
             ],
-            "example": "question",
+            "example": "QUESTION",
             "description": "Entity type"
           },
           "questionId": {
@@ -10672,8 +10672,8 @@
           "commentSentiment": {
             "type": "string",
             "enum": [
-              "negative",
-              "positive"
+              "NEGATIVE",
+              "POSITIVE"
             ],
             "description": "Comment sentiment",
             "nullable": true
@@ -10946,8 +10946,8 @@
           "commentSentiment": {
             "type": "string",
             "enum": [
-              "negative",
-              "positive"
+              "NEGATIVE",
+              "POSITIVE"
             ],
             "description": "Sentiment of the comment"
           },

@@ -1,6 +1,6 @@
 export enum EntityType {
-    QUESTION = 'question',
-    COMPETENCE = 'competence',
+    QUESTION = 'QUESTION',
+    COMPETENCE = 'COMPETENCE',
 }
 
 export const ENTITY_TYPES = Object.values(EntityType);

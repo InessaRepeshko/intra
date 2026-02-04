@@ -212,4 +212,4 @@ export type { CompetenceAccumulator } from './reporting/dto/competence-accumulat
 export type { CompetenceSummaryTotals } from './reporting/dto/competence-summary-totals.type';
 
 /* Auth */
-export type { AuthResponseDto } from './auth/auth-response-dto.interface';
+export type { AuthResponseDto } from './auth/dto/auth-response-dto.interface';

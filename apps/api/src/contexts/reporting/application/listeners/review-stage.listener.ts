@@ -22,7 +22,7 @@ export class ReviewStageListener {
     async handleReviewStageChanged(
         event: ReviewStageChangedEvent,
     ): Promise<void> {
-        this.logger.log(
+        this.logger.debug(
             `Review ${event.reviewId} transitioned from ${event.fromStage} to ${event.toStage}`,
         );
 
@@ -30,7 +30,7 @@ export class ReviewStageListener {
             return;
         }
 
-        this.logger.log(
+        this.logger.debug(
             `Initiating report generation for review ${event.reviewId}`,
         );
 
@@ -39,7 +39,7 @@ export class ReviewStageListener {
                 event.reviewId,
             );
 
-            this.logger.log(
+            this.logger.debug(
                 `Successfully generated report ${report.id} for review ${event.reviewId}`,
             );
         } catch (error) {

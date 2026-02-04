@@ -20,6 +20,10 @@ import {
     REVIEW_QUESTION_RELATION_REPOSITORY,
     ReviewQuestionRelationRepositoryPort,
 } from '../../../feedback360/application/ports/review-question-relation.repository.port';
+import {
+    REVIEW_REPOSITORY,
+    ReviewRepositoryPort,
+} from '../../../feedback360/application/ports/review.repository.port';
 import { AnswerDomain } from '../../../feedback360/domain/answer.domain';
 import { RespondentDomain } from '../../../feedback360/domain/respondent.domain';
 import { ReviewQuestionRelationDomain } from '../../../feedback360/domain/review-question-relation.domain';
@@ -55,6 +59,8 @@ export class ReportingService {
         private readonly answers: AnswerRepositoryPort,
         @Inject(REVIEW_QUESTION_RELATION_REPOSITORY)
         private readonly reviewQuestionRelations: ReviewQuestionRelationRepositoryPort,
+        @Inject(REVIEW_REPOSITORY)
+        private readonly reviews: ReviewRepositoryPort,
     ) {}
 
     async getById(id: number): Promise<ReportDomain> {
@@ -88,6 +94,11 @@ export class ReportingService {
         if (existing) {
             this.logger.debug(`Report already exists for review ${reviewId}`);
             return existing;
+        }
+
+        const review = await this.reviews.findById(reviewId);
+        if (!review) {
+            throw new NotFoundException(`Review with id ${reviewId} not found`);
         }
 
         const allRespondents = await this.respondents.listByReview(
@@ -128,6 +139,7 @@ export class ReportingService {
 
         const report = ReportDomain.create({
             reviewId,
+            cycleId: review.cycleId,
             respondentCount,
             turnoutOfTeam: teamTurnout,
             turnoutOfOther: otherTurnout,
@@ -172,6 +184,10 @@ export class ReportingService {
         this.logger.debug(
             `Successfully created report ${fullReport.id} for review ${reviewId}`,
         );
+
+        await this.reviews.updateById(reviewId, {
+            reportId: fullReport.id,
+        });
 
         return fullReport;
     }
