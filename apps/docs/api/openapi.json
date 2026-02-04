@@ -7188,6 +7188,47 @@
         ]
       }
     },
+    "/reporting/reports/reviews/{reviewId}/text-answers": {
+      "get": {
+        "operationId": "ReportingController_getTextAnswers",
+        "parameters": [
+          {
+            "name": "reviewId",
+            "required": true,
+            "in": "path",
+            "description": "Feedback360 review identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TextAnswerResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get anonymized text answers for a review",
+        "tags": [
+          "Reporting / Reports"
+        ]
+      }
+    },
     "/reporting/analytics/report/{reportId}": {
       "get": {
         "operationId": "ReportAnalyticsController_getByReportId",
@@ -7341,6 +7382,38 @@
           }
         },
         "summary": "Get comment by id",
+        "tags": [
+          "Reporting / Comments"
+        ]
+      }
+    },
+    "/reporting/comments": {
+      "post": {
+        "operationId": "ReportCommentController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReportCommentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportCommentResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create report comment",
         "tags": [
           "Reporting / Comments"
         ]
@@ -10606,15 +10679,18 @@
             "minimum": 1,
             "maximum": 1000
           },
-          "respondentCategory": {
-            "type": "string",
-            "enum": [
-              "SELF_ASSESSMENT",
-              "TEAM",
-              "OTHER"
-            ],
-            "description": "Respondent category",
-            "nullable": false
+          "respondentCategories": {
+            "type": "array",
+            "description": "Respondent categories",
+            "nullable": false,
+            "items": {
+              "type": "string",
+              "enum": [
+                "SELF_ASSESSMENT",
+                "TEAM",
+                "OTHER"
+              ]
+            }
           },
           "commentSentiment": {
             "type": "string",
@@ -10645,7 +10721,7 @@
           "questionId",
           "questionTitle",
           "comment",
-          "respondentCategory",
+          "respondentCategories",
           "numberOfMentions",
           "createdAt"
         ]
@@ -10810,6 +10886,108 @@
           "analytics",
           "questionSummaries",
           "competenceSummaries"
+        ]
+      },
+      "TextAnswerResponse": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "number",
+            "example": 101,
+            "description": "Question identifier"
+          },
+          "questionTitle": {
+            "type": "string",
+            "example": "Handles conflicts constructively",
+            "description": "Related question title",
+            "nullable": true
+          },
+          "respondentCategory": {
+            "type": "string",
+            "enum": [
+              "SELF_ASSESSMENT",
+              "TEAM",
+              "OTHER"
+            ],
+            "example": "TEAM",
+            "description": "Category of respondent who provided the text answer"
+          },
+          "textValue": {
+            "type": "string",
+            "example": "Always listens before giving advice.",
+            "description": "Text value provided by respondent"
+          }
+        },
+        "required": [
+          "questionId",
+          "respondentCategory",
+          "textValue"
+        ]
+      },
+      "CreateReportCommentDto": {
+        "type": "object",
+        "properties": {
+          "reportId": {
+            "type": "number",
+            "example": 1,
+            "description": "Report id"
+          },
+          "questionId": {
+            "type": "number",
+            "example": 1,
+            "description": "Question id"
+          },
+          "questionTitle": {
+            "type": "string",
+            "example": "Question title",
+            "description": "Question title",
+            "minimum": 1,
+            "maximum": 255
+          },
+          "comment": {
+            "type": "string",
+            "example": "Comment summary",
+            "description": "Summarized comment",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "respondentCategories": {
+            "type": "array",
+            "example": [
+              "TEAM"
+            ],
+            "description": "Respondent categories who mentioned this comment",
+            "items": {
+              "type": "string",
+              "enum": [
+                "SELF_ASSESSMENT",
+                "TEAM",
+                "OTHER"
+              ]
+            }
+          },
+          "commentSentiment": {
+            "type": "string",
+            "enum": [
+              "negative",
+              "positive"
+            ],
+            "description": "Sentiment of the comment"
+          },
+          "numberOfMentions": {
+            "type": "number",
+            "example": 3,
+            "description": "Number of mentions",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "reportId",
+          "questionId",
+          "questionTitle",
+          "comment",
+          "respondentCategories",
+          "numberOfMentions"
         ]
       }
     }

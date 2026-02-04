@@ -26,4 +26,8 @@ export class ReportCommentService {
 
         return comment;
     }
+
+    async create(comment: ReportCommentDomain): Promise<ReportCommentDomain> {
+        return this.comments.create(comment);
+    }
 }

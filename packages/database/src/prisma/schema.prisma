@@ -676,15 +676,15 @@ model ReportAnalytics {
 }
 
 model ReportComment {
-  id                 Int                @id @default(autoincrement())
-  reportId           Int                @map("report_id")
-  questionId         Int                @map("question_id")
-  questionTitle      String             @map("question_title") @db.Text
-  comment            String             @db.Text
-  respondentCategory RespondentCategory @map("respondent_category")
-  commentSentiment   CommentSentiment?  @default(POSITIVE) @map("comment_sentiment")
-  numberOfMentions   Int                @map("number_of_mentions")
-  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamp(0)
+  id                   Int                  @id @default(autoincrement())
+  reportId             Int                  @map("report_id")
+  questionId           Int                  @map("question_id")
+  questionTitle        String               @map("question_title") @db.Text
+  comment              String               @db.Text
+  respondentCategories RespondentCategory[] @map("respondent_categories")
+  commentSentiment     CommentSentiment?    @default(POSITIVE) @map("comment_sentiment")
+  numberOfMentions     Int                  @map("number_of_mentions")
+  createdAt            DateTime             @default(now()) @map("created_at") @db.Timestamp(0)
 
   report   Report    @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   question Question? @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)

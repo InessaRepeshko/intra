@@ -458,7 +458,7 @@ Table reporting_comments {
   questionId Int [not null]
   questionTitle String [not null]
   comment String [not null]
-  respondentCategory RespondentCategory [not null]
+  respondentCategories RespondentCategory[] [not null]
   commentSentiment CommentSentiment [default: 'POSITIVE']
   numberOfMentions Int [not null]
   createdAt DateTime [default: `now()`, not null]

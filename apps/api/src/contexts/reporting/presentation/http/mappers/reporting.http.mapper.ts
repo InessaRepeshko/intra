@@ -1,4 +1,4 @@
-import { EntityType } from '@intra/shared-kernel';
+import { EntityType, ReportTextAnswerDto } from '@intra/shared-kernel';
 import { ReportAnalyticsDomain } from '../../../domain/report-analytics.domain';
 import { ReportCommentDomain } from '../../../domain/report-comment.domain';
 import { ReportDomain } from '../../../domain/report.domain';
@@ -8,6 +8,7 @@ import { QuestionSummaryResponse } from '../models/question-summary.response';
 import { ReportAnalyticsResponse } from '../models/report-analytics.response';
 import { ReportCommentResponse } from '../models/report-comment.response';
 import { ReportResponse } from '../models/report.response';
+import { TextAnswerResponse } from '../models/text-answer.response';
 
 export class ReportingHttpMapper {
     static toReportResponse(report: ReportDomain): ReportResponse {
@@ -84,10 +85,21 @@ export class ReportingHttpMapper {
         response.questionId = comment.questionId;
         response.questionTitle = comment.questionTitle;
         response.comment = comment.comment;
-        response.respondentCategory = comment.respondentCategory;
+        response.respondentCategories = comment.respondentCategories;
         response.commentSentiment = comment.commentSentiment ?? null;
         response.numberOfMentions = comment.numberOfMentions;
         response.createdAt = comment.createdAt!;
+        return response;
+    }
+
+    static toTextAnswerResponse(
+        answer: ReportTextAnswerDto,
+    ): TextAnswerResponse {
+        const response = new TextAnswerResponse();
+        response.questionId = answer.questionId;
+        response.questionTitle = answer.questionTitle ?? null;
+        response.respondentCategory = answer.respondentCategory;
+        response.textValue = answer.textValue;
         return response;
     }
 

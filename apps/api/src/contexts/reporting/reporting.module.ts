@@ -9,6 +9,7 @@ import { REPORT_REPOSITORY } from './application/ports/report.repository.port';
 import { ReportAnalyticsService } from './application/services/report-analytics.service';
 import { ReportCommentService } from './application/services/report-comment.service';
 import { ReportingService } from './application/services/reporting.service';
+import { TextAnswerService } from './application/services/text-answer.service';
 import { ReportAnalyticsRepository } from './infrastructure/prisma-repositories/report-analytics.repository';
 import { ReportCommentRepository } from './infrastructure/prisma-repositories/report-comment.repository';
 import { ReportRepository } from './infrastructure/prisma-repositories/report.repository';
@@ -28,6 +29,7 @@ import { ReportingController } from './presentation/http/controllers/reporting.c
         ReportingService,
         ReportAnalyticsService,
         ReportCommentService,
+        TextAnswerService,
         ReportRepository,
         ReportAnalyticsRepository,
         ReportCommentRepository,
@@ -41,6 +43,11 @@ import { ReportingController } from './presentation/http/controllers/reporting.c
             useExisting: ReportCommentRepository,
         },
     ],
-    exports: [ReportingService, ReportAnalyticsService, ReportCommentService],
+    exports: [
+        ReportingService,
+        ReportAnalyticsService,
+        ReportCommentService,
+        TextAnswerService,
+    ],
 })
 export class ReportingModule {}

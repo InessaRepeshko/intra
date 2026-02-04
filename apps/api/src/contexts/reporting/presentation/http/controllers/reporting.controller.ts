@@ -11,15 +11,20 @@ import {
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 import { ReportingService } from '../../../application/services/reporting.service';
+import { TextAnswerService } from '../../../application/services/text-answer.service';
 import { ReportingHttpMapper } from '../mappers/reporting.http.mapper';
 import { ReportResponse } from '../models/report.response';
+import { TextAnswerResponse } from '../models/text-answer.response';
 
 @ApiTags('Reporting / Reports')
 @Controller('reporting/reports')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ReportResponse })
 export class ReportingController {
-    constructor(private readonly reporting: ReportingService) {}
+    constructor(
+        private readonly reporting: ReportingService,
+        private readonly textAnswerService: TextAnswerService,
+    ) {}
 
     @Get(':id')
     @ApiOperation({ summary: 'Get report by id' })
@@ -51,5 +56,25 @@ export class ReportingController {
     ): Promise<ReportResponse> {
         const report = await this.reporting.getByReviewId(reviewId);
         return ReportingHttpMapper.toReportResponse(report);
+    }
+
+    @Get('reviews/:reviewId/text-answers')
+    @ApiOperation({ summary: 'Get anonymized text answers for a review' })
+    @ApiParam({
+        name: 'reviewId',
+        description: 'Feedback360 review identifier',
+        type: 'number',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        isArray: true,
+        type: TextAnswerResponse,
+    })
+    @ApiReadErrorResponses()
+    async getTextAnswers(
+        @Param('reviewId', ParseIntPipe) reviewId: number,
+    ): Promise<TextAnswerResponse[]> {
+        const answers = await this.textAnswerService.listByReview(reviewId);
+        return answers.map(ReportingHttpMapper.toTextAnswerResponse);
     }
 }

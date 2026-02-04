@@ -6,7 +6,7 @@ export type ReportCommentProps = {
     questionId: number;
     questionTitle: string;
     comment: string;
-    respondentCategory: RespondentCategory;
+    respondentCategories: RespondentCategory[];
     commentSentiment?: CommentSentiment | null;
     numberOfMentions: number;
     createdAt?: Date;
@@ -18,7 +18,7 @@ export class ReportCommentDomain {
     readonly questionId: number;
     readonly questionTitle: string;
     readonly comment: string;
-    readonly respondentCategory: RespondentCategory;
+    readonly respondentCategories: RespondentCategory[];
     readonly commentSentiment?: CommentSentiment | null;
     readonly numberOfMentions: number;
     readonly createdAt?: Date;
@@ -29,7 +29,7 @@ export class ReportCommentDomain {
         this.questionId = props.questionId;
         this.questionTitle = props.questionTitle;
         this.comment = props.comment;
-        this.respondentCategory = props.respondentCategory;
+        this.respondentCategories = props.respondentCategories ?? [];
         this.commentSentiment = props.commentSentiment ?? null;
         this.numberOfMentions = props.numberOfMentions;
         this.createdAt = props.createdAt;

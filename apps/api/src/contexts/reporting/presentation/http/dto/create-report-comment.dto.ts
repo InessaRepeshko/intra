@@ -1,31 +1,28 @@
 import {
     CommentSentiment,
     REPORT_COMMENT_CONSTRAINTS,
-    ReportCommentDto,
     RespondentCategory,
 } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import {
+    ArrayMinSize,
+    IsArray,
+    IsEnum,
+    IsInt,
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    Min,
+} from 'class-validator';
 
-export class ReportCommentResponse implements ReportCommentDto {
-    @ApiProperty({
-        example: 1,
-        description: 'Comment id',
-        type: 'number',
-        required: true,
-        nullable: false,
-    })
-    @Expose()
-    id!: number;
-
+export class CreateReportCommentDto {
     @ApiProperty({
         example: 1,
         description: 'Report id',
         type: 'number',
         required: true,
-        nullable: false,
     })
-    @Expose()
+    @IsInt()
     reportId!: number;
 
     @ApiProperty({
@@ -33,9 +30,8 @@ export class ReportCommentResponse implements ReportCommentDto {
         description: 'Question id',
         type: 'number',
         required: true,
-        nullable: false,
     })
-    @Expose()
+    @IsInt()
     questionId!: number;
 
     @ApiProperty({
@@ -43,63 +39,54 @@ export class ReportCommentResponse implements ReportCommentDto {
         description: 'Question title',
         type: 'string',
         required: true,
-        nullable: false,
         minimum: REPORT_COMMENT_CONSTRAINTS.TITLE.LENGTH.MIN,
         maximum: REPORT_COMMENT_CONSTRAINTS.TITLE.LENGTH.MAX,
     })
-    @Expose()
+    @IsString()
+    @IsNotEmpty()
     questionTitle!: string;
 
     @ApiProperty({
-        example: 'Comment',
-        description: 'Comment',
+        example: 'Comment summary',
+        description: 'Summarized comment',
         type: 'string',
         required: true,
-        nullable: false,
         minimum: REPORT_COMMENT_CONSTRAINTS.COMMENT.LENGTH.MIN,
         maximum: REPORT_COMMENT_CONSTRAINTS.COMMENT.LENGTH.MAX,
     })
-    @Expose()
+    @IsString()
+    @IsNotEmpty()
     comment!: string;
 
     @ApiProperty({
         enum: RespondentCategory,
-        description: 'Respondent categories',
-        type: 'array',
         isArray: true,
+        example: [RespondentCategory.TEAM],
+        description: 'Respondent categories who mentioned this comment',
         required: true,
-        nullable: false,
     })
-    @Expose()
+    @IsArray()
+    @ArrayMinSize(1)
+    @IsEnum(RespondentCategory, { each: true })
     respondentCategories!: RespondentCategory[];
 
     @ApiProperty({
         enum: CommentSentiment,
-        description: 'Comment sentiment',
-        type: 'string',
+        description: 'Sentiment of the comment',
         required: false,
-        nullable: true,
     })
-    @Expose()
-    commentSentiment?: CommentSentiment | null;
+    @IsEnum(CommentSentiment)
+    @IsOptional()
+    commentSentiment?: CommentSentiment;
 
     @ApiProperty({
         example: 3,
         description: 'Number of mentions',
         type: 'number',
         required: true,
-        nullable: false,
         minimum: 1,
     })
-    @Expose()
+    @IsInt()
+    @Min(1)
     numberOfMentions!: number;
-
-    @ApiProperty({
-        example: '2025-01-01T00:00:00.000Z',
-        description: 'Created at',
-        type: 'string',
-        format: 'date-time',
-    })
-    @Expose()
-    createdAt!: Date;
 }

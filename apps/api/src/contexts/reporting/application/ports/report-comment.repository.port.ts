@@ -7,4 +7,5 @@ export const REPORT_COMMENT_REPOSITORY = Symbol(
 export interface ReportCommentRepositoryPort {
     findByReportId(reportId: number): Promise<ReportCommentDomain[]>;
     findById(id: number): Promise<ReportCommentDomain | null>;
+    create(comment: ReportCommentDomain): Promise<ReportCommentDomain>;
 }

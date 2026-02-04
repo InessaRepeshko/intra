@@ -206,6 +206,7 @@ export type { ReportAnalyticsDto } from './reporting/dto/report-analytics-dto.in
 export type { ReportCompetenceSummaryDto } from './reporting/dto/report-competence-summary-dto.interface';
 export type { ReportCompetenceSummaryTotalsDto } from './reporting/dto/report-competence-summary-totals-dto.interface';
 export type { ReportQuestionSummaryDto } from './reporting/dto/report-question-summary-dto.interface';
+export type { ReportTextAnswerDto } from './reporting/dto/report-text-answer-dto.interface';
 
 /* Auth */
 export type { AuthResponseDto } from './auth/auth-response-dto.interface';

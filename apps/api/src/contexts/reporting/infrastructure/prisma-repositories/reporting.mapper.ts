@@ -1,4 +1,5 @@
 import {
+    $Enums,
     Prisma,
     EntityType as PrismaEntityType,
     Report as PrismaReport,
@@ -102,8 +103,8 @@ export class ReportingMapper {
             questionId: comment.questionId,
             questionTitle: comment.questionTitle,
             comment: comment.comment,
-            respondentCategory:
-                comment.respondentCategory as RespondentCategory,
+            respondentCategories:
+                (comment.respondentCategories as RespondentCategory[]) ?? [],
             commentSentiment: comment.commentSentiment as CommentSentiment,
             numberOfMentions: comment.numberOfMentions,
             createdAt: comment.createdAt,
@@ -112,5 +113,22 @@ export class ReportingMapper {
 
     static toPrismaEntityType(domainType: EntityType): PrismaEntityType {
         return domainType.toString() as PrismaEntityType;
+    }
+
+    static toPrismaReportCommentCreateInput(
+        comment: ReportCommentDomain,
+    ): Prisma.ReportCommentUncheckedCreateInput {
+        return {
+            reportId: comment.reportId,
+            questionId: comment.questionId,
+            questionTitle: comment.questionTitle,
+            comment: comment.comment,
+            respondentCategories: comment.respondentCategories,
+            commentSentiment:
+                comment.commentSentiment === null
+                    ? undefined
+                    : (comment.commentSentiment as unknown as $Enums.CommentSentiment),
+            numberOfMentions: comment.numberOfMentions,
+        };
     }
 }

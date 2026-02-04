@@ -29,4 +29,11 @@ export class ReportCommentRepository implements ReportCommentRepositoryPort {
 
         return comment ? ReportingMapper.toReportCommentDomain(comment) : null;
     }
+
+    async create(comment: ReportCommentDomain): Promise<ReportCommentDomain> {
+        const created = await this.prisma.reportComment.create({
+            data: ReportingMapper.toPrismaReportCommentCreateInput(comment),
+        });
+        return ReportingMapper.toReportCommentDomain(created);
+    }
 }

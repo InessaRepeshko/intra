@@ -1,16 +1,26 @@
 import {
+    Body,
     ClassSerializerInterceptor,
     Controller,
     Get,
     HttpStatus,
     Param,
     ParseIntPipe,
+    Post,
     SerializeOptions,
     UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+    ApiCreatedResponse,
+    ApiOperation,
+    ApiParam,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
 import { ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 import { ReportCommentService } from '../../../application/services/report-comment.service';
+import { ReportCommentDomain } from '../../../domain/report-comment.domain';
+import { CreateReportCommentDto } from '../dto/create-report-comment.dto';
 import { ReportingHttpMapper } from '../mappers/reporting.http.mapper';
 import { ReportCommentResponse } from '../models/report-comment.response';
 
@@ -55,5 +65,25 @@ export class ReportCommentController {
     ): Promise<ReportCommentResponse> {
         const comment = await this.commentService.getById(id);
         return ReportingHttpMapper.toReportCommentResponse(comment);
+    }
+
+    @Post()
+    @ApiOperation({ summary: 'Create report comment' })
+    @ApiCreatedResponse({ type: ReportCommentResponse })
+    async create(
+        @Body() payload: CreateReportCommentDto,
+    ): Promise<ReportCommentResponse> {
+        const comment = ReportCommentDomain.create({
+            reportId: payload.reportId,
+            questionId: payload.questionId,
+            questionTitle: payload.questionTitle,
+            comment: payload.comment,
+            respondentCategories: payload.respondentCategories,
+            commentSentiment: payload.commentSentiment ?? null,
+            numberOfMentions: payload.numberOfMentions,
+        });
+
+        const created = await this.commentService.create(comment);
+        return ReportingHttpMapper.toReportCommentResponse(created);
     }
 }

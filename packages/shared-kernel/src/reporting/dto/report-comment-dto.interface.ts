@@ -7,7 +7,7 @@ export interface ReportCommentDto {
     questionId: number;
     questionTitle: string;
     comment: string;
-    respondentCategory: RespondentCategory;
+    respondentCategories: RespondentCategory[];
     commentSentiment?: CommentSentiment | null;
     numberOfMentions: number;
     createdAt: Date;
