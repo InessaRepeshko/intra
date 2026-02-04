@@ -419,6 +419,12 @@ Table reporting_reports {
   totalDeltaBySelfAssessment Float
   totalDeltaByTeam Float
   totalDeltaByOthers Float
+  totalAverageCompetenceBySelfAssessment Float
+  totalAverageCompetenceByTeam Float
+  totalAverageCompetenceByOthers Float
+  totalCompetencePercentageBySelfAssessment Float
+  totalCompetencePercentageByTeam Float
+  totalCompetencePercentageByOthers Float
   createdAt DateTime [default: `now()`, not null]
   review feedback360_reviews [not null]
   cycle feedback360_cycles

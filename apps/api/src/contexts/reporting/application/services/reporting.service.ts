@@ -3,6 +3,7 @@ import {
     EntityType,
     REPORT_ANALYTICS_CONSTRAINTS,
     RespondentCategory,
+    ResponseStatus,
 } from '@intra/shared-kernel';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
@@ -18,6 +19,7 @@ import {
     ReviewQuestionRelationRepositoryPort,
 } from '../../../feedback360/application/ports/review-question-relation.repository.port';
 import { AnswerDomain } from '../../../feedback360/domain/answer.domain';
+import { RespondentDomain } from '../../../feedback360/domain/respondent.domain';
 import { ReviewQuestionRelationDomain } from '../../../feedback360/domain/review-question-relation.domain';
 import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
 import { ReportDomain } from '../../domain/report.domain';
@@ -91,9 +93,17 @@ export class ReportingService {
             {},
         );
         const respondentCount = allRespondents.length;
+        const teamTurnout = this.calculateTurnout(
+            allRespondents,
+            RespondentCategory.TEAM,
+        );
+        const otherTurnout = this.calculateTurnout(
+            allRespondents,
+            RespondentCategory.OTHER,
+        );
 
         this.logger.debug(
-            `Calculated respondent counts: ${respondentCount} total`,
+            `Calculated respondent counts: ${respondentCount} total, team turnout ${teamTurnout}, other turnout ${otherTurnout}`,
         );
 
         const answers = await this.answers.list({
@@ -109,12 +119,16 @@ export class ReportingService {
         const maxScore = REPORT_ANALYTICS_CONSTRAINTS.SCORE.MAX;
         const { questionAnalytics, competenceAnalytics, questionTotals } =
             this.buildAnalyticsPayload(answers, relations, maxScore);
+        const competenceTotals = this.calculateCompetenceSummaryTotals(
+            competenceAnalytics,
+            maxScore,
+        );
 
         const report = ReportDomain.create({
             reviewId,
             respondentCount,
-            turnoutOfTeam: null,
-            turnoutOfOther: null,
+            turnoutOfTeam: teamTurnout,
+            turnoutOfOther: otherTurnout,
             totalAverageBySelfAssessment:
                 questionTotals.averageBySelfAssessment,
             totalAverageByTeam: questionTotals.averageByTeam,
@@ -122,6 +136,15 @@ export class ReportingService {
             totalDeltaBySelfAssessment: null,
             totalDeltaByTeam: questionTotals.deltaByTeam,
             totalDeltaByOthers: questionTotals.deltaByOthers,
+            totalAverageCompetenceBySelfAssessment:
+                competenceTotals.averageBySelfAssessment,
+            totalAverageCompetenceByTeam: competenceTotals.averageByTeam,
+            totalAverageCompetenceByOthers: competenceTotals.averageByOther,
+            totalCompetencePercentageBySelfAssessment:
+                competenceTotals.percentageBySelfAssessment,
+            totalCompetencePercentageByTeam: competenceTotals.percentageByTeam,
+            totalCompetencePercentageByOthers:
+                competenceTotals.percentageByOther,
             analytics: [],
             comments: [],
         });
@@ -170,6 +193,25 @@ export class ReportingService {
     private round(value: number | null | undefined): number | null {
         if (value === null || value === undefined) return null;
         return Math.round(value * 100) / 100;
+    }
+
+    private calculateTurnout(
+        respondents: RespondentDomain[],
+        category: RespondentCategory,
+    ): number | null {
+        const categoryRespondents = respondents.filter(
+            (respondent) => respondent.category === category,
+        );
+        if (categoryRespondents.length === 0) {
+            return null;
+        }
+
+        const completed = categoryRespondents.filter(
+            (respondent) =>
+                respondent.responseStatus === ResponseStatus.COMPLETED,
+        ).length;
+
+        return this.round((completed / categoryRespondents.length) * 100);
     }
 
     private buildAnalyticsPayload(
@@ -405,6 +447,53 @@ export class ReportingService {
         }
         return ((base - comparison) / maxScore) * 100;
     }
+
+    private calculateCompetenceSummaryTotals(
+        analytics: ReportAnalyticsDomain[],
+        maxScore: number,
+    ): CompetenceSummaryTotals {
+        const averageBySelf = this.calculateAverage(
+            analytics.map((item) => item.averageBySelfAssessment),
+        );
+        const averageByTeam = this.calculateAverage(
+            analytics.map((item) => item.averageByTeam),
+        );
+        const averageByOther = this.calculateAverage(
+            analytics.map((item) => item.averageByOther),
+        );
+
+        const percentageBySelf = this.calculatePercentage(
+            averageBySelf,
+            maxScore,
+        );
+        const percentageByTeam = this.calculatePercentage(
+            averageByTeam,
+            maxScore,
+        );
+        const percentageByOther = this.calculatePercentage(
+            averageByOther,
+            maxScore,
+        );
+
+        return {
+            averageBySelfAssessment: this.round(averageBySelf),
+            averageByTeam: this.round(averageByTeam),
+            averageByOther: this.round(averageByOther),
+            percentageBySelfAssessment: this.round(percentageBySelf),
+            percentageByTeam: this.round(percentageByTeam),
+            percentageByOther: this.round(percentageByOther),
+        };
+    }
+
+    private calculatePercentage(
+        value: number | null,
+        maxScore: number,
+    ): number | null {
+        if (value === null || maxScore === 0) {
+            return null;
+        }
+        return (value / maxScore) * 100;
+    }
 }
 
 type CompetenceAccumulator = {
@@ -413,4 +502,13 @@ type CompetenceAccumulator = {
     selfScores: number[];
     teamScores: number[];
     otherScores: number[];
+};
+
+type CompetenceSummaryTotals = {
+    averageBySelfAssessment: number | null;
+    averageByTeam: number | null;
+    averageByOther: number | null;
+    percentageBySelfAssessment: number | null;
+    percentageByTeam: number | null;
+    percentageByOther: number | null;
 };

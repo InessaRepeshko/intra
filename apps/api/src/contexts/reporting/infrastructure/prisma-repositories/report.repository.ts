@@ -52,6 +52,18 @@ export class ReportRepository implements ReportRepositoryPort {
                 totalDeltaBySelfAssessment: domain.totalDeltaBySelfAssessment,
                 totalDeltaByTeam: domain.totalDeltaByTeam,
                 totalDeltaByOthers: domain.totalDeltaByOthers,
+                totalAverageCompetenceBySelfAssessment:
+                    domain.totalAverageCompetenceBySelfAssessment,
+                totalAverageCompetenceByTeam:
+                    domain.totalAverageCompetenceByTeam,
+                totalAverageCompetenceByOthers:
+                    domain.totalAverageCompetenceByOthers,
+                totalCompetencePercentageBySelfAssessment:
+                    domain.totalCompetencePercentageBySelfAssessment,
+                totalCompetencePercentageByTeam:
+                    domain.totalCompetencePercentageByTeam,
+                totalCompetencePercentageByOthers:
+                    domain.totalCompetencePercentageByOthers,
             },
             include: {
                 analytics: { orderBy: { id: 'asc' } },

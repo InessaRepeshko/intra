@@ -1,4 +1,4 @@
-import { EntityType, REPORT_ANALYTICS_CONSTRAINTS } from '@intra/shared-kernel';
+import { EntityType } from '@intra/shared-kernel';
 import { ReportAnalyticsDomain } from '../../../domain/report-analytics.domain';
 import { ReportCommentDomain } from '../../../domain/report-comment.domain';
 import { ReportDomain } from '../../../domain/report.domain';
@@ -45,7 +45,7 @@ export class ReportingHttpMapper {
             this.toCompetenceSummaryResponse,
         );
         response.competenceSummaryTotals =
-            this.buildCompetenceSummaryTotals(competenceAnalytics);
+            this.toCompetenceSummaryTotalsResponse(report);
 
         response.comments =
             report.comments?.map(this.toReportCommentResponse) ?? [];
@@ -123,71 +123,32 @@ export class ReportingHttpMapper {
         return response;
     }
 
-    private static buildCompetenceSummaryTotals(
-        analytics: ReportAnalyticsDomain[],
+    private static toCompetenceSummaryTotalsResponse(
+        report: ReportDomain,
     ): CompetenceSummaryTotalsResponse | null {
-        if (analytics.length === 0) {
+        const hasValues =
+            report.totalAverageCompetenceBySelfAssessment !== null ||
+            report.totalAverageCompetenceByTeam !== null ||
+            report.totalAverageCompetenceByOthers !== null ||
+            report.totalCompetencePercentageBySelfAssessment !== null ||
+            report.totalCompetencePercentageByTeam !== null ||
+            report.totalCompetencePercentageByOthers !== null;
+
+        if (!hasValues) {
             return null;
         }
 
-        const averageBySelf = this.calculateAverage(
-            analytics.map((item) => item.averageBySelfAssessment),
-        );
-        const averageByTeam = this.calculateAverage(
-            analytics.map((item) => item.averageByTeam),
-        );
-        const averageByOther = this.calculateAverage(
-            analytics.map((item) => item.averageByOther),
-        );
-
-        const maxScore = REPORT_ANALYTICS_CONSTRAINTS.SCORE.MAX;
-        const percentageBySelf = this.calculatePercentage(
-            averageBySelf,
-            maxScore,
-        );
-        const percentageByTeam = this.calculatePercentage(
-            averageByTeam,
-            maxScore,
-        );
-        const percentageByOther = this.calculatePercentage(
-            averageByOther,
-            maxScore,
-        );
-
-        const totals = new CompetenceSummaryTotalsResponse();
-        totals.averageBySelfAssessment = this.round(averageBySelf);
-        totals.averageByTeam = this.round(averageByTeam);
-        totals.averageByOther = this.round(averageByOther);
-        totals.percentageBySelfAssessment = this.round(percentageBySelf);
-        totals.percentageByTeam = this.round(percentageByTeam);
-        totals.percentageByOther = this.round(percentageByOther);
-        return totals;
-    }
-
-    private static calculateAverage(
-        numbers: (number | null | undefined)[],
-    ): number | null {
-        const validNumbers = numbers.filter(
-            (n): n is number => n !== null && n !== undefined,
-        );
-        if (validNumbers.length === 0) return null;
-        return validNumbers.reduce((a, b) => a + b, 0) / validNumbers.length;
-    }
-
-    private static calculatePercentage(
-        value: number | null,
-        maxScore: number,
-    ): number | null {
-        if (value === null || maxScore === 0) {
-            return null;
-        }
-        return (value / maxScore) * 100;
-    }
-
-    private static round(value: number | null | undefined): number | null {
-        if (value === null || value === undefined) {
-            return null;
-        }
-        return Math.round(value * 100) / 100;
+        const response = new CompetenceSummaryTotalsResponse();
+        response.averageBySelfAssessment =
+            report.totalAverageCompetenceBySelfAssessment ?? null;
+        response.averageByTeam = report.totalAverageCompetenceByTeam ?? null;
+        response.averageByOther = report.totalAverageCompetenceByOthers ?? null;
+        response.percentageBySelfAssessment =
+            report.totalCompetencePercentageBySelfAssessment ?? null;
+        response.percentageByTeam =
+            report.totalCompetencePercentageByTeam ?? null;
+        response.percentageByOther =
+            report.totalCompetencePercentageByOthers ?? null;
+        return response;
     }
 }

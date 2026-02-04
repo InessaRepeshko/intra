@@ -34,6 +34,17 @@ export class ReportingMapper {
             totalDeltaBySelfAssessment: report.totalDeltaBySelfAssessment,
             totalDeltaByTeam: report.totalDeltaByTeam,
             totalDeltaByOthers: report.totalDeltaByOthers,
+            totalAverageCompetenceBySelfAssessment:
+                report.totalAverageCompetenceBySelfAssessment,
+            totalAverageCompetenceByTeam: report.totalAverageCompetenceByTeam,
+            totalAverageCompetenceByOthers:
+                report.totalAverageCompetenceByOthers,
+            totalCompetencePercentageBySelfAssessment:
+                report.totalCompetencePercentageBySelfAssessment,
+            totalCompetencePercentageByTeam:
+                report.totalCompetencePercentageByTeam,
+            totalCompetencePercentageByOthers:
+                report.totalCompetencePercentageByOthers,
             createdAt: report.createdAt,
             analytics: report.analytics.map(this.toReportAnalyticsDomain),
             comments: report.comments.map(this.toReportCommentDomain),

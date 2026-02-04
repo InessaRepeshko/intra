@@ -14,6 +14,12 @@ export type ReportProps = {
     totalDeltaBySelfAssessment?: number | null;
     totalDeltaByTeam?: number | null;
     totalDeltaByOthers?: number | null;
+    totalAverageCompetenceBySelfAssessment?: number | null;
+    totalAverageCompetenceByTeam?: number | null;
+    totalAverageCompetenceByOthers?: number | null;
+    totalCompetencePercentageBySelfAssessment?: number | null;
+    totalCompetencePercentageByTeam?: number | null;
+    totalCompetencePercentageByOthers?: number | null;
     createdAt?: Date;
     analytics: ReportAnalyticsDomain[];
     comments?: ReportCommentDomain[];
@@ -32,6 +38,12 @@ export class ReportDomain {
     readonly totalDeltaBySelfAssessment?: number | null;
     readonly totalDeltaByTeam?: number | null;
     readonly totalDeltaByOthers?: number | null;
+    readonly totalAverageCompetenceBySelfAssessment?: number | null;
+    readonly totalAverageCompetenceByTeam?: number | null;
+    readonly totalAverageCompetenceByOthers?: number | null;
+    readonly totalCompetencePercentageBySelfAssessment?: number | null;
+    readonly totalCompetencePercentageByTeam?: number | null;
+    readonly totalCompetencePercentageByOthers?: number | null;
     readonly createdAt?: Date;
     readonly analytics: ReportAnalyticsDomain[];
     readonly comments?: ReportCommentDomain[];
@@ -51,6 +63,18 @@ export class ReportDomain {
             props.totalDeltaBySelfAssessment ?? null;
         this.totalDeltaByTeam = props.totalDeltaByTeam ?? null;
         this.totalDeltaByOthers = props.totalDeltaByOthers ?? null;
+        this.totalAverageCompetenceBySelfAssessment =
+            props.totalAverageCompetenceBySelfAssessment ?? null;
+        this.totalAverageCompetenceByTeam =
+            props.totalAverageCompetenceByTeam ?? null;
+        this.totalAverageCompetenceByOthers =
+            props.totalAverageCompetenceByOthers ?? null;
+        this.totalCompetencePercentageBySelfAssessment =
+            props.totalCompetencePercentageBySelfAssessment ?? null;
+        this.totalCompetencePercentageByTeam =
+            props.totalCompetencePercentageByTeam ?? null;
+        this.totalCompetencePercentageByOthers =
+            props.totalCompetencePercentageByOthers ?? null;
         this.createdAt = props.createdAt;
         this.analytics = props.analytics ?? [];
         this.comments = props.comments ?? [];
