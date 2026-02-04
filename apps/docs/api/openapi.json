@@ -41,17 +41,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "userId": {
-                      "type": "string",
-                      "example": "1"
-                    },
-                    "session": {
-                      "type": "object",
-                      "description": "Session data"
-                    }
-                  }
+                  "$ref": "#/components/schemas/LoginResponseDto"
                 }
               }
             }
@@ -113,19 +103,6 @@
         "responses": {
           "200": {
             "description": "Successfully logged in as the specified user",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "userId": {
-                  "type": "string",
-                  "example": "1"
-                },
-                "session": {
-                  "type": "object",
-                  "description": "Session data"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -7430,6 +7407,27 @@
   "servers": [],
   "components": {
     "schemas": {
+      "LoginResponseDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "number",
+            "description": "ID of the logged in user",
+            "example": 1,
+            "nullable": false
+          },
+          "session": {
+            "type": "object",
+            "description": "Session data",
+            "example": {},
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "userId",
+          "session"
+        ]
+      },
       "UserResponse": {
         "type": "object",
         "properties": {
@@ -7570,27 +7568,6 @@
         },
         "required": [
           "email"
-        ]
-      },
-      "LoginResponseDto": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "number",
-            "description": "ID of the logged in user",
-            "example": 1,
-            "nullable": false
-          },
-          "session": {
-            "type": "object",
-            "description": "Session data",
-            "example": {},
-            "additionalProperties": true
-          }
-        },
-        "required": [
-          "userId",
-          "session"
         ]
       },
       "CreateUserDto": {

@@ -50,13 +50,7 @@ export class AuthController {
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'User successfully logged in',
-        schema: {
-            type: 'object',
-            properties: {
-                userId: { type: 'string', example: '1' },
-                session: { type: 'object', description: 'Session data' },
-            },
-        },
+        type: LoginResponseDto,
     })
     @ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -113,13 +107,6 @@ export class AuthController {
         status: HttpStatus.OK,
         description: 'Successfully logged in as the specified user',
         type: LoginResponseDto,
-        schema: {
-            type: 'object',
-            properties: {
-                userId: { type: 'string', example: '1' },
-                session: { type: 'object', description: 'Session data' },
-            },
-        },
     })
     @ApiResponse({
         status: HttpStatus.UNAUTHORIZED,
