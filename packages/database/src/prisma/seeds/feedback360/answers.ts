@@ -166,26 +166,21 @@ export default async function seedAnswers(
                         },
                     });
                 } else if (question.answerType === 'TEXT_FIELD') {
-                    // 70% chance of providing text feedback for TEXT_FIELD questions
-                    const shouldProvideComment = Math.random() < 0.7;
+                    const isPositiveFeedback = Math.random() < 0.75; // 75% positive
+                    const comment = getRandomComment(isPositiveFeedback);
 
-                    if (shouldProvideComment) {
-                        const isPositiveFeedback = Math.random() < 0.75; // 75% positive
-                        const comment = getRandomComment(isPositiveFeedback);
-
-                        await prisma.answer.create({
-                            data: {
-                                reviewId: review.id,
-                                questionId: question.id,
-                                respondentCategory:
-                                    respondent.category as unknown as PrismaRespondentCategory,
-                                answerType:
-                                    'TEXT_FIELD' as unknown as PrismaAnswerType,
-                                numericalValue: null,
-                                textValue: comment,
-                            },
-                        });
-                    }
+                    await prisma.answer.create({
+                        data: {
+                            reviewId: review.id,
+                            questionId: question.id,
+                            respondentCategory:
+                                respondent.category as unknown as PrismaRespondentCategory,
+                            answerType:
+                                'TEXT_FIELD' as unknown as PrismaAnswerType,
+                            numericalValue: null,
+                            textValue: comment,
+                        },
+                    });
                 }
             }
         }

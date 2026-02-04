@@ -83,10 +83,10 @@ async function main() {
     const reviews = await seedReviews(prisma, users, cycles);
     console.info('📝 Reviews');
 
-    const questions = await seedQuestions(prisma, cycles);
+    await seedQuestions(prisma, cycles);
     console.info('❓ Cycle questions');
 
-    await seedReviewQuestionRelations(prisma, reviews, questions);
+    await seedReviewQuestionRelations(prisma, reviews);
     console.info('🔗 Review-question relations');
 
     await seedRespondents(prisma, reviews, users);
