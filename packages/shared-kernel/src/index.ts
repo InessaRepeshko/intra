@@ -208,5 +208,8 @@ export type { ReportCompetenceSummaryTotalsDto } from './reporting/dto/report-co
 export type { ReportQuestionSummaryDto } from './reporting/dto/report-question-summary-dto.interface';
 export type { ReportTextAnswerDto } from './reporting/dto/report-text-answer-dto.interface';
 
+export type { CompetenceAccumulator } from './reporting/dto/competence-accumulator.type';
+export type { CompetenceSummaryTotals } from './reporting/dto/competence-summary-totals.type';
+
 /* Auth */
 export type { AuthResponseDto } from './auth/auth-response-dto.interface';

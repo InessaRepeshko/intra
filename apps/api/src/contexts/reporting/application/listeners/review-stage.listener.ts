@@ -26,7 +26,6 @@ export class ReviewStageListener {
             `Review ${event.reviewId} transitioned from ${event.fromStage} to ${event.toStage}`,
         );
 
-        // Only act when review reaches PREPARING_REPORT stage
         if (event.toStage !== ReviewStage.PREPARING_REPORT) {
             return;
         }
@@ -48,8 +47,6 @@ export class ReviewStageListener {
                 `Failed to generate report for review ${event.reviewId}: ${error.message}`,
                 error.stack,
             );
-            // Don't throw - we don't want to break the review transition
-            // The report can be generated manually or retried later
         }
     }
 }

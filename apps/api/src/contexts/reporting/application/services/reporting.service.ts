@@ -1,5 +1,7 @@
 import {
     AnswerType,
+    CompetenceAccumulator,
+    CompetenceSummaryTotals,
     EntityType,
     REPORT_ANALYTICS_CONSTRAINTS,
     RespondentCategory,
@@ -283,8 +285,8 @@ export class ReportingService {
                     entityType: EntityType.QUESTION,
                     questionId: relation.questionId,
                     questionTitle: relation.questionTitle,
-                    competenceId: relation.competenceId ?? null,
-                    competenceTitle: relation.competenceTitle ?? null,
+                    competenceId: null,
+                    competenceTitle: null,
                     averageBySelfAssessment: this.round(averageBySelf),
                     averageByTeam: this.round(averageByTeam),
                     averageByOther: this.round(averageByOther),
@@ -495,20 +497,3 @@ export class ReportingService {
         return (value / maxScore) * 100;
     }
 }
-
-type CompetenceAccumulator = {
-    competenceId: number;
-    competenceTitle: string | null;
-    selfScores: number[];
-    teamScores: number[];
-    otherScores: number[];
-};
-
-type CompetenceSummaryTotals = {
-    averageBySelfAssessment: number | null;
-    averageByTeam: number | null;
-    averageByOther: number | null;
-    percentageBySelfAssessment: number | null;
-    percentageByTeam: number | null;
-    percentageByOther: number | null;
-};

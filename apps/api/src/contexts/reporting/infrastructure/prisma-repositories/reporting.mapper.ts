@@ -1,6 +1,6 @@
 import {
-    $Enums,
     Prisma,
+    CommentSentiment as PrismaCommentSentiment,
     EntityType as PrismaEntityType,
     Report as PrismaReport,
     ReportAnalytics as PrismaReportAnalytics,
@@ -115,6 +115,12 @@ export class ReportingMapper {
         return domainType.toString() as PrismaEntityType;
     }
 
+    static toPrismaCommentSentiment(
+        domainSentiment: CommentSentiment,
+    ): PrismaCommentSentiment {
+        return domainSentiment.toString() as PrismaCommentSentiment;
+    }
+
     static toPrismaReportCommentCreateInput(
         comment: ReportCommentDomain,
     ): Prisma.ReportCommentUncheckedCreateInput {
@@ -127,7 +133,7 @@ export class ReportingMapper {
             commentSentiment:
                 comment.commentSentiment === null
                     ? undefined
-                    : (comment.commentSentiment as unknown as $Enums.CommentSentiment),
+                    : this.toPrismaCommentSentiment(comment.commentSentiment!),
             numberOfMentions: comment.numberOfMentions,
         };
     }
