@@ -1,13 +1,24 @@
-import { EntityType } from '@intra/shared-kernel';
+import {
+    AnswerType,
+    EntityType,
+    REPORT_ANALYTICS_CONSTRAINTS,
+    RespondentCategory,
+} from '@intra/shared-kernel';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
-    CLUSTER_SCORE_REPOSITORY,
-    ClusterScoreRepositoryPort,
-} from '../../../feedback360/application/ports/cluster-score.repository.port';
+    ANSWER_REPOSITORY,
+    AnswerRepositoryPort,
+} from '../../../feedback360/application/ports/answer.repository.port';
 import {
     RESPONDENT_REPOSITORY,
     RespondentRepositoryPort,
 } from '../../../feedback360/application/ports/respondent.repository.port';
+import {
+    REVIEW_QUESTION_RELATION_REPOSITORY,
+    ReviewQuestionRelationRepositoryPort,
+} from '../../../feedback360/application/ports/review-question-relation.repository.port';
+import { AnswerDomain } from '../../../feedback360/domain/answer.domain';
+import { ReviewQuestionRelationDomain } from '../../../feedback360/domain/review-question-relation.domain';
 import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
 import { ReportDomain } from '../../domain/report.domain';
 import {
@@ -36,8 +47,10 @@ export class ReportingService {
         private readonly commentsRepo: ReportCommentRepositoryPort,
         @Inject(RESPONDENT_REPOSITORY)
         private readonly respondents: RespondentRepositoryPort,
-        @Inject(CLUSTER_SCORE_REPOSITORY)
-        private readonly clusterScores: ClusterScoreRepositoryPort,
+        @Inject(ANSWER_REPOSITORY)
+        private readonly answers: AnswerRepositoryPort,
+        @Inject(REVIEW_QUESTION_RELATION_REPOSITORY)
+        private readonly reviewQuestionRelations: ReviewQuestionRelationRepositoryPort,
     ) {}
 
     async getById(id: number): Promise<ReportDomain> {
@@ -62,131 +75,80 @@ export class ReportingService {
 
     /**
      * Generates a comprehensive report for a review
-     * Calculates respondent counts and generates cluster-based analytics
+     * Calculates respondent counts and derives analytics from answers
      */
     async generateReportForReview(reviewId: number): Promise<ReportDomain> {
-        this.logger.log(`Starting report generation for review ${reviewId}`);
+        this.logger.debug(`Starting report generation for review ${reviewId}`);
 
-        // Check if report already exists
         const existing = await this.reports.findByReviewId(reviewId);
         if (existing) {
-            this.logger.log(`Report already exists for review ${reviewId}`);
+            this.logger.debug(`Report already exists for review ${reviewId}`);
             return existing;
         }
 
-        // Step 1: Calculate respondent counts
         const allRespondents = await this.respondents.listByReview(
             reviewId,
             {},
         );
         const respondentCount = allRespondents.length;
 
-        // Count by category (assuming TEAM vs OTHER based on isDirectReport or similar field)
-        // For simplified version, we'll leave turnout calculations as 0
-        const turnoutOfTeam = 0;
-        const turnoutOfOther = 0;
-
-        this.logger.log(
+        this.logger.debug(
             `Calculated respondent counts: ${respondentCount} total`,
         );
 
-        // Step 2: Generate cluster-based analytics
-        const scores = await this.clusterScores.list({ reviewId });
-        const analyticsData = this.generateClusterAnalytics(scores);
+        const answers = await this.answers.list({
+            reviewId,
+            answerType: AnswerType.NUMERICAL_SCALE,
+        });
 
-        // Calculate report-level averages from all cluster scores
-        const allScores = scores.map((s) => s.score);
-        const overallAverage = this.calculateAverage(allScores);
-
-        this.logger.log(
-            `Generated analytics for ${analyticsData.length} clusters`,
+        const relations = await this.reviewQuestionRelations.listByReview(
+            reviewId,
+            {},
         );
 
-        // Create report with calculated data
+        const maxScore = REPORT_ANALYTICS_CONSTRAINTS.SCORE.MAX;
+        const { questionAnalytics, competenceAnalytics, questionTotals } =
+            this.buildAnalyticsPayload(answers, relations, maxScore);
+
         const report = ReportDomain.create({
             reviewId,
             respondentCount,
-            turnoutOfTeam,
-            turnoutOfOther,
-            totalAverageBySelfAssessment: null, // Would need respondent category info
-            totalAverageByTeam: overallAverage,
-            totalAverageByOthers: null,
+            turnoutOfTeam: null,
+            turnoutOfOther: null,
+            totalAverageBySelfAssessment:
+                questionTotals.averageBySelfAssessment,
+            totalAverageByTeam: questionTotals.averageByTeam,
+            totalAverageByOthers: questionTotals.averageByOthers,
             totalDeltaBySelfAssessment: null,
-            totalDeltaByTeam: null,
-            totalDeltaByOthers: null,
-            analytics: analyticsData,
-            comments: [], // Comments will be added separately if needed
+            totalDeltaByTeam: questionTotals.deltaByTeam,
+            totalDeltaByOthers: questionTotals.deltaByOthers,
+            analytics: [],
+            comments: [],
         });
 
-        // Persist report
         const created = await this.reports.create(report);
-        this.logger.log(
-            `Successfully created report ${created.id} for review ${reviewId}`,
+
+        await this.analyticsRepo.createMany(created.id!, [
+            ...questionAnalytics,
+            ...competenceAnalytics,
+        ]);
+
+        this.logger.debug(
+            `Generated ${questionAnalytics.length} question analytics and ${competenceAnalytics.length} competence analytics`,
         );
 
-        return created;
-    }
-
-    /**
-     * Generates analytics from cluster scores
-     * Groups by cluster and calculates averages
-     */
-    private generateClusterAnalytics(scores: any[]): ReportAnalyticsDomain[] {
-        // Group scores by cluster
-        const scoresByCluster = scores.reduce((acc, score) => {
-            const clusterId = score.clusterId;
-            if (!acc[clusterId]) {
-                acc[clusterId] = {
-                    scores: [],
-                    clusterTitle:
-                        score.cluster?.title || `Cluster ${clusterId}`,
-                    competenceId: score.cluster?.competenceId || null,
-                    competenceTitle: score.cluster?.competence?.title || null,
-                };
-            }
-            acc[clusterId].scores.push(score.score);
-            return acc;
-        }, {});
-
-        // Generate analytics for each cluster
-        const analytics: ReportAnalyticsDomain[] = [];
-
-        for (const [clusterIdStr, data] of Object.entries(scoresByCluster)) {
-            const clusterId = Number(clusterIdStr);
-            const {
-                scores: clusterScores,
-                clusterTitle,
-                competenceId,
-                competenceTitle,
-            } = data as any;
-
-            const average = this.calculateAverage(clusterScores);
-            const baseline = 5.0; // Expected baseline score
-            const delta = average !== null ? average - baseline : null;
-
-            analytics.push(
-                ReportAnalyticsDomain.create({
-                    reportId: 0, // Will be set when persisted
-                    entityType: EntityType.COMPETENCE,
-                    questionId: null,
-                    questionTitle: clusterTitle,
-                    competenceId: competenceId,
-                    competenceTitle: competenceTitle,
-                    averageBySelfAssessment: null, // Would need category breakdown
-                    averageByTeam: this.round(average),
-                    averageByOther: null,
-                    deltaBySelfAssessment: null,
-                    deltaByTeam: this.round(delta),
-                    deltaByOther: null,
-                }),
+        const fullReport = await this.reports.findById(created.id!);
+        if (!fullReport) {
+            throw new NotFoundException(
+                `Report ${created.id} could not be loaded after creation`,
             );
         }
 
-        return analytics.sort((a, b) => {
-            const aId = a.competenceId || 0;
-            const bId = b.competenceId || 0;
-            return aId - bId;
-        });
+        this.logger.debug(
+            `Successfully created report ${fullReport.id} for review ${reviewId}`,
+        );
+
+        return fullReport;
     }
 
     /**
@@ -209,4 +171,246 @@ export class ReportingService {
         if (value === null || value === undefined) return null;
         return Math.round(value * 100) / 100;
     }
+
+    private buildAnalyticsPayload(
+        answers: AnswerDomain[],
+        relations: ReviewQuestionRelationDomain[],
+        maxScore: number,
+    ): {
+        questionAnalytics: ReportAnalyticsDomain[];
+        competenceAnalytics: ReportAnalyticsDomain[];
+        questionTotals: {
+            averageBySelfAssessment: number | null;
+            averageByTeam: number | null;
+            averageByOthers: number | null;
+            deltaByTeam: number | null;
+            deltaByOthers: number | null;
+        };
+    } {
+        const answersByQuestion = this.groupAnswersByQuestion(
+            answers,
+            relations,
+        );
+        const questionAnalytics: ReportAnalyticsDomain[] = [];
+        const competenceAccumulators = new Map<number, CompetenceAccumulator>();
+        const questionSelfAverages: number[] = [];
+        const questionTeamAverages: number[] = [];
+        const questionOtherAverages: number[] = [];
+
+        for (const relation of relations) {
+            const questionAnswers =
+                answersByQuestion.get(relation.questionId) ?? [];
+
+            const averageBySelf = this.calculateAverageByCategory(
+                questionAnswers,
+                RespondentCategory.SELF_ASSESSMENT,
+            );
+            const averageByTeam = this.calculateAverageByCategory(
+                questionAnswers,
+                RespondentCategory.TEAM,
+            );
+            const averageByOther = this.calculateAverageByCategory(
+                questionAnswers,
+                RespondentCategory.OTHER,
+            );
+
+            if (averageBySelf !== null) {
+                questionSelfAverages.push(averageBySelf);
+            }
+            if (averageByTeam !== null) {
+                questionTeamAverages.push(averageByTeam);
+            }
+            if (averageByOther !== null) {
+                questionOtherAverages.push(averageByOther);
+            }
+
+            const deltaByTeam = this.calculateDeltaPercent(
+                averageBySelf,
+                averageByTeam,
+                maxScore,
+            );
+            const deltaByOther = this.calculateDeltaPercent(
+                averageBySelf,
+                averageByOther,
+                maxScore,
+            );
+
+            questionAnalytics.push(
+                ReportAnalyticsDomain.create({
+                    reportId: 0,
+                    entityType: EntityType.QUESTION,
+                    questionId: relation.questionId,
+                    questionTitle: relation.questionTitle,
+                    competenceId: relation.competenceId ?? null,
+                    competenceTitle: relation.competenceTitle ?? null,
+                    averageBySelfAssessment: this.round(averageBySelf),
+                    averageByTeam: this.round(averageByTeam),
+                    averageByOther: this.round(averageByOther),
+                    deltaBySelfAssessment: null,
+                    deltaByTeam: this.round(deltaByTeam),
+                    deltaByOther: this.round(deltaByOther),
+                }),
+            );
+
+            const competenceId = relation.competenceId;
+            if (competenceId !== null && competenceId !== undefined) {
+                const accumulator = competenceAccumulators.get(
+                    competenceId,
+                ) ?? {
+                    competenceId,
+                    competenceTitle: relation.competenceTitle ?? null,
+                    selfScores: [],
+                    teamScores: [],
+                    otherScores: [],
+                };
+
+                if (averageBySelf !== null) {
+                    accumulator.selfScores.push(averageBySelf);
+                }
+                if (averageByTeam !== null) {
+                    accumulator.teamScores.push(averageByTeam);
+                }
+                if (averageByOther !== null) {
+                    accumulator.otherScores.push(averageByOther);
+                }
+
+                competenceAccumulators.set(competenceId, accumulator);
+            }
+        }
+
+        const competenceAnalytics: ReportAnalyticsDomain[] = [];
+        const competenceSelfAverages: number[] = [];
+        const competenceTeamAverages: number[] = [];
+        const competenceOtherAverages: number[] = [];
+
+        for (const accumulator of competenceAccumulators.values()) {
+            const averageBySelf = this.calculateAverage(accumulator.selfScores);
+            const averageByTeam = this.calculateAverage(accumulator.teamScores);
+            const averageByOther = this.calculateAverage(
+                accumulator.otherScores,
+            );
+
+            if (averageBySelf !== null) {
+                competenceSelfAverages.push(averageBySelf);
+            }
+            if (averageByTeam !== null) {
+                competenceTeamAverages.push(averageByTeam);
+            }
+            if (averageByOther !== null) {
+                competenceOtherAverages.push(averageByOther);
+            }
+
+            const deltaByTeam = this.calculateDeltaPercent(
+                averageBySelf,
+                averageByTeam,
+                maxScore,
+            );
+            const deltaByOther = this.calculateDeltaPercent(
+                averageBySelf,
+                averageByOther,
+                maxScore,
+            );
+
+            competenceAnalytics.push(
+                ReportAnalyticsDomain.create({
+                    reportId: 0,
+                    entityType: EntityType.COMPETENCE,
+                    questionId: null,
+                    questionTitle: null,
+                    competenceId: accumulator.competenceId,
+                    competenceTitle: accumulator.competenceTitle,
+                    averageBySelfAssessment: this.round(averageBySelf),
+                    averageByTeam: this.round(averageByTeam),
+                    averageByOther: this.round(averageByOther),
+                    deltaBySelfAssessment: null,
+                    deltaByTeam: this.round(deltaByTeam),
+                    deltaByOther: this.round(deltaByOther),
+                }),
+            );
+        }
+
+        const questionAverageBySelf =
+            this.calculateAverage(questionSelfAverages);
+        const questionAverageByTeam =
+            this.calculateAverage(questionTeamAverages);
+        const questionAverageByOther = this.calculateAverage(
+            questionOtherAverages,
+        );
+
+        const questionDeltaByTeam = this.calculateDeltaPercent(
+            questionAverageBySelf,
+            questionAverageByTeam,
+            maxScore,
+        );
+        const questionDeltaByOther = this.calculateDeltaPercent(
+            questionAverageBySelf,
+            questionAverageByOther,
+            maxScore,
+        );
+
+        return {
+            questionAnalytics,
+            competenceAnalytics,
+            questionTotals: {
+                averageBySelfAssessment: this.round(questionAverageBySelf),
+                averageByTeam: this.round(questionAverageByTeam),
+                averageByOthers: this.round(questionAverageByOther),
+                deltaByTeam: this.round(questionDeltaByTeam),
+                deltaByOthers: this.round(questionDeltaByOther),
+            },
+        };
+    }
+
+    private groupAnswersByQuestion(
+        answers: AnswerDomain[],
+        relations: ReviewQuestionRelationDomain[],
+    ): Map<number, AnswerDomain[]> {
+        const allowedQuestionIds = new Set(
+            relations.map((relation) => relation.questionId),
+        );
+        const grouped = new Map<number, AnswerDomain[]>();
+        for (const answer of answers) {
+            if (!allowedQuestionIds.has(answer.questionId)) {
+                continue;
+            }
+            const bucket = grouped.get(answer.questionId) ?? [];
+            bucket.push(answer);
+            grouped.set(answer.questionId, bucket);
+        }
+        return grouped;
+    }
+
+    private calculateAverageByCategory(
+        answers: AnswerDomain[],
+        category: RespondentCategory,
+    ): number | null {
+        const values = answers
+            .filter(
+                (answer) =>
+                    answer.respondentCategory === category &&
+                    answer.numericalValue !== null &&
+                    answer.numericalValue !== undefined,
+            )
+            .map((answer) => answer.numericalValue!);
+        return this.calculateAverage(values);
+    }
+
+    private calculateDeltaPercent(
+        base: number | null,
+        comparison: number | null,
+        maxScore: number,
+    ): number | null {
+        if (base === null || comparison === null || maxScore === 0) {
+            return null;
+        }
+        return ((base - comparison) / maxScore) * 100;
+    }
 }
+
+type CompetenceAccumulator = {
+    competenceId: number;
+    competenceTitle: string | null;
+    selfScores: number[];
+    teamScores: number[];
+    otherScores: number[];
+};

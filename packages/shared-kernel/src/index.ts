@@ -203,5 +203,9 @@ export type { ReportCommentDto } from './reporting/dto/report-comment-dto.interf
 
 export type { ReportAnalyticsDto } from './reporting/dto/report-analytics-dto.interface';
 
+export type { ReportCompetenceSummaryDto } from './reporting/dto/report-competence-summary-dto.interface';
+export type { ReportCompetenceSummaryTotalsDto } from './reporting/dto/report-competence-summary-totals-dto.interface';
+export type { ReportQuestionSummaryDto } from './reporting/dto/report-question-summary-dto.interface';
+
 /* Auth */
 export type { AuthResponseDto } from './auth/auth-response-dto.interface';

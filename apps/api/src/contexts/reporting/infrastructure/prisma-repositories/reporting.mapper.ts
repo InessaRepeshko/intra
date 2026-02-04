@@ -1,4 +1,6 @@
 import {
+    Prisma,
+    EntityType as PrismaEntityType,
     Report as PrismaReport,
     ReportAnalytics as PrismaReportAnalytics,
     ReportComment as PrismaReportComment,
@@ -59,6 +61,27 @@ export class ReportingMapper {
         });
     }
 
+    static toPrismaReportAnalyticsCreateInput(
+        reportId: number,
+        analytics: ReportAnalyticsDomain,
+    ): Prisma.ReportAnalyticsCreateManyInput {
+        return {
+            reportId,
+            entityType: this.toPrismaEntityType(analytics.entityType),
+            questionId: analytics.questionId ?? undefined,
+            questionTitle: analytics.questionTitle ?? undefined,
+            competenceId: analytics.competenceId ?? undefined,
+            competenceTitle: analytics.competenceTitle ?? undefined,
+            averageBySelfAssessment:
+                analytics.averageBySelfAssessment ?? undefined,
+            averageByTeam: analytics.averageByTeam ?? undefined,
+            averageByOther: analytics.averageByOther ?? undefined,
+            deltaBySelfAssessment: analytics.deltaBySelfAssessment ?? undefined,
+            deltaByTeam: analytics.deltaByTeam ?? undefined,
+            deltaByOther: analytics.deltaByOther ?? undefined,
+        };
+    }
+
     static toReportCommentDomain(
         comment: PrismaReportComment,
     ): ReportCommentDomain {
@@ -74,5 +97,9 @@ export class ReportingMapper {
             numberOfMentions: comment.numberOfMentions,
             createdAt: comment.createdAt,
         });
+    }
+
+    static toPrismaEntityType(domainType: EntityType): PrismaEntityType {
+        return domainType.toString() as PrismaEntityType;
     }
 }

@@ -7,4 +7,8 @@ export const REPORT_ANALYTICS_REPOSITORY = Symbol(
 export interface ReportAnalyticsRepositoryPort {
     findByReportId(reportId: number): Promise<ReportAnalyticsDomain[]>;
     findById(id: number): Promise<ReportAnalyticsDomain | null>;
+    createMany(
+        reportId: number,
+        analytics: ReportAnalyticsDomain[],
+    ): Promise<void>;
 }

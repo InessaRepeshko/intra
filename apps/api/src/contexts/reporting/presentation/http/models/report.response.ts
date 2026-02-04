@@ -1,6 +1,9 @@
 import { REPORT_CONSTRAINTS, ReportDto } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
+import { CompetenceSummaryTotalsResponse } from './competence-summary-totals.response';
+import { CompetenceSummaryResponse } from './competence-summary.response';
+import { QuestionSummaryResponse } from './question-summary.response';
 import { ReportAnalyticsResponse } from './report-analytics.response';
 import { ReportCommentResponse } from './report-comment.response';
 
@@ -169,6 +172,38 @@ export class ReportResponse implements ReportDto {
     })
     @Expose()
     analytics!: ReportAnalyticsResponse[];
+
+    @ApiProperty({
+        type: QuestionSummaryResponse,
+        isArray: true,
+        default: [],
+        nullable: false,
+        required: true,
+        description: 'Question-level summary analytics',
+    })
+    @Expose()
+    questionSummaries!: QuestionSummaryResponse[];
+
+    @ApiProperty({
+        type: CompetenceSummaryResponse,
+        isArray: true,
+        default: [],
+        nullable: false,
+        required: true,
+        description: 'Competence-level summary analytics',
+    })
+    @Expose()
+    competenceSummaries!: CompetenceSummaryResponse[];
+
+    @ApiProperty({
+        type: CompetenceSummaryTotalsResponse,
+        nullable: true,
+        required: false,
+        description:
+            'Aggregated competence scores and percentages across all competencies',
+    })
+    @Expose()
+    competenceSummaryTotals?: CompetenceSummaryTotalsResponse | null;
 
     @ApiProperty({
         type: ReportCommentResponse,

@@ -10345,6 +10345,230 @@
           "createdAt"
         ]
       },
+      "QuestionSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "number",
+            "example": 101,
+            "description": "Question identifier"
+          },
+          "questionTitle": {
+            "type": "string",
+            "example": "Provides constructive feedback",
+            "description": "Question title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "competenceId": {
+            "type": "number",
+            "example": 10,
+            "description": "Competence identifier (optional)",
+            "nullable": true
+          },
+          "competenceTitle": {
+            "type": "string",
+            "example": "Communication",
+            "description": "Competence title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "averageBySelfAssessment": {
+            "type": "number",
+            "example": 4,
+            "description": "Average score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByTeam": {
+            "type": "number",
+            "example": 4.2,
+            "description": "Average score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByOther": {
+            "type": "number",
+            "example": 3.8,
+            "description": "Average score by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "deltaByTeam": {
+            "type": "number",
+            "example": 10,
+            "description": "Delta between self and team averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaByOther": {
+            "type": "number",
+            "example": -5,
+            "description": "Delta between self and other averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "questionId",
+          "questionTitle",
+          "averageBySelfAssessment",
+          "averageByTeam",
+          "averageByOther",
+          "deltaByTeam",
+          "deltaByOther"
+        ]
+      },
+      "CompetenceSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "competenceId": {
+            "type": "number",
+            "example": 12,
+            "description": "Competence identifier"
+          },
+          "competenceTitle": {
+            "type": "string",
+            "example": "Strategic Thinking",
+            "description": "Competence title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "averageBySelfAssessment": {
+            "type": "number",
+            "example": 4.1,
+            "description": "Average score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByTeam": {
+            "type": "number",
+            "example": 4.3,
+            "description": "Average score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByOther": {
+            "type": "number",
+            "example": 4,
+            "description": "Average score by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "deltaByTeam": {
+            "type": "number",
+            "example": 5,
+            "description": "Delta between self and team averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaByOther": {
+            "type": "number",
+            "example": -3,
+            "description": "Delta between self and other averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "competenceId",
+          "averageBySelfAssessment",
+          "averageByTeam",
+          "averageByOther",
+          "deltaByTeam",
+          "deltaByOther"
+        ]
+      },
+      "CompetenceSummaryTotalsResponse": {
+        "type": "object",
+        "properties": {
+          "averageBySelfAssessment": {
+            "type": "number",
+            "example": 4.2,
+            "description": "Average competence score across all competencies by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByTeam": {
+            "type": "number",
+            "example": 4.3,
+            "description": "Average competence score across all competencies by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByOther": {
+            "type": "number",
+            "example": 4.1,
+            "description": "Average competence score across all competencies by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "percentageBySelfAssessment": {
+            "type": "number",
+            "example": 84,
+            "description": "Self assessment average expressed as percentage of scale maximum",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByTeam": {
+            "type": "number",
+            "example": 86,
+            "description": "Team average expressed as percentage of scale maximum",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByOther": {
+            "type": "number",
+            "example": 82,
+            "description": "Other respondents average expressed as percentage of scale maximum",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "averageBySelfAssessment",
+          "averageByTeam",
+          "averageByOther",
+          "percentageBySelfAssessment",
+          "percentageByTeam",
+          "percentageByOther"
+        ]
+      },
       "ReportCommentResponse": {
         "type": "object",
         "properties": {
@@ -10541,6 +10765,33 @@
               "$ref": "#/components/schemas/ReportAnalyticsResponse"
             }
           },
+          "questionSummaries": {
+            "default": [],
+            "nullable": false,
+            "description": "Question-level summary analytics",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionSummaryResponse"
+            }
+          },
+          "competenceSummaries": {
+            "default": [],
+            "nullable": false,
+            "description": "Competence-level summary analytics",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompetenceSummaryResponse"
+            }
+          },
+          "competenceSummaryTotals": {
+            "nullable": true,
+            "description": "Aggregated competence scores and percentages across all competencies",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CompetenceSummaryTotalsResponse"
+              }
+            ]
+          },
           "comments": {
             "default": [],
             "nullable": true,
@@ -10556,7 +10807,9 @@
           "reviewId",
           "respondentCount",
           "createdAt",
-          "analytics"
+          "analytics",
+          "questionSummaries",
+          "competenceSummaries"
         ]
       }
     }

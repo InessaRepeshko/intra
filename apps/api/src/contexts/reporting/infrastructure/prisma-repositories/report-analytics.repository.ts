@@ -31,4 +31,19 @@ export class ReportAnalyticsRepository implements ReportAnalyticsRepositoryPort 
             ? ReportingMapper.toReportAnalyticsDomain(analytics)
             : null;
     }
+
+    async createMany(
+        reportId: number,
+        analytics: ReportAnalyticsDomain[],
+    ): Promise<void> {
+        if (analytics.length === 0) {
+            return;
+        }
+
+        const data = analytics.map((item) =>
+            ReportingMapper.toPrismaReportAnalyticsCreateInput(reportId, item),
+        );
+
+        await this.prisma.reportAnalytics.createMany({ data });
+    }
 }
