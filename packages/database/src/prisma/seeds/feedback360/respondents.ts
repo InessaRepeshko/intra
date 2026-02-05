@@ -701,6 +701,37 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     },
 ];
 
+function getRespondentDates(cycleTitle: string, status: ResponseStatus) {
+    const invitedAt = new Date('2026-01-16T10:00:00Z');
+    let respondedAt: Date | null = null;
+    let canceledAt: Date | null = null;
+
+    if (cycleTitle === 'Mid-Year Performance Review 2025') {
+        invitedAt.setFullYear(2025);
+        invitedAt.setMonth(4);
+        invitedAt.setDate(2);
+        if (status === ResponseStatus.COMPLETED) {
+            respondedAt = new Date('2025-05-18T14:30:00Z');
+        }
+    } else if (cycleTitle === 'Annual Performance Review 2025') {
+        invitedAt.setFullYear(2025);
+        invitedAt.setMonth(10);
+        invitedAt.setDate(2);
+        if (status === ResponseStatus.COMPLETED) {
+            respondedAt = new Date('2025-11-18T16:00:00Z');
+        }
+    } else {
+        invitedAt.setFullYear(2026);
+        invitedAt.setMonth(0);
+        invitedAt.setDate(16);
+        if (status === ResponseStatus.COMPLETED) {
+            respondedAt = new Date('2026-01-20T15:30:00Z');
+        }
+    }
+
+    return { invitedAt, respondedAt, canceledAt };
+}
+
 export default async function seedRespondents(
     prisma: PrismaClient,
     reviewMap: ReviewMap,
@@ -752,27 +783,10 @@ export default async function seedRespondents(
             if (existing) continue;
 
             // Set dates based on cycle and response status
-            let invitedAt: Date;
-            let respondedAt: Date | null = null;
-            let canceledAt: Date | null = null;
-
-            if (data.cycleTitle === 'Mid-Year Performance Review 2025') {
-                invitedAt = new Date('2025-05-02T10:00:00Z');
-                if (data.responseStatus === ResponseStatus.COMPLETED) {
-                    respondedAt = new Date('2025-05-18T14:30:00Z');
-                }
-            } else if (data.cycleTitle === 'Annual Performance Review 2025') {
-                invitedAt = new Date('2025-11-02T10:00:00Z');
-                if (data.responseStatus === ResponseStatus.COMPLETED) {
-                    respondedAt = new Date('2025-11-18T16:00:00Z');
-                }
-            } else {
-                // 2026 cycle
-                invitedAt = new Date('2026-01-16T10:00:00Z');
-                if (data.responseStatus === ResponseStatus.COMPLETED) {
-                    respondedAt = new Date('2026-01-20T15:30:00Z');
-                }
-            }
+            const { invitedAt, respondedAt, canceledAt } = getRespondentDates(
+                data.cycleTitle,
+                data.responseStatus,
+            );
 
             // Get respondent team info
             const respondentWithMemberships = await prisma.user.findUnique({
@@ -812,5 +826,62 @@ export default async function seedRespondents(
                 },
             });
         }
+    }
+
+    for (const reviewRef of reviewMap.values()) {
+        const existingSelf = await prisma.respondent.findFirst({
+            where: {
+                reviewId: reviewRef.id,
+                category: 'SELF_ASSESSMENT',
+            },
+        });
+
+        if (existingSelf) continue;
+
+        const review = await prisma.review.findUnique({
+            where: { id: reviewRef.id },
+            include: {
+                ratee: true,
+                cycle: true,
+            },
+        });
+
+        if (
+            !review ||
+            !review.ratee ||
+            !review.cycle ||
+            !review.rateePositionId ||
+            !review.rateePositionTitle
+        ) {
+            continue;
+        }
+
+        const { invitedAt, respondedAt, canceledAt } = getRespondentDates(
+            review.cycle.title,
+            ResponseStatus.COMPLETED,
+        );
+
+        const fullName =
+            review.rateeFullName ||
+            `${review.ratee.firstName} ${review.ratee.lastName}`;
+
+        await prisma.respondent.create({
+            data: {
+                reviewId: review.id,
+                respondentId: review.ratee.id,
+                category:
+                    RespondentCategory.SELF_ASSESSMENT.toString().toUpperCase() as unknown as PrismaRespondentCategory,
+                responseStatus:
+                    ResponseStatus.COMPLETED.toString().toUpperCase() as unknown as PrismaResponseStatus,
+                positionId: review.rateePositionId,
+                positionTitle: review.rateePositionTitle,
+                fullName,
+                teamId: review.teamId,
+                teamTitle: review.teamTitle,
+                invitedAt,
+                respondedAt,
+                canceledAt,
+            },
+        });
     }
 }

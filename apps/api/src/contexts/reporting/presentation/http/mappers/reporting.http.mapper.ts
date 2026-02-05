@@ -23,8 +23,6 @@ export class ReportingHttpMapper {
             report.totalAverageBySelfAssessment ?? null;
         response.totalAverageByTeam = report.totalAverageByTeam ?? null;
         response.totalAverageByOthers = report.totalAverageByOthers ?? null;
-        response.totalDeltaBySelfAssessment =
-            report.totalDeltaBySelfAssessment ?? null;
         response.totalDeltaByTeam = report.totalDeltaByTeam ?? null;
         response.totalDeltaByOthers = report.totalDeltaByOthers ?? null;
         response.createdAt = report.createdAt!;
@@ -68,8 +66,6 @@ export class ReportingHttpMapper {
             analytics.averageBySelfAssessment ?? null;
         response.averageByTeam = analytics.averageByTeam ?? null;
         response.averageByOther = analytics.averageByOther ?? null;
-        response.deltaBySelfAssessment =
-            analytics.deltaBySelfAssessment ?? null;
         response.deltaByTeam = analytics.deltaByTeam ?? null;
         response.deltaByOther = analytics.deltaByOther ?? null;
         response.createdAt = analytics.createdAt!;

@@ -23,9 +23,9 @@ export class ReviewSchedulerService {
 
     /**
      * SCHEDULED TRIGGER: Check for reviews past their deadline
-     * Runs every hour to find reviews that should be completed
+     * Runs every day at 7am to find reviews that should be completed
      */
-    @Cron(CronExpression.EVERY_HOUR)
+    @Cron(CronExpression.EVERY_DAY_AT_7AM)
     async checkReviewDeadlines(): Promise<void> {
         this.logger.log('Checking for reviews past deadline...');
 

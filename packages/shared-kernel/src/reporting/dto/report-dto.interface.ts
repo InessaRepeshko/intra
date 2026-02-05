@@ -8,7 +8,6 @@ export interface ReportDto {
     totalAverageBySelfAssessment?: number | null;
     totalAverageByTeam?: number | null;
     totalAverageByOthers?: number | null;
-    totalDeltaBySelfAssessment?: number | null;
     totalDeltaByTeam?: number | null;
     totalDeltaByOthers?: number | null;
     totalAverageCompetenceBySelfAssessment?: number | null;

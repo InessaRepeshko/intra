@@ -117,21 +117,21 @@ export default async function seedAnswers(
             for (const rqr of review.reviewQuestionRelations) {
                 const question = rqr.question;
 
-                // Skip if this is a self-assessment question but respondent is not self
-                if (
-                    question.isForSelfassessment &&
-                    respondent.category !== 'SELF_ASSESSMENT'
-                ) {
-                    continue;
-                }
+                // // Skip if this is a self-assessment question but respondent is not self
+                // if (
+                //     question.isForSelfassessment &&
+                //     respondent.category !== 'SELF_ASSESSMENT'
+                // ) {
+                //     continue;
+                // }
 
-                // Skip if this is not for self-assessment but respondent is self
-                if (
-                    !question.isForSelfassessment &&
-                    respondent.category === 'SELF_ASSESSMENT'
-                ) {
-                    continue;
-                }
+                // // Skip if this is not for self-assessment but respondent is self
+                // if (
+                //     !question.isForSelfassessment &&
+                //     respondent.category === 'SELF_ASSESSMENT'
+                // ) {
+                //     continue;
+                // }
 
                 const existing = await prisma.answer.findFirst({
                     where: {

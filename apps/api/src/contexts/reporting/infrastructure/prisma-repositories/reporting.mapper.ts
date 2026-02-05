@@ -32,7 +32,6 @@ export class ReportingMapper {
             totalAverageBySelfAssessment: report.totalAverageBySelfAssessment,
             totalAverageByTeam: report.totalAverageByTeam,
             totalAverageByOthers: report.totalAverageByOthers,
-            totalDeltaBySelfAssessment: report.totalDeltaBySelfAssessment,
             totalDeltaByTeam: report.totalDeltaByTeam,
             totalDeltaByOthers: report.totalDeltaByOthers,
             totalAverageCompetenceBySelfAssessment:
@@ -66,7 +65,6 @@ export class ReportingMapper {
             averageBySelfAssessment: analytics.averageBySelfAssessment,
             averageByTeam: analytics.averageByTeam,
             averageByOther: analytics.averageByOther,
-            deltaBySelfAssessment: analytics.deltaBySelfAssessment,
             deltaByTeam: analytics.deltaByTeam,
             deltaByOther: analytics.deltaByOther,
             createdAt: analytics.createdAt,
@@ -88,7 +86,6 @@ export class ReportingMapper {
                 analytics.averageBySelfAssessment ?? undefined,
             averageByTeam: analytics.averageByTeam ?? undefined,
             averageByOther: analytics.averageByOther ?? undefined,
-            deltaBySelfAssessment: analytics.deltaBySelfAssessment ?? undefined,
             deltaByTeam: analytics.deltaByTeam ?? undefined,
             deltaByOther: analytics.deltaByOther ?? undefined,
         };

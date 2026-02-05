@@ -28,7 +28,6 @@ Table identity_users {
   reviewsAsReviewer feedback360_reviewers [not null]
   reviewsAsManager feedback360_reviews [not null]
   clusterScores feedback360_cluster_scores [not null]
-  answers feedback360_answers [not null]
   stageChangeHistory feedback360_review_stage_history [not null]
 }
 
@@ -304,8 +303,6 @@ Table feedback360_answers {
   createdAt DateTime [default: `now()`, not null]
   question feedback360_questions [not null]
   review feedback360_reviews [not null]
-  user identity_users
-  userId Int
 }
 
 Table feedback360_cluster_scores {
@@ -416,7 +413,6 @@ Table reporting_reports {
   totalAverageBySelfAssessment Float
   totalAverageByTeam Float
   totalAverageByOthers Float
-  totalDeltaBySelfAssessment Float
   totalDeltaByTeam Float
   totalDeltaByOthers Float
   totalAverageCompetenceBySelfAssessment Float
@@ -443,7 +439,6 @@ Table reporting_analytics {
   averageBySelfAssessment Float
   averageByTeam Float
   averageByOther Float
-  deltaBySelfAssessment Float
   deltaByTeam Float
   deltaByOther Float
   createdAt DateTime [default: `now()`, not null]
@@ -595,8 +590,6 @@ Ref: feedback360_review_question_relations.competenceId > library_competences.id
 Ref: feedback360_answers.questionId > feedback360_questions.id [delete: No Action]
 
 Ref: feedback360_answers.reviewId > feedback360_reviews.id [delete: No Action]
-
-Ref: feedback360_answers.userId > identity_users.id
 
 Ref: feedback360_cluster_scores.rateeId > identity_users.id [delete: No Action]
 

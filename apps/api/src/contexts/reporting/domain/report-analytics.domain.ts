@@ -11,7 +11,6 @@ export type ReportAnalyticsProps = {
     averageBySelfAssessment?: number | null;
     averageByTeam?: number | null;
     averageByOther?: number | null;
-    deltaBySelfAssessment?: number | null;
     deltaByTeam?: number | null;
     deltaByOther?: number | null;
     createdAt?: Date;
@@ -28,7 +27,6 @@ export class ReportAnalyticsDomain {
     readonly averageBySelfAssessment?: number | null;
     readonly averageByTeam?: number | null;
     readonly averageByOther?: number | null;
-    readonly deltaBySelfAssessment?: number | null;
     readonly deltaByTeam?: number | null;
     readonly deltaByOther?: number | null;
     readonly createdAt?: Date;
@@ -44,7 +42,6 @@ export class ReportAnalyticsDomain {
         this.averageBySelfAssessment = props.averageBySelfAssessment ?? null;
         this.averageByTeam = props.averageByTeam ?? null;
         this.averageByOther = props.averageByOther ?? null;
-        this.deltaBySelfAssessment = props.deltaBySelfAssessment ?? null;
         this.deltaByTeam = props.deltaByTeam ?? null;
         this.deltaByOther = props.deltaByOther ?? null;
         this.createdAt = props.createdAt;

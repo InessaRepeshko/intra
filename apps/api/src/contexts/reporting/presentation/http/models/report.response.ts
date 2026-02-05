@@ -115,19 +115,6 @@ export class ReportResponse implements ReportDto {
     totalAverageByOthers?: number | null;
 
     @ApiProperty({
-        example: +20.0,
-        description: 'Total score delta by self assessment',
-        type: 'number',
-        format: 'signed float',
-        required: false,
-        nullable: true,
-        minimum: REPORT_CONSTRAINTS.DELTA_PERCENTAGE.MIN,
-        maximum: REPORT_CONSTRAINTS.DELTA_PERCENTAGE.MAX,
-    })
-    @Expose()
-    totalDeltaBySelfAssessment?: number | null;
-
-    @ApiProperty({
         example: +15.0,
         description: 'Total score delta by team',
         type: 'number',

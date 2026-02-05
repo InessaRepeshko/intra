@@ -147,7 +147,6 @@ export class ReportingService {
                 questionTotals.averageBySelfAssessment,
             totalAverageByTeam: questionTotals.averageByTeam,
             totalAverageByOthers: questionTotals.averageByOthers,
-            totalDeltaBySelfAssessment: null,
             totalDeltaByTeam: questionTotals.deltaByTeam,
             totalDeltaByOthers: questionTotals.deltaByOthers,
             totalAverageCompetenceBySelfAssessment:
@@ -247,9 +246,13 @@ export class ReportingService {
             deltaByOthers: number | null;
         };
     } {
+        const numericalRelations = relations.filter(
+            (r) => r.answerType === AnswerType.NUMERICAL_SCALE,
+        );
+
         const answersByQuestion = this.groupAnswersByQuestion(
             answers,
-            relations,
+            numericalRelations,
         );
         const questionAnalytics: ReportAnalyticsDomain[] = [];
         const competenceAccumulators = new Map<number, CompetenceAccumulator>();
@@ -257,7 +260,7 @@ export class ReportingService {
         const questionTeamAverages: number[] = [];
         const questionOtherAverages: number[] = [];
 
-        for (const relation of relations) {
+        for (const relation of numericalRelations) {
             const questionAnswers =
                 answersByQuestion.get(relation.questionId) ?? [];
 
@@ -306,7 +309,6 @@ export class ReportingService {
                     averageBySelfAssessment: this.round(averageBySelf),
                     averageByTeam: this.round(averageByTeam),
                     averageByOther: this.round(averageByOther),
-                    deltaBySelfAssessment: null,
                     deltaByTeam: this.round(deltaByTeam),
                     deltaByOther: this.round(deltaByOther),
                 }),
@@ -382,7 +384,6 @@ export class ReportingService {
                     averageBySelfAssessment: this.round(averageBySelf),
                     averageByTeam: this.round(averageByTeam),
                     averageByOther: this.round(averageByOther),
-                    deltaBySelfAssessment: null,
                     deltaByTeam: this.round(deltaByTeam),
                     deltaByOther: this.round(deltaByOther),
                 }),
@@ -426,7 +427,12 @@ export class ReportingService {
         relations: ReviewQuestionRelationDomain[],
     ): Map<number, AnswerDomain[]> {
         const allowedQuestionIds = new Set(
-            relations.map((relation) => relation.questionId),
+            relations
+                .filter(
+                    (relation) =>
+                        relation.answerType === AnswerType.NUMERICAL_SCALE,
+                )
+                .map((relation) => relation.questionId),
         );
         const grouped = new Map<number, AnswerDomain[]>();
         for (const answer of answers) {

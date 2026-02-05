@@ -15,73 +15,73 @@ const SURVEY_QUESTIONS: SurveyQuestion[] = [
         competenceCode: 'LEAD',
         title: 'Sets a clear vision aligned with company strategy.',
         answerType: PrismaAnswerType.NUMERICAL_SCALE,
-        isForSelfassessment: false,
+        isForSelfassessment: true,
     },
     {
         competenceCode: 'LEAD',
         title: 'Makes decisive calls when information is incomplete.',
         answerType: PrismaAnswerType.NUMERICAL_SCALE,
-        isForSelfassessment: false,
+        isForSelfassessment: true,
     },
     {
         competenceCode: 'COMM',
         title: 'Tailors messaging to different audiences.',
         answerType: PrismaAnswerType.NUMERICAL_SCALE,
-        isForSelfassessment: false,
+        isForSelfassessment: true,
     },
     {
         competenceCode: 'COMM',
         title: 'Keeps stakeholders informed on progress and risks.',
         answerType: PrismaAnswerType.NUMERICAL_SCALE,
-        isForSelfassessment: false,
+        isForSelfassessment: true,
     },
     {
         competenceCode: 'TECH',
         title: 'Produces maintainable code that follows standards.',
         answerType: PrismaAnswerType.NUMERICAL_SCALE,
-        isForSelfassessment: false,
+        isForSelfassessment: true,
     },
     {
         competenceCode: 'TECH',
         title: 'Designs systems with scalability in mind.',
         answerType: PrismaAnswerType.NUMERICAL_SCALE,
-        isForSelfassessment: false,
+        isForSelfassessment: true,
     },
     {
         competenceCode: 'QUAL',
         title: 'Defines clear acceptance criteria before starting work.',
         answerType: PrismaAnswerType.NUMERICAL_SCALE,
-        isForSelfassessment: false,
+        isForSelfassessment: true,
     },
     {
         competenceCode: 'QUAL',
         title: 'Adds automated tests for critical paths.',
         answerType: PrismaAnswerType.NUMERICAL_SCALE,
-        isForSelfassessment: false,
+        isForSelfassessment: true,
     },
     {
         competenceCode: 'COLLAB',
         title: 'Shares context proactively with peers.',
         answerType: PrismaAnswerType.NUMERICAL_SCALE,
-        isForSelfassessment: false,
+        isForSelfassessment: true,
     },
     {
         competenceCode: 'COLLAB',
         title: 'Seeks input from relevant experts before committing.',
         answerType: PrismaAnswerType.NUMERICAL_SCALE,
-        isForSelfassessment: false,
+        isForSelfassessment: true,
     },
     {
         competenceCode: 'LEAD',
         title: 'Builds trust through transparent decisions.',
         answerType: PrismaAnswerType.TEXT_FIELD,
-        isForSelfassessment: false,
+        isForSelfassessment: true,
     },
     {
         competenceCode: 'COMM',
         title: 'Gives direct feedback with empathy.',
         answerType: PrismaAnswerType.TEXT_FIELD,
-        isForSelfassessment: false,
+        isForSelfassessment: true,
     },
 ];
 
@@ -119,9 +119,7 @@ export default async function seedQuestions(
             });
 
             if (!questionTemplate) {
-                console.warn(
-                    `⚠️ Question template "${q.title}" not found`,
-                );
+                console.warn(`⚠️ Question template "${q.title}" not found`);
                 continue;
             }
 

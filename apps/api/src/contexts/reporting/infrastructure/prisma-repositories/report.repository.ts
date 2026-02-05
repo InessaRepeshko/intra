@@ -49,7 +49,6 @@ export class ReportRepository implements ReportRepositoryPort {
                     domain.totalAverageBySelfAssessment,
                 totalAverageByTeam: domain.totalAverageByTeam,
                 totalAverageByOthers: domain.totalAverageByOthers,
-                totalDeltaBySelfAssessment: domain.totalDeltaBySelfAssessment,
                 totalDeltaByTeam: domain.totalDeltaByTeam,
                 totalDeltaByOthers: domain.totalDeltaByOthers,
                 totalAverageCompetenceBySelfAssessment:

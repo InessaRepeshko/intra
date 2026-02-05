@@ -11,7 +11,6 @@ export interface ReportAnalyticsDto {
     averageBySelfAssessment?: number | null;
     averageByTeam?: number | null;
     averageByOther?: number | null;
-    deltaBySelfAssessment?: number | null;
     deltaByTeam?: number | null;
     deltaByOther?: number | null;
     createdAt: Date;

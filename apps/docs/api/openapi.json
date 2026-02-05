@@ -10355,15 +10355,6 @@
             "minimum": 0,
             "maximum": 5
           },
-          "deltaBySelfAssessment": {
-            "type": "number",
-            "example": 20,
-            "description": "Delta score by self assessment",
-            "format": "signed float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 100
-          },
           "deltaByTeam": {
             "type": "number",
             "example": 15,
@@ -10775,15 +10766,6 @@
             "nullable": true,
             "minimum": 0,
             "maximum": 5
-          },
-          "totalDeltaBySelfAssessment": {
-            "type": "number",
-            "example": 20,
-            "description": "Total score delta by self assessment",
-            "format": "signed float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 100
           },
           "totalDeltaByTeam": {
             "type": "number",

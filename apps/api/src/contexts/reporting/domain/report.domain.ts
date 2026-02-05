@@ -11,7 +11,6 @@ export type ReportProps = {
     totalAverageBySelfAssessment?: number | null;
     totalAverageByTeam?: number | null;
     totalAverageByOthers?: number | null;
-    totalDeltaBySelfAssessment?: number | null;
     totalDeltaByTeam?: number | null;
     totalDeltaByOthers?: number | null;
     totalAverageCompetenceBySelfAssessment?: number | null;
@@ -35,7 +34,6 @@ export class ReportDomain {
     readonly totalAverageBySelfAssessment?: number | null;
     readonly totalAverageByTeam?: number | null;
     readonly totalAverageByOthers?: number | null;
-    readonly totalDeltaBySelfAssessment?: number | null;
     readonly totalDeltaByTeam?: number | null;
     readonly totalDeltaByOthers?: number | null;
     readonly totalAverageCompetenceBySelfAssessment?: number | null;
@@ -59,8 +57,6 @@ export class ReportDomain {
             props.totalAverageBySelfAssessment ?? null;
         this.totalAverageByTeam = props.totalAverageByTeam ?? null;
         this.totalAverageByOthers = props.totalAverageByOthers ?? null;
-        this.totalDeltaBySelfAssessment =
-            props.totalDeltaBySelfAssessment ?? null;
         this.totalDeltaByTeam = props.totalDeltaByTeam ?? null;
         this.totalDeltaByOthers = props.totalDeltaByOthers ?? null;
         this.totalAverageCompetenceBySelfAssessment =
