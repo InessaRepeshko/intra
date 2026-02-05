@@ -10278,114 +10278,6 @@
           }
         }
       },
-      "ReportAnalyticsResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "example": 1,
-            "description": "Analytics ID"
-          },
-          "reportId": {
-            "type": "number",
-            "example": 1,
-            "description": "Report ID"
-          },
-          "entityType": {
-            "type": "string",
-            "enum": [
-              "QUESTION",
-              "COMPETENCE"
-            ],
-            "example": "QUESTION",
-            "description": "Entity type"
-          },
-          "questionId": {
-            "type": "number",
-            "example": 1,
-            "description": "Question ID",
-            "nullable": true
-          },
-          "questionTitle": {
-            "type": "string",
-            "example": "Listens actively before responding.",
-            "description": "Question title",
-            "nullable": true,
-            "minimum": 1,
-            "maximum": 255
-          },
-          "competenceId": {
-            "type": "number",
-            "example": 1,
-            "description": "Competence ID",
-            "nullable": true
-          },
-          "competenceTitle": {
-            "type": "string",
-            "example": "Leadership",
-            "description": "Competence title",
-            "nullable": true,
-            "minimum": 1,
-            "maximum": 255
-          },
-          "averageBySelfAssessment": {
-            "type": "number",
-            "example": 4,
-            "description": "Average score by self assessment",
-            "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 5
-          },
-          "averageByTeam": {
-            "type": "number",
-            "example": 5,
-            "description": "Average score by team",
-            "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 5
-          },
-          "averageByOther": {
-            "type": "number",
-            "example": 5,
-            "description": "Average score by other",
-            "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 5
-          },
-          "deltaByTeam": {
-            "type": "number",
-            "example": 15,
-            "description": "Delta score by team",
-            "format": "signed float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 100
-          },
-          "deltaByOther": {
-            "type": "number",
-            "example": -10,
-            "description": "Delta score by other",
-            "format": "signed float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 100
-          },
-          "createdAt": {
-            "type": "string",
-            "example": "2024-01-01T00:00:00.000Z",
-            "description": "Created at"
-          }
-        },
-        "required": [
-          "id",
-          "reportId",
-          "entityType",
-          "createdAt"
-        ]
-      },
       "QuestionSummaryResponse": {
         "type": "object",
         "properties": {
@@ -10398,20 +10290,6 @@
             "type": "string",
             "example": "Provides constructive feedback",
             "description": "Question title",
-            "nullable": true,
-            "minimum": 1,
-            "maximum": 255
-          },
-          "competenceId": {
-            "type": "number",
-            "example": 10,
-            "description": "Competence identifier (optional)",
-            "nullable": true
-          },
-          "competenceTitle": {
-            "type": "string",
-            "example": "Communication",
-            "description": "Competence title",
             "nullable": true,
             "minimum": 1,
             "maximum": 255
@@ -10443,7 +10321,34 @@
             "minimum": 0,
             "maximum": 5
           },
-          "deltaByTeam": {
+          "percentageBySelfAssessment": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByTeam": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByOther": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByTeam": {
             "type": "number",
             "example": 10,
             "description": "Delta between self and team averages (%)",
@@ -10452,7 +10357,7 @@
             "minimum": 0,
             "maximum": 100
           },
-          "deltaByOther": {
+          "deltaPercentageByOther": {
             "type": "number",
             "example": -5,
             "description": "Delta between self and other averages (%)",
@@ -10468,8 +10373,98 @@
           "averageBySelfAssessment",
           "averageByTeam",
           "averageByOther",
-          "deltaByTeam",
-          "deltaByOther"
+          "percentageBySelfAssessment",
+          "percentageByTeam",
+          "percentageByOther",
+          "deltaPercentageByTeam",
+          "deltaPercentageByOther"
+        ]
+      },
+      "QuestionSummaryTotalsResponse": {
+        "type": "object",
+        "properties": {
+          "averageBySelfAssessment": {
+            "type": "number",
+            "example": 4.2,
+            "description": "Average question score across all questions by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByTeam": {
+            "type": "number",
+            "example": 4.3,
+            "description": "Average question score across all questions by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByOther": {
+            "type": "number",
+            "example": 4.1,
+            "description": "Average question score across all questions by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "percentageBySelfAssessment": {
+            "type": "number",
+            "example": 84,
+            "description": "Self assessment average expressed as percentage of scale maximum",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByTeam": {
+            "type": "number",
+            "example": 86,
+            "description": "Team average expressed as percentage of scale maximum",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByOther": {
+            "type": "number",
+            "example": 82,
+            "description": "Other respondents average expressed as percentage of scale maximum",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByTeam": {
+            "type": "number",
+            "example": 10,
+            "description": "Delta between self and team averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByOther": {
+            "type": "number",
+            "example": -5,
+            "description": "Delta between self and other averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "averageBySelfAssessment",
+          "averageByTeam",
+          "averageByOther",
+          "percentageBySelfAssessment",
+          "percentageByTeam",
+          "percentageByOther",
+          "deltaPercentageByTeam",
+          "deltaPercentageByOther"
         ]
       },
       "CompetenceSummaryResponse": {
@@ -10515,7 +10510,34 @@
             "minimum": 0,
             "maximum": 5
           },
-          "deltaByTeam": {
+          "percentageBySelfAssessment": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByTeam": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByOther": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByTeam": {
             "type": "number",
             "example": 5,
             "description": "Delta between self and team averages (%)",
@@ -10524,7 +10546,7 @@
             "minimum": 0,
             "maximum": 100
           },
-          "deltaByOther": {
+          "deltaPercentageByOther": {
             "type": "number",
             "example": -3,
             "description": "Delta between self and other averages (%)",
@@ -10539,8 +10561,11 @@
           "averageBySelfAssessment",
           "averageByTeam",
           "averageByOther",
-          "deltaByTeam",
-          "deltaByOther"
+          "percentageBySelfAssessment",
+          "percentageByTeam",
+          "percentageByOther",
+          "deltaPercentageByTeam",
+          "deltaPercentageByOther"
         ]
       },
       "CompetenceSummaryTotalsResponse": {
@@ -10599,6 +10624,24 @@
             "nullable": true,
             "minimum": 0,
             "maximum": 100
+          },
+          "deltaPercentageByTeam": {
+            "type": "number",
+            "example": 10,
+            "description": "Delta between self and team averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByOther": {
+            "type": "number",
+            "example": -5,
+            "description": "Delta between self and other averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
           }
         },
         "required": [
@@ -10607,7 +10650,9 @@
           "averageByOther",
           "percentageBySelfAssessment",
           "percentageByTeam",
-          "percentageByOther"
+          "percentageByOther",
+          "deltaPercentageByTeam",
+          "deltaPercentageByOther"
         ]
       },
       "ReportCommentResponse": {
@@ -10722,7 +10767,7 @@
             "nullable": false,
             "minimum": 3
           },
-          "turnoutOfTeam": {
+          "turnoutPctOfTeam": {
             "type": "number",
             "example": 100,
             "description": "Turnout of team",
@@ -10731,56 +10776,11 @@
             "minimum": 0,
             "maximum": 100
           },
-          "turnoutOfOther": {
+          "turnoutPctOfOther": {
             "type": "number",
             "example": 100,
             "description": "Turnout of other",
             "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 100
-          },
-          "totalAverageBySelfAssessment": {
-            "type": "number",
-            "example": 4,
-            "description": "Total average score by self assessment",
-            "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 5
-          },
-          "totalAverageByTeam": {
-            "type": "number",
-            "example": 4.5,
-            "description": "Total average score by team",
-            "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 5
-          },
-          "totalAverageByOthers": {
-            "type": "number",
-            "example": 5,
-            "description": "Total average score by others",
-            "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 5
-          },
-          "totalDeltaByTeam": {
-            "type": "number",
-            "example": 15,
-            "description": "Total score delta by team",
-            "format": "signed float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 100
-          },
-          "totalDeltaByOthers": {
-            "type": "number",
-            "example": -10,
-            "description": "Total score delta by others",
-            "format": "signed float",
             "nullable": true,
             "minimum": 0,
             "maximum": 100
@@ -10791,15 +10791,6 @@
             "description": "Created at",
             "format": "date-time"
           },
-          "analytics": {
-            "default": [],
-            "nullable": false,
-            "description": "Review score analytics",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ReportAnalyticsResponse"
-            }
-          },
           "questionSummaries": {
             "default": [],
             "nullable": false,
@@ -10808,6 +10799,15 @@
             "items": {
               "$ref": "#/components/schemas/QuestionSummaryResponse"
             }
+          },
+          "questionSummaryTotals": {
+            "nullable": true,
+            "description": "Aggregated question scores and percentages across all questions",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionSummaryTotalsResponse"
+              }
+            ]
           },
           "competenceSummaries": {
             "default": [],
@@ -10842,7 +10842,6 @@
           "reviewId",
           "respondentCount",
           "createdAt",
-          "analytics",
           "questionSummaries",
           "competenceSummaries"
         ]
@@ -10881,6 +10880,144 @@
           "questionId",
           "respondentCategory",
           "textValue"
+        ]
+      },
+      "ReportAnalyticsResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "Analytics ID"
+          },
+          "reportId": {
+            "type": "number",
+            "example": 1,
+            "description": "Report ID"
+          },
+          "entityType": {
+            "type": "string",
+            "enum": [
+              "QUESTION",
+              "COMPETENCE"
+            ],
+            "example": "QUESTION",
+            "description": "Entity type"
+          },
+          "questionId": {
+            "type": "number",
+            "example": 1,
+            "description": "Question ID",
+            "nullable": true
+          },
+          "questionTitle": {
+            "type": "string",
+            "example": "Listens actively before responding.",
+            "description": "Question title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "competenceId": {
+            "type": "number",
+            "example": 1,
+            "description": "Competence ID",
+            "nullable": true
+          },
+          "competenceTitle": {
+            "type": "string",
+            "example": "Leadership",
+            "description": "Competence title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "averageBySelfAssessment": {
+            "type": "number",
+            "example": 4,
+            "description": "Average score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByTeam": {
+            "type": "number",
+            "example": 5,
+            "description": "Average score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByOther": {
+            "type": "number",
+            "example": 5,
+            "description": "Average score by other",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "percentageBySelfAssessment": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByTeam": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByOther": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByTeam": {
+            "type": "number",
+            "example": 15,
+            "description": "Delta score by team",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByOther": {
+            "type": "number",
+            "example": -10,
+            "description": "Delta score by other",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T00:00:00.000Z",
+            "description": "Created at"
+          }
+        },
+        "required": [
+          "id",
+          "reportId",
+          "entityType",
+          "percentageBySelfAssessment",
+          "percentageByTeam",
+          "percentageByOther",
+          "createdAt"
         ]
       },
       "CreateReportCommentDto": {

@@ -5,6 +5,7 @@ import { ReportCommentDomain } from '../../../domain/report-comment.domain';
 import { ReportDomain } from '../../../domain/report.domain';
 import { CompetenceSummaryTotalsResponse } from '../models/competence-summary-totals.response';
 import { CompetenceSummaryResponse } from '../models/competence-summary.response';
+import { QuestionSummaryTotalsResponse } from '../models/question-summary-totals.response';
 import { QuestionSummaryResponse } from '../models/question-summary.response';
 import { ReportAnalyticsResponse } from '../models/report-analytics.response';
 import { ReportCommentResponse } from '../models/report-comment.response';
@@ -18,38 +19,26 @@ export class ReportingHttpMapper {
         response.reviewId = report.reviewId;
         response.cycleId = report.cycleId ?? null;
         response.respondentCount = report.respondentCount;
-        response.turnoutOfTeam = this.round(report.turnoutOfTeam);
-        response.turnoutOfOther = this.round(report.turnoutOfOther);
-        response.totalAverageBySelfAssessment = this.round(
-            report.totalAverageBySelfAssessment,
-        );
-        response.totalAverageByTeam = this.round(report.totalAverageByTeam);
-        response.totalAverageByOthers = this.round(report.totalAverageByOthers);
-        response.totalDeltaByTeam = this.round(report.totalDeltaByTeam);
-        response.totalDeltaByOthers = this.round(report.totalDeltaByOthers);
+        response.turnoutPctOfTeam = this.round(report.turnoutPctOfTeam);
+        response.turnoutPctOfOther = this.round(report.turnoutPctOfOther);
         response.createdAt = report.createdAt!;
-        response.analytics = report.analytics.map(
-            this.toReportAnalyticsResponse,
-        );
 
-        const questionAnalytics = report.analytics.filter(
-            (analytics) => analytics.entityType === EntityType.QUESTION,
-        );
-        response.questionSummaries = questionAnalytics.map(
-            this.toQuestionSummaryResponse,
-        );
+        response.questionSummaries = report.analytics
+            .filter((analytics) => analytics.entityType === EntityType.QUESTION)
+            .map((a) => this.toQuestionSummaryResponse(a));
+        response.questionSummaryTotals =
+            this.toQuestionSummaryTotalsResponse(report);
 
-        const competenceAnalytics = report.analytics.filter(
-            (analytics) => analytics.entityType === EntityType.COMPETENCE,
-        );
-        response.competenceSummaries = competenceAnalytics.map(
-            this.toCompetenceSummaryResponse,
-        );
+        response.competenceSummaries = report.analytics
+            .filter(
+                (analytics) => analytics.entityType === EntityType.COMPETENCE,
+            )
+            .map((a) => this.toCompetenceSummaryResponse(a));
         response.competenceSummaryTotals =
             this.toCompetenceSummaryTotalsResponse(report);
 
         response.comments =
-            report.comments?.map(this.toReportCommentResponse) ?? [];
+            report.comments?.map((c) => this.toReportCommentResponse(c)) ?? [];
         return response;
     }
 
@@ -69,8 +58,17 @@ export class ReportingHttpMapper {
         );
         response.averageByTeam = this.round(analytics.averageByTeam);
         response.averageByOther = this.round(analytics.averageByOther);
-        response.deltaByTeam = this.round(analytics.deltaByTeam);
-        response.deltaByOther = this.round(analytics.deltaByOther);
+        response.percentageBySelfAssessment = this.round(
+            analytics.percentageBySelfAssessment,
+        );
+        response.percentageByTeam = this.round(analytics.percentageByTeam);
+        response.percentageByOther = this.round(analytics.percentageByOther);
+        response.deltaPercentageByTeam = this.round(
+            analytics.deltaPercentageByTeam,
+        );
+        response.deltaPercentageByOther = this.round(
+            analytics.deltaPercentageByOther,
+        );
         response.createdAt = analytics.createdAt!;
         return response;
     }
@@ -108,15 +106,61 @@ export class ReportingHttpMapper {
         const response = new QuestionSummaryResponse();
         response.questionId = analytics.questionId ?? 0;
         response.questionTitle = analytics.questionTitle ?? null;
-        response.competenceId = analytics.competenceId ?? null;
-        response.competenceTitle = analytics.competenceTitle ?? null;
         response.averageBySelfAssessment = this.round(
             analytics.averageBySelfAssessment,
         );
         response.averageByTeam = this.round(analytics.averageByTeam);
         response.averageByOther = this.round(analytics.averageByOther);
-        response.deltaByTeam = this.round(analytics.deltaByTeam);
-        response.deltaByOther = this.round(analytics.deltaByOther);
+        response.percentageBySelfAssessment = this.round(
+            analytics.percentageBySelfAssessment,
+        );
+        response.percentageByTeam = this.round(analytics.percentageByTeam);
+        response.percentageByOther = this.round(analytics.percentageByOther);
+        response.deltaPercentageByTeam = this.round(
+            analytics.deltaPercentageByTeam,
+        );
+        response.deltaPercentageByOther = this.round(
+            analytics.deltaPercentageByOther,
+        );
+        return response;
+    }
+
+    private static toQuestionSummaryTotalsResponse(
+        report: ReportDomain,
+    ): QuestionSummaryTotalsResponse | null {
+        const hasValues =
+            report.competenceTotAvgBySelf !== null ||
+            report.competenceTotAvgByTeam !== null ||
+            report.competenceTotAvgByOthers !== null ||
+            report.competenceTotPctBySelf !== null ||
+            report.competenceTotPctByTeam !== null ||
+            report.competenceTotPctByOthers !== null ||
+            report.competenceTotDeltaPctByTeam !== null ||
+            report.competenceTotDeltaPctByOthers !== null;
+
+        if (!hasValues) {
+            return null;
+        }
+
+        const response = new QuestionSummaryTotalsResponse();
+        response.averageBySelfAssessment = this.round(
+            report.competenceTotAvgBySelf,
+        );
+        response.averageByTeam = this.round(report.competenceTotAvgByTeam);
+        response.averageByOther = this.round(report.competenceTotAvgByOthers);
+        response.percentageBySelfAssessment = this.round(
+            report.competenceTotPctBySelf,
+        );
+        response.percentageByTeam = this.round(report.competenceTotPctByTeam);
+        response.percentageByOther = this.round(
+            report.competenceTotPctByOthers,
+        );
+        response.deltaPercentageByTeam = this.round(
+            report.competenceTotDeltaPctByTeam,
+        );
+        response.deltaPercentageByOther = this.round(
+            report.competenceTotDeltaPctByOthers,
+        );
         return response;
     }
 
@@ -131,8 +175,17 @@ export class ReportingHttpMapper {
         );
         response.averageByTeam = this.round(analytics.averageByTeam);
         response.averageByOther = this.round(analytics.averageByOther);
-        response.deltaByTeam = this.round(analytics.deltaByTeam);
-        response.deltaByOther = this.round(analytics.deltaByOther);
+        response.percentageBySelfAssessment = this.round(
+            analytics.percentageBySelfAssessment,
+        );
+        response.percentageByTeam = this.round(analytics.percentageByTeam);
+        response.percentageByOther = this.round(analytics.percentageByOther);
+        response.deltaPercentageByTeam = this.round(
+            analytics.deltaPercentageByTeam,
+        );
+        response.deltaPercentageByOther = this.round(
+            analytics.deltaPercentageByOther,
+        );
         return response;
     }
 
@@ -140,12 +193,14 @@ export class ReportingHttpMapper {
         report: ReportDomain,
     ): CompetenceSummaryTotalsResponse | null {
         const hasValues =
-            report.totalAverageCompetenceBySelfAssessment !== null ||
-            report.totalAverageCompetenceByTeam !== null ||
-            report.totalAverageCompetenceByOthers !== null ||
-            report.totalCompetencePercentageBySelfAssessment !== null ||
-            report.totalCompetencePercentageByTeam !== null ||
-            report.totalCompetencePercentageByOthers !== null;
+            report.competenceTotAvgBySelf !== null ||
+            report.competenceTotAvgByTeam !== null ||
+            report.competenceTotAvgByOthers !== null ||
+            report.competenceTotPctBySelf !== null ||
+            report.competenceTotPctByTeam !== null ||
+            report.competenceTotPctByOthers !== null ||
+            report.competenceTotDeltaPctByTeam !== null ||
+            report.competenceTotDeltaPctByOthers !== null;
 
         if (!hasValues) {
             return null;
@@ -153,22 +208,22 @@ export class ReportingHttpMapper {
 
         const response = new CompetenceSummaryTotalsResponse();
         response.averageBySelfAssessment = this.round(
-            report.totalAverageCompetenceBySelfAssessment,
+            report.competenceTotAvgBySelf,
         );
-        response.averageByTeam = this.round(
-            report.totalAverageCompetenceByTeam,
-        );
-        response.averageByOther = this.round(
-            report.totalAverageCompetenceByOthers,
-        );
+        response.averageByTeam = this.round(report.competenceTotAvgByTeam);
+        response.averageByOther = this.round(report.competenceTotAvgByOthers);
         response.percentageBySelfAssessment = this.round(
-            report.totalCompetencePercentageBySelfAssessment,
+            report.competenceTotPctBySelf,
         );
-        response.percentageByTeam = this.round(
-            report.totalCompetencePercentageByTeam,
-        );
+        response.percentageByTeam = this.round(report.competenceTotPctByTeam);
         response.percentageByOther = this.round(
-            report.totalCompetencePercentageByOthers,
+            report.competenceTotPctByOthers,
+        );
+        response.deltaPercentageByTeam = this.round(
+            report.competenceTotDeltaPctByTeam,
+        );
+        response.deltaPercentageByOther = this.round(
+            report.competenceTotDeltaPctByOthers,
         );
         return response;
     }

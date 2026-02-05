@@ -3,8 +3,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { CompetenceSummaryTotalsResponse } from './competence-summary-totals.response';
 import { CompetenceSummaryResponse } from './competence-summary.response';
+import { QuestionSummaryTotalsResponse } from './question-summary-totals.response';
 import { QuestionSummaryResponse } from './question-summary.response';
-import { ReportAnalyticsResponse } from './report-analytics.response';
 import { ReportCommentResponse } from './report-comment.response';
 
 export class ReportResponse implements ReportDto {
@@ -56,11 +56,11 @@ export class ReportResponse implements ReportDto {
         format: 'float',
         required: false,
         nullable: true,
-        minimum: REPORT_CONSTRAINTS.TURNOUT_PERCENTAGE.MIN,
-        maximum: REPORT_CONSTRAINTS.TURNOUT_PERCENTAGE.MAX,
+        minimum: REPORT_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_CONSTRAINTS.PERCENTAGE.MAX,
     })
     @Expose()
-    turnoutOfTeam?: number | null;
+    turnoutPctOfTeam?: number | null;
 
     @ApiProperty({
         example: 100.0,
@@ -69,76 +69,11 @@ export class ReportResponse implements ReportDto {
         format: 'float',
         required: false,
         nullable: true,
-        minimum: REPORT_CONSTRAINTS.TURNOUT_PERCENTAGE.MIN,
-        maximum: REPORT_CONSTRAINTS.TURNOUT_PERCENTAGE.MAX,
+        minimum: REPORT_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_CONSTRAINTS.PERCENTAGE.MAX,
     })
     @Expose()
-    turnoutOfOther?: number | null;
-
-    @ApiProperty({
-        example: 4.0,
-        description: 'Total average score by self assessment',
-        type: 'number',
-        format: 'float',
-        required: false,
-        nullable: true,
-        minimum: REPORT_CONSTRAINTS.SCORE.MIN,
-        maximum: REPORT_CONSTRAINTS.SCORE.MAX,
-    })
-    @Expose()
-    totalAverageBySelfAssessment?: number | null;
-
-    @ApiProperty({
-        example: 4.5,
-        description: 'Total average score by team',
-        type: 'number',
-        format: 'float',
-        required: false,
-        nullable: true,
-        minimum: REPORT_CONSTRAINTS.SCORE.MIN,
-        maximum: REPORT_CONSTRAINTS.SCORE.MAX,
-    })
-    @Expose()
-    totalAverageByTeam?: number | null;
-
-    @ApiProperty({
-        example: 5.0,
-        description: 'Total average score by others',
-        type: 'number',
-        format: 'float',
-        required: false,
-        nullable: true,
-        minimum: REPORT_CONSTRAINTS.SCORE.MIN,
-        maximum: REPORT_CONSTRAINTS.SCORE.MAX,
-    })
-    @Expose()
-    totalAverageByOthers?: number | null;
-
-    @ApiProperty({
-        example: +15.0,
-        description: 'Total score delta by team',
-        type: 'number',
-        format: 'signed float',
-        required: false,
-        nullable: true,
-        minimum: REPORT_CONSTRAINTS.DELTA_PERCENTAGE.MIN,
-        maximum: REPORT_CONSTRAINTS.DELTA_PERCENTAGE.MAX,
-    })
-    @Expose()
-    totalDeltaByTeam?: number | null;
-
-    @ApiProperty({
-        example: -10.0,
-        description: 'Total score delta by others',
-        type: 'number',
-        format: 'signed float',
-        required: false,
-        nullable: true,
-        minimum: REPORT_CONSTRAINTS.DELTA_PERCENTAGE.MIN,
-        maximum: REPORT_CONSTRAINTS.DELTA_PERCENTAGE.MAX,
-    })
-    @Expose()
-    totalDeltaByOthers?: number | null;
+    turnoutPctOfOther?: number | null;
 
     @ApiProperty({
         example: '2025-01-01T00:00:00.000Z',
@@ -150,17 +85,6 @@ export class ReportResponse implements ReportDto {
     createdAt!: Date;
 
     @ApiProperty({
-        type: ReportAnalyticsResponse,
-        isArray: true,
-        default: [],
-        nullable: false,
-        required: true,
-        description: 'Review score analytics',
-    })
-    @Expose()
-    analytics!: ReportAnalyticsResponse[];
-
-    @ApiProperty({
         type: QuestionSummaryResponse,
         isArray: true,
         default: [],
@@ -170,6 +94,16 @@ export class ReportResponse implements ReportDto {
     })
     @Expose()
     questionSummaries!: QuestionSummaryResponse[];
+
+    @ApiProperty({
+        type: QuestionSummaryTotalsResponse,
+        nullable: true,
+        required: false,
+        description:
+            'Aggregated question scores and percentages across all questions',
+    })
+    @Expose()
+    questionSummaryTotals?: QuestionSummaryTotalsResponse | null;
 
     @ApiProperty({
         type: CompetenceSummaryResponse,

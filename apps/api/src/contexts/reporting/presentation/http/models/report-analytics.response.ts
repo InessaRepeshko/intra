@@ -107,16 +107,49 @@ export class ReportAnalyticsResponse implements ReportAnalyticsDto {
     averageByOther?: number | null;
 
     @ApiProperty({
+        example: 100,
+        description: 'Percentage of score by self assessment',
+        type: 'number',
+        format: 'float',
+        nullable: true,
+        minimum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MAX,
+    })
+    percentageBySelfAssessment?: number | null;
+
+    @ApiProperty({
+        example: 100,
+        description: 'Percentage of score by team',
+        type: 'number',
+        format: 'float',
+        nullable: true,
+        minimum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MAX,
+    })
+    percentageByTeam?: number | null;
+
+    @ApiProperty({
+        example: 100,
+        description: 'Percentage of score by other respondents',
+        type: 'number',
+        format: 'float',
+        nullable: true,
+        minimum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MAX,
+    })
+    percentageByOther?: number | null;
+
+    @ApiProperty({
         example: +15.0,
         description: 'Delta score by team',
         required: false,
         type: 'number',
         format: 'signed float',
         nullable: true,
-        minimum: REPORT_ANALYTICS_CONSTRAINTS.DELTA_PERCENTAGE.MIN,
-        maximum: REPORT_ANALYTICS_CONSTRAINTS.DELTA_PERCENTAGE.MAX,
+        minimum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MAX,
     })
-    deltaByTeam?: number | null;
+    deltaPercentageByTeam?: number | null;
 
     @ApiProperty({
         example: -10.0,
@@ -125,10 +158,10 @@ export class ReportAnalyticsResponse implements ReportAnalyticsDto {
         type: 'number',
         format: 'signed float',
         nullable: true,
-        minimum: REPORT_ANALYTICS_CONSTRAINTS.DELTA_PERCENTAGE.MIN,
-        maximum: REPORT_ANALYTICS_CONSTRAINTS.DELTA_PERCENTAGE.MAX,
+        minimum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MAX,
     })
-    deltaByOther?: number | null;
+    deltaPercentageByOther?: number | null;
 
     @ApiProperty({
         example: '2024-01-01T00:00:00.000Z',

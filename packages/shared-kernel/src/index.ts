@@ -197,19 +197,18 @@ export {
 } from './reporting/enums/comment-sentiment.enum';
 export { ENTITY_TYPES, EntityType } from './reporting/enums/entity-type.enum';
 
-export type { ReportDto } from './reporting/dto/report-dto.interface';
+export type { ReportCommentDto } from './reporting/dto/comment/report-comment-dto.interface';
+export type { ReportCompetenceSummaryDto } from './reporting/dto/competence/report-competence-summary-dto.interface';
+export type { ReportQuestionSummaryDto } from './reporting/dto/question/report-question-summary-dto.interface';
+export type { ReportAnalyticsDto } from './reporting/dto/report/report-analytics-dto.interface';
+export type { ReportDto } from './reporting/dto/report/report-dto.interface';
+export type { ReportTextAnswerDto } from './reporting/dto/report/report-text-answer-dto.interface';
 
-export type { ReportCommentDto } from './reporting/dto/report-comment-dto.interface';
-
-export type { ReportAnalyticsDto } from './reporting/dto/report-analytics-dto.interface';
-
-export type { ReportCompetenceSummaryDto } from './reporting/dto/report-competence-summary-dto.interface';
-export type { ReportCompetenceSummaryTotalsDto } from './reporting/dto/report-competence-summary-totals-dto.interface';
-export type { ReportQuestionSummaryDto } from './reporting/dto/report-question-summary-dto.interface';
-export type { ReportTextAnswerDto } from './reporting/dto/report-text-answer-dto.interface';
-
-export type { CompetenceAccumulator } from './reporting/dto/competence-accumulator.type';
-export type { CompetenceSummaryTotals } from './reporting/dto/competence-summary-totals.type';
+export type { CompetenceAccumulator } from './reporting/dto/competence/competence-accumulator.type';
+export type { EntitySummaryMetricsDto } from './reporting/dto/entity-summary-metrics-dto.interface';
+export type { EntitySummaryTotals } from './reporting/dto/entity-summary-totals.type';
+export type { QuestionAccumulator } from './reporting/dto/question/question-accumulator.type';
+export type { ReportEntitySummaryTotalsDto } from './reporting/dto/report-entity-summary-totals-dto.interface';
 
 /* Auth */
 export type { AuthResponseDto } from './auth/dto/auth-response-dto.interface';

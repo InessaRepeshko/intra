@@ -28,24 +28,24 @@ export class ReportingMapper {
             reviewId: report.reviewId,
             cycleId: report.cycleId,
             respondentCount: report.respondentCount,
-            turnoutOfTeam: report.turnoutOfTeam,
-            turnoutOfOther: report.turnoutOfOther,
-            totalAverageBySelfAssessment: report.totalAverageBySelfAssessment,
-            totalAverageByTeam: report.totalAverageByTeam,
-            totalAverageByOthers: report.totalAverageByOthers,
-            totalDeltaByTeam: report.totalDeltaByTeam,
-            totalDeltaByOthers: report.totalDeltaByOthers,
-            totalAverageCompetenceBySelfAssessment:
-                report.totalAverageCompetenceBySelfAssessment,
-            totalAverageCompetenceByTeam: report.totalAverageCompetenceByTeam,
-            totalAverageCompetenceByOthers:
-                report.totalAverageCompetenceByOthers,
-            totalCompetencePercentageBySelfAssessment:
-                report.totalCompetencePercentageBySelfAssessment,
-            totalCompetencePercentageByTeam:
-                report.totalCompetencePercentageByTeam,
-            totalCompetencePercentageByOthers:
-                report.totalCompetencePercentageByOthers,
+            turnoutPctOfTeam: report.turnoutPctOfTeam,
+            turnoutPctOfOther: report.turnoutPctOfOther,
+            questionTotAvgBySelf: report.questionTotAvgBySelf,
+            questionTotAvgByTeam: report.questionTotAvgByTeam,
+            questionTotAvgByOthers: report.questionTotAvgByOthers,
+            questionTotPctBySelf: report.questionTotPctBySelf,
+            questionTotPctByTeam: report.questionTotPctByTeam,
+            questionTotPctByOthers: report.questionTotPctByOthers,
+            questionTotDeltaPctByTeam: report.questionTotDeltaPctByTeam,
+            questionTotDeltaPctByOthers: report.questionTotDeltaPctByOthers,
+            competenceTotAvgBySelf: report.competenceTotAvgBySelf,
+            competenceTotAvgByTeam: report.competenceTotAvgByTeam,
+            competenceTotAvgByOthers: report.competenceTotAvgByOthers,
+            competenceTotPctBySelf: report.competenceTotPctBySelf,
+            competenceTotPctByTeam: report.competenceTotPctByTeam,
+            competenceTotPctByOthers: report.competenceTotPctByOthers,
+            competenceTotDeltaPctByTeam: report.competenceTotDeltaPctByTeam,
+            competenceTotDeltaPctByOthers: report.competenceTotDeltaPctByOthers,
             createdAt: report.createdAt,
             analytics: report.analytics.map(this.toReportAnalyticsDomain),
             comments: report.comments.map(this.toReportCommentDomain),
@@ -66,8 +66,11 @@ export class ReportingMapper {
             averageBySelfAssessment: analytics.averageBySelfAssessment,
             averageByTeam: analytics.averageByTeam,
             averageByOther: analytics.averageByOther,
-            deltaByTeam: analytics.deltaByTeam,
-            deltaByOther: analytics.deltaByOther,
+            percentageBySelfAssessment: analytics.percentageBySelfAssessment,
+            percentageByTeam: analytics.percentageByTeam,
+            percentageByOther: analytics.percentageByOther,
+            deltaPercentageByTeam: analytics.deltaPercentageByTeam,
+            deltaPercentageByOther: analytics.deltaPercentageByOther,
             createdAt: analytics.createdAt,
         });
     }
@@ -98,15 +101,30 @@ export class ReportingMapper {
                 analytics.averageByOther !== undefined
                     ? this.toDecimalString(analytics.averageByOther)
                     : undefined,
-            deltaByTeam:
-                analytics.deltaByTeam !== null &&
-                analytics.deltaByTeam !== undefined
-                    ? this.toDecimalString(analytics.deltaByTeam)
+            percentageBySelfAssessment:
+                analytics.percentageBySelfAssessment !== null &&
+                analytics.percentageBySelfAssessment !== undefined
+                    ? this.toDecimalString(analytics.percentageBySelfAssessment)
                     : undefined,
-            deltaByOther:
-                analytics.deltaByOther !== null &&
-                analytics.deltaByOther !== undefined
-                    ? this.toDecimalString(analytics.deltaByOther)
+            percentageByTeam:
+                analytics.percentageByTeam !== null &&
+                analytics.percentageByTeam !== undefined
+                    ? this.toDecimalString(analytics.percentageByTeam)
+                    : undefined,
+            percentageByOther:
+                analytics.percentageByOther !== null &&
+                analytics.percentageByOther !== undefined
+                    ? this.toDecimalString(analytics.percentageByOther)
+                    : undefined,
+            deltaPercentageByTeam:
+                analytics.deltaPercentageByTeam !== null &&
+                analytics.deltaPercentageByTeam !== undefined
+                    ? this.toDecimalString(analytics.deltaPercentageByTeam)
+                    : undefined,
+            deltaPercentageByOther:
+                analytics.deltaPercentageByOther !== null &&
+                analytics.deltaPercentageByOther !== undefined
+                    ? this.toDecimalString(analytics.deltaPercentageByOther)
                     : undefined,
         };
     }

@@ -44,38 +44,57 @@ export class ReportRepository implements ReportRepositoryPort {
                 reviewId: domain.reviewId,
                 cycleId: domain.cycleId,
                 respondentCount: domain.respondentCount,
-                turnoutOfTeam: this.toDecimalString(domain.turnoutOfTeam),
-                turnoutOfOther: this.toDecimalString(domain.turnoutOfOther),
-                totalAverageBySelfAssessment: this.toDecimalString(
-                    domain.totalAverageBySelfAssessment,
+                turnoutPctOfTeam: this.toDecimalString(domain.turnoutPctOfTeam),
+                turnoutPctOfOther: this.toDecimalString(
+                    domain.turnoutPctOfOther,
                 ),
-                totalAverageByTeam: this.toDecimalString(
-                    domain.totalAverageByTeam,
+                questionTotAvgBySelf: this.toDecimalString(
+                    domain.questionTotAvgBySelf,
                 ),
-                totalAverageByOthers: this.toDecimalString(
-                    domain.totalAverageByOthers,
+                questionTotAvgByTeam: this.toDecimalString(
+                    domain.questionTotAvgByTeam,
                 ),
-                totalDeltaByTeam: this.toDecimalString(domain.totalDeltaByTeam),
-                totalDeltaByOthers: this.toDecimalString(
-                    domain.totalDeltaByOthers,
+                questionTotAvgByOthers: this.toDecimalString(
+                    domain.questionTotAvgByOthers,
                 ),
-                totalAverageCompetenceBySelfAssessment: this.toDecimalString(
-                    domain.totalAverageCompetenceBySelfAssessment,
+                questionTotPctBySelf: this.toDecimalString(
+                    domain.questionTotPctBySelf,
                 ),
-                totalAverageCompetenceByTeam: this.toDecimalString(
-                    domain.totalAverageCompetenceByTeam,
+                questionTotPctByTeam: this.toDecimalString(
+                    domain.questionTotPctByTeam,
                 ),
-                totalAverageCompetenceByOthers: this.toDecimalString(
-                    domain.totalAverageCompetenceByOthers,
+                questionTotPctByOthers: this.toDecimalString(
+                    domain.questionTotPctByOthers,
                 ),
-                totalCompetencePercentageBySelfAssessment: this.toDecimalString(
-                    domain.totalCompetencePercentageBySelfAssessment,
+                questionTotDeltaPctByTeam: this.toDecimalString(
+                    domain.questionTotDeltaPctByTeam,
                 ),
-                totalCompetencePercentageByTeam: this.toDecimalString(
-                    domain.totalCompetencePercentageByTeam,
+                questionTotDeltaPctByOthers: this.toDecimalString(
+                    domain.questionTotDeltaPctByOthers,
                 ),
-                totalCompetencePercentageByOthers: this.toDecimalString(
-                    domain.totalCompetencePercentageByOthers,
+                competenceTotAvgBySelf: this.toDecimalString(
+                    domain.competenceTotAvgBySelf,
+                ),
+                competenceTotAvgByTeam: this.toDecimalString(
+                    domain.competenceTotAvgByTeam,
+                ),
+                competenceTotAvgByOthers: this.toDecimalString(
+                    domain.competenceTotAvgByOthers,
+                ),
+                competenceTotPctBySelf: this.toDecimalString(
+                    domain.competenceTotPctBySelf,
+                ),
+                competenceTotPctByTeam: this.toDecimalString(
+                    domain.competenceTotPctByTeam,
+                ),
+                competenceTotPctByOthers: this.toDecimalString(
+                    domain.competenceTotPctByOthers,
+                ),
+                competenceTotDeltaPctByTeam: this.toDecimalString(
+                    domain.competenceTotDeltaPctByTeam,
+                ),
+                competenceTotDeltaPctByOthers: this.toDecimalString(
+                    domain.competenceTotDeltaPctByOthers,
                 ),
             },
             include: {

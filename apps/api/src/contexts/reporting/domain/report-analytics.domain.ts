@@ -12,8 +12,11 @@ export type ReportAnalyticsProps = {
     averageBySelfAssessment?: Decimal.Value | null;
     averageByTeam?: Decimal.Value | null;
     averageByOther?: Decimal.Value | null;
-    deltaByTeam?: Decimal.Value | null;
-    deltaByOther?: Decimal.Value | null;
+    percentageBySelfAssessment?: Decimal.Value | null;
+    percentageByTeam?: Decimal.Value | null;
+    percentageByOther?: Decimal.Value | null;
+    deltaPercentageByTeam?: Decimal.Value | null;
+    deltaPercentageByOther?: Decimal.Value | null;
     createdAt?: Date;
 };
 
@@ -28,8 +31,11 @@ export class ReportAnalyticsDomain {
     readonly averageBySelfAssessment?: Decimal | null;
     readonly averageByTeam?: Decimal | null;
     readonly averageByOther?: Decimal | null;
-    readonly deltaByTeam?: Decimal | null;
-    readonly deltaByOther?: Decimal | null;
+    readonly percentageBySelfAssessment?: Decimal | null;
+    readonly percentageByTeam?: Decimal | null;
+    readonly percentageByOther?: Decimal | null;
+    readonly deltaPercentageByTeam?: Decimal | null;
+    readonly deltaPercentageByOther?: Decimal | null;
     readonly createdAt?: Date;
 
     private constructor(props: ReportAnalyticsProps) {
@@ -45,8 +51,17 @@ export class ReportAnalyticsDomain {
         );
         this.averageByTeam = this.toDecimalOrNull(props.averageByTeam);
         this.averageByOther = this.toDecimalOrNull(props.averageByOther);
-        this.deltaByTeam = this.toDecimalOrNull(props.deltaByTeam);
-        this.deltaByOther = this.toDecimalOrNull(props.deltaByOther);
+        this.percentageBySelfAssessment = this.toDecimalOrNull(
+            props.percentageBySelfAssessment,
+        );
+        this.percentageByTeam = this.toDecimalOrNull(props.percentageByTeam);
+        this.percentageByOther = this.toDecimalOrNull(props.percentageByOther);
+        this.deltaPercentageByTeam = this.toDecimalOrNull(
+            props.deltaPercentageByTeam,
+        );
+        this.deltaPercentageByOther = this.toDecimalOrNull(
+            props.deltaPercentageByOther,
+        );
         this.createdAt = props.createdAt;
     }
 

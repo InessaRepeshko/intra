@@ -1,7 +1,7 @@
 import {
     AnswerType,
     CompetenceAccumulator,
-    CompetenceSummaryTotals,
+    EntitySummaryTotals,
     EntityType,
     REPORT_ANALYTICS_CONSTRAINTS,
     RespondentCategory,
@@ -142,23 +142,25 @@ export class ReportingService {
             reviewId,
             cycleId: review.cycleId,
             respondentCount,
-            turnoutOfTeam: teamTurnout,
-            turnoutOfOther: otherTurnout,
-            totalAverageBySelfAssessment:
-                questionTotals.averageBySelfAssessment,
-            totalAverageByTeam: questionTotals.averageByTeam,
-            totalAverageByOthers: questionTotals.averageByOthers,
-            totalDeltaByTeam: questionTotals.deltaByTeam,
-            totalDeltaByOthers: questionTotals.deltaByOthers,
-            totalAverageCompetenceBySelfAssessment:
-                competenceTotals.averageBySelfAssessment,
-            totalAverageCompetenceByTeam: competenceTotals.averageByTeam,
-            totalAverageCompetenceByOthers: competenceTotals.averageByOther,
-            totalCompetencePercentageBySelfAssessment:
-                competenceTotals.percentageBySelfAssessment,
-            totalCompetencePercentageByTeam: competenceTotals.percentageByTeam,
-            totalCompetencePercentageByOthers:
-                competenceTotals.percentageByOther,
+            turnoutPctOfTeam: teamTurnout,
+            turnoutPctOfOther: otherTurnout,
+            questionTotAvgBySelf: questionTotals.averageBySelfAssessment,
+            questionTotAvgByTeam: questionTotals.averageByTeam,
+            questionTotAvgByOthers: questionTotals.averageByOther,
+            questionTotPctBySelf: questionTotals.percentageBySelfAssessment,
+            questionTotPctByTeam: questionTotals.percentageByTeam,
+            questionTotPctByOthers: questionTotals.percentageByOther,
+            questionTotDeltaPctByTeam: questionTotals.deltaPercentageByTeam,
+            questionTotDeltaPctByOthers: questionTotals.deltaPercentageByOther,
+            competenceTotAvgBySelf: competenceTotals.averageBySelfAssessment,
+            competenceTotAvgByTeam: competenceTotals.averageByTeam,
+            competenceTotAvgByOthers: competenceTotals.averageByOther,
+            competenceTotPctBySelf: competenceTotals.percentageBySelfAssessment,
+            competenceTotPctByTeam: competenceTotals.percentageByTeam,
+            competenceTotPctByOthers: competenceTotals.percentageByOther,
+            competenceTotDeltaPctByTeam: competenceTotals.deltaPercentageByTeam,
+            competenceTotDeltaPctByOthers:
+                competenceTotals.deltaPercentageByOther,
             analytics: [],
             comments: [],
         });
@@ -250,13 +252,8 @@ export class ReportingService {
     ): {
         questionAnalytics: ReportAnalyticsDomain[];
         competenceAnalytics: ReportAnalyticsDomain[];
-        questionTotals: {
-            averageBySelfAssessment: number | null;
-            averageByTeam: number | null;
-            averageByOthers: number | null;
-            deltaByTeam: number | null;
-            deltaByOthers: number | null;
-        };
+        questionTotals: EntitySummaryTotals;
+        competenceTotals: EntitySummaryTotals;
     } {
         const numericalRelations = relations.filter(
             (r) => r.answerType === AnswerType.NUMERICAL_SCALE,
@@ -299,12 +296,25 @@ export class ReportingService {
                 questionOtherAverages.push(averageByOther);
             }
 
-            const deltaByTeam = this.calculateDeltaPercent(
+            const percentageBySelf = this.calculatePercentage(
+                averageBySelf,
+                maxScore,
+            );
+            const percentageByTeam = this.calculatePercentage(
+                averageByTeam,
+                maxScore,
+            );
+            const percentageByOther = this.calculatePercentage(
+                averageByOther,
+                maxScore,
+            );
+
+            const deltaPercentageByTeam = this.calculateDeltaPercent(
                 averageBySelf,
                 averageByTeam,
                 maxScore,
             );
-            const deltaByOther = this.calculateDeltaPercent(
+            const deltaPercentageByOther = this.calculateDeltaPercent(
                 averageBySelf,
                 averageByOther,
                 maxScore,
@@ -322,8 +332,16 @@ export class ReportingService {
                         this.roundDecimal(averageBySelf) ?? null,
                     averageByTeam: this.roundDecimal(averageByTeam) ?? null,
                     averageByOther: this.roundDecimal(averageByOther) ?? null,
-                    deltaByTeam: this.roundDecimal(deltaByTeam) ?? null,
-                    deltaByOther: this.roundDecimal(deltaByOther) ?? null,
+                    percentageBySelfAssessment:
+                        this.roundDecimal(percentageBySelf) ?? null,
+                    percentageByTeam:
+                        this.roundDecimal(percentageByTeam) ?? null,
+                    percentageByOther:
+                        this.roundDecimal(percentageByOther) ?? null,
+                    deltaPercentageByTeam:
+                        this.roundDecimal(deltaPercentageByTeam) ?? null,
+                    deltaPercentageByOther:
+                        this.roundDecimal(deltaPercentageByOther) ?? null,
                 }),
             );
 
@@ -379,12 +397,25 @@ export class ReportingService {
                 competenceOtherAverages.push(averageByOther);
             }
 
-            const deltaByTeam = this.calculateDeltaPercent(
+            const percentageBySelf = this.calculatePercentage(
+                averageBySelf,
+                maxScore,
+            );
+            const percentageByTeam = this.calculatePercentage(
+                averageByTeam,
+                maxScore,
+            );
+            const percentageByOther = this.calculatePercentage(
+                averageByOther,
+                maxScore,
+            );
+
+            const deltaPercentageByTeam = this.calculateDeltaPercent(
                 averageBySelf,
                 averageByTeam,
                 maxScore,
             );
-            const deltaByOther = this.calculateDeltaPercent(
+            const deltaPercentageByOther = this.calculateDeltaPercent(
                 averageBySelf,
                 averageByOther,
                 maxScore,
@@ -402,43 +433,35 @@ export class ReportingService {
                         this.roundDecimal(averageBySelf) ?? null,
                     averageByTeam: this.roundDecimal(averageByTeam) ?? null,
                     averageByOther: this.roundDecimal(averageByOther) ?? null,
-                    deltaByTeam: this.roundDecimal(deltaByTeam) ?? null,
-                    deltaByOther: this.roundDecimal(deltaByOther) ?? null,
+                    percentageBySelfAssessment:
+                        this.roundDecimal(percentageBySelf) ?? null,
+                    percentageByTeam:
+                        this.roundDecimal(percentageByTeam) ?? null,
+                    percentageByOther:
+                        this.roundDecimal(percentageByOther) ?? null,
+                    deltaPercentageByTeam:
+                        this.roundDecimal(deltaPercentageByTeam) ?? null,
+                    deltaPercentageByOther:
+                        this.roundDecimal(deltaPercentageByOther) ?? null,
                 }),
             );
         }
 
-        const questionAverageBySelf =
-            this.calculateAverage(questionSelfAverages);
-        const questionAverageByTeam =
-            this.calculateAverage(questionTeamAverages);
-        const questionAverageByOther = this.calculateAverage(
-            questionOtherAverages,
-        );
-
-        const questionDeltaByTeam = this.calculateDeltaPercent(
-            questionAverageBySelf,
-            questionAverageByTeam,
-            maxScore,
-        );
-        const questionDeltaByOther = this.calculateDeltaPercent(
-            questionAverageBySelf,
-            questionAverageByOther,
-            maxScore,
-        );
-
         return {
             questionAnalytics,
             competenceAnalytics,
-            questionTotals: {
-                averageBySelfAssessment: this.toRoundedNumber(
-                    questionAverageBySelf,
-                ),
-                averageByTeam: this.toRoundedNumber(questionAverageByTeam),
-                averageByOthers: this.toRoundedNumber(questionAverageByOther),
-                deltaByTeam: this.toRoundedNumber(questionDeltaByTeam),
-                deltaByOthers: this.toRoundedNumber(questionDeltaByOther),
-            },
+            questionTotals: this.calculateSummaryTotalsFromValues(
+                questionSelfAverages,
+                questionTeamAverages,
+                questionOtherAverages,
+                maxScore,
+            ),
+            competenceTotals: this.calculateSummaryTotalsFromValues(
+                competenceSelfAverages,
+                competenceTeamAverages,
+                competenceOtherAverages,
+                maxScore,
+            ),
         };
     }
 
@@ -496,7 +519,7 @@ export class ReportingService {
     private calculateCompetenceSummaryTotals(
         analytics: ReportAnalyticsDomain[],
         maxScore: Decimal,
-    ): CompetenceSummaryTotals {
+    ): EntitySummaryTotals {
         const averageBySelf = this.calculateAverage(
             analytics.map((item) => item.averageBySelfAssessment),
         );
@@ -520,6 +543,16 @@ export class ReportingService {
             maxScore,
         );
 
+        const deltaPercentageByTeam = this.calculateDeltaPercent(
+            averageBySelf,
+            averageByTeam,
+            maxScore,
+        );
+        const deltaPercentageByOther = this.calculateDeltaPercent(
+            averageBySelf,
+            averageByOther,
+            maxScore,
+        );
         return {
             averageBySelfAssessment: this.toRoundedNumber(averageBySelf),
             averageByTeam: this.toRoundedNumber(averageByTeam),
@@ -527,6 +560,10 @@ export class ReportingService {
             percentageBySelfAssessment: this.toRoundedNumber(percentageBySelf),
             percentageByTeam: this.toRoundedNumber(percentageByTeam),
             percentageByOther: this.toRoundedNumber(percentageByOther),
+            deltaPercentageByTeam: this.toRoundedNumber(deltaPercentageByTeam),
+            deltaPercentageByOther: this.toRoundedNumber(
+                deltaPercentageByOther,
+            ),
         };
     }
 
@@ -543,5 +580,53 @@ export class ReportingService {
     private toRoundedNumber(value: Decimal | null): number | null {
         if (value === null) return null;
         return Number(this.roundDecimal(value)?.toFixed(4));
+    }
+
+    private calculateSummaryTotalsFromValues(
+        selfValues: Decimal[],
+        teamValues: Decimal[],
+        otherValues: Decimal[],
+        maxScore: Decimal,
+    ): EntitySummaryTotals {
+        const averageBySelf = this.calculateAverage(selfValues);
+        const averageByTeam = this.calculateAverage(teamValues);
+        const averageByOther = this.calculateAverage(otherValues);
+
+        const percentageBySelf = this.calculatePercentage(
+            averageBySelf,
+            maxScore,
+        );
+        const percentageByTeam = this.calculatePercentage(
+            averageByTeam,
+            maxScore,
+        );
+        const percentageByOther = this.calculatePercentage(
+            averageByOther,
+            maxScore,
+        );
+
+        const deltaPercentageByTeam = this.calculateDeltaPercent(
+            averageBySelf,
+            averageByTeam,
+            maxScore,
+        );
+        const deltaPercentageByOther = this.calculateDeltaPercent(
+            averageBySelf,
+            averageByOther,
+            maxScore,
+        );
+
+        return {
+            averageBySelfAssessment: this.toRoundedNumber(averageBySelf),
+            averageByTeam: this.toRoundedNumber(averageByTeam),
+            averageByOther: this.toRoundedNumber(averageByOther),
+            percentageBySelfAssessment: this.toRoundedNumber(percentageBySelf),
+            percentageByTeam: this.toRoundedNumber(percentageByTeam),
+            percentageByOther: this.toRoundedNumber(percentageByOther),
+            deltaPercentageByTeam: this.toRoundedNumber(deltaPercentageByTeam),
+            deltaPercentageByOther: this.toRoundedNumber(
+                deltaPercentageByOther,
+            ),
+        };
     }
 }

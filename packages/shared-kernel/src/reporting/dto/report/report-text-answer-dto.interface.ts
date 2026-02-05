@@ -1,4 +1,4 @@
-import { RespondentCategory } from '../../feedback360/enums/respondent-category.enum';
+import { RespondentCategory } from '../../../feedback360/enums/respondent-category.enum';
 
 export interface ReportTextAnswerDto {
     questionId: number;

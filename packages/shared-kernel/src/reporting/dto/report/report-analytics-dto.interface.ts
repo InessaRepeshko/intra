@@ -1,4 +1,4 @@
-import { EntityType } from '../enums/entity-type.enum';
+import { EntityType } from '../../enums/entity-type.enum';
 
 export interface ReportAnalyticsDto {
     id: number;
@@ -11,7 +11,10 @@ export interface ReportAnalyticsDto {
     averageBySelfAssessment?: number | null;
     averageByTeam?: number | null;
     averageByOther?: number | null;
-    deltaByTeam?: number | null;
-    deltaByOther?: number | null;
+    percentageBySelfAssessment?: number | null;
+    percentageByTeam?: number | null;
+    percentageByOther?: number | null;
+    deltaPercentageByTeam?: number | null;
+    deltaPercentageByOther?: number | null;
     createdAt: Date;
 }

@@ -7,19 +7,24 @@ export type ReportProps = {
     reviewId: number;
     cycleId?: number | null;
     respondentCount: number;
-    turnoutOfTeam?: Decimal.Value | null;
-    turnoutOfOther?: Decimal.Value | null;
-    totalAverageBySelfAssessment?: Decimal.Value | null;
-    totalAverageByTeam?: Decimal.Value | null;
-    totalAverageByOthers?: Decimal.Value | null;
-    totalDeltaByTeam?: Decimal.Value | null;
-    totalDeltaByOthers?: Decimal.Value | null;
-    totalAverageCompetenceBySelfAssessment?: Decimal.Value | null;
-    totalAverageCompetenceByTeam?: Decimal.Value | null;
-    totalAverageCompetenceByOthers?: Decimal.Value | null;
-    totalCompetencePercentageBySelfAssessment?: Decimal.Value | null;
-    totalCompetencePercentageByTeam?: Decimal.Value | null;
-    totalCompetencePercentageByOthers?: Decimal.Value | null;
+    turnoutPctOfTeam?: Decimal.Value | null;
+    turnoutPctOfOther?: Decimal.Value | null;
+    questionTotAvgBySelf?: Decimal.Value | null;
+    questionTotAvgByTeam?: Decimal.Value | null;
+    questionTotAvgByOthers?: Decimal.Value | null;
+    questionTotPctBySelf?: Decimal.Value | null;
+    questionTotPctByTeam?: Decimal.Value | null;
+    questionTotPctByOthers?: Decimal.Value | null;
+    questionTotDeltaPctByTeam?: Decimal.Value | null;
+    questionTotDeltaPctByOthers?: Decimal.Value | null;
+    competenceTotAvgBySelf?: Decimal.Value | null;
+    competenceTotAvgByTeam?: Decimal.Value | null;
+    competenceTotAvgByOthers?: Decimal.Value | null;
+    competenceTotPctBySelf?: Decimal.Value | null;
+    competenceTotPctByTeam?: Decimal.Value | null;
+    competenceTotPctByOthers?: Decimal.Value | null;
+    competenceTotDeltaPctByTeam?: Decimal.Value | null;
+    competenceTotDeltaPctByOthers?: Decimal.Value | null;
     createdAt?: Date;
     analytics: ReportAnalyticsDomain[];
     comments?: ReportCommentDomain[];
@@ -30,19 +35,24 @@ export class ReportDomain {
     readonly reviewId: number;
     readonly cycleId?: number | null;
     readonly respondentCount: number;
-    readonly turnoutOfTeam?: Decimal | null;
-    readonly turnoutOfOther?: Decimal | null;
-    readonly totalAverageBySelfAssessment?: Decimal | null;
-    readonly totalAverageByTeam?: Decimal | null;
-    readonly totalAverageByOthers?: Decimal | null;
-    readonly totalDeltaByTeam?: Decimal | null;
-    readonly totalDeltaByOthers?: Decimal | null;
-    readonly totalAverageCompetenceBySelfAssessment?: Decimal | null;
-    readonly totalAverageCompetenceByTeam?: Decimal | null;
-    readonly totalAverageCompetenceByOthers?: Decimal | null;
-    readonly totalCompetencePercentageBySelfAssessment?: Decimal | null;
-    readonly totalCompetencePercentageByTeam?: Decimal | null;
-    readonly totalCompetencePercentageByOthers?: Decimal | null;
+    readonly turnoutPctOfTeam?: Decimal | null;
+    readonly turnoutPctOfOther?: Decimal | null;
+    readonly questionTotAvgBySelf?: Decimal | null;
+    readonly questionTotAvgByTeam?: Decimal | null;
+    readonly questionTotAvgByOthers?: Decimal | null;
+    readonly questionTotPctBySelf?: Decimal | null;
+    readonly questionTotPctByTeam?: Decimal | null;
+    readonly questionTotPctByOthers?: Decimal | null;
+    readonly questionTotDeltaPctByTeam?: Decimal | null;
+    readonly questionTotDeltaPctByOthers?: Decimal | null;
+    readonly competenceTotAvgBySelf?: Decimal | null;
+    readonly competenceTotAvgByTeam?: Decimal | null;
+    readonly competenceTotAvgByOthers?: Decimal | null;
+    readonly competenceTotPctBySelf?: Decimal | null;
+    readonly competenceTotPctByTeam?: Decimal | null;
+    readonly competenceTotPctByOthers?: Decimal | null;
+    readonly competenceTotDeltaPctByTeam?: Decimal | null;
+    readonly competenceTotDeltaPctByOthers?: Decimal | null;
     readonly createdAt?: Date;
     readonly analytics: ReportAnalyticsDomain[];
     readonly comments?: ReportCommentDomain[];
@@ -52,38 +62,55 @@ export class ReportDomain {
         this.reviewId = props.reviewId;
         this.cycleId = props.cycleId ?? null;
         this.respondentCount = props.respondentCount;
-        this.turnoutOfTeam = this.toDecimalOrNull(props.turnoutOfTeam);
-        this.turnoutOfOther = this.toDecimalOrNull(props.turnoutOfOther);
-        this.totalAverageBySelfAssessment = this.toDecimalOrNull(
-            props.totalAverageBySelfAssessment,
+        this.turnoutPctOfTeam = this.toDecimalOrNull(props.turnoutPctOfTeam);
+        this.turnoutPctOfOther = this.toDecimalOrNull(props.turnoutPctOfOther);
+        this.questionTotAvgBySelf = this.toDecimalOrNull(
+            props.questionTotAvgBySelf,
         );
-        this.totalAverageByTeam = this.toDecimalOrNull(
-            props.totalAverageByTeam,
+        this.questionTotAvgByTeam = this.toDecimalOrNull(
+            props.questionTotAvgByTeam,
         );
-        this.totalAverageByOthers = this.toDecimalOrNull(
-            props.totalAverageByOthers,
+        this.questionTotAvgByOthers = this.toDecimalOrNull(
+            props.questionTotAvgByOthers,
         );
-        this.totalDeltaByTeam = this.toDecimalOrNull(props.totalDeltaByTeam);
-        this.totalDeltaByOthers = this.toDecimalOrNull(
-            props.totalDeltaByOthers,
+        this.questionTotPctBySelf = this.toDecimalOrNull(
+            props.questionTotPctBySelf,
         );
-        this.totalAverageCompetenceBySelfAssessment = this.toDecimalOrNull(
-            props.totalAverageCompetenceBySelfAssessment,
+        this.questionTotPctByTeam = this.toDecimalOrNull(
+            props.questionTotPctByTeam,
         );
-        this.totalAverageCompetenceByTeam = this.toDecimalOrNull(
-            props.totalAverageCompetenceByTeam,
+        this.questionTotPctByOthers = this.toDecimalOrNull(
+            props.questionTotPctByOthers,
         );
-        this.totalAverageCompetenceByOthers = this.toDecimalOrNull(
-            props.totalAverageCompetenceByOthers,
+        this.questionTotDeltaPctByTeam = this.toDecimalOrNull(
+            props.questionTotDeltaPctByTeam,
         );
-        this.totalCompetencePercentageBySelfAssessment = this.toDecimalOrNull(
-            props.totalCompetencePercentageBySelfAssessment,
+        this.questionTotDeltaPctByOthers = this.toDecimalOrNull(
+            props.questionTotDeltaPctByOthers,
         );
-        this.totalCompetencePercentageByTeam = this.toDecimalOrNull(
-            props.totalCompetencePercentageByTeam,
+        this.competenceTotAvgBySelf = this.toDecimalOrNull(
+            props.competenceTotAvgBySelf,
         );
-        this.totalCompetencePercentageByOthers = this.toDecimalOrNull(
-            props.totalCompetencePercentageByOthers,
+        this.competenceTotAvgByTeam = this.toDecimalOrNull(
+            props.competenceTotAvgByTeam,
+        );
+        this.competenceTotAvgByOthers = this.toDecimalOrNull(
+            props.competenceTotAvgByOthers,
+        );
+        this.competenceTotPctBySelf = this.toDecimalOrNull(
+            props.competenceTotPctBySelf,
+        );
+        this.competenceTotPctByTeam = this.toDecimalOrNull(
+            props.competenceTotPctByTeam,
+        );
+        this.competenceTotPctByOthers = this.toDecimalOrNull(
+            props.competenceTotPctByOthers,
+        );
+        this.competenceTotDeltaPctByTeam = this.toDecimalOrNull(
+            props.competenceTotDeltaPctByTeam,
+        );
+        this.competenceTotDeltaPctByOthers = this.toDecimalOrNull(
+            props.competenceTotDeltaPctByOthers,
         );
         this.createdAt = props.createdAt;
         this.analytics = props.analytics ?? [];

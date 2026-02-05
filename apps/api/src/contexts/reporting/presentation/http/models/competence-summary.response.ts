@@ -58,15 +58,48 @@ export class CompetenceSummaryResponse implements ReportCompetenceSummaryDto {
     averageByOther?: number | null;
 
     @ApiProperty({
+        example: 100,
+        description: 'Percentage of score by self assessment',
+        type: 'number',
+        format: 'float',
+        nullable: true,
+        minimum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MAX,
+    })
+    percentageBySelfAssessment?: number | null;
+
+    @ApiProperty({
+        example: 100,
+        description: 'Percentage of score by team',
+        type: 'number',
+        format: 'float',
+        nullable: true,
+        minimum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MAX,
+    })
+    percentageByTeam?: number | null;
+
+    @ApiProperty({
+        example: 100,
+        description: 'Percentage of score by other respondents',
+        type: 'number',
+        format: 'float',
+        nullable: true,
+        minimum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MAX,
+    })
+    percentageByOther?: number | null;
+
+    @ApiProperty({
         example: +5.0,
         description: 'Delta between self and team averages (%)',
         type: 'number',
         format: 'signed float',
         nullable: true,
-        minimum: REPORT_ANALYTICS_CONSTRAINTS.DELTA_PERCENTAGE.MIN,
-        maximum: REPORT_ANALYTICS_CONSTRAINTS.DELTA_PERCENTAGE.MAX,
+        minimum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MAX,
     })
-    deltaByTeam?: number | null;
+    deltaPercentageByTeam?: number | null;
 
     @ApiProperty({
         example: -3.0,
@@ -74,8 +107,8 @@ export class CompetenceSummaryResponse implements ReportCompetenceSummaryDto {
         type: 'number',
         format: 'signed float',
         nullable: true,
-        minimum: REPORT_ANALYTICS_CONSTRAINTS.DELTA_PERCENTAGE.MIN,
-        maximum: REPORT_ANALYTICS_CONSTRAINTS.DELTA_PERCENTAGE.MAX,
+        minimum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_ANALYTICS_CONSTRAINTS.PERCENTAGE.MAX,
     })
-    deltaByOther?: number | null;
+    deltaPercentageByOther?: number | null;
 }

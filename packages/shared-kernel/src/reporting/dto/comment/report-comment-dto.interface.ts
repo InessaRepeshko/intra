@@ -1,5 +1,5 @@
 import { RespondentCategory } from 'src/feedback360/enums/respondent-category.enum';
-import { CommentSentiment } from '../enums/comment-sentiment.enum';
+import { CommentSentiment } from '../../enums/comment-sentiment.enum';
 
 export interface ReportCommentDto {
     id: number;

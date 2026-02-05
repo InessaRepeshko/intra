@@ -408,19 +408,24 @@ Table reporting_reports {
   reviewId Int [unique, not null]
   cycleId Int
   respondentCount Int [not null]
-  turnoutOfTeam Decimal
-  turnoutOfOther Decimal
-  totalAverageBySelfAssessment Decimal
-  totalAverageByTeam Decimal
-  totalAverageByOthers Decimal
-  totalDeltaByTeam Decimal
-  totalDeltaByOthers Decimal
-  totalAverageCompetenceBySelfAssessment Decimal
-  totalAverageCompetenceByTeam Decimal
-  totalAverageCompetenceByOthers Decimal
-  totalCompetencePercentageBySelfAssessment Decimal
-  totalCompetencePercentageByTeam Decimal
-  totalCompetencePercentageByOthers Decimal
+  turnoutPctOfTeam Decimal
+  turnoutPctOfOther Decimal
+  questionTotAvgBySelf Decimal
+  questionTotAvgByTeam Decimal
+  questionTotAvgByOthers Decimal
+  questionTotPctBySelf Decimal
+  questionTotPctByTeam Decimal
+  questionTotPctByOthers Decimal
+  questionTotDeltaPctByTeam Decimal
+  questionTotDeltaPctByOthers Decimal
+  competenceTotAvgBySelf Decimal
+  competenceTotAvgByTeam Decimal
+  competenceTotAvgByOthers Decimal
+  competenceTotPctBySelf Decimal
+  competenceTotPctByTeam Decimal
+  competenceTotPctByOthers Decimal
+  competenceTotDeltaPctByTeam Decimal
+  competenceTotDeltaPctByOthers Decimal
   createdAt DateTime [default: `now()`, not null]
   review feedback360_reviews [not null]
   cycle feedback360_cycles
@@ -439,8 +444,11 @@ Table reporting_analytics {
   averageBySelfAssessment Decimal
   averageByTeam Decimal
   averageByOther Decimal
-  deltaByTeam Decimal
-  deltaByOther Decimal
+  percentageBySelfAssessment Decimal
+  percentageByTeam Decimal
+  percentageByOther Decimal
+  deltaPercentageByTeam Decimal
+  deltaPercentageByOther Decimal
   createdAt DateTime [default: `now()`, not null]
   report reporting_reports [not null]
   question feedback360_questions

@@ -4,11 +4,11 @@ import {
 } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CompetenceSummaryTotalsResponse implements ReportEntitySummaryTotalsDto {
+export class QuestionSummaryTotalsResponse implements ReportEntitySummaryTotalsDto {
     @ApiProperty({
         example: 4.2,
         description:
-            'Average competence score across all competencies by self assessment',
+            'Average question score across all questions by self assessment',
         type: 'number',
         format: 'float',
         nullable: true,
@@ -19,7 +19,7 @@ export class CompetenceSummaryTotalsResponse implements ReportEntitySummaryTotal
 
     @ApiProperty({
         example: 4.3,
-        description: 'Average competence score across all competencies by team',
+        description: 'Average question score across all questions by team',
         type: 'number',
         format: 'float',
         nullable: true,
@@ -31,7 +31,7 @@ export class CompetenceSummaryTotalsResponse implements ReportEntitySummaryTotal
     @ApiProperty({
         example: 4.1,
         description:
-            'Average competence score across all competencies by other respondents',
+            'Average question score across all questions by other respondents',
         type: 'number',
         format: 'float',
         nullable: true,
