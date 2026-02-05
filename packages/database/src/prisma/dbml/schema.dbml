@@ -128,8 +128,8 @@ Table library_competences {
 Table library_clusters {
   id Int [pk, increment]
   competenceId Int [not null]
-  lowerBound Float [not null]
-  upperBound Float [not null]
+  lowerBound Decimal [not null]
+  upperBound Decimal [not null]
   title String [not null]
   description String [not null]
   createdAt DateTime [default: `now()`, not null]
@@ -311,7 +311,7 @@ Table feedback360_cluster_scores {
   clusterId Int [not null]
   rateeId Int [not null]
   reviewId Int [not null]
-  score Float [not null]
+  score Decimal [not null]
   answersCount Int [not null, default: 0]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
@@ -330,9 +330,9 @@ Table feedback360_cluster_score_analytics {
   cycleId Int [not null]
   clusterId Int [not null]
   employeesCount Int [not null, default: 0]
-  minScore Float [not null]
-  maxScore Float [not null]
-  averageScore Float [not null]
+  minScore Decimal [not null]
+  maxScore Decimal [not null]
+  averageScore Decimal [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   cycle feedback360_cycles [not null]
@@ -408,19 +408,19 @@ Table reporting_reports {
   reviewId Int [unique, not null]
   cycleId Int
   respondentCount Int [not null]
-  turnoutOfTeam Float
-  turnoutOfOther Float
-  totalAverageBySelfAssessment Float
-  totalAverageByTeam Float
-  totalAverageByOthers Float
-  totalDeltaByTeam Float
-  totalDeltaByOthers Float
-  totalAverageCompetenceBySelfAssessment Float
-  totalAverageCompetenceByTeam Float
-  totalAverageCompetenceByOthers Float
-  totalCompetencePercentageBySelfAssessment Float
-  totalCompetencePercentageByTeam Float
-  totalCompetencePercentageByOthers Float
+  turnoutOfTeam Decimal
+  turnoutOfOther Decimal
+  totalAverageBySelfAssessment Decimal
+  totalAverageByTeam Decimal
+  totalAverageByOthers Decimal
+  totalDeltaByTeam Decimal
+  totalDeltaByOthers Decimal
+  totalAverageCompetenceBySelfAssessment Decimal
+  totalAverageCompetenceByTeam Decimal
+  totalAverageCompetenceByOthers Decimal
+  totalCompetencePercentageBySelfAssessment Decimal
+  totalCompetencePercentageByTeam Decimal
+  totalCompetencePercentageByOthers Decimal
   createdAt DateTime [default: `now()`, not null]
   review feedback360_reviews [not null]
   cycle feedback360_cycles
@@ -436,11 +436,11 @@ Table reporting_analytics {
   questionTitle String
   competenceId Int
   competenceTitle String
-  averageBySelfAssessment Float
-  averageByTeam Float
-  averageByOther Float
-  deltaByTeam Float
-  deltaByOther Float
+  averageBySelfAssessment Decimal
+  averageByTeam Decimal
+  averageByOther Decimal
+  deltaByTeam Decimal
+  deltaByOther Decimal
   createdAt DateTime [default: `now()`, not null]
   report reporting_reports [not null]
   question feedback360_questions

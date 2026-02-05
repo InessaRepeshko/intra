@@ -1,4 +1,5 @@
 import { PrismaClient } from '@intra/database';
+import Decimal from 'decimal.js';
 import type { CycleMap } from './cycles';
 import type { ReviewMap } from './reviews';
 
@@ -31,7 +32,7 @@ export default async function seedClusterScores(
         if (!review.cycle) continue;
 
         // Calculate average score for each competence and count answers
-        const competenceData = new Map<number, { scores: number[] }>();
+        const competenceData = new Map<number, { scores: Decimal[] }>();
 
         for (const answer of review.answers) {
             const question = await prisma.question.findUnique({
@@ -44,7 +45,7 @@ export default async function seedClusterScores(
             const data = competenceData.get(question.competence.id) || {
                 scores: [],
             };
-            data.scores.push(answer.numericalValue);
+            data.scores.push(new Decimal(answer.numericalValue));
             competenceData.set(question.competence.id, data);
         }
 
@@ -53,8 +54,9 @@ export default async function seedClusterScores(
             const { scores } = data;
             if (scores.length === 0) continue;
 
-            const averageScore =
-                scores.reduce((a, b) => a + b, 0) / scores.length;
+            const averageScore = scores
+                .reduce((a, b) => a.plus(b), new Decimal(0))
+                .dividedBy(scores.length);
             const answersCount = scores.length; // Count total answers instead of unique evaluators
 
             const competence = competences.find((c) => c.id === competenceId);
@@ -63,8 +65,12 @@ export default async function seedClusterScores(
             // Find the cluster that matches this score
             const matchingCluster = competence.clusters.find(
                 (cluster) =>
-                    averageScore >= cluster.lowerBound &&
-                    averageScore <= cluster.upperBound,
+                    averageScore.greaterThanOrEqualTo(
+                        new Decimal(cluster.lowerBound),
+                    ) &&
+                    averageScore.lessThanOrEqualTo(
+                        new Decimal(cluster.upperBound),
+                    ),
             );
 
             if (!matchingCluster) {
@@ -89,7 +95,7 @@ export default async function seedClusterScores(
                 await prisma.clusterScore.update({
                     where: { id: existing.id },
                     data: {
-                        score: averageScore,
+                        score: averageScore.toDecimalPlaces(4).toString(),
                         answersCount,
                         cycleId: review.cycleId,
                         reviewId: review.id,
@@ -103,7 +109,7 @@ export default async function seedClusterScores(
                         clusterId: matchingCluster.id,
                         rateeId: review.rateeId,
                         reviewId: review.id,
-                        score: averageScore,
+                        score: averageScore.toDecimalPlaces(4).toString(),
                         answersCount,
                     },
                 });

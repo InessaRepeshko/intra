@@ -1,3 +1,4 @@
+import Decimal from 'decimal.js';
 import { AnswerDomain } from '../../../domain/answer.domain';
 import { ClusterScoreAnalyticsDomain } from '../../../domain/cluster-score-analytics.domain';
 import { ClusterScoreDomain } from '../../../domain/cluster-score.domain';
@@ -148,7 +149,7 @@ export class Feedback360HttpMapper {
         view.clusterId = domain.clusterId;
         view.rateeId = domain.rateeId;
         view.reviewId = domain.reviewId ?? null;
-        view.score = domain.score;
+        view.score = this.toRoundedNumber(domain.score)!;
         view.answersCount = domain.answersCount;
         view.createdAt = domain.createdAt!;
         view.updatedAt = domain.updatedAt!;
@@ -163,11 +164,20 @@ export class Feedback360HttpMapper {
         view.cycleId = domain.cycleId;
         view.clusterId = domain.clusterId;
         view.employeesCount = domain.employeesCount;
-        view.minScore = domain.minScore;
-        view.maxScore = domain.maxScore;
-        view.averageScore = domain.averageScore;
+        view.minScore = this.toRoundedNumber(domain.minScore)!;
+        view.maxScore = this.toRoundedNumber(domain.maxScore)!;
+        view.averageScore = this.toRoundedNumber(domain.averageScore)!;
         view.createdAt = domain.createdAt!;
         view.updatedAt = domain.updatedAt!;
         return view;
+    }
+
+    private static toRoundedNumber(
+        value: Decimal | number | null | undefined,
+    ): number | null {
+        if (value === null || value === undefined) return null;
+        const decimalValue =
+            value instanceof Decimal ? value : new Decimal(value);
+        return Number(decimalValue.toDecimalPlaces(4).toFixed(4));
     }
 }

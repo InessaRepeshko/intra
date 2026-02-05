@@ -5,6 +5,7 @@ import {
     SortDirection,
 } from '@intra/shared-kernel';
 import { Injectable } from '@nestjs/common';
+import Decimal from 'decimal.js';
 import { PrismaService } from 'src/database/prisma.service';
 import {
     CLUSTER_SCORE_REPOSITORY,
@@ -32,13 +33,13 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
                 clusterId: score.clusterId,
                 rateeId: score.rateeId,
                 reviewId: score.reviewId,
-                score: score.score,
+                score: this.toDecimalString(score.score),
                 answersCount: score.answersCount,
             },
             update: {
                 cycleId: score.cycleId,
                 reviewId: score.reviewId,
-                score: score.score,
+                score: this.toDecimalString(score.score),
                 answersCount: score.answersCount,
             },
         });
@@ -70,7 +71,9 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
             ...(clusterId ? { clusterId } : {}),
             ...(rateeId ? { rateeId } : {}),
             ...(reviewId ? { reviewId } : {}),
-            ...(score ? { score } : {}),
+            ...(score !== undefined
+                ? { score: this.toDecimalString(score) }
+                : {}),
             ...(answerCount ? { answerCount } : {}),
         };
     }
@@ -81,5 +84,9 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
         const field = query.sortBy ?? ClusterScoreSortField.ID;
         const direction = query.sortDirection ?? SortDirection.ASC;
         return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
+    }
+
+    private toDecimalString(value: Decimal.Value): string {
+        return new Decimal(value).toDecimalPlaces(4).toFixed(4);
     }
 }

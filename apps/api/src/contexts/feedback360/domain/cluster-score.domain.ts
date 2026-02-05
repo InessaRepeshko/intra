@@ -1,10 +1,12 @@
+import Decimal from 'decimal.js';
+
 export type ClusterScoreProps = {
     id?: number;
     cycleId?: number | null;
     clusterId: number;
     rateeId: number;
     reviewId: number;
-    score: number;
+    score: Decimal.Value;
     answersCount: number;
     createdAt?: Date;
     updatedAt?: Date;
@@ -16,7 +18,7 @@ export class ClusterScoreDomain {
     readonly clusterId: number;
     readonly rateeId: number;
     readonly reviewId: number;
-    readonly score: number;
+    readonly score: Decimal;
     readonly answersCount: number;
     readonly createdAt?: Date;
     readonly updatedAt?: Date;
@@ -27,7 +29,7 @@ export class ClusterScoreDomain {
         this.clusterId = props.clusterId;
         this.rateeId = props.rateeId;
         this.reviewId = props.reviewId;
-        this.score = props.score;
+        this.score = new Decimal(props.score);
         this.answersCount = props.answersCount;
         this.createdAt = props.createdAt;
         this.updatedAt = props.updatedAt;

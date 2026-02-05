@@ -8,6 +8,7 @@ import {
     ResponseStatus,
 } from '@intra/shared-kernel';
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import Decimal from 'decimal.js';
 import {
     ANSWER_REPOSITORY,
     AnswerRepositoryPort,
@@ -129,7 +130,7 @@ export class ReportingService {
             {},
         );
 
-        const maxScore = REPORT_ANALYTICS_CONSTRAINTS.SCORE.MAX;
+        const maxScore = new Decimal(REPORT_ANALYTICS_CONSTRAINTS.SCORE.MAX);
         const { questionAnalytics, competenceAnalytics, questionTotals } =
             this.buildAnalyticsPayload(answers, relations, maxScore);
         const competenceTotals = this.calculateCompetenceSummaryTotals(
@@ -192,30 +193,38 @@ export class ReportingService {
     }
 
     /**
-     * Calculates average of numbers, returns null if array is empty
+     * Calculates average of decimals, returns null if array is empty
      */
     private calculateAverage(
-        numbers: (number | null | undefined)[],
-    ): number | null {
-        const validNumbers = numbers.filter(
-            (n): n is number => n !== null && n !== undefined,
-        );
+        numbers: (Decimal | number | null | undefined)[],
+    ): Decimal | null {
+        const validNumbers = numbers
+            .filter((n): n is Decimal | number => n !== null && n !== undefined)
+            .map((n) => (n instanceof Decimal ? n : new Decimal(n)));
         if (validNumbers.length === 0) return null;
-        return validNumbers.reduce((a, b) => a + b, 0) / validNumbers.length;
+        const sum = validNumbers.reduce(
+            (acc, value) => acc.plus(value),
+            new Decimal(0),
+        );
+        return sum.dividedBy(validNumbers.length);
     }
 
     /**
-     * Rounds number to 2 decimal places
+     * Normalizes decimal scale to 4 digits (or null)
      */
-    private round(value: number | null | undefined): number | null {
+    private roundDecimal(
+        value: Decimal | number | null | undefined,
+    ): Decimal | null {
         if (value === null || value === undefined) return null;
-        return Math.round(value * 100) / 100;
+        const decimalValue =
+            value instanceof Decimal ? value : new Decimal(value);
+        return decimalValue.toDecimalPlaces(4);
     }
 
     private calculateTurnout(
         respondents: RespondentDomain[],
         category: RespondentCategory,
-    ): number | null {
+    ): Decimal | null {
         const categoryRespondents = respondents.filter(
             (respondent) => respondent.category === category,
         );
@@ -228,13 +237,16 @@ export class ReportingService {
                 respondent.responseStatus === ResponseStatus.COMPLETED,
         ).length;
 
-        return this.round((completed / categoryRespondents.length) * 100);
+        const turnout = new Decimal(completed)
+            .dividedBy(categoryRespondents.length)
+            .times(100);
+        return this.roundDecimal(turnout);
     }
 
     private buildAnalyticsPayload(
         answers: AnswerDomain[],
         relations: ReviewQuestionRelationDomain[],
-        maxScore: number,
+        maxScore: Decimal,
     ): {
         questionAnalytics: ReportAnalyticsDomain[];
         competenceAnalytics: ReportAnalyticsDomain[];
@@ -256,9 +268,9 @@ export class ReportingService {
         );
         const questionAnalytics: ReportAnalyticsDomain[] = [];
         const competenceAccumulators = new Map<number, CompetenceAccumulator>();
-        const questionSelfAverages: number[] = [];
-        const questionTeamAverages: number[] = [];
-        const questionOtherAverages: number[] = [];
+        const questionSelfAverages: Decimal[] = [];
+        const questionTeamAverages: Decimal[] = [];
+        const questionOtherAverages: Decimal[] = [];
 
         for (const relation of numericalRelations) {
             const questionAnswers =
@@ -306,11 +318,12 @@ export class ReportingService {
                     questionTitle: relation.questionTitle,
                     competenceId: null,
                     competenceTitle: null,
-                    averageBySelfAssessment: this.round(averageBySelf),
-                    averageByTeam: this.round(averageByTeam),
-                    averageByOther: this.round(averageByOther),
-                    deltaByTeam: this.round(deltaByTeam),
-                    deltaByOther: this.round(deltaByOther),
+                    averageBySelfAssessment:
+                        this.roundDecimal(averageBySelf) ?? null,
+                    averageByTeam: this.roundDecimal(averageByTeam) ?? null,
+                    averageByOther: this.roundDecimal(averageByOther) ?? null,
+                    deltaByTeam: this.roundDecimal(deltaByTeam) ?? null,
+                    deltaByOther: this.roundDecimal(deltaByOther) ?? null,
                 }),
             );
 
@@ -341,15 +354,19 @@ export class ReportingService {
         }
 
         const competenceAnalytics: ReportAnalyticsDomain[] = [];
-        const competenceSelfAverages: number[] = [];
-        const competenceTeamAverages: number[] = [];
-        const competenceOtherAverages: number[] = [];
+        const competenceSelfAverages: Decimal[] = [];
+        const competenceTeamAverages: Decimal[] = [];
+        const competenceOtherAverages: Decimal[] = [];
 
         for (const accumulator of competenceAccumulators.values()) {
-            const averageBySelf = this.calculateAverage(accumulator.selfScores);
-            const averageByTeam = this.calculateAverage(accumulator.teamScores);
+            const averageBySelf = this.calculateAverage(
+                accumulator.selfScores.map((s) => new Decimal(s)),
+            );
+            const averageByTeam = this.calculateAverage(
+                accumulator.teamScores.map((s) => new Decimal(s)),
+            );
             const averageByOther = this.calculateAverage(
-                accumulator.otherScores,
+                accumulator.otherScores.map((s) => new Decimal(s)),
             );
 
             if (averageBySelf !== null) {
@@ -381,11 +398,12 @@ export class ReportingService {
                     questionTitle: null,
                     competenceId: accumulator.competenceId,
                     competenceTitle: accumulator.competenceTitle,
-                    averageBySelfAssessment: this.round(averageBySelf),
-                    averageByTeam: this.round(averageByTeam),
-                    averageByOther: this.round(averageByOther),
-                    deltaByTeam: this.round(deltaByTeam),
-                    deltaByOther: this.round(deltaByOther),
+                    averageBySelfAssessment:
+                        this.roundDecimal(averageBySelf) ?? null,
+                    averageByTeam: this.roundDecimal(averageByTeam) ?? null,
+                    averageByOther: this.roundDecimal(averageByOther) ?? null,
+                    deltaByTeam: this.roundDecimal(deltaByTeam) ?? null,
+                    deltaByOther: this.roundDecimal(deltaByOther) ?? null,
                 }),
             );
         }
@@ -413,11 +431,13 @@ export class ReportingService {
             questionAnalytics,
             competenceAnalytics,
             questionTotals: {
-                averageBySelfAssessment: this.round(questionAverageBySelf),
-                averageByTeam: this.round(questionAverageByTeam),
-                averageByOthers: this.round(questionAverageByOther),
-                deltaByTeam: this.round(questionDeltaByTeam),
-                deltaByOthers: this.round(questionDeltaByOther),
+                averageBySelfAssessment: this.toRoundedNumber(
+                    questionAverageBySelf,
+                ),
+                averageByTeam: this.toRoundedNumber(questionAverageByTeam),
+                averageByOthers: this.toRoundedNumber(questionAverageByOther),
+                deltaByTeam: this.toRoundedNumber(questionDeltaByTeam),
+                deltaByOthers: this.toRoundedNumber(questionDeltaByOther),
             },
         };
     }
@@ -449,7 +469,7 @@ export class ReportingService {
     private calculateAverageByCategory(
         answers: AnswerDomain[],
         category: RespondentCategory,
-    ): number | null {
+    ): Decimal | null {
         const values = answers
             .filter(
                 (answer) =>
@@ -457,24 +477,25 @@ export class ReportingService {
                     answer.numericalValue !== null &&
                     answer.numericalValue !== undefined,
             )
-            .map((answer) => answer.numericalValue!);
+            .map((answer) => new Decimal(answer.numericalValue!));
         return this.calculateAverage(values);
     }
 
     private calculateDeltaPercent(
-        base: number | null,
-        comparison: number | null,
-        maxScore: number,
-    ): number | null {
-        if (base === null || comparison === null || maxScore === 0) {
+        base: Decimal | null,
+        comparison: Decimal | null,
+        maxScore: Decimal,
+    ): Decimal | null {
+        if (base === null || comparison === null || maxScore.isZero()) {
             return null;
         }
-        return ((base - comparison) / maxScore) * 100;
+        const delta = base.minus(comparison).dividedBy(maxScore).times(100);
+        return this.roundDecimal(delta);
     }
 
     private calculateCompetenceSummaryTotals(
         analytics: ReportAnalyticsDomain[],
-        maxScore: number,
+        maxScore: Decimal,
     ): CompetenceSummaryTotals {
         const averageBySelf = this.calculateAverage(
             analytics.map((item) => item.averageBySelfAssessment),
@@ -500,22 +521,27 @@ export class ReportingService {
         );
 
         return {
-            averageBySelfAssessment: this.round(averageBySelf),
-            averageByTeam: this.round(averageByTeam),
-            averageByOther: this.round(averageByOther),
-            percentageBySelfAssessment: this.round(percentageBySelf),
-            percentageByTeam: this.round(percentageByTeam),
-            percentageByOther: this.round(percentageByOther),
+            averageBySelfAssessment: this.toRoundedNumber(averageBySelf),
+            averageByTeam: this.toRoundedNumber(averageByTeam),
+            averageByOther: this.toRoundedNumber(averageByOther),
+            percentageBySelfAssessment: this.toRoundedNumber(percentageBySelf),
+            percentageByTeam: this.toRoundedNumber(percentageByTeam),
+            percentageByOther: this.toRoundedNumber(percentageByOther),
         };
     }
 
     private calculatePercentage(
-        value: number | null,
-        maxScore: number,
-    ): number | null {
-        if (value === null || maxScore === 0) {
+        value: Decimal | null,
+        maxScore: Decimal,
+    ): Decimal | null {
+        if (value === null || maxScore.isZero()) {
             return null;
         }
-        return (value / maxScore) * 100;
+        return this.roundDecimal(value.dividedBy(maxScore).times(100));
+    }
+
+    private toRoundedNumber(value: Decimal | null): number | null {
+        if (value === null) return null;
+        return Number(this.roundDecimal(value)?.toFixed(4));
     }
 }

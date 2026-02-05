@@ -9,6 +9,7 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
+import Decimal from 'decimal.js';
 import { ClusterScoreAnalyticsDomain } from '../../domain/cluster-score-analytics.domain';
 import {
     CLUSTER_SCORE_ANALYTICS_REPOSITORY,
@@ -28,19 +29,19 @@ export class ClusterScoreAnalyticsService {
         payload: UpsertClusterScoreAnalyticsPayload,
     ): Promise<ClusterScoreAnalyticsDomain> {
         await this.cycles.getById(payload.cycleId);
-        await this.validateScores(
-            payload.minScore,
-            payload.maxScore,
-            payload.averageScore,
-        );
+        const minScore = new Decimal(payload.minScore);
+        const maxScore = new Decimal(payload.maxScore);
+        const averageScore = new Decimal(payload.averageScore);
+
+        await this.validateScores(minScore, maxScore, averageScore);
 
         const domain = ClusterScoreAnalyticsDomain.create({
             cycleId: payload.cycleId,
             clusterId: payload.clusterId,
             employeesCount: payload.employeesCount,
-            minScore: payload.minScore,
-            maxScore: payload.maxScore,
-            averageScore: payload.averageScore,
+            minScore,
+            maxScore,
+            averageScore,
         });
 
         return this.analytics.upsert(domain);
@@ -65,9 +66,18 @@ export class ClusterScoreAnalyticsService {
     ): Promise<ClusterScoreAnalyticsDomain> {
         const current = await this.getById(id);
 
-        const minScore = patch.minScore ?? current.minScore;
-        const maxScore = patch.maxScore ?? current.maxScore;
-        const averageScore = patch.averageScore ?? current.averageScore;
+        const minScore =
+            patch.minScore !== undefined
+                ? new Decimal(patch.minScore)
+                : current.minScore;
+        const maxScore =
+            patch.maxScore !== undefined
+                ? new Decimal(patch.maxScore)
+                : current.maxScore;
+        const averageScore =
+            patch.averageScore !== undefined
+                ? new Decimal(patch.averageScore)
+                : current.averageScore;
 
         await this.validateScores(minScore, maxScore, averageScore);
 
@@ -95,16 +105,16 @@ export class ClusterScoreAnalyticsService {
     }
 
     private async validateScores(
-        min: number,
-        max: number,
-        avg: number,
+        min: Decimal,
+        max: Decimal,
+        avg: Decimal,
     ): Promise<void> {
-        if (min > max) {
+        if (min.gt(max)) {
             throw new BadRequestException(
                 'Min score must be less than or equal to max score',
             );
         }
-        if (avg < min || avg > max) {
+        if (avg.lt(min) || avg.gt(max)) {
             throw new BadRequestException(
                 'Average score must be between min and max scores',
             );

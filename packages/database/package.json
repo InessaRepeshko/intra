@@ -38,8 +38,9 @@
     },
     "dependencies": {
         "@intra/shared-kernel": "workspace:*",
+        "@prisma/adapter-pg": "^7.2.0",
         "@prisma/client": "^7.2.0",
-        "@prisma/adapter-pg": "^7.2.0"
+        "decimal.js": "^10.6.0"
     },
     "devDependencies": {
         "@types/node": "^22.19.6",

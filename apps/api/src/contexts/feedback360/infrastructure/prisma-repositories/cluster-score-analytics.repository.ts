@@ -6,6 +6,7 @@ import {
     UpdateClusterScoreAnalyticsPayload,
 } from '@intra/shared-kernel';
 import { Injectable } from '@nestjs/common';
+import Decimal from 'decimal.js';
 import { PrismaService } from 'src/database/prisma.service';
 import {
     CLUSTER_SCORE_ANALYTICS_REPOSITORY,
@@ -35,15 +36,15 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
                 cycleId: analytics.cycleId,
                 clusterId: analytics.clusterId,
                 employeesCount: analytics.employeesCount,
-                minScore: analytics.minScore,
-                maxScore: analytics.maxScore,
-                averageScore: analytics.averageScore,
+                minScore: this.toDecimalString(analytics.minScore),
+                maxScore: this.toDecimalString(analytics.maxScore),
+                averageScore: this.toDecimalString(analytics.averageScore),
             },
             update: {
                 employeesCount: analytics.employeesCount,
-                minScore: analytics.minScore,
-                maxScore: analytics.maxScore,
-                averageScore: analytics.averageScore,
+                minScore: this.toDecimalString(analytics.minScore),
+                maxScore: this.toDecimalString(analytics.maxScore),
+                averageScore: this.toDecimalString(analytics.averageScore),
             },
         });
 
@@ -103,9 +104,15 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
             ...(cycleId ? { cycleId } : {}),
             ...(clusterId ? { clusterId } : {}),
             ...(employeesCount ? { employeesCount } : {}),
-            ...(minScore ? { minScore } : {}),
-            ...(maxScore ? { maxScore } : {}),
-            ...(averageScore ? { averageScore } : {}),
+            ...(minScore !== undefined
+                ? { minScore: this.toDecimalString(minScore) }
+                : {}),
+            ...(maxScore !== undefined
+                ? { maxScore: this.toDecimalString(maxScore) }
+                : {}),
+            ...(averageScore !== undefined
+                ? { averageScore: this.toDecimalString(averageScore) }
+                : {}),
         };
     }
 
@@ -115,5 +122,9 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
         const field = query.sortBy ?? ClusterScoreAnalyticsSortField.ID;
         const direction = query.sortDirection ?? SortDirection.ASC;
         return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
+    }
+
+    private toDecimalString(value: Decimal.Value): string {
+        return new Decimal(value).toDecimalPlaces(4).toFixed(4);
     }
 }

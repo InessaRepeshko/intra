@@ -1,7 +1,9 @@
+import Decimal from 'decimal.js';
+
 export type CompetenceAccumulator = {
     competenceId: number;
     competenceTitle: string | null;
-    selfScores: number[];
-    teamScores: number[];
-    otherScores: number[];
+    selfScores: Decimal.Value[];
+    teamScores: Decimal.Value[];
+    otherScores: Decimal.Value[];
 };

@@ -22,6 +22,7 @@ import {
     ResponseStatus,
     ReviewStage,
 } from '@intra/shared-kernel';
+import Decimal from 'decimal.js';
 import { AnswerDomain } from '../../domain/answer.domain';
 import { ClusterScoreAnalyticsDomain } from '../../domain/cluster-score-analytics.domain';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
@@ -161,7 +162,7 @@ export class Feedback360Mapper {
             clusterId: score.clusterId,
             rateeId: score.rateeId,
             reviewId: score.reviewId,
-            score: score.score,
+            score: new Decimal(score.score),
             answersCount: score.answersCount,
             createdAt: score.createdAt,
             updatedAt: score.updatedAt,
@@ -176,9 +177,9 @@ export class Feedback360Mapper {
             cycleId: analytics.cycleId,
             clusterId: analytics.clusterId,
             employeesCount: analytics.employeesCount,
-            minScore: analytics.minScore,
-            maxScore: analytics.maxScore,
-            averageScore: analytics.averageScore,
+            minScore: new Decimal(analytics.minScore),
+            maxScore: new Decimal(analytics.maxScore),
+            averageScore: new Decimal(analytics.averageScore),
             createdAt: analytics.createdAt,
             updatedAt: analytics.updatedAt,
         });

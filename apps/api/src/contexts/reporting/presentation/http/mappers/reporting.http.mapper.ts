@@ -1,4 +1,5 @@
 import { EntityType, ReportTextAnswerDto } from '@intra/shared-kernel';
+import Decimal from 'decimal.js';
 import { ReportAnalyticsDomain } from '../../../domain/report-analytics.domain';
 import { ReportCommentDomain } from '../../../domain/report-comment.domain';
 import { ReportDomain } from '../../../domain/report.domain';
@@ -17,14 +18,15 @@ export class ReportingHttpMapper {
         response.reviewId = report.reviewId;
         response.cycleId = report.cycleId ?? null;
         response.respondentCount = report.respondentCount;
-        response.turnoutOfTeam = report.turnoutOfTeam ?? null;
-        response.turnoutOfOther = report.turnoutOfOther ?? null;
-        response.totalAverageBySelfAssessment =
-            report.totalAverageBySelfAssessment ?? null;
-        response.totalAverageByTeam = report.totalAverageByTeam ?? null;
-        response.totalAverageByOthers = report.totalAverageByOthers ?? null;
-        response.totalDeltaByTeam = report.totalDeltaByTeam ?? null;
-        response.totalDeltaByOthers = report.totalDeltaByOthers ?? null;
+        response.turnoutOfTeam = this.round(report.turnoutOfTeam);
+        response.turnoutOfOther = this.round(report.turnoutOfOther);
+        response.totalAverageBySelfAssessment = this.round(
+            report.totalAverageBySelfAssessment,
+        );
+        response.totalAverageByTeam = this.round(report.totalAverageByTeam);
+        response.totalAverageByOthers = this.round(report.totalAverageByOthers);
+        response.totalDeltaByTeam = this.round(report.totalDeltaByTeam);
+        response.totalDeltaByOthers = this.round(report.totalDeltaByOthers);
         response.createdAt = report.createdAt!;
         response.analytics = report.analytics.map(
             this.toReportAnalyticsResponse,
@@ -62,12 +64,13 @@ export class ReportingHttpMapper {
         response.questionTitle = analytics.questionTitle ?? null;
         response.competenceId = analytics.competenceId ?? null;
         response.competenceTitle = analytics.competenceTitle ?? null;
-        response.averageBySelfAssessment =
-            analytics.averageBySelfAssessment ?? null;
-        response.averageByTeam = analytics.averageByTeam ?? null;
-        response.averageByOther = analytics.averageByOther ?? null;
-        response.deltaByTeam = analytics.deltaByTeam ?? null;
-        response.deltaByOther = analytics.deltaByOther ?? null;
+        response.averageBySelfAssessment = this.round(
+            analytics.averageBySelfAssessment,
+        );
+        response.averageByTeam = this.round(analytics.averageByTeam);
+        response.averageByOther = this.round(analytics.averageByOther);
+        response.deltaByTeam = this.round(analytics.deltaByTeam);
+        response.deltaByOther = this.round(analytics.deltaByOther);
         response.createdAt = analytics.createdAt!;
         return response;
     }
@@ -107,12 +110,13 @@ export class ReportingHttpMapper {
         response.questionTitle = analytics.questionTitle ?? null;
         response.competenceId = analytics.competenceId ?? null;
         response.competenceTitle = analytics.competenceTitle ?? null;
-        response.averageBySelfAssessment =
-            analytics.averageBySelfAssessment ?? null;
-        response.averageByTeam = analytics.averageByTeam ?? null;
-        response.averageByOther = analytics.averageByOther ?? null;
-        response.deltaByTeam = analytics.deltaByTeam ?? null;
-        response.deltaByOther = analytics.deltaByOther ?? null;
+        response.averageBySelfAssessment = this.round(
+            analytics.averageBySelfAssessment,
+        );
+        response.averageByTeam = this.round(analytics.averageByTeam);
+        response.averageByOther = this.round(analytics.averageByOther);
+        response.deltaByTeam = this.round(analytics.deltaByTeam);
+        response.deltaByOther = this.round(analytics.deltaByOther);
         return response;
     }
 
@@ -122,12 +126,13 @@ export class ReportingHttpMapper {
         const response = new CompetenceSummaryResponse();
         response.competenceId = analytics.competenceId ?? 0;
         response.competenceTitle = analytics.competenceTitle ?? null;
-        response.averageBySelfAssessment =
-            analytics.averageBySelfAssessment ?? null;
-        response.averageByTeam = analytics.averageByTeam ?? null;
-        response.averageByOther = analytics.averageByOther ?? null;
-        response.deltaByTeam = analytics.deltaByTeam ?? null;
-        response.deltaByOther = analytics.deltaByOther ?? null;
+        response.averageBySelfAssessment = this.round(
+            analytics.averageBySelfAssessment,
+        );
+        response.averageByTeam = this.round(analytics.averageByTeam);
+        response.averageByOther = this.round(analytics.averageByOther);
+        response.deltaByTeam = this.round(analytics.deltaByTeam);
+        response.deltaByOther = this.round(analytics.deltaByOther);
         return response;
     }
 
@@ -147,16 +152,33 @@ export class ReportingHttpMapper {
         }
 
         const response = new CompetenceSummaryTotalsResponse();
-        response.averageBySelfAssessment =
-            report.totalAverageCompetenceBySelfAssessment ?? null;
-        response.averageByTeam = report.totalAverageCompetenceByTeam ?? null;
-        response.averageByOther = report.totalAverageCompetenceByOthers ?? null;
-        response.percentageBySelfAssessment =
-            report.totalCompetencePercentageBySelfAssessment ?? null;
-        response.percentageByTeam =
-            report.totalCompetencePercentageByTeam ?? null;
-        response.percentageByOther =
-            report.totalCompetencePercentageByOthers ?? null;
+        response.averageBySelfAssessment = this.round(
+            report.totalAverageCompetenceBySelfAssessment,
+        );
+        response.averageByTeam = this.round(
+            report.totalAverageCompetenceByTeam,
+        );
+        response.averageByOther = this.round(
+            report.totalAverageCompetenceByOthers,
+        );
+        response.percentageBySelfAssessment = this.round(
+            report.totalCompetencePercentageBySelfAssessment,
+        );
+        response.percentageByTeam = this.round(
+            report.totalCompetencePercentageByTeam,
+        );
+        response.percentageByOther = this.round(
+            report.totalCompetencePercentageByOthers,
+        );
         return response;
+    }
+
+    private static round(
+        value: Decimal | number | null | undefined,
+    ): number | null {
+        if (value === null || value === undefined) return null;
+        const decimalValue =
+            value instanceof Decimal ? value : new Decimal(value);
+        return Number(decimalValue.toDecimalPlaces(4).toFixed(4));
     }
 }

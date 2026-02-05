@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import Decimal from 'decimal.js';
 import { PrismaService } from 'src/database/prisma.service';
 import {
     REPORT_REPOSITORY,
@@ -43,26 +44,39 @@ export class ReportRepository implements ReportRepositoryPort {
                 reviewId: domain.reviewId,
                 cycleId: domain.cycleId,
                 respondentCount: domain.respondentCount,
-                turnoutOfTeam: domain.turnoutOfTeam,
-                turnoutOfOther: domain.turnoutOfOther,
-                totalAverageBySelfAssessment:
+                turnoutOfTeam: this.toDecimalString(domain.turnoutOfTeam),
+                turnoutOfOther: this.toDecimalString(domain.turnoutOfOther),
+                totalAverageBySelfAssessment: this.toDecimalString(
                     domain.totalAverageBySelfAssessment,
-                totalAverageByTeam: domain.totalAverageByTeam,
-                totalAverageByOthers: domain.totalAverageByOthers,
-                totalDeltaByTeam: domain.totalDeltaByTeam,
-                totalDeltaByOthers: domain.totalDeltaByOthers,
-                totalAverageCompetenceBySelfAssessment:
+                ),
+                totalAverageByTeam: this.toDecimalString(
+                    domain.totalAverageByTeam,
+                ),
+                totalAverageByOthers: this.toDecimalString(
+                    domain.totalAverageByOthers,
+                ),
+                totalDeltaByTeam: this.toDecimalString(domain.totalDeltaByTeam),
+                totalDeltaByOthers: this.toDecimalString(
+                    domain.totalDeltaByOthers,
+                ),
+                totalAverageCompetenceBySelfAssessment: this.toDecimalString(
                     domain.totalAverageCompetenceBySelfAssessment,
-                totalAverageCompetenceByTeam:
+                ),
+                totalAverageCompetenceByTeam: this.toDecimalString(
                     domain.totalAverageCompetenceByTeam,
-                totalAverageCompetenceByOthers:
+                ),
+                totalAverageCompetenceByOthers: this.toDecimalString(
                     domain.totalAverageCompetenceByOthers,
-                totalCompetencePercentageBySelfAssessment:
+                ),
+                totalCompetencePercentageBySelfAssessment: this.toDecimalString(
                     domain.totalCompetencePercentageBySelfAssessment,
-                totalCompetencePercentageByTeam:
+                ),
+                totalCompetencePercentageByTeam: this.toDecimalString(
                     domain.totalCompetencePercentageByTeam,
-                totalCompetencePercentageByOthers:
+                ),
+                totalCompetencePercentageByOthers: this.toDecimalString(
                     domain.totalCompetencePercentageByOthers,
+                ),
             },
             include: {
                 analytics: { orderBy: { id: 'asc' } },
@@ -71,5 +85,12 @@ export class ReportRepository implements ReportRepositoryPort {
         });
 
         return ReportingMapper.toReportDomain(created);
+    }
+
+    private toDecimalString(
+        value: Decimal.Value | null | undefined,
+    ): string | undefined {
+        if (value === null || value === undefined) return undefined;
+        return new Decimal(value).toDecimalPlaces(4).toFixed(4);
     }
 }

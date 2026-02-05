@@ -11,6 +11,7 @@ import {
     EntityType,
     RespondentCategory,
 } from '@intra/shared-kernel';
+import Decimal from 'decimal.js';
 import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
 import { ReportCommentDomain } from '../../domain/report-comment.domain';
 import { ReportDomain } from '../../domain/report.domain';
@@ -83,11 +84,30 @@ export class ReportingMapper {
             competenceId: analytics.competenceId ?? undefined,
             competenceTitle: analytics.competenceTitle ?? undefined,
             averageBySelfAssessment:
-                analytics.averageBySelfAssessment ?? undefined,
-            averageByTeam: analytics.averageByTeam ?? undefined,
-            averageByOther: analytics.averageByOther ?? undefined,
-            deltaByTeam: analytics.deltaByTeam ?? undefined,
-            deltaByOther: analytics.deltaByOther ?? undefined,
+                analytics.averageBySelfAssessment !== null &&
+                analytics.averageBySelfAssessment !== undefined
+                    ? this.toDecimalString(analytics.averageBySelfAssessment)
+                    : undefined,
+            averageByTeam:
+                analytics.averageByTeam !== null &&
+                analytics.averageByTeam !== undefined
+                    ? this.toDecimalString(analytics.averageByTeam)
+                    : undefined,
+            averageByOther:
+                analytics.averageByOther !== null &&
+                analytics.averageByOther !== undefined
+                    ? this.toDecimalString(analytics.averageByOther)
+                    : undefined,
+            deltaByTeam:
+                analytics.deltaByTeam !== null &&
+                analytics.deltaByTeam !== undefined
+                    ? this.toDecimalString(analytics.deltaByTeam)
+                    : undefined,
+            deltaByOther:
+                analytics.deltaByOther !== null &&
+                analytics.deltaByOther !== undefined
+                    ? this.toDecimalString(analytics.deltaByOther)
+                    : undefined,
         };
     }
 
@@ -133,5 +153,9 @@ export class ReportingMapper {
                     : this.toPrismaCommentSentiment(comment.commentSentiment!),
             numberOfMentions: comment.numberOfMentions,
         };
+    }
+
+    private static toDecimalString(value: Decimal.Value): string {
+        return new Decimal(value).toDecimalPlaces(4).toFixed(4);
     }
 }
