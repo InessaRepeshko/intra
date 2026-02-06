@@ -4,6 +4,8 @@ export type ClusterScoreAnalyticsProps = {
     id?: number;
     cycleId: number;
     clusterId: number;
+    lowerBound: Decimal.Value;
+    upperBound: Decimal.Value;
     employeesCount: number;
     minScore: Decimal.Value;
     maxScore: Decimal.Value;
@@ -16,6 +18,8 @@ export class ClusterScoreAnalyticsDomain {
     readonly id?: number;
     readonly cycleId: number;
     readonly clusterId: number;
+    readonly lowerBound: Decimal;
+    readonly upperBound: Decimal;
     readonly employeesCount: number;
     readonly minScore: Decimal;
     readonly maxScore: Decimal;
@@ -27,6 +31,8 @@ export class ClusterScoreAnalyticsDomain {
         this.id = props.id;
         this.cycleId = props.cycleId;
         this.clusterId = props.clusterId;
+        this.lowerBound = new Decimal(props.lowerBound);
+        this.upperBound = new Decimal(props.upperBound);
         this.employeesCount = props.employeesCount;
         this.minScore = new Decimal(props.minScore);
         this.maxScore = new Decimal(props.maxScore);

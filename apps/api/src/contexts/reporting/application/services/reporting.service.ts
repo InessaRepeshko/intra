@@ -14,6 +14,10 @@ import {
     AnswerRepositoryPort,
 } from '../../../feedback360/application/ports/answer.repository.port';
 import {
+    CLUSTER_SCORE_REPOSITORY,
+    ClusterScoreRepositoryPort,
+} from '../../../feedback360/application/ports/cluster-score.repository.port';
+import {
     RESPONDENT_REPOSITORY,
     RespondentRepositoryPort,
 } from '../../../feedback360/application/ports/respondent.repository.port';
@@ -26,8 +30,15 @@ import {
     ReviewRepositoryPort,
 } from '../../../feedback360/application/ports/review.repository.port';
 import { AnswerDomain } from '../../../feedback360/domain/answer.domain';
+import { ClusterScoreDomain } from '../../../feedback360/domain/cluster-score.domain';
 import { RespondentDomain } from '../../../feedback360/domain/respondent.domain';
 import { ReviewQuestionRelationDomain } from '../../../feedback360/domain/review-question-relation.domain';
+import { ReviewDomain } from '../../../feedback360/domain/review.domain';
+import {
+    CLUSTER_REPOSITORY,
+    ClusterRepositoryPort,
+} from '../../../library/application/ports/cluster.repository.port';
+import { ClusterDomain } from '../../../library/domain/cluster.domain';
 import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
 import { ReportDomain } from '../../domain/report.domain';
 import {
@@ -62,6 +73,10 @@ export class ReportingService {
         private readonly reviewQuestionRelations: ReviewQuestionRelationRepositoryPort,
         @Inject(REVIEW_REPOSITORY)
         private readonly reviews: ReviewRepositoryPort,
+        @Inject(CLUSTER_REPOSITORY)
+        private readonly clusters: ClusterRepositoryPort,
+        @Inject(CLUSTER_SCORE_REPOSITORY)
+        private readonly clusterScores: ClusterScoreRepositoryPort,
     ) {}
 
     async getById(id: number): Promise<ReportDomain> {
@@ -174,6 +189,13 @@ export class ReportingService {
             ...competenceAnalytics,
         ]);
 
+        await this.saveClusterScoresForCompetences(
+            competenceAnalytics,
+            answers,
+            relations,
+            review,
+        );
+
         this.logger.debug(
             `Generated ${questionAnalytics.length} question analytics and ${competenceAnalytics.length} competence analytics`,
         );
@@ -194,6 +216,130 @@ export class ReportingService {
         });
 
         return fullReport;
+    }
+
+    /**
+     * Saves the cluster scores for the competences.
+     * @param competenceAnalytics The competence analytics.
+     * @param answers The answers.
+     * @param relations The review-question relations.
+     * @param review The review.
+     */
+    private async saveClusterScoresForCompetences(
+        competenceAnalytics: ReportAnalyticsDomain[],
+        answers: AnswerDomain[],
+        relations: ReviewQuestionRelationDomain[],
+        review: ReviewDomain,
+    ): Promise<void> {
+        const questionToCompetence = new Map<number, number>();
+        for (const relation of relations) {
+            if (
+                relation.answerType === AnswerType.NUMERICAL_SCALE &&
+                relation.competenceId !== null &&
+                relation.competenceId !== undefined
+            ) {
+                questionToCompetence.set(
+                    relation.questionId,
+                    relation.competenceId,
+                );
+            }
+        }
+
+        const competenceAnswerCounts = new Map<number, number>();
+        for (const answer of answers) {
+            if (
+                answer.respondentCategory === RespondentCategory.SELF_ASSESSMENT
+            )
+                continue;
+            const competenceId = questionToCompetence.get(answer.questionId);
+            if (competenceId === undefined) continue;
+            if (
+                answer.numericalValue === null ||
+                answer.numericalValue === undefined
+            )
+                continue;
+            const current = competenceAnswerCounts.get(competenceId) ?? 0;
+            competenceAnswerCounts.set(competenceId, current + 1);
+        }
+
+        for (const analytic of competenceAnalytics) {
+            const competenceId = analytic.competenceId;
+            if (competenceId === null || competenceId === undefined) continue;
+
+            const finalScore = this.calculateCompetenceFinalScore(
+                analytic.averageByTeam ?? null,
+                analytic.averageByOther ?? null,
+            );
+            const roundedScore = this.roundDecimal(finalScore);
+            if (roundedScore === null) continue;
+
+            const clusters = await this.clusters.search({ competenceId });
+            if (!clusters.length) continue;
+
+            const matchedCluster = this.findMatchingCluster(
+                roundedScore,
+                clusters,
+            );
+            if (!matchedCluster) {
+                this.logger.debug(
+                    `Cluster not found for competence ${competenceId} and score ${roundedScore.toFixed(4)}`,
+                );
+                continue;
+            }
+
+            const answersCount = competenceAnswerCounts.get(competenceId) ?? 0;
+
+            await this.clusterScores.upsert(
+                ClusterScoreDomain.create({
+                    cycleId: review.cycleId ?? null,
+                    clusterId: matchedCluster.id!,
+                    rateeId: review.rateeId,
+                    reviewId: review.id!,
+                    score: roundedScore,
+                    answersCount,
+                }),
+            );
+        }
+    }
+
+    /**
+     * Calculates the final score for a competence.
+     * @param averageByTeam The average score by team.
+     * @param averageByOther The average score by other.
+     * @returns The final score.
+     */
+    private calculateCompetenceFinalScore(
+        averageByTeam: Decimal | null,
+        averageByOther: Decimal | null,
+    ): Decimal | null {
+        return this.calculateAverage([averageByTeam, averageByOther]);
+    }
+
+    /**
+     * Finds the matching cluster for a score.
+     * @param score The score to find the cluster for.
+     * @param clusters The clusters to search in.
+     * @returns The matching cluster.
+     */
+    private findMatchingCluster(
+        score: Decimal,
+        clusters: ClusterDomain[],
+    ): ClusterDomain | null {
+        for (const cluster of clusters) {
+            const lower = new Decimal(cluster.lowerBound);
+            const upper = new Decimal(cluster.upperBound);
+            const isMaxUpper = upper.equals(
+                new Decimal(REPORT_ANALYTICS_CONSTRAINTS.SCORE.MAX),
+            );
+            const meetsLower = score.greaterThanOrEqualTo(lower);
+            const meetsUpper = isMaxUpper
+                ? score.lessThanOrEqualTo(upper)
+                : score.lessThan(upper);
+            if (meetsLower && meetsUpper) {
+                return cluster;
+            }
+        }
+        return null;
     }
 
     /**

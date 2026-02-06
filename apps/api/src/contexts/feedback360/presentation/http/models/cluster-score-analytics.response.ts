@@ -34,6 +34,28 @@ export class ClusterScoreAnalyticsResponse implements ClusterScoreAnalyticsDto {
     clusterId!: number;
 
     @ApiProperty({
+        example: 5,
+        description: 'Lower bound',
+        type: 'number',
+        required: true,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+    })
+    @Expose()
+    lowerBound!: number;
+
+    @ApiProperty({
+        example: 5,
+        description: 'Upper bound',
+        type: 'number',
+        required: true,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+    })
+    @Expose()
+    upperBound!: number;
+
+    @ApiProperty({
         example: 8,
         description: 'Number of employees in this cluster',
         type: 'number',

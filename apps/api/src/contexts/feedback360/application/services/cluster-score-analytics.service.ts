@@ -1,4 +1,5 @@
 import {
+    CLUSTER_SCORE_ANALYTICS_CONSTRAINTS,
     ClusterScoreAnalyticsSearchQuery,
     UpdateClusterScoreAnalyticsPayload,
     UpsertClusterScoreAnalyticsPayload,
@@ -32,13 +33,18 @@ export class ClusterScoreAnalyticsService {
         const minScore = new Decimal(payload.minScore);
         const maxScore = new Decimal(payload.maxScore);
         const averageScore = new Decimal(payload.averageScore);
+        const lowerBound = new Decimal(payload.lowerBound);
+        const upperBound = new Decimal(payload.upperBound);
 
+        await this.validateBounds(lowerBound, upperBound);
         await this.validateScores(minScore, maxScore, averageScore);
 
         const domain = ClusterScoreAnalyticsDomain.create({
             cycleId: payload.cycleId,
             clusterId: payload.clusterId,
             employeesCount: payload.employeesCount,
+            lowerBound,
+            upperBound,
             minScore,
             maxScore,
             averageScore,
@@ -117,6 +123,27 @@ export class ClusterScoreAnalyticsService {
         if (avg.lt(min) || avg.gt(max)) {
             throw new BadRequestException(
                 'Average score must be between min and max scores',
+            );
+        }
+    }
+
+    private async validateBounds(
+        lower: Decimal,
+        upper: Decimal,
+    ): Promise<void> {
+        if (lower.lt(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN)) {
+            throw new BadRequestException(
+                'Lower bound must be greater than or equal to min score',
+            );
+        }
+        if (upper.gt(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX)) {
+            throw new BadRequestException(
+                'Upper bound must be less than or equal to max score',
+            );
+        }
+        if (lower.gt(upper)) {
+            throw new BadRequestException(
+                'Lower bound must be less than or equal to upper bound',
             );
         }
     }

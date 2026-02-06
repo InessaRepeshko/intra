@@ -63,7 +63,9 @@ export class ClusterScoresController {
         @Query() query: ClusterScoreQueryDto,
     ): Promise<ClusterScoreResponse[]> {
         const scores = await this.reviews.listClusterScores(query);
-        return scores.map(Feedback360HttpMapper.toClusterScoreResponse);
+        return scores.map((score) =>
+            Feedback360HttpMapper.toClusterScoreResponse(score),
+        );
     }
 
     @Delete(':id')

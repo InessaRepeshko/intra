@@ -149,7 +149,7 @@ export class Feedback360HttpMapper {
         view.clusterId = domain.clusterId;
         view.rateeId = domain.rateeId;
         view.reviewId = domain.reviewId ?? null;
-        view.score = this.toRoundedNumber(domain.score)!;
+        view.score = Feedback360HttpMapper.toRoundedNumber(domain.score)!;
         view.answersCount = domain.answersCount;
         view.createdAt = domain.createdAt!;
         view.updatedAt = domain.updatedAt!;
@@ -163,10 +163,18 @@ export class Feedback360HttpMapper {
         view.id = domain.id!;
         view.cycleId = domain.cycleId;
         view.clusterId = domain.clusterId;
+        view.lowerBound = Feedback360HttpMapper.toRoundedNumber(
+            domain.lowerBound,
+        )!;
+        view.upperBound = Feedback360HttpMapper.toRoundedNumber(
+            domain.upperBound,
+        )!;
         view.employeesCount = domain.employeesCount;
-        view.minScore = this.toRoundedNumber(domain.minScore)!;
-        view.maxScore = this.toRoundedNumber(domain.maxScore)!;
-        view.averageScore = this.toRoundedNumber(domain.averageScore)!;
+        view.minScore = Feedback360HttpMapper.toRoundedNumber(domain.minScore)!;
+        view.maxScore = Feedback360HttpMapper.toRoundedNumber(domain.maxScore)!;
+        view.averageScore = Feedback360HttpMapper.toRoundedNumber(
+            domain.averageScore,
+        )!;
         view.createdAt = domain.createdAt!;
         view.updatedAt = domain.updatedAt!;
         return view;

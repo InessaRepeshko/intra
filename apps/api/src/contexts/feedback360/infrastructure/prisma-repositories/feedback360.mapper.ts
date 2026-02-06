@@ -177,6 +177,8 @@ export class Feedback360Mapper {
             cycleId: analytics.cycleId,
             clusterId: analytics.clusterId,
             employeesCount: analytics.employeesCount,
+            lowerBound: new Decimal(analytics.lowerBound),
+            upperBound: new Decimal(analytics.upperBound),
             minScore: new Decimal(analytics.minScore),
             maxScore: new Decimal(analytics.maxScore),
             averageScore: new Decimal(analytics.averageScore),

@@ -55,6 +55,8 @@ export class ClusterScoreAnalyticsController {
         const saved = await this.service.upsert({
             cycleId: dto.cycleId,
             clusterId: dto.clusterId,
+            lowerBound: dto.lowerBound,
+            upperBound: dto.upperBound,
             employeesCount: dto.employeesCount,
             minScore: dto.minScore,
             maxScore: dto.maxScore,
@@ -77,7 +79,9 @@ export class ClusterScoreAnalyticsController {
         @Query() query: ClusterScoreAnalyticsQueryDto,
     ): Promise<ClusterScoreAnalyticsResponse[]> {
         const items = await this.service.search(query);
-        return items.map(Feedback360HttpMapper.toClusterScoreAnalyticsResponse);
+        return items.map((item) =>
+            Feedback360HttpMapper.toClusterScoreAnalyticsResponse(item),
+        );
     }
 
     @Get(':id')

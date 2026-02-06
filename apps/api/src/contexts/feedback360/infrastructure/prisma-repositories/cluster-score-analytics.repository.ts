@@ -35,6 +35,8 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
             create: {
                 cycleId: analytics.cycleId,
                 clusterId: analytics.clusterId,
+                lowerBound: this.toDecimalString(analytics.lowerBound),
+                upperBound: this.toDecimalString(analytics.upperBound),
                 employeesCount: analytics.employeesCount,
                 minScore: this.toDecimalString(analytics.minScore),
                 maxScore: this.toDecimalString(analytics.maxScore),

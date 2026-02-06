@@ -8,8 +8,6 @@ export default async function seedClusterScoreAnalytics(
     reviewMap: ReviewMap,
     cycleMap: CycleMap,
 ) {
-    // console.log('🔄 Seeding Cycle Cluster Analytics...');
-
     // Get all clusters (library templates)
     const clusters = await prisma.cluster.findMany({
         include: {
@@ -86,6 +84,8 @@ export default async function seedClusterScoreAnalytics(
                         cycleId: cycle.id,
                         clusterId: cluster.id,
                         employeesCount,
+                        lowerBound: cluster.lowerBound,
+                        upperBound: cluster.upperBound,
                         minScore: minScore.toDecimalPlaces(4).toString(),
                         maxScore: maxScore.toDecimalPlaces(4).toString(),
                         averageScore: averageScore
@@ -93,10 +93,7 @@ export default async function seedClusterScoreAnalytics(
                             .toString(),
                     },
                 });
-                // console.log(`✅ Created analytics for ${cluster.competence.code} (${cluster.lowerBound}-${cluster.upperBound}) in cycle "${cycle.title}": ${employeesCount} employees`);
             }
         }
     }
-
-    // console.log('✅ Cycle Cluster Analytics seeded successfully');
 }

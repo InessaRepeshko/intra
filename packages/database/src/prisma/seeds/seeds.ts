@@ -1,8 +1,6 @@
 import { PrismaClient } from '@intra/database';
 import { PrismaPg } from '@prisma/adapter-pg';
 import seedAnswers from './feedback360/answers';
-import seedClusterScoreAnalytics from './feedback360/cluster-score-analytics';
-import seedClusterScores from './feedback360/cluster-scores';
 import seedCycles from './feedback360/cycles';
 import seedQuestions from './feedback360/questions';
 import seedRespondents from './feedback360/respondents';
@@ -99,11 +97,11 @@ async function main() {
     await seedAnswers(prisma, reviews);
     console.info('💬 Answers');
 
-    await seedClusterScores(prisma, reviews, cycles);
-    console.info('📊 Cluster scores');
+    // await seedClusterScores(prisma, reviews, cycles);
+    // console.info('📊 Cluster scores');
 
-    await seedClusterScoreAnalytics(prisma, reviews, cycles);
-    console.info('📈 Cluster score analytics');
+    // await seedClusterScoreAnalytics(prisma, reviews, cycles);
+    // console.info('📈 Cluster score analytics');
 
     await seedStaticReview(prisma);
     console.info('🗿 Static review');

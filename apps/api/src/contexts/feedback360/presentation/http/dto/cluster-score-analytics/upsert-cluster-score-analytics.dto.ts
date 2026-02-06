@@ -27,6 +27,40 @@ export class UpsertClusterScoreAnalyticsDto {
     clusterId!: number;
 
     @ApiProperty({
+        example: 5,
+        description: 'Lower bound',
+        type: 'number',
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        required: true,
+    })
+    @ToOptionalInt({
+        min: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        max: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+    })
+    @IsNumber()
+    @Min(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN)
+    @Max(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX)
+    lowerBound!: number;
+
+    @ApiProperty({
+        example: 5,
+        description: 'Upper bound',
+        type: 'number',
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+        required: true,
+    })
+    @ToOptionalInt({
+        min: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        max: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+    })
+    @IsNumber()
+    @Min(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN)
+    @Max(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX)
+    upperBound!: number;
+
+    @ApiProperty({
         example: 42,
         description: 'Number of employees in this cluster',
         type: 'number',

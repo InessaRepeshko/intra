@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { DatabaseModule } from 'src/database/database.module';
 import { Feedback360Module } from '../feedback360/feedback360.module';
+import { CLUSTER_REPOSITORY } from '../library/application/ports/cluster.repository.port';
+import { ClusterRepository } from '../library/infrastructure/prisma-repositories/cluster.repository';
 import { ReviewStageListener } from './application/listeners/review-stage.listener';
 import { REPORT_ANALYTICS_REPOSITORY } from './application/ports/report-analytics.repository.port';
 import { REPORT_COMMENT_REPOSITORY } from './application/ports/report-comment.repository.port';
@@ -33,6 +35,7 @@ import { ReportingController } from './presentation/http/controllers/reporting.c
         ReportRepository,
         ReportAnalyticsRepository,
         ReportCommentRepository,
+        ClusterRepository,
         { provide: REPORT_REPOSITORY, useExisting: ReportRepository },
         {
             provide: REPORT_ANALYTICS_REPOSITORY,
@@ -42,12 +45,14 @@ import { ReportingController } from './presentation/http/controllers/reporting.c
             provide: REPORT_COMMENT_REPOSITORY,
             useExisting: ReportCommentRepository,
         },
+        { provide: CLUSTER_REPOSITORY, useExisting: ClusterRepository },
     ],
     exports: [
         ReportingService,
         ReportAnalyticsService,
         ReportCommentService,
         TextAnswerService,
+        CLUSTER_REPOSITORY,
     ],
 })
 export class ReportingModule {}

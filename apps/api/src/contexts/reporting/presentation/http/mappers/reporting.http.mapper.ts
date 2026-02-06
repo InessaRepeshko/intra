@@ -129,14 +129,14 @@ export class ReportingHttpMapper {
         report: ReportDomain,
     ): QuestionSummaryTotalsResponse | null {
         const hasValues =
-            report.competenceTotAvgBySelf !== null ||
-            report.competenceTotAvgByTeam !== null ||
-            report.competenceTotAvgByOthers !== null ||
-            report.competenceTotPctBySelf !== null ||
-            report.competenceTotPctByTeam !== null ||
-            report.competenceTotPctByOthers !== null ||
-            report.competenceTotDeltaPctByTeam !== null ||
-            report.competenceTotDeltaPctByOthers !== null;
+            report.questionTotAvgBySelf !== null ||
+            report.questionTotAvgByTeam !== null ||
+            report.questionTotAvgByOthers !== null ||
+            report.questionTotPctBySelf !== null ||
+            report.questionTotPctByTeam !== null ||
+            report.questionTotPctByOthers !== null ||
+            report.questionTotDeltaPctByTeam !== null ||
+            report.questionTotDeltaPctByOthers !== null;
 
         if (!hasValues) {
             return null;
@@ -144,22 +144,20 @@ export class ReportingHttpMapper {
 
         const response = new QuestionSummaryTotalsResponse();
         response.averageBySelfAssessment = this.round(
-            report.competenceTotAvgBySelf,
+            report.questionTotAvgBySelf,
         );
-        response.averageByTeam = this.round(report.competenceTotAvgByTeam);
-        response.averageByOther = this.round(report.competenceTotAvgByOthers);
+        response.averageByTeam = this.round(report.questionTotAvgByTeam);
+        response.averageByOther = this.round(report.questionTotAvgByOthers);
         response.percentageBySelfAssessment = this.round(
-            report.competenceTotPctBySelf,
+            report.questionTotPctBySelf,
         );
-        response.percentageByTeam = this.round(report.competenceTotPctByTeam);
-        response.percentageByOther = this.round(
-            report.competenceTotPctByOthers,
-        );
+        response.percentageByTeam = this.round(report.questionTotPctByTeam);
+        response.percentageByOther = this.round(report.questionTotPctByOthers);
         response.deltaPercentageByTeam = this.round(
-            report.competenceTotDeltaPctByTeam,
+            report.questionTotDeltaPctByTeam,
         );
         response.deltaPercentageByOther = this.round(
-            report.competenceTotDeltaPctByOthers,
+            report.questionTotDeltaPctByOthers,
         );
         return response;
     }
