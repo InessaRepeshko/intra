@@ -9,6 +9,7 @@ import seedRespondents from './feedback360/respondents';
 import seedReviewQuestionRelations from './feedback360/review-question-relations';
 import seedReviewers from './feedback360/reviewers';
 import seedReviews from './feedback360/reviews';
+import seedStaticReview from './feedback360/static-review';
 import seedUserRoles from './identity/user-roles';
 import seedUsers from './identity/users';
 import seedClusters from './library/clusters';
@@ -103,6 +104,9 @@ async function main() {
 
     await seedClusterScoreAnalytics(prisma, reviews, cycles);
     console.info('📈 Cluster score analytics');
+
+    await seedStaticReview(prisma);
+    console.info('🗿 Static review');
 }
 
 main()

@@ -85,8 +85,10 @@ export class ReportingService {
     }
 
     /**
-     * Generates a comprehensive report for a review
-     * Calculates respondent counts and derives analytics from answers
+     * Generates a comprehensive report for a review.
+     * Calculates respondent counts and derives analytics from answers.
+     * @param reviewId The ID of the review to generate a report for.
+     * @returns The generated report.
      */
     async generateReportForReview(reviewId: number): Promise<ReportDomain> {
         this.logger.debug(`Starting report generation for review ${reviewId}`);
@@ -195,7 +197,10 @@ export class ReportingService {
     }
 
     /**
-     * Calculates average of decimals, returns null if array is empty
+     * Calculates average of decimals, returns null if array is empty.
+     * Formula: sum / count
+     * @param numbers The array of numbers to calculate the average of.
+     * @returns The average of the numbers as a Decimal, or null if the array is empty.
      */
     private calculateAverage(
         numbers: (Decimal | number | null | undefined)[],
@@ -213,6 +218,8 @@ export class ReportingService {
 
     /**
      * Normalizes decimal scale to 4 digits (or null)
+     * @param value The value to normalize.
+     * @returns The normalized value.
      */
     private roundDecimal(
         value: Decimal | number | null | undefined,
@@ -223,6 +230,13 @@ export class ReportingService {
         return decimalValue.toDecimalPlaces(4);
     }
 
+    /**
+     * Calculates the turnout percentage for a specific category of respondents.
+     * Formula: (completed / total) * 100
+     * @param respondents The list of all respondents.
+     * @param category The category to calculate turnout for.
+     * @returns The turnout percentage as a Decimal, or null if no respondents in category.
+     */
     private calculateTurnout(
         respondents: RespondentDomain[],
         category: RespondentCategory,
@@ -245,6 +259,13 @@ export class ReportingService {
         return this.roundDecimal(turnout);
     }
 
+    /**
+     * Builds the analytics payload for a report, calculating averages and percentages for questions and competences.
+     * @param answers The answers to calculate analytics from.
+     * @param relations The review-question relations to determine allowed question IDs.
+     * @param maxScore The maximum score for the report.
+     * @returns An object containing question analytics, competence analytics, and summary totals.
+     */
     private buildAnalyticsPayload(
         answers: AnswerDomain[],
         relations: ReviewQuestionRelationDomain[],
@@ -312,12 +333,10 @@ export class ReportingService {
             const deltaPercentageByTeam = this.calculateDeltaPercent(
                 averageBySelf,
                 averageByTeam,
-                maxScore,
             );
             const deltaPercentageByOther = this.calculateDeltaPercent(
                 averageBySelf,
                 averageByOther,
-                maxScore,
             );
 
             questionAnalytics.push(
@@ -413,12 +432,10 @@ export class ReportingService {
             const deltaPercentageByTeam = this.calculateDeltaPercent(
                 averageBySelf,
                 averageByTeam,
-                maxScore,
             );
             const deltaPercentageByOther = this.calculateDeltaPercent(
                 averageBySelf,
                 averageByOther,
-                maxScore,
             );
 
             competenceAnalytics.push(
@@ -465,6 +482,12 @@ export class ReportingService {
         };
     }
 
+    /**
+     * Groups answers by question ID, filtering for numerical scale answers only.
+     * @param answers The answers to group.
+     * @param relations The review-question relations to determine allowed question IDs.
+     * @returns A map of question IDs to arrays of answers.
+     */
     private groupAnswersByQuestion(
         answers: AnswerDomain[],
         relations: ReviewQuestionRelationDomain[],
@@ -489,6 +512,12 @@ export class ReportingService {
         return grouped;
     }
 
+    /**
+     * Calculates the average score for a specific category of respondents.
+     * @param answers The answers to calculate the average from.
+     * @param category The category of respondents.
+     * @returns The average score for the category.
+     */
     private calculateAverageByCategory(
         answers: AnswerDomain[],
         category: RespondentCategory,
@@ -504,18 +533,30 @@ export class ReportingService {
         return this.calculateAverage(values);
     }
 
+    /**
+     * Calculates the percentage difference between two values by subtracting the comparison value from the base value and dividing by the base value.
+     * Formula: ((base - comparison) / base) * 100
+     * @param comparison The comparison value.
+     * @param base The base value.
+     * @returns The percentage difference.
+     */
     private calculateDeltaPercent(
-        base: Decimal | null,
         comparison: Decimal | null,
-        maxScore: Decimal,
+        base: Decimal | null,
     ): Decimal | null {
-        if (base === null || comparison === null || maxScore.isZero()) {
+        if (base === null || comparison === null) {
             return null;
         }
-        const delta = base.minus(comparison).dividedBy(maxScore).times(100);
+        const delta = base.minus(comparison).dividedBy(base).times(100);
         return this.roundDecimal(delta);
     }
 
+    /**
+     * Calculates the summary totals for a competence.
+     * @param analytics The analytics for the competence.
+     * @param maxScore The maximum score.
+     * @returns The summary totals.
+     */
     private calculateCompetenceSummaryTotals(
         analytics: ReportAnalyticsDomain[],
         maxScore: Decimal,
@@ -546,12 +587,10 @@ export class ReportingService {
         const deltaPercentageByTeam = this.calculateDeltaPercent(
             averageBySelf,
             averageByTeam,
-            maxScore,
         );
         const deltaPercentageByOther = this.calculateDeltaPercent(
             averageBySelf,
             averageByOther,
-            maxScore,
         );
         return {
             averageBySelfAssessment: this.toRoundedNumber(averageBySelf),
@@ -567,6 +606,13 @@ export class ReportingService {
         };
     }
 
+    /**
+     * Calculates the percentage of a value relative to a maximum score.
+     * Formula: (value / maxScore) * 100
+     * @param value The value to calculate the percentage of.
+     * @param maxScore The maximum score.
+     * @returns The percentage.
+     */
     private calculatePercentage(
         value: Decimal | null,
         maxScore: Decimal,
@@ -577,11 +623,24 @@ export class ReportingService {
         return this.roundDecimal(value.dividedBy(maxScore).times(100));
     }
 
+    /**
+     * Rounds a Decimal value to 4 decimal places.
+     * @param value The value to round.
+     * @returns The rounded value.
+     */
     private toRoundedNumber(value: Decimal | null): number | null {
         if (value === null) return null;
         return Number(this.roundDecimal(value)?.toFixed(4));
     }
 
+    /**
+     * Calculates the summary totals from arrays of values.
+     * @param selfValues The values for self-assessment.
+     * @param teamValues The values for team assessment.
+     * @param otherValues The values for other assessment.
+     * @param maxScore The maximum score.
+     * @returns The summary totals.
+     */
     private calculateSummaryTotalsFromValues(
         selfValues: Decimal[],
         teamValues: Decimal[],
@@ -608,12 +667,10 @@ export class ReportingService {
         const deltaPercentageByTeam = this.calculateDeltaPercent(
             averageBySelf,
             averageByTeam,
-            maxScore,
         );
         const deltaPercentageByOther = this.calculateDeltaPercent(
             averageBySelf,
             averageByOther,
-            maxScore,
         );
 
         return {
