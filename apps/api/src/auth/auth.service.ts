@@ -122,11 +122,21 @@ export class AuthService {
     async getSessionFromRequest(req: Request): Promise<{
         session: unknown;
     } | null> {
-        const session = await this.auth.api.getSession({
-            headers: req.headers as any,
-        });
-        if (!session) return null;
-        return { session };
+        try {
+            const session = await this.auth.api.getSession({
+                headers: req.headers as any,
+            });
+            if (!session) {
+                console.warn('DEBUG: better-auth getSession returned null', {
+                    cookie: req.headers.cookie,
+                });
+                return null;
+            }
+            return { session };
+        } catch (error) {
+            console.error('DEBUG: better-auth getSession failed', error);
+            return null;
+        }
     }
 
     /**

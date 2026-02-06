@@ -3913,7 +3913,7 @@
     },
     "/feedback360/cycles/{id}/force-finish": {
       "post": {
-        "operationId": "CyclesController_finish",
+        "operationId": "CyclesController_forceFinish",
         "parameters": [
           {
             "name": "id",
