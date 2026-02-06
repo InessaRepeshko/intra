@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AuthModule } from 'src/auth/auth.module';
 import { DatabaseModule } from 'src/database/database.module';
+import { IdentityModule } from '../identity/identity.module';
 import { LibraryModule } from '../library/library.module';
+import { CycleFinishedListener } from './application/listeners/cycle-finished.listener';
 import { ANSWER_REPOSITORY } from './application/ports/answer.repository.port';
 import { CLUSTER_SCORE_ANALYTICS_REPOSITORY } from './application/ports/cluster-score-analytics.repository.port';
 import { CLUSTER_SCORE_REPOSITORY } from './application/ports/cluster-score.repository.port';
@@ -39,6 +42,8 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
         ScheduleModule.forRoot(),
         DatabaseModule,
         LibraryModule,
+        AuthModule,
+        IdentityModule,
     ],
     controllers: [
         CyclesController,
@@ -48,6 +53,7 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
         ClusterScoreAnalyticsController,
     ],
     providers: [
+        CycleFinishedListener,
         CycleService,
         ReviewService,
         ReviewSchedulerService,

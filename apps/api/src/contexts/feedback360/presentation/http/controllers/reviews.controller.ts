@@ -1,4 +1,4 @@
-import { RespondentCategory } from '@intra/shared-kernel';
+import { IdentityRole, RespondentCategory } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -12,6 +12,7 @@ import {
     Post,
     Query,
     SerializeOptions,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -22,12 +23,17 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import {
     ApiCreateAndUpdateErrorResponses,
     ApiDeletionErrorResponses,
     ApiListReadErrorResponses,
     ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { ReviewService } from '../../../application/services/review.service';
 import { AnswerQueryDto } from '../dto/answers/answer-query.dto';
 import { CreateAnswerDto } from '../dto/answers/create-answer.dto';
@@ -366,9 +372,11 @@ export class ReviewController {
      * Transitions review to PREPARING_REPORT regardless of pending responses
      */
     @Post(':id/force-complete')
+    @UseGuards(AuthSessionGuard, RolesGuard)
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR)
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: 'Force complete Review (HR only)',
+        summary: 'Force complete Review (HR/Admin only)',
         description:
             'Manually transition review to PREPARING_REPORT stage, even if some responses are pending',
     })
@@ -378,9 +386,15 @@ export class ReviewController {
         description: 'Review stage changed to PREPARING_REPORT',
     })
     @ApiCreateAndUpdateErrorResponses()
-    async forceComplete(@Param('id') id: string): Promise<{ message: string }> {
-        // TODO: Add HR role guard when authentication is implemented
-        await this.reviews.forceCompleteReview(Number(id));
+    async forceComplete(
+        @Param('id') id: string,
+        @CurrentUser() user: UserDomain,
+    ): Promise<{ message: string }> {
+        const actorId = user.id!;
+        const actorName = user.fullName!;
+
+        await this.reviews.forceCompleteReview(Number(id), actorId, actorName);
+
         return {
             message: `Review ${id} has been force-completed and moved to PREPARING_REPORT stage`,
         };

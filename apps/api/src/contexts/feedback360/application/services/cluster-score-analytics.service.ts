@@ -11,11 +11,16 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import Decimal from 'decimal.js';
+import { ClusterService } from '../../../library/application/services/cluster.service';
 import { ClusterScoreAnalyticsDomain } from '../../domain/cluster-score-analytics.domain';
 import {
     CLUSTER_SCORE_ANALYTICS_REPOSITORY,
     ClusterScoreAnalyticsRepositoryPort,
 } from '../ports/cluster-score-analytics.repository.port';
+import {
+    CLUSTER_SCORE_REPOSITORY,
+    ClusterScoreRepositoryPort,
+} from '../ports/cluster-score.repository.port';
 import { CycleService } from './cycle.service';
 
 @Injectable()
@@ -23,7 +28,10 @@ export class ClusterScoreAnalyticsService {
     constructor(
         @Inject(CLUSTER_SCORE_ANALYTICS_REPOSITORY)
         private readonly analytics: ClusterScoreAnalyticsRepositoryPort,
+        @Inject(CLUSTER_SCORE_REPOSITORY)
+        private readonly clusterScores: ClusterScoreRepositoryPort,
         private readonly cycles: CycleService,
+        private readonly clusters: ClusterService,
     ) {}
 
     async upsert(
@@ -108,6 +116,55 @@ export class ClusterScoreAnalyticsService {
     async delete(id: number): Promise<void> {
         await this.getById(id);
         await this.analytics.deleteById(id);
+    }
+
+    async generateAnalyticsForCycle(cycleId: number): Promise<void> {
+        await this.cycles.getById(cycleId);
+
+        const clusters = await this.clusters.search({});
+
+        for (const cluster of clusters) {
+            if (!cluster.id) {
+                continue;
+            }
+
+            const clusterScores = await this.clusterScores.list({
+                cycleId,
+                clusterId: cluster.id,
+            });
+
+            if (!clusterScores.length) {
+                continue;
+            }
+
+            const scores = clusterScores.map((cs) => new Decimal(cs.score));
+            const minScore = Decimal.min(...scores).toDecimalPlaces(4);
+            const maxScore = Decimal.max(...scores).toDecimalPlaces(4);
+            const averageScore = scores
+                .reduce((a, b) => a.plus(b), new Decimal(0))
+                .dividedBy(scores.length)
+                .toDecimalPlaces(4);
+            const employeesCount = clusterScores.length;
+
+            const lowerBound = new Decimal(cluster.lowerBound);
+            const upperBound = new Decimal(cluster.upperBound);
+
+            await this.validateBounds(lowerBound, upperBound);
+            await this.validateScores(minScore, maxScore, averageScore);
+
+            const domain = ClusterScoreAnalyticsDomain.create({
+                cycleId,
+                clusterId: cluster.id,
+                employeesCount,
+                lowerBound,
+                upperBound,
+                minScore,
+                maxScore,
+                averageScore,
+            });
+
+            await this.analytics.upsert(domain);
+        }
     }
 
     private async validateScores(

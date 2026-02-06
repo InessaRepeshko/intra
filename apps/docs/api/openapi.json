@@ -3911,6 +3911,50 @@
         ]
       }
     },
+    "/feedback360/cycles/{id}/force-finish": {
+      "post": {
+        "operationId": "CyclesController_finish",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Cycle id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CycleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Force finish 360-Feedback cycle (HR/Admin only)",
+        "tags": [
+          "Feedback360 / Cycles"
+        ]
+      }
+    },
     "/feedback360/reviews": {
       "post": {
         "operationId": "ReviewController_create",
@@ -6108,7 +6152,7 @@
             "description": "Conflict"
           }
         },
-        "summary": "Force complete Review (HR only)",
+        "summary": "Force complete Review (HR/Admin only)",
         "tags": [
           "Feedback360 / Reviews"
         ]
@@ -6768,6 +6812,30 @@
             }
           },
           {
+            "name": "lowerBound",
+            "required": false,
+            "in": "query",
+            "description": "Filter by lower bound",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "name": "upperBound",
+            "required": false,
+            "in": "query",
+            "description": "Filter by upper bound",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
             "name": "employeesCount",
             "required": false,
             "in": "query",
@@ -6828,6 +6896,8 @@
                 "cycleId",
                 "clusterId",
                 "employeesCount",
+                "lowerBound",
+                "upperBound",
                 "minScore",
                 "maxScore",
                 "averageScore",
@@ -6868,6 +6938,30 @@
             "in": "query",
             "schema": {
               "example": 3,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by lower bound",
+            "required": false,
+            "name": "lowerBound",
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by upper bound",
+            "required": false,
+            "name": "upperBound",
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 5,
               "type": "number"
             }
           },
@@ -10139,6 +10233,20 @@
             "example": 3,
             "description": "Cluster ID"
           },
+          "lowerBound": {
+            "type": "number",
+            "example": 5,
+            "description": "Lower bound",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "upperBound": {
+            "type": "number",
+            "example": 5,
+            "description": "Upper bound",
+            "minimum": 0,
+            "maximum": 5
+          },
           "employeesCount": {
             "type": "number",
             "example": 42,
@@ -10170,6 +10278,8 @@
         "required": [
           "cycleId",
           "clusterId",
+          "lowerBound",
+          "upperBound",
           "employeesCount",
           "minScore",
           "maxScore",
@@ -10193,6 +10303,20 @@
             "type": "number",
             "example": 2,
             "description": "Cluster ID"
+          },
+          "lowerBound": {
+            "type": "number",
+            "example": 5,
+            "description": "Lower bound",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "upperBound": {
+            "type": "number",
+            "example": 5,
+            "description": "Upper bound",
+            "minimum": 0,
+            "maximum": 5
           },
           "employeesCount": {
             "type": "number",
@@ -10238,6 +10362,8 @@
           "id",
           "cycleId",
           "clusterId",
+          "lowerBound",
+          "upperBound",
           "employeesCount",
           "minScore",
           "maxScore",

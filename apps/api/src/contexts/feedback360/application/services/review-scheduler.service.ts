@@ -1,4 +1,4 @@
-import { ReviewStage } from '@intra/shared-kernel';
+import { CycleStage, ReviewStage } from '@intra/shared-kernel';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import {
@@ -77,6 +77,51 @@ export class ReviewSchedulerService {
         } catch (error) {
             this.logger.error(
                 `Error checking review deadlines: ${error.message}`,
+            );
+        }
+    }
+
+    /**
+     * SCHEDULED TRIGGER: Finish cycles past their deadlines
+     * Runs every day at 7am to find cycles that should be finished
+     */
+    @Cron(CronExpression.EVERY_DAY_AT_7AM)
+    async checkCycleDeadlines(): Promise<void> {
+        this.logger.log('Checking for cycles past deadline...');
+
+        try {
+            const cycles = await this.cycleService.search({
+                stage: CycleStage.ACTIVE,
+                isActive: true,
+            });
+
+            const now = new Date();
+
+            for (const cycle of cycles) {
+                const endDatePassed =
+                    cycle.endDate && new Date(cycle.endDate) < now;
+                const responseDeadlinePassed =
+                    cycle.responseDeadline &&
+                    new Date(cycle.responseDeadline) < now;
+
+                if (!endDatePassed && !responseDeadlinePassed) {
+                    continue;
+                }
+
+                try {
+                    await this.cycleService.finish(cycle.id!);
+                    this.logger.log(
+                        `Finished cycle ${cycle.id} (deadline reached)`,
+                    );
+                } catch (error) {
+                    this.logger.error(
+                        `Failed to finish cycle ${cycle.id}: ${error.message}`,
+                    );
+                }
+            }
+        } catch (error) {
+            this.logger.error(
+                `Error checking cycle deadlines: ${error.message}`,
             );
         }
     }

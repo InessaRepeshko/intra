@@ -6,6 +6,7 @@ import {
     CreateAnswerPayload,
     CreateQuestionPayload,
     CreateReviewPayload,
+    CycleStage,
     QuestionSearchQuery,
     RespondentCategory,
     RespondentSearchQuery,
@@ -334,8 +335,16 @@ export class ReviewService {
         const updated = await this.respondents.updateById(id, patch);
 
         // Reactive Trigger: Check if all responses completed
-        if (patch.responseStatus === ResponseStatus.COMPLETED) {
+        if (
+            patch.responseStatus === ResponseStatus.COMPLETED ||
+            patch.responseStatus === ResponseStatus.CANCELED
+        ) {
             await this.checkReviewCompletion(updated.reviewId);
+
+            const review = await this.getById(updated.reviewId);
+            if (review.cycleId) {
+                await this.checkCompletion(review.cycleId);
+            }
         }
 
         return updated;
@@ -513,19 +522,62 @@ export class ReviewService {
     }
 
     /**
+     * REACTIVE TRIGGER: Check if all respondents in cycle completed
+     * If yes, automatically finish the cycle
+     */
+    async checkCompletion(cycleId: number): Promise<void> {
+        const cycle = await this.cycles.getById(cycleId);
+
+        if (cycle.stage !== CycleStage.ACTIVE) {
+            return;
+        }
+
+        const reviews = await this.search({ cycleId });
+        if (!reviews.length) {
+            return;
+        }
+
+        let totalRespondents = 0;
+
+        for (const review of reviews) {
+            const respondents = await this.respondents.listByReview(
+                review.id!,
+                {},
+            );
+            totalRespondents += respondents.length;
+
+            const hasPendingResponses = respondents.some(
+                (r) =>
+                    r.responseStatus === ResponseStatus.PENDING ||
+                    r.responseStatus === ResponseStatus.IN_PROGRESS,
+            );
+
+            if (hasPendingResponses) {
+                return;
+            }
+        }
+
+        if (totalRespondents === 0) {
+            return;
+        }
+
+        await this.cycles.finish(cycleId);
+    }
+
+    /**
      * MANUAL TRIGGER: HR force-completes a review
      * Transitions review to PREPARING_REPORT regardless of pending responses
      */
-    async forceCompleteReview(reviewId: number): Promise<void> {
-        // TODO: Get HR user info from request context when auth is implemented
-        const hrActorId = SYSTEM_ACTOR_ID;
-        const hrActorName = 'HR Manager';
-
+    async forceCompleteReview(
+        reviewId: number,
+        actorId: number,
+        actorName: string,
+    ): Promise<void> {
         await this.changeStage(
             reviewId,
             ReviewStage.PREPARING_REPORT,
-            hrActorId,
-            hrActorName,
+            actorId,
+            actorName,
             TRANSITION_REASONS.HR_FORCE_COMPLETION,
         );
     }
