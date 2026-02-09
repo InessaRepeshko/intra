@@ -1,4 +1,4 @@
-import { IdentityStatus, Prisma } from '@intra/database';
+import { Prisma } from '@intra/database';
 import {
     IdentityRole,
     SortDirection,
@@ -18,29 +18,7 @@ export class UserRepository implements UserRepositoryPort {
 
     async create(user: UserDomain): Promise<UserDomain> {
         const created = await this.prisma.user.create({
-            data: {
-                firstName: user.firstName,
-                secondName: user.secondName,
-                lastName: user.lastName,
-                fullName: user.fullName,
-                email: user.email,
-                avatarUrl: user.avatarUrl,
-                status: user.status as IdentityStatus,
-                positionId: user.positionId ?? null,
-                teamId: user.teamId,
-                managerId: user.managerId,
-                ...(user.roles.length
-                    ? {
-                          userRoles: {
-                              createMany: {
-                                  data: user.roles.map((roleCode) => ({
-                                      roleCode,
-                                  })),
-                              },
-                          },
-                      }
-                    : {}),
-            },
+            data: UserMapper.toPrisma(user),
             include: this.withRolesInclude(true),
         });
 

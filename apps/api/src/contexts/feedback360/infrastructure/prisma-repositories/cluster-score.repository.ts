@@ -5,7 +5,6 @@ import {
     SortDirection,
 } from '@intra/shared-kernel';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import Decimal from 'decimal.js';
 import { PrismaService } from 'src/database/prisma.service';
 import {
     CLUSTER_SCORE_REPOSITORY,
@@ -13,7 +12,7 @@ import {
 } from '../../application/ports/cluster-score.repository.port';
 import { ClusterScoreWithRelationsDomain } from '../../domain/cluster-score-with-relations.domain';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
-import { Feedback360Mapper } from './feedback360.mapper';
+import { ClusterScoreMapper } from '../mappers/cluster-score.mapper';
 
 @Injectable()
 export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
@@ -22,6 +21,7 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
     constructor(private readonly prisma: PrismaService) {}
 
     async upsert(score: ClusterScoreDomain): Promise<ClusterScoreDomain> {
+        const prismaScore = ClusterScoreMapper.toPrisma(score);
         const saved = await this.prisma.clusterScore.upsert({
             where: {
                 clusterId_rateeId: {
@@ -29,23 +29,16 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
                     rateeId: score.rateeId,
                 },
             },
-            create: {
-                cycleId: score.cycleId,
-                clusterId: score.clusterId,
-                rateeId: score.rateeId,
-                reviewId: score.reviewId,
-                score: this.toDecimalString(score.score),
-                answersCount: score.answersCount,
-            },
+            create: prismaScore,
             update: {
-                cycleId: score.cycleId,
-                reviewId: score.reviewId,
-                score: this.toDecimalString(score.score),
-                answersCount: score.answersCount,
+                cycleId: prismaScore.cycleId,
+                reviewId: prismaScore.reviewId,
+                score: prismaScore.score,
+                answersCount: prismaScore.answersCount,
             },
         });
 
-        return Feedback360Mapper.toClusterScoreDomain(saved);
+        return ClusterScoreMapper.toDomain(saved);
     }
 
     async list(query: ClusterScoreSearchQuery): Promise<ClusterScoreDomain[]> {
@@ -55,7 +48,7 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
             where,
             orderBy,
         });
-        return scores.map(Feedback360Mapper.toClusterScoreDomain);
+        return scores.map(ClusterScoreMapper.toDomain);
     }
 
     async getById(id: number): Promise<ClusterScoreWithRelationsDomain> {
@@ -67,7 +60,7 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
             },
         });
         if (!score) throw new NotFoundException('Cluster score not found');
-        return Feedback360Mapper.toClusterScoreWithRelationsDomain(score);
+        return ClusterScoreMapper.toDomainWithRelations(score);
     }
 
     async deleteById(id: number): Promise<void> {
@@ -85,9 +78,7 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
                 ratee: true,
             },
         });
-        return scores.map((s) =>
-            Feedback360Mapper.toClusterScoreWithRelationsDomain(s),
-        );
+        return scores.map((s) => ClusterScoreMapper.toDomainWithRelations(s));
     }
 
     private buildWhere(
@@ -101,7 +92,7 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
             ...(rateeId ? { rateeId } : {}),
             ...(reviewId ? { reviewId } : {}),
             ...(score !== undefined
-                ? { score: this.toDecimalString(score) }
+                ? { score: ClusterScoreMapper.toScoreDecimalString(score) }
                 : {}),
             ...(answerCount ? { answerCount } : {}),
         };
@@ -113,9 +104,5 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
         const field = query.sortBy ?? ClusterScoreSortField.ID;
         const direction = query.sortDirection ?? SortDirection.ASC;
         return [{ [field]: direction.toLowerCase() as Prisma.SortOrder }];
-    }
-
-    private toDecimalString(value: Decimal.Value): string {
-        return new Decimal(value).toDecimalPlaces(4).toFixed(4);
     }
 }

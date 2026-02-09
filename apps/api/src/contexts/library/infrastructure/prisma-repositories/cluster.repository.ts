@@ -17,13 +17,7 @@ export class ClusterRepository implements ClusterRepositoryPort {
 
     async create(cluster: ClusterDomain): Promise<ClusterDomain> {
         const created = await this.prisma.cluster.create({
-            data: {
-                competenceId: cluster.competenceId,
-                lowerBound: cluster.lowerBound,
-                upperBound: cluster.upperBound,
-                title: cluster.title,
-                description: cluster.description,
-            },
+            data: ClusterMapper.toPrisma(cluster),
         });
 
         return ClusterMapper.toDomain(created);

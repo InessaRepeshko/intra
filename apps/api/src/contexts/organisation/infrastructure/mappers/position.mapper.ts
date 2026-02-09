@@ -1,4 +1,4 @@
-import { Position } from '@intra/database';
+import { Position, Prisma } from '@intra/database';
 import { PositionDomain } from '../../domain/position.domain';
 
 export class PositionMapper {
@@ -10,5 +10,14 @@ export class PositionMapper {
             createdAt: position.createdAt,
             updatedAt: position.updatedAt,
         });
+    }
+
+    static toPrisma(
+        position: PositionDomain,
+    ): Prisma.PositionUncheckedCreateInput {
+        return {
+            title: position.title,
+            description: position.description,
+        };
     }
 }

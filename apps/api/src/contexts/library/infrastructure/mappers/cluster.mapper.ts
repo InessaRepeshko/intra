@@ -1,4 +1,4 @@
-import { Cluster } from '@intra/database';
+import { Cluster, Prisma } from '@intra/database';
 import { ClusterDomain } from '../../domain/cluster.domain';
 
 export class ClusterMapper {
@@ -13,5 +13,17 @@ export class ClusterMapper {
             createdAt: cluster.createdAt,
             updatedAt: cluster.updatedAt,
         });
+    }
+
+    static toPrisma(
+        cluster: ClusterDomain,
+    ): Prisma.ClusterUncheckedCreateInput {
+        return {
+            competenceId: cluster.competenceId,
+            lowerBound: cluster.lowerBound,
+            upperBound: cluster.upperBound,
+            title: cluster.title,
+            description: cluster.description,
+        };
     }
 }

@@ -1,4 +1,5 @@
 import {
+    Prisma,
     IdentityStatus as PrismaIdentityStatus,
     Role,
     User,
@@ -26,7 +27,7 @@ export class UserMapper {
             fullName: user.fullName,
             email: user.email,
             avatarUrl: user.avatarUrl,
-            status: UserMapper.fromPrismaStatus(user.status),
+            status: UserMapper.toDomainStatus(user.status),
             positionId: user.positionId,
             teamId: user.teamId,
             managerId: user.managerId,
@@ -36,13 +37,37 @@ export class UserMapper {
         });
     }
 
+    static toPrisma(user: UserDomain): Prisma.UserUncheckedCreateInput {
+        return {
+            firstName: user.firstName,
+            secondName: user.secondName,
+            lastName: user.lastName,
+            fullName: user.fullName,
+            email: user.email,
+            avatarUrl: user.avatarUrl,
+            status: UserMapper.toPrismaStatus(user.status),
+            positionId: user.positionId ?? null,
+            teamId: user.teamId,
+            managerId: user.managerId,
+            ...(user.roles.length
+                ? {
+                      userRoles: {
+                          createMany: {
+                              data: user.roles.map((roleCode) => ({
+                                  roleCode,
+                              })),
+                          },
+                      },
+                  }
+                : {}),
+        };
+    }
+
     static toPrismaStatus(domainStatus: IdentityStatus): PrismaIdentityStatus {
         return domainStatus.toString().toUpperCase() as PrismaIdentityStatus;
     }
 
-    static fromPrismaStatus(
-        prismaStatus: PrismaIdentityStatus,
-    ): IdentityStatus {
+    static toDomainStatus(prismaStatus: PrismaIdentityStatus): IdentityStatus {
         return prismaStatus.toString().toUpperCase() as IdentityStatus;
     }
 }

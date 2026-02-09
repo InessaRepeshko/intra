@@ -21,7 +21,7 @@ import { ApiReadErrorResponses } from 'src/common/documentation/api.error.respon
 import { ReportCommentService } from '../../../application/services/report-comment.service';
 import { ReportCommentDomain } from '../../../domain/report-comment.domain';
 import { CreateReportCommentDto } from '../dto/create-report-comment.dto';
-import { ReportingHttpMapper } from '../mappers/reporting.http.mapper';
+import { ReportCommentHttpMapper } from '../mappers/report-comment.http.mapper';
 import { ReportCommentResponse } from '../models/report-comment.response';
 
 @ApiTags('Reporting / Comments')
@@ -48,7 +48,7 @@ export class ReportCommentController {
         @Param('reportId', ParseIntPipe) reportId: number,
     ): Promise<ReportCommentResponse[]> {
         const comments = await this.commentService.getByReportId(reportId);
-        return comments.map(ReportingHttpMapper.toReportCommentResponse);
+        return comments.map(ReportCommentHttpMapper.toResponse);
     }
 
     @Get(':id')
@@ -64,7 +64,7 @@ export class ReportCommentController {
         @Param('id', ParseIntPipe) id: number,
     ): Promise<ReportCommentResponse> {
         const comment = await this.commentService.getById(id);
-        return ReportingHttpMapper.toReportCommentResponse(comment);
+        return ReportCommentHttpMapper.toResponse(comment);
     }
 
     @Post()
@@ -84,6 +84,6 @@ export class ReportCommentController {
         });
 
         const created = await this.commentService.create(comment);
-        return ReportingHttpMapper.toReportCommentResponse(created);
+        return ReportCommentHttpMapper.toResponse(created);
     }
 }

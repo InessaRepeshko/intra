@@ -1,4 +1,5 @@
 import {
+    Prisma,
     AnswerType as PrismaAnswerType,
     QuestionTemplate as PrismaQuestionTemplate,
     QuestionTemplateStatus as PrismaQuestionTemplateStatus,
@@ -26,6 +27,18 @@ export class QuestionTemplateMapper {
             positionIds:
                 question.positionRelations?.map((q) => q.positionId) ?? [],
         });
+    }
+
+    static toPrisma(
+        question: QuestionTemplateDomain,
+    ): Prisma.QuestionTemplateUncheckedCreateInput {
+        return {
+            title: question.title,
+            answerType: question.answerType,
+            competenceId: question.competenceId,
+            isForSelfassessment: question.isForSelfassessment,
+            status: question.status,
+        };
     }
 
     static toPrismaAnswerType(domainType: AnswerType): PrismaAnswerType {

@@ -5,7 +5,7 @@ import {
     ReviewStageHistoryRepositoryPort,
 } from '../../application/ports/review-stage-history.repository.port';
 import { ReviewStageHistoryDomain } from '../../domain/review-stage-history.domain';
-import { Feedback360Mapper } from './feedback360.mapper';
+import { ReviewStageHistoryMapper } from '../mappers/review-stage-history.mapper';
 
 @Injectable()
 export class ReviewStageHistoryRepository implements ReviewStageHistoryRepositoryPort {
@@ -18,18 +18,9 @@ export class ReviewStageHistoryRepository implements ReviewStageHistoryRepositor
         history: ReviewStageHistoryDomain,
     ): Promise<ReviewStageHistoryDomain> {
         const created = await this.prisma.reviewStageHistory.create({
-            data: {
-                reviewId: history.reviewId,
-                fromStage: Feedback360Mapper.toPrismaReviewStage(
-                    history.fromStage,
-                ),
-                toStage: Feedback360Mapper.toPrismaReviewStage(history.toStage),
-                changedById: history.changedById,
-                changedByName: history.changedByName,
-                reason: history.reason,
-            },
+            data: ReviewStageHistoryMapper.toPrisma(history),
         });
-        return Feedback360Mapper.toReviewStageHistoryDomain(created);
+        return ReviewStageHistoryMapper.toDomain(created);
     }
 
     async findByReviewId(
@@ -39,13 +30,13 @@ export class ReviewStageHistoryRepository implements ReviewStageHistoryRepositor
             where: { reviewId },
             orderBy: { createdAt: 'asc' },
         });
-        return items.map(Feedback360Mapper.toReviewStageHistoryDomain);
+        return items.map(ReviewStageHistoryMapper.toDomain);
     }
 
     async findById(id: number): Promise<ReviewStageHistoryDomain | null> {
         const item = await this.prisma.reviewStageHistory.findUnique({
             where: { id },
         });
-        return item ? Feedback360Mapper.toReviewStageHistoryDomain(item) : null;
+        return item ? ReviewStageHistoryMapper.toDomain(item) : null;
     }
 }

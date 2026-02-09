@@ -31,7 +31,7 @@ import { ClusterScoreAnalyticsService } from '../../../application/services/clus
 import { ClusterScoreAnalyticsQueryDto } from '../dto/cluster-score-analytics/cluster-score-analytics-query.dto';
 import { UpdateClusterScoreAnalyticsDto } from '../dto/cluster-score-analytics/update-cluster-score-analytics.dto';
 import { UpsertClusterScoreAnalyticsDto } from '../dto/cluster-score-analytics/upsert-cluster-score-analytics.dto';
-import { Feedback360HttpMapper } from '../mappers/feedback360.http.mapper';
+import { ClusterScoreAnalyticsHttpMapper } from '../mappers/cluster-score-analytics.http.mapper';
 import { ClusterScoreAnalyticsResponse } from '../models/cluster-score-analytics.response';
 
 @ApiTags('Feedback360 / Cluster Score Analytics')
@@ -62,7 +62,7 @@ export class ClusterScoreAnalyticsController {
             maxScore: dto.maxScore,
             averageScore: dto.averageScore,
         });
-        return Feedback360HttpMapper.toClusterScoreAnalyticsResponse(saved);
+        return ClusterScoreAnalyticsHttpMapper.toResponse(saved);
     }
 
     @Get()
@@ -80,7 +80,7 @@ export class ClusterScoreAnalyticsController {
     ): Promise<ClusterScoreAnalyticsResponse[]> {
         const items = await this.service.search(query);
         return items.map((item) =>
-            Feedback360HttpMapper.toClusterScoreAnalyticsResponse(item),
+            ClusterScoreAnalyticsHttpMapper.toResponse(item),
         );
     }
 
@@ -97,7 +97,7 @@ export class ClusterScoreAnalyticsController {
         @Param('id') id: string,
     ): Promise<ClusterScoreAnalyticsResponse> {
         const item = await this.service.getById(Number(id));
-        return Feedback360HttpMapper.toClusterScoreAnalyticsResponse(item);
+        return ClusterScoreAnalyticsHttpMapper.toResponse(item);
     }
 
     @Patch(':id')
@@ -115,7 +115,7 @@ export class ClusterScoreAnalyticsController {
         @Body() dto: UpdateClusterScoreAnalyticsDto,
     ): Promise<ClusterScoreAnalyticsResponse> {
         const updated = await this.service.update(Number(id), dto);
-        return Feedback360HttpMapper.toClusterScoreAnalyticsResponse(updated);
+        return ClusterScoreAnalyticsHttpMapper.toResponse(updated);
     }
 
     @Delete(':id')
@@ -141,7 +141,7 @@ export class ClusterScoreAnalyticsController {
     ): Promise<ClusterScoreAnalyticsResponse[]> {
         const analytics = await this.service.getByCycleId(Number(cycleId));
         return analytics.map((analytics) =>
-            Feedback360HttpMapper.toClusterScoreAnalyticsResponse(analytics),
+            ClusterScoreAnalyticsHttpMapper.toResponse(analytics),
         );
     }
 }

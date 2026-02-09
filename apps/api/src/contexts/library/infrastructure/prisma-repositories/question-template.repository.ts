@@ -18,19 +18,14 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
     async create(
         question: QuestionTemplateDomain,
     ): Promise<QuestionTemplateDomain> {
+        const prismaQuestion = QuestionTemplateMapper.toPrisma(question);
+        prismaQuestion.positionRelations = {
+            create: question.positionIds.map((positionId) => ({
+                positionId,
+            })),
+        };
         const created = await this.prisma.questionTemplate.create({
-            data: {
-                title: question.title,
-                answerType: question.answerType,
-                competenceId: question.competenceId,
-                isForSelfassessment: question.isForSelfassessment,
-                status: question.status,
-                positionRelations: {
-                    create: question.positionIds.map((positionId) => ({
-                        positionId,
-                    })),
-                },
-            },
+            data: prismaQuestion,
             include: { positionRelations: { select: { positionId: true } } },
         });
 

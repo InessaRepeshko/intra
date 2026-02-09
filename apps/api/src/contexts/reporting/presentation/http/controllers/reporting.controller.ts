@@ -12,7 +12,7 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 import { ReportingService } from '../../../application/services/reporting.service';
 import { TextAnswerService } from '../../../application/services/text-answer.service';
-import { ReportingHttpMapper } from '../mappers/reporting.http.mapper';
+import { ReportHttpMapper } from '../mappers/report.http.mapper';
 import { ReportResponse } from '../models/report.response';
 import { TextAnswerResponse } from '../models/text-answer.response';
 
@@ -39,7 +39,7 @@ export class ReportingController {
         @Param('id', ParseIntPipe) id: number,
     ): Promise<ReportResponse> {
         const report = await this.reporting.getById(id);
-        return ReportingHttpMapper.toReportResponse(report);
+        return ReportHttpMapper.toResponse(report);
     }
 
     @Get('review/:reviewId')
@@ -55,7 +55,7 @@ export class ReportingController {
         @Param('reviewId', ParseIntPipe) reviewId: number,
     ): Promise<ReportResponse> {
         const report = await this.reporting.getByReviewId(reviewId);
-        return ReportingHttpMapper.toReportResponse(report);
+        return ReportHttpMapper.toResponse(report);
     }
 
     @Get('reviews/:reviewId/text-answers')
@@ -75,6 +75,6 @@ export class ReportingController {
         @Param('reviewId', ParseIntPipe) reviewId: number,
     ): Promise<TextAnswerResponse[]> {
         const answers = await this.textAnswerService.listByReview(reviewId);
-        return answers.map(ReportingHttpMapper.toTextAnswerResponse);
+        return answers.map(ReportHttpMapper.toTextAnswerResponse);
     }
 }

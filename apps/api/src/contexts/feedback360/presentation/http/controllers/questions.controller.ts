@@ -28,7 +28,7 @@ import {
 import { ReviewService } from '../../../application/services/review.service';
 import { CreateQuestionDto } from '../dto/questions/create-question.dto';
 import { QuestionQueryDto } from '../dto/questions/question-query.dto';
-import { Feedback360HttpMapper } from '../mappers/feedback360.http.mapper';
+import { QuestionHttpMapper } from '../mappers/question.http.mapper';
 import { QuestionResponse } from '../models/question.response';
 
 @ApiTags('Feedback360 / Questions')
@@ -45,7 +45,7 @@ export class QuestionsController {
     @ApiCreateAndUpdateErrorResponses()
     async create(@Body() dto: CreateQuestionDto): Promise<QuestionResponse> {
         const created = await this.reviews.createQuestion(dto);
-        return Feedback360HttpMapper.toQuestionResponse(created);
+        return QuestionHttpMapper.toResponse(created);
     }
 
     @Get()
@@ -62,7 +62,7 @@ export class QuestionsController {
         @Query() query: QuestionQueryDto,
     ): Promise<QuestionResponse[]> {
         const items = await this.reviews.listQuestions(query);
-        return items.map(Feedback360HttpMapper.toQuestionResponse);
+        return items.map(QuestionHttpMapper.toResponse);
     }
 
     @Delete(':id')

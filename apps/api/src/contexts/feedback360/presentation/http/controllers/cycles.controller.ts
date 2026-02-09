@@ -31,7 +31,7 @@ import { CycleService } from '../../../application/services/cycle.service';
 import { CreateCycleDto } from '../dto/cycles/create-cycle.dto';
 import { CycleQueryDto } from '../dto/cycles/cycle-query.dto';
 import { UpdateCycleDto } from '../dto/cycles/update-cycle.dto';
-import { Feedback360HttpMapper } from '../mappers/feedback360.http.mapper';
+import { CycleHttpMapper } from '../mappers/cycle.http.mapper';
 import { CycleResponse } from '../models/cycle.response';
 
 @ApiTags('Feedback360 / Cycles')
@@ -48,7 +48,7 @@ export class CyclesController {
     @ApiCreateAndUpdateErrorResponses()
     async create(@Body() dto: CreateCycleDto): Promise<CycleResponse> {
         const created = await this.cycles.create(dto);
-        return Feedback360HttpMapper.toCycleResponse(created);
+        return CycleHttpMapper.toResponse(created);
     }
 
     @Get()
@@ -63,7 +63,7 @@ export class CyclesController {
     @ApiListReadErrorResponses()
     async search(@Query() query: CycleQueryDto): Promise<CycleResponse[]> {
         const items = await this.cycles.search(query);
-        return items.map(Feedback360HttpMapper.toCycleResponse);
+        return items.map(CycleHttpMapper.toResponse);
     }
 
     @Get(':id')
@@ -73,7 +73,7 @@ export class CyclesController {
     @ApiReadErrorResponses()
     async getById(@Param('id') id: string): Promise<CycleResponse> {
         const cycle = await this.cycles.getById(Number(id));
-        return Feedback360HttpMapper.toCycleResponse(cycle);
+        return CycleHttpMapper.toResponse(cycle);
     }
 
     @Patch(':id')
@@ -87,7 +87,7 @@ export class CyclesController {
         @Body() dto: UpdateCycleDto,
     ): Promise<CycleResponse> {
         const updated = await this.cycles.update(Number(id), dto);
-        return Feedback360HttpMapper.toCycleResponse(updated);
+        return CycleHttpMapper.toResponse(updated);
     }
 
     @Delete(':id')
@@ -120,6 +120,6 @@ export class CyclesController {
 
         await this.cycles.finish(cycleId, 0, 'Admin');
         const updated = await this.cycles.getById(cycleId);
-        return Feedback360HttpMapper.toCycleResponse(updated);
+        return CycleHttpMapper.toResponse(updated);
     }
 }

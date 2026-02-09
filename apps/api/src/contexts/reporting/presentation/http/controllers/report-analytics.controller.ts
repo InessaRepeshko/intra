@@ -11,7 +11,7 @@ import {
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 import { ReportAnalyticsService } from '../../../application/services/report-analytics.service';
-import { ReportingHttpMapper } from '../mappers/reporting.http.mapper';
+import { ReportAnalyticsHttpMapper } from '../mappers/report-analytics.http.mapper';
 import { ReportAnalyticsResponse } from '../models/report-analytics.response';
 
 @ApiTags('Reporting / Analytics')
@@ -38,9 +38,7 @@ export class ReportAnalyticsController {
         @Param('reportId', ParseIntPipe) reportId: number,
     ): Promise<ReportAnalyticsResponse[]> {
         const analytics = await this.analyticsService.getByReportId(reportId);
-        return analytics.map((a) =>
-            ReportingHttpMapper.toReportAnalyticsResponse(a),
-        );
+        return analytics.map((a) => ReportAnalyticsHttpMapper.toResponse(a));
     }
 
     @Get(':id')
@@ -56,6 +54,6 @@ export class ReportAnalyticsController {
         @Param('id', ParseIntPipe) id: number,
     ): Promise<ReportAnalyticsResponse> {
         const analytics = await this.analyticsService.getById(id);
-        return ReportingHttpMapper.toReportAnalyticsResponse(analytics);
+        return ReportAnalyticsHttpMapper.toResponse(analytics);
     }
 }

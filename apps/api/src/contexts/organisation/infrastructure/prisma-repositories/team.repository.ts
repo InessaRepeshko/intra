@@ -19,11 +19,7 @@ export class TeamRepository implements TeamRepositoryPort {
 
     async create(team: TeamDomain): Promise<TeamDomain> {
         const created = await this.prisma.team.create({
-            data: {
-                title: team.title,
-                description: team.description,
-                headId: team.headId,
-            },
+            data: TeamMapper.toPrisma(team),
         });
         return TeamMapper.toDomain(created);
     }

@@ -12,7 +12,7 @@ import {
     ReviewRepositoryPort,
 } from '../../application/ports/review.repository.port';
 import { ReviewDomain } from '../../domain/review.domain';
-import { Feedback360Mapper } from './feedback360.mapper';
+import { ReviewMapper } from '../mappers/review.mapper';
 
 @Injectable()
 export class ReviewRepository implements ReviewRepositoryPort {
@@ -22,39 +22,22 @@ export class ReviewRepository implements ReviewRepositoryPort {
 
     async create(review: ReviewDomain): Promise<ReviewDomain> {
         const created = await this.prisma.review.create({
-            data: {
-                rateeId: review.rateeId,
-                rateeFullName: review.rateeFullName,
-                rateePositionId: review.rateePositionId,
-                rateePositionTitle: review.rateePositionTitle,
-                hrId: review.hrId,
-                hrFullName: review.hrFullName,
-                hrNote: review.hrNote,
-                teamId: review.teamId,
-                teamTitle: review.teamTitle,
-                managerId: review.managerId,
-                managerFullName: review.managerFullName,
-                managerPositionId: review.managerPositionId,
-                managerPositionTitle: review.managerPositionTitle,
-                cycleId: review.cycleId,
-                stage: Feedback360Mapper.toPrismaReviewStage(review.stage),
-                reportId: review.reportId,
-            },
+            data: ReviewMapper.toPrisma(review),
         });
 
-        return Feedback360Mapper.toReviewDomain(created);
+        return ReviewMapper.toDomain(created);
     }
 
     async findById(id: number): Promise<ReviewDomain | null> {
         const review = await this.prisma.review.findUnique({ where: { id } });
-        return review ? Feedback360Mapper.toReviewDomain(review) : null;
+        return review ? ReviewMapper.toDomain(review) : null;
     }
 
     async search(query: ReviewSearchQuery): Promise<ReviewDomain[]> {
         const where = this.buildWhere(query);
         const orderBy = this.buildOrder(query);
         const items = await this.prisma.review.findMany({ where, orderBy });
-        return items.map(Feedback360Mapper.toReviewDomain);
+        return items.map(ReviewMapper.toDomain);
     }
 
     async updateById(
@@ -67,14 +50,12 @@ export class ReviewRepository implements ReviewRepositoryPort {
                 ...patch,
                 ...(patch.stage
                     ? {
-                          stage: Feedback360Mapper.toPrismaReviewStage(
-                              patch.stage,
-                          ),
+                          stage: ReviewMapper.toPrismaStage(patch.stage),
                       }
                     : {}),
             },
         });
-        return Feedback360Mapper.toReviewDomain(updated);
+        return ReviewMapper.toDomain(updated);
     }
 
     async deleteById(id: number): Promise<void> {
@@ -149,9 +130,7 @@ export class ReviewRepository implements ReviewRepositoryPort {
                   }
                 : {}),
             ...(cycleId ? { cycleId } : {}),
-            ...(stage
-                ? { stage: Feedback360Mapper.toPrismaReviewStage(stage) }
-                : {}),
+            ...(stage ? { stage: ReviewMapper.toPrismaStage(stage) } : {}),
             ...(reportId ? { reportId } : {}),
         };
     }

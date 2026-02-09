@@ -17,11 +17,7 @@ export class CompetenceRepository implements CompetenceRepositoryPort {
 
     async create(competence: CompetenceDomain): Promise<CompetenceDomain> {
         const created = await this.prisma.competence.create({
-            data: {
-                code: competence.code,
-                title: competence.title,
-                description: competence.description,
-            },
+            data: CompetenceMapper.toPrisma(competence),
         });
 
         return CompetenceMapper.toDomain(created);

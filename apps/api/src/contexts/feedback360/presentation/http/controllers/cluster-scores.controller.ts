@@ -29,9 +29,10 @@ import {
 import { ReviewService } from '../../../application/services/review.service';
 import { ClusterScoreQueryDto } from '../dto/cluster-scores/cluster-score-query.dto';
 import { UpsertClusterScoreDto } from '../dto/cluster-scores/upsert-cluster-score.dto';
-import { Feedback360HttpMapper } from '../mappers/feedback360.http.mapper';
+import { ClusterScoreHttpMapper } from '../mappers/cluster-score.http.mapper';
 import { ClusterScoreWithRelationsResponse } from '../models/cluster-score-with-relations.response';
 import { ClusterScoreResponse } from '../models/cluster-score.response';
+
 @ApiTags('Feedback360 / Cluster Scores')
 @Controller('feedback360/cluster-scores')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -48,7 +49,7 @@ export class ClusterScoresController {
         @Body() dto: UpsertClusterScoreDto,
     ): Promise<ClusterScoreResponse> {
         const saved = await this.reviews.upsertClusterScore(dto);
-        return Feedback360HttpMapper.toClusterScoreResponse(saved);
+        return ClusterScoreHttpMapper.toResponse(saved);
     }
 
     @Get()
@@ -65,9 +66,7 @@ export class ClusterScoresController {
         @Query() query: ClusterScoreQueryDto,
     ): Promise<ClusterScoreResponse[]> {
         const scores = await this.reviews.listClusterScores(query);
-        return scores.map((score) =>
-            Feedback360HttpMapper.toClusterScoreResponse(score),
-        );
+        return scores.map((score) => ClusterScoreHttpMapper.toResponse(score));
     }
 
     @Get(':id')
@@ -82,7 +81,7 @@ export class ClusterScoresController {
         @Param('id') id: string,
     ): Promise<ClusterScoreWithRelationsResponse> {
         const score = await this.reviews.getClusterScoreById(Number(id));
-        return Feedback360HttpMapper.toClusterScoreWithRelationsResponse(score);
+        return ClusterScoreHttpMapper.toResponseWithRelations(score);
     }
 
     @Delete(':id')
@@ -112,7 +111,7 @@ export class ClusterScoresController {
             Number(cycleId),
         );
         return scores.map((score) =>
-            Feedback360HttpMapper.toClusterScoreWithRelationsResponse(score),
+            ClusterScoreHttpMapper.toResponseWithRelations(score),
         );
     }
 }

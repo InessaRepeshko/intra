@@ -5,7 +5,7 @@ import {
     ReportCommentRepositoryPort,
 } from '../../application/ports/report-comment.repository.port';
 import { ReportCommentDomain } from '../../domain/report-comment.domain';
-import { ReportingMapper } from './reporting.mapper';
+import { ReportCommentMapper } from '../mappers/report-comment.mapper';
 
 @Injectable()
 export class ReportCommentRepository implements ReportCommentRepositoryPort {
@@ -13,13 +13,20 @@ export class ReportCommentRepository implements ReportCommentRepositoryPort {
 
     constructor(private readonly prisma: PrismaService) {}
 
+    async create(comment: ReportCommentDomain): Promise<ReportCommentDomain> {
+        const created = await this.prisma.reportComment.create({
+            data: ReportCommentMapper.toPrisma(comment),
+        });
+        return ReportCommentMapper.toDomain(created);
+    }
+
     async findByReportId(reportId: number): Promise<ReportCommentDomain[]> {
         const comments = await this.prisma.reportComment.findMany({
             where: { reportId },
             orderBy: { id: 'asc' },
         });
 
-        return comments.map(ReportingMapper.toReportCommentDomain);
+        return comments.map(ReportCommentMapper.toDomain);
     }
 
     async findById(id: number): Promise<ReportCommentDomain | null> {
@@ -27,13 +34,6 @@ export class ReportCommentRepository implements ReportCommentRepositoryPort {
             where: { id },
         });
 
-        return comment ? ReportingMapper.toReportCommentDomain(comment) : null;
-    }
-
-    async create(comment: ReportCommentDomain): Promise<ReportCommentDomain> {
-        const created = await this.prisma.reportComment.create({
-            data: ReportingMapper.toPrismaReportCommentCreateInput(comment),
-        });
-        return ReportingMapper.toReportCommentDomain(created);
+        return comment ? ReportCommentMapper.toDomain(comment) : null;
     }
 }

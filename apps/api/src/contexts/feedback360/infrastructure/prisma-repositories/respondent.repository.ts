@@ -12,7 +12,7 @@ import {
     RespondentRepositoryPort,
 } from '../../application/ports/respondent.repository.port';
 import { RespondentDomain } from '../../domain/respondent.domain';
-import { Feedback360Mapper } from './feedback360.mapper';
+import { RespondentMapper } from '../mappers/respondent.mapper';
 
 @Injectable()
 export class RespondentRepository implements RespondentRepositoryPort {
@@ -20,31 +20,12 @@ export class RespondentRepository implements RespondentRepositoryPort {
 
     constructor(private readonly prisma: PrismaService) {}
 
-    async create(relation: RespondentDomain): Promise<RespondentDomain> {
+    async create(respondent: RespondentDomain): Promise<RespondentDomain> {
         const created = await this.prisma.respondent.create({
-            data: {
-                reviewId: relation.reviewId,
-                respondentId: relation.respondentId,
-                fullName: relation.fullName,
-                category: Feedback360Mapper.toPrismaRespondentCategory(
-                    relation.category,
-                ),
-                responseStatus: Feedback360Mapper.toPrismaResponseStatus(
-                    relation.responseStatus,
-                ),
-                respondentNote: relation.respondentNote,
-                hrNote: relation.hrNote,
-                positionId: relation.positionId,
-                positionTitle: relation.positionTitle,
-                teamId: relation.teamId,
-                teamTitle: relation.teamTitle,
-                invitedAt: relation.invitedAt,
-                canceledAt: relation.canceledAt,
-                respondedAt: relation.respondedAt,
-            },
+            data: RespondentMapper.toPrisma(respondent),
         });
 
-        return Feedback360Mapper.toRespondentDomain(created);
+        return RespondentMapper.toDomain(created);
     }
 
     async listByReview(
@@ -59,7 +40,7 @@ export class RespondentRepository implements RespondentRepositoryPort {
             orderBy,
         });
 
-        return relations.map(Feedback360Mapper.toRespondentDomain);
+        return relations.map(RespondentMapper.toDomain);
     }
 
     async updateById(
@@ -72,23 +53,22 @@ export class RespondentRepository implements RespondentRepositoryPort {
                 ...patch,
                 ...(patch.category
                     ? {
-                          category:
-                              Feedback360Mapper.toPrismaRespondentCategory(
-                                  patch.category,
-                              ),
+                          category: RespondentMapper.toPrismaCategory(
+                              patch.category,
+                          ),
                       }
                     : {}),
                 ...(patch.responseStatus
                     ? {
                           responseStatus:
-                              Feedback360Mapper.toPrismaResponseStatus(
+                              RespondentMapper.toPrismaResponseStatus(
                                   patch.responseStatus,
                               ),
                       }
                     : {}),
             },
         });
-        return Feedback360Mapper.toRespondentDomain(updated);
+        return RespondentMapper.toDomain(updated);
     }
 
     async deleteById(id: number): Promise<void> {
@@ -122,16 +102,13 @@ export class RespondentRepository implements RespondentRepositoryPort {
                 : {}),
             ...(category
                 ? {
-                      category:
-                          Feedback360Mapper.toPrismaRespondentCategory(
-                              category,
-                          ),
+                      category: RespondentMapper.toPrismaCategory(category),
                   }
                 : {}),
             ...(responseStatus
                 ? {
                       responseStatus:
-                          Feedback360Mapper.toPrismaResponseStatus(
+                          RespondentMapper.toPrismaResponseStatus(
                               responseStatus,
                           ),
                   }

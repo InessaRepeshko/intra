@@ -1,4 +1,4 @@
-import { Team } from '@intra/database';
+import { Prisma, Team } from '@intra/database';
 import { TeamDomain } from '../../domain/team.domain';
 
 export class TeamMapper {
@@ -11,5 +11,13 @@ export class TeamMapper {
             createdAt: team.createdAt,
             updatedAt: team.updatedAt,
         });
+    }
+
+    static toPrisma(team: TeamDomain): Prisma.TeamUncheckedCreateInput {
+        return {
+            title: team.title,
+            description: team.description,
+            headId: team.headId,
+        };
     }
 }

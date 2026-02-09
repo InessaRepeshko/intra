@@ -17,10 +17,7 @@ export class PositionRepository implements PositionRepositoryPort {
 
     async create(position: PositionDomain): Promise<PositionDomain> {
         const created = await this.prisma.position.create({
-            data: {
-                title: position.title,
-                description: position.description,
-            },
+            data: PositionMapper.toPrisma(position),
         });
         return PositionMapper.toDomain(created);
     }
