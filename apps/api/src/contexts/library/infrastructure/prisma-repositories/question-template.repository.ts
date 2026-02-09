@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { QuestionTemplateRepositoryPort } from '../../application/ports/question-template.repository.port';
 import { QuestionTemplateDomain } from '../../domain/question-template.domain';
-import { LibraryMapper } from './library.mapper';
+import { QuestionTemplateMapper } from '../mappers/question-template.mapper';
 
 @Injectable()
 export class QuestionTemplateRepository implements QuestionTemplateRepositoryPort {
@@ -34,7 +34,7 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
             include: { positionRelations: { select: { positionId: true } } },
         });
 
-        return LibraryMapper.toQuestionTemplateDomain(created);
+        return QuestionTemplateMapper.toDomain(created);
     }
 
     async findById(id: number): Promise<QuestionTemplateDomain | null> {
@@ -43,9 +43,7 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
             include: { positionRelations: { select: { positionId: true } } },
         });
 
-        return question
-            ? LibraryMapper.toQuestionTemplateDomain(question)
-            : null;
+        return question ? QuestionTemplateMapper.toDomain(question) : null;
     }
 
     async search(
@@ -60,7 +58,7 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
             include: { positionRelations: { select: { positionId: true } } },
         });
 
-        return items.map(LibraryMapper.toQuestionTemplateDomain);
+        return items.map(QuestionTemplateMapper.toDomain);
     }
 
     async updateById(
@@ -75,7 +73,7 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
             include: { positionRelations: { select: { positionId: true } } },
         });
 
-        return LibraryMapper.toQuestionTemplateDomain(updated);
+        return QuestionTemplateMapper.toDomain(updated);
     }
 
     async deleteById(id: number): Promise<void> {

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { PositionCompetenceRelationRepositoryPort } from '../../application/ports/position-competence-relation.repository.port';
 import { PositionCompetenceRelationDomain } from '../../domain/position-competence-relation.domain';
-import { LibraryMapper } from './library.mapper';
+import { PositionCompetenceRelationMapper } from '../mappers/position-competence-relation.mapper';
 
 @Injectable()
 export class PositionCompetenceRelationRepository implements PositionCompetenceRelationRepositoryPort {
@@ -18,7 +18,7 @@ export class PositionCompetenceRelationRepository implements PositionCompetenceR
                 await this.prisma.positionCompetenceRelation.create({
                     data: { competenceId, positionId },
                 });
-            return LibraryMapper.toPositionCompetenceRelationDomain(relation);
+            return PositionCompetenceRelationMapper.toDomain(relation);
         } catch (error) {
             if (
                 error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -34,9 +34,7 @@ export class PositionCompetenceRelationRepository implements PositionCompetenceR
                         },
                     });
                 if (existing)
-                    return LibraryMapper.toPositionCompetenceRelationDomain(
-                        existing,
-                    );
+                    return PositionCompetenceRelationMapper.toDomain(existing);
             }
             throw error;
         }
@@ -57,7 +55,7 @@ export class PositionCompetenceRelationRepository implements PositionCompetenceR
                 orderBy: { createdAt: 'desc' },
             },
         );
-        return relations.map(LibraryMapper.toPositionCompetenceRelationDomain);
+        return relations.map(PositionCompetenceRelationMapper.toDomain);
     }
 
     async listByPosition(
@@ -69,7 +67,7 @@ export class PositionCompetenceRelationRepository implements PositionCompetenceR
                 orderBy: { createdAt: 'desc' },
             },
         );
-        return relations.map(LibraryMapper.toPositionCompetenceRelationDomain);
+        return relations.map(PositionCompetenceRelationMapper.toDomain);
     }
 
     async replaceForCompetence(

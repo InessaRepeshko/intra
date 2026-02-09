@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { ClusterRepositoryPort } from '../../application/ports/cluster.repository.port';
 import { ClusterDomain } from '../../domain/cluster.domain';
-import { LibraryMapper } from './library.mapper';
+import { ClusterMapper } from '../mappers/cluster.mapper';
 
 @Injectable()
 export class ClusterRepository implements ClusterRepositoryPort {
@@ -26,12 +26,12 @@ export class ClusterRepository implements ClusterRepositoryPort {
             },
         });
 
-        return LibraryMapper.toClusterDomain(created);
+        return ClusterMapper.toDomain(created);
     }
 
     async findById(id: number): Promise<ClusterDomain | null> {
         const cluster = await this.prisma.cluster.findUnique({ where: { id } });
-        return cluster ? LibraryMapper.toClusterDomain(cluster) : null;
+        return cluster ? ClusterMapper.toDomain(cluster) : null;
     }
 
     async search(query: ClusterSearchQuery): Promise<ClusterDomain[]> {
@@ -39,7 +39,7 @@ export class ClusterRepository implements ClusterRepositoryPort {
         const orderBy = this.buildOrder(query);
 
         const items = await this.prisma.cluster.findMany({ where, orderBy });
-        return items.map(LibraryMapper.toClusterDomain);
+        return items.map(ClusterMapper.toDomain);
     }
 
     async updateById(
@@ -51,7 +51,7 @@ export class ClusterRepository implements ClusterRepositoryPort {
             data: patch,
         });
 
-        return LibraryMapper.toClusterDomain(updated);
+        return ClusterMapper.toDomain(updated);
     }
 
     async deleteById(id: number): Promise<void> {

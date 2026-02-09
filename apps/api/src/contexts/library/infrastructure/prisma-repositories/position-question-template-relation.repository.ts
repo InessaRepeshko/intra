@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { PositionQuestionTemplateRelationRepositoryPort } from '../../application/ports/position-question-template-relation.repository.port';
 import { PositionQuestionTemplateRelationDomain } from '../../domain/position-question-template-relation.domain';
-import { LibraryMapper } from './library.mapper';
+import { PositionQuestionTemplateRelationMapper } from '../mappers/position-question-template-relation.mapper';
 
 @Injectable()
 export class PositionQuestionTemplateRelationRepository implements PositionQuestionTemplateRelationRepositoryPort {
@@ -18,9 +18,7 @@ export class PositionQuestionTemplateRelationRepository implements PositionQuest
                 await this.prisma.positionQuestionTemplateRelation.create({
                     data: { questionTemplateId: questionId, positionId },
                 });
-            return LibraryMapper.toPositionQuestionTemplateRelationDomain(
-                relation,
-            );
+            return PositionQuestionTemplateRelationMapper.toDomain(relation);
         } catch (error) {
             if (
                 error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -38,7 +36,7 @@ export class PositionQuestionTemplateRelationRepository implements PositionQuest
                         },
                     );
                 if (existing)
-                    return LibraryMapper.toPositionQuestionTemplateRelationDomain(
+                    return PositionQuestionTemplateRelationMapper.toDomain(
                         existing,
                     );
             }
@@ -61,9 +59,7 @@ export class PositionQuestionTemplateRelationRepository implements PositionQuest
                 orderBy: { createdAt: 'desc' },
             });
 
-        return relations.map(
-            LibraryMapper.toPositionQuestionTemplateRelationDomain,
-        );
+        return relations.map(PositionQuestionTemplateRelationMapper.toDomain);
     }
 
     async replace(

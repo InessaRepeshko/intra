@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { CompetenceRepositoryPort } from '../../application/ports/competence.repository.port';
 import { CompetenceDomain } from '../../domain/competence.domain';
-import { LibraryMapper } from './library.mapper';
+import { CompetenceMapper } from '../mappers/competence.mapper';
 
 @Injectable()
 export class CompetenceRepository implements CompetenceRepositoryPort {
@@ -24,14 +24,14 @@ export class CompetenceRepository implements CompetenceRepositoryPort {
             },
         });
 
-        return LibraryMapper.toCompetenceDomain(created);
+        return CompetenceMapper.toDomain(created);
     }
 
     async findById(id: number): Promise<CompetenceDomain | null> {
         const competence = await this.prisma.competence.findUnique({
             where: { id },
         });
-        return competence ? LibraryMapper.toCompetenceDomain(competence) : null;
+        return competence ? CompetenceMapper.toDomain(competence) : null;
     }
 
     async search(query: CompetenceSearchQuery): Promise<CompetenceDomain[]> {
@@ -39,7 +39,7 @@ export class CompetenceRepository implements CompetenceRepositoryPort {
         const orderBy = this.buildOrder(query);
 
         const items = await this.prisma.competence.findMany({ where, orderBy });
-        return items.map(LibraryMapper.toCompetenceDomain);
+        return items.map(CompetenceMapper.toDomain);
     }
 
     async updateById(
@@ -51,7 +51,7 @@ export class CompetenceRepository implements CompetenceRepositoryPort {
             data: patch,
         });
 
-        return LibraryMapper.toCompetenceDomain(updated);
+        return CompetenceMapper.toDomain(updated);
     }
 
     async deleteById(id: number): Promise<void> {

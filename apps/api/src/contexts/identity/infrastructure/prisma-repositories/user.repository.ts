@@ -10,7 +10,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { UserRepositoryPort } from '../../application/ports/user.repository.port';
 import { UserDomain } from '../../domain/user.domain';
-import { IdentityMapper, UserWithRoles } from './identity.mapper';
+import { UserMapper, UserWithRoles } from '../mappers/user.mapper';
 
 @Injectable()
 export class UserRepository implements UserRepositoryPort {
@@ -44,7 +44,7 @@ export class UserRepository implements UserRepositoryPort {
             include: this.withRolesInclude(true),
         });
 
-        return IdentityMapper.toUserDomain(created);
+        return UserMapper.toDomain(created);
     }
 
     async findById(
@@ -56,7 +56,7 @@ export class UserRepository implements UserRepositoryPort {
             include: this.withRolesInclude(opts?.withRoles),
         });
 
-        return user ? IdentityMapper.toUserDomain(user) : null;
+        return user ? UserMapper.toDomain(user) : null;
     }
 
     async findByEmail(
@@ -68,7 +68,7 @@ export class UserRepository implements UserRepositoryPort {
             include: this.withRolesInclude(opts?.withRoles),
         });
 
-        return user ? IdentityMapper.toUserDomain(user) : null;
+        return user ? UserMapper.toDomain(user) : null;
     }
 
     async search(query: UserSearchQuery): Promise<UserDomain[]> {
@@ -81,9 +81,7 @@ export class UserRepository implements UserRepositoryPort {
             include: this.withRolesInclude(true),
         });
 
-        return items.map((u) =>
-            IdentityMapper.toUserDomain(u as UserWithRoles),
-        );
+        return items.map((u) => UserMapper.toDomain(u as UserWithRoles));
     }
 
     async updateById(
@@ -101,7 +99,7 @@ export class UserRepository implements UserRepositoryPort {
             include: this.withRolesInclude(true),
         });
 
-        return IdentityMapper.toUserDomain(updated);
+        return UserMapper.toDomain(updated);
     }
 
     async deleteById(id: number): Promise<void> {
