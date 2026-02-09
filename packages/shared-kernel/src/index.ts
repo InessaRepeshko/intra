@@ -121,6 +121,7 @@ export {
 
 export type { ClusterScoreDto } from './feedback360/dto/cluster-score/cluster-score-dto.interface';
 export type { ClusterScoreSearchQuery } from './feedback360/dto/cluster-score/cluster-score-search-query.type';
+export type { ClusterScoreWithRelationsDto } from './feedback360/dto/cluster-score/cluster-score-with-relations-dto.interface';
 export type { UpsertClusterScorePayload } from './feedback360/dto/cluster-score/upsert-cluster-score-payload.type';
 export {
     CLUSTER_SCORE_SORT_FIELDS,

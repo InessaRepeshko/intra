@@ -126,4 +126,22 @@ export class ClusterScoreAnalyticsController {
     async delete(@Param('id') id: string): Promise<void> {
         await this.service.delete(Number(id));
     }
+
+    @Get('cycle/:cycleId')
+    @ApiOperation({ summary: 'Get cluster score analytics by cycle id' })
+    @ApiParam({ name: 'cycleId', description: 'Cycle id', type: 'number' })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: ClusterScoreAnalyticsResponse,
+        isArray: true,
+    })
+    @ApiListReadErrorResponses()
+    async getByCycleId(
+        @Param('cycleId') cycleId: string,
+    ): Promise<ClusterScoreAnalyticsResponse[]> {
+        const analytics = await this.service.getByCycleId(Number(cycleId));
+        return analytics.map((analytics) =>
+            Feedback360HttpMapper.toClusterScoreAnalyticsResponse(analytics),
+        );
+    }
 }

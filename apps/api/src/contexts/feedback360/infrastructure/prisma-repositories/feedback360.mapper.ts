@@ -1,6 +1,7 @@
 import {
     Answer as PrismaAnswer,
     AnswerType as PrismaAnswerType,
+    Cluster as PrismaCluster,
     ClusterScore as PrismaClusterScore,
     ClusterScoreAnalytics as PrismaClusterScoreAnalytics,
     Cycle as PrismaCycle,
@@ -14,17 +15,22 @@ import {
     ReviewQuestionRelation as PrismaReviewQuestionRelation,
     ReviewStage as PrismaReviewStage,
     ReviewStageHistory as PrismaReviewStageHistory,
+    User as PrismaUser,
 } from '@intra/database';
 import {
     AnswerType,
     CycleStage,
+    IdentityStatus,
     RespondentCategory,
     ResponseStatus,
     ReviewStage,
 } from '@intra/shared-kernel';
 import Decimal from 'decimal.js';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
+import { ClusterDomain } from 'src/contexts/library/domain/cluster.domain';
 import { AnswerDomain } from '../../domain/answer.domain';
 import { ClusterScoreAnalyticsDomain } from '../../domain/cluster-score-analytics.domain';
+import { ClusterScoreWithRelationsDomain } from '../../domain/cluster-score-with-relations.domain';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
 import { CycleDomain } from '../../domain/cycle.domain';
 import { QuestionDomain } from '../../domain/question.domain';
@@ -166,6 +172,50 @@ export class Feedback360Mapper {
             answersCount: score.answersCount,
             createdAt: score.createdAt,
             updatedAt: score.updatedAt,
+        });
+    }
+
+    static toClusterScoreWithRelationsDomain(
+        score: PrismaClusterScore & {
+            cluster: PrismaCluster;
+            ratee: PrismaUser;
+        },
+    ): ClusterScoreWithRelationsDomain {
+        return ClusterScoreWithRelationsDomain.create({
+            id: score.id,
+            cycleId: score.cycleId,
+            clusterId: score.clusterId,
+            rateeId: score.rateeId,
+            reviewId: score.reviewId,
+            score: new Decimal(score.score),
+            answersCount: score.answersCount,
+            createdAt: score.createdAt,
+            updatedAt: score.updatedAt,
+            cluster: ClusterDomain.create({
+                id: score.cluster.id,
+                competenceId: score.cluster.competenceId,
+                lowerBound: new Decimal(score.cluster.lowerBound).toNumber(),
+                upperBound: new Decimal(score.cluster.upperBound).toNumber(),
+                title: score.cluster.title,
+                description: score.cluster.description,
+                createdAt: score.cluster.createdAt,
+                updatedAt: score.cluster.updatedAt,
+            }),
+            ratee: UserDomain.create({
+                id: score.ratee.id,
+                firstName: score.ratee.firstName,
+                secondName: score.ratee.secondName ?? undefined,
+                lastName: score.ratee.lastName,
+                fullName: score.ratee.fullName,
+                email: score.ratee.email,
+                avatarUrl: score.ratee.avatarUrl,
+                status: score.ratee.status as IdentityStatus,
+                positionId: score.ratee.positionId,
+                teamId: score.ratee.teamId,
+                managerId: score.ratee.managerId,
+                createdAt: score.ratee.createdAt,
+                updatedAt: score.ratee.updatedAt,
+            }),
         });
     }
 

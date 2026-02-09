@@ -91,6 +91,15 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
         await this.prisma.clusterScoreAnalytics.delete({ where: { id } });
     }
 
+    async getByCycleId(
+        cycleId: number,
+    ): Promise<ClusterScoreAnalyticsDomain[]> {
+        const items = await this.prisma.clusterScoreAnalytics.findMany({
+            where: { cycleId },
+        });
+        return items.map(Feedback360Mapper.toClusterScoreAnalyticsDomain);
+    }
+
     private buildWhere(
         query: ClusterScoreAnalyticsSearchQuery,
     ): Prisma.ClusterScoreAnalyticsWhereInput {

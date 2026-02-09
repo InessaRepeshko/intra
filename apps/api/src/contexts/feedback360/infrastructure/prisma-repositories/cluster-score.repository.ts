@@ -4,13 +4,14 @@ import {
     ClusterScoreSortField,
     SortDirection,
 } from '@intra/shared-kernel';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import Decimal from 'decimal.js';
 import { PrismaService } from 'src/database/prisma.service';
 import {
     CLUSTER_SCORE_REPOSITORY,
     ClusterScoreRepositoryPort,
 } from '../../application/ports/cluster-score.repository.port';
+import { ClusterScoreWithRelationsDomain } from '../../domain/cluster-score-with-relations.domain';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
 import { Feedback360Mapper } from './feedback360.mapper';
 
@@ -57,8 +58,36 @@ export class ClusterScoreRepository implements ClusterScoreRepositoryPort {
         return scores.map(Feedback360Mapper.toClusterScoreDomain);
     }
 
+    async getById(id: number): Promise<ClusterScoreWithRelationsDomain> {
+        const score = await this.prisma.clusterScore.findUnique({
+            where: { id },
+            include: {
+                cluster: true,
+                ratee: true,
+            },
+        });
+        if (!score) throw new NotFoundException('Cluster score not found');
+        return Feedback360Mapper.toClusterScoreWithRelationsDomain(score);
+    }
+
     async deleteById(id: number): Promise<void> {
         await this.prisma.clusterScore.delete({ where: { id } });
+    }
+
+    async getByCycleId(
+        cycleId: number,
+    ): Promise<ClusterScoreWithRelationsDomain[]> {
+        const scores = await this.prisma.clusterScore.findMany({
+            where: { cycleId },
+            orderBy: [{ clusterId: 'asc' }, { score: 'asc' }],
+            include: {
+                cluster: true,
+                ratee: true,
+            },
+        });
+        return scores.map((s) =>
+            Feedback360Mapper.toClusterScoreWithRelationsDomain(s),
+        );
     }
 
     private buildWhere(

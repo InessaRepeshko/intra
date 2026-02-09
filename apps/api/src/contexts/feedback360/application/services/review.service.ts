@@ -30,6 +30,7 @@ import { CompetenceService } from 'src/contexts/library/application/services/com
 import { QuestionTemplateService } from 'src/contexts/library/application/services/question-template.service';
 import { PrismaService } from 'src/database/prisma.service';
 import { AnswerDomain } from '../../domain/answer.domain';
+import { ClusterScoreWithRelationsDomain } from '../../domain/cluster-score-with-relations.domain';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
 import { QuestionDomain } from '../../domain/question.domain';
 import { RespondentDomain } from '../../domain/respondent.domain';
@@ -411,6 +412,18 @@ export class ReviewService {
         query: ClusterScoreSearchQuery,
     ): Promise<ClusterScoreDomain[]> {
         return this.clusterScores.list(query);
+    }
+
+    async getClusterScoreById(
+        id: number,
+    ): Promise<ClusterScoreWithRelationsDomain> {
+        return this.clusterScores.getById(id);
+    }
+
+    async getClusterScoreByCycleId(
+        cycleId: number,
+    ): Promise<ClusterScoreWithRelationsDomain[]> {
+        return this.clusterScores.getByCycleId(cycleId);
     }
 
     async removeClusterScore(id: number): Promise<void> {

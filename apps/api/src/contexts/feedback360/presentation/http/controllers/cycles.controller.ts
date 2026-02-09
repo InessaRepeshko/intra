@@ -21,14 +21,12 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import {
     ApiCreateAndUpdateErrorResponses,
     ApiDeletionErrorResponses,
     ApiListReadErrorResponses,
     ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
-import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { CycleService } from '../../../application/services/cycle.service';
 import { CreateCycleDto } from '../dto/cycles/create-cycle.dto';
 import { CycleQueryDto } from '../dto/cycles/cycle-query.dto';
@@ -114,13 +112,13 @@ export class CyclesController {
     @ApiCreateAndUpdateErrorResponses()
     async forceFinish(
         @Param('id') id: string,
-        @CurrentUser() user: UserDomain,
+        // @CurrentUser() user: UserDomain,
     ): Promise<CycleResponse> {
         const cycleId = Number(id);
-        const actorId = user.id!;
-        const actorName = user.fullName;
+        // const actorId = user.id!;
+        // const actorName = user.fullName;
 
-        await this.cycles.finish(cycleId, actorId, actorName);
+        await this.cycles.finish(cycleId, 0, 'Admin');
         const updated = await this.cycles.getById(cycleId);
         return Feedback360HttpMapper.toCycleResponse(updated);
     }

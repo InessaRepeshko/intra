@@ -1,4 +1,7 @@
 import Decimal from 'decimal.js';
+import { ClusterScoreWithRelationsDomain } from 'src/contexts/feedback360/domain/cluster-score-with-relations.domain';
+import { UserHttpMapper } from 'src/contexts/identity/presentation/http/mappers/user.http.mapper';
+import { ClusterHttpMapper } from 'src/contexts/library/presentation/http/mappers/cluster.http.mapper';
 import { AnswerDomain } from '../../../domain/answer.domain';
 import { ClusterScoreAnalyticsDomain } from '../../../domain/cluster-score-analytics.domain';
 import { ClusterScoreDomain } from '../../../domain/cluster-score.domain';
@@ -10,6 +13,7 @@ import { ReviewDomain } from '../../../domain/review.domain';
 import { ReviewerDomain } from '../../../domain/reviewer.domain';
 import { AnswerResponse } from '../models/answer.response';
 import { ClusterScoreAnalyticsResponse } from '../models/cluster-score-analytics.response';
+import { ClusterScoreWithRelationsResponse } from '../models/cluster-score-with-relations.response';
 import { ClusterScoreResponse } from '../models/cluster-score.response';
 import { CycleResponse } from '../models/cycle.response';
 import { QuestionResponse } from '../models/question.response';
@@ -153,6 +157,24 @@ export class Feedback360HttpMapper {
         view.answersCount = domain.answersCount;
         view.createdAt = domain.createdAt!;
         view.updatedAt = domain.updatedAt!;
+        return view;
+    }
+
+    static toClusterScoreWithRelationsResponse(
+        domain: ClusterScoreWithRelationsDomain,
+    ): ClusterScoreWithRelationsResponse {
+        const view = new ClusterScoreWithRelationsResponse();
+        view.id = domain.id!;
+        view.cycleId = domain.cycleId ?? null;
+        view.clusterId = domain.clusterId;
+        view.rateeId = domain.rateeId;
+        view.reviewId = domain.reviewId ?? null;
+        view.score = Feedback360HttpMapper.toRoundedNumber(domain.score)!;
+        view.answersCount = domain.answersCount;
+        view.createdAt = domain.createdAt!;
+        view.updatedAt = domain.updatedAt!;
+        view.cluster = ClusterHttpMapper.toResponse(domain.cluster);
+        view.ratee = UserHttpMapper.toResponse(domain.ratee);
         return view;
     }
 

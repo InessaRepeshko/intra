@@ -118,6 +118,12 @@ export class ClusterScoreAnalyticsService {
         await this.analytics.deleteById(id);
     }
 
+    async getByCycleId(
+        cycleId: number,
+    ): Promise<ClusterScoreAnalyticsDomain[]> {
+        return this.analytics.getByCycleId(cycleId);
+    }
+
     async generateAnalyticsForCycle(cycleId: number): Promise<void> {
         await this.cycles.getById(cycleId);
 

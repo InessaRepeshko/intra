@@ -38,7 +38,9 @@ export class ReportAnalyticsController {
         @Param('reportId', ParseIntPipe) reportId: number,
     ): Promise<ReportAnalyticsResponse[]> {
         const analytics = await this.analyticsService.getByReportId(reportId);
-        return analytics.map(ReportingHttpMapper.toReportAnalyticsResponse);
+        return analytics.map((a) =>
+            ReportingHttpMapper.toReportAnalyticsResponse(a),
+        );
     }
 
     @Get(':id')

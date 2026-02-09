@@ -6709,6 +6709,42 @@
       }
     },
     "/feedback360/cluster-scores/{id}": {
+      "get": {
+        "operationId": "ClusterScoresController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Cluster score id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClusterScoreWithRelationsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get cluster score by id",
+        "tags": [
+          "Feedback360 / Cluster Scores"
+        ]
+      },
       "delete": {
         "operationId": "ClusterScoresController_delete",
         "parameters": [
@@ -6740,6 +6776,44 @@
           }
         },
         "summary": "Delete cluster score",
+        "tags": [
+          "Feedback360 / Cluster Scores"
+        ]
+      }
+    },
+    "/feedback360/cluster-scores/cycle/{cycleId}": {
+      "get": {
+        "operationId": "ClusterScoresController_getByCycleId",
+        "parameters": [
+          {
+            "name": "cycleId",
+            "required": true,
+            "in": "path",
+            "description": "Cycle id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default sort by ascending cluster id and score",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClusterScoreWithRelationsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get cluster scores by cycle id",
         "tags": [
           "Feedback360 / Cluster Scores"
         ]
@@ -7178,6 +7252,44 @@
           }
         },
         "summary": "Delete cluster score analytics",
+        "tags": [
+          "Feedback360 / Cluster Score Analytics"
+        ]
+      }
+    },
+    "/feedback360/cluster-score-analytics/cycle/{cycleId}": {
+      "get": {
+        "operationId": "ClusterScoreAnalyticsController_getByCycleId",
+        "parameters": [
+          {
+            "name": "cycleId",
+            "required": true,
+            "in": "path",
+            "description": "Cycle id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClusterScoreAnalyticsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get cluster score analytics by cycle id",
         "tags": [
           "Feedback360 / Cluster Score Analytics"
         ]
@@ -10218,6 +10330,92 @@
           "answersCount",
           "createdAt",
           "updatedAt"
+        ]
+      },
+      "ClusterScoreWithRelationsResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "Cluster score id"
+          },
+          "cycleId": {
+            "type": "number",
+            "example": 1,
+            "description": "Cycle id",
+            "nullable": true
+          },
+          "clusterId": {
+            "type": "number",
+            "example": 3,
+            "description": "Cluster id"
+          },
+          "rateeId": {
+            "type": "number",
+            "example": 7,
+            "description": "Ratee id"
+          },
+          "reviewId": {
+            "type": "number",
+            "example": 2,
+            "description": "Review id"
+          },
+          "score": {
+            "type": "number",
+            "example": 4.3,
+            "description": "Cluster score",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "answersCount": {
+            "type": "number",
+            "example": 5,
+            "description": "Number of answers this score is based on",
+            "minimum": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Created at",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Updated at",
+            "format": "date-time"
+          },
+          "cluster": {
+            "nullable": false,
+            "description": "Library cluster data",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ClusterResponse"
+              }
+            ]
+          },
+          "ratee": {
+            "nullable": false,
+            "description": "Ratee data",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserResponse"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "clusterId",
+          "rateeId",
+          "reviewId",
+          "score",
+          "answersCount",
+          "createdAt",
+          "updatedAt",
+          "cluster",
+          "ratee"
         ]
       },
       "UpsertClusterScoreAnalyticsDto": {
