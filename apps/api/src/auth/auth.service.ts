@@ -127,14 +127,10 @@ export class AuthService {
                 headers: req.headers as any,
             });
             if (!session) {
-                console.warn('DEBUG: better-auth getSession returned null', {
-                    cookie: req.headers.cookie,
-                });
                 return null;
             }
             return { session };
         } catch (error) {
-            console.error('DEBUG: better-auth getSession failed', error);
             return null;
         }
     }
@@ -360,10 +356,46 @@ export class AuthService {
                 ? (betterAuthResponse as any).headers.raw()['set-cookie']
                 : undefined);
 
-        if (Array.isArray(setCookies)) {
-            res.header('set-cookie', setCookies);
-        } else if (setCookies) {
-            res.header('set-cookie', setCookies);
+        if (!setCookies) {
+            return;
+        }
+
+        // Parse and set each cookie individually
+        const cookies = Array.isArray(setCookies)
+            ? setCookies
+            : typeof setCookies === 'string'
+              ? setCookies.split(', ').filter((c) => c.includes('='))
+              : [setCookies];
+
+        for (const cookieStr of cookies) {
+            const parts = cookieStr.split(';').map((p) => p.trim());
+            const [nameValue, ...attributes] = parts;
+            const [name, ...valueParts] = nameValue.split('=');
+            // Join back in case value contains '='
+            const value = decodeURIComponent(valueParts.join('='));
+
+            const options: any = {
+                httpOnly: false,
+                secure: false,
+                sameSite: 'lax' as const,
+                path: '/',
+            };
+
+            for (const attr of attributes) {
+                const [key, val] = attr.split('=').map((s) => s.trim());
+                const lowerKey = key.toLowerCase();
+
+                if (lowerKey === 'httponly') options.httpOnly = true;
+                else if (lowerKey === 'secure') options.secure = true;
+                else if (lowerKey === 'path') options.path = val;
+                else if (lowerKey === 'max-age')
+                    options.maxAge = parseInt(val) * 1000;
+                else if (lowerKey === 'samesite')
+                    options.sameSite = val.toLowerCase();
+                else if (lowerKey === 'domain') options.domain = val;
+            }
+
+            res.cookie(name, value, options);
         }
     }
 

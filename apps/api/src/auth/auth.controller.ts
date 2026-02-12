@@ -1,6 +1,5 @@
 import {
     Body,
-    ClassSerializerInterceptor,
     Controller,
     Get,
     HttpCode,
@@ -8,9 +7,7 @@ import {
     Post,
     Req,
     Res,
-    SerializeOptions,
     UseGuards,
-    UseInterceptors,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
@@ -28,8 +25,6 @@ import { RolesGuard } from './guards/roles.guard';
 @ApiTags('Auth')
 @Controller('auth')
 @UseGuards(AuthSessionGuard, RolesGuard)
-@UseInterceptors(ClassSerializerInterceptor)
-@SerializeOptions({ type: UserResponse })
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
@@ -145,6 +140,10 @@ export class AuthController {
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'User successfully logged out',
+    })
+    @ApiResponse({
+        status: HttpStatus.UNAUTHORIZED,
+        description: 'User is not authenticated',
     })
     async logout(
         @Req() req: Request,

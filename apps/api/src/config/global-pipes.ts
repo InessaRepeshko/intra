@@ -7,7 +7,7 @@ export function setupGlobalPipes(app: INestApplication): void {
             transformOptions: { enableImplicitConversion: true },
             whitelist: true,
             forbidNonWhitelisted: false,
-            validateCustomDecorators: true,
+            validateCustomDecorators: false,
         }),
     );
 }

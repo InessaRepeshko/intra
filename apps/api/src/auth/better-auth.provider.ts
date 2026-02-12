@@ -38,6 +38,20 @@ export const betterAuthProvider: Provider = {
                     prompt: 'select_account consent',
                 },
             },
+            advanced: {
+                cookiePrefix: 'better-auth',
+                generateId: false,
+            },
+            session: {
+                expiresIn: 60 * 60 * 24 * 30, // 30 days
+                updateAge: 60 * 60 * 24, // 1 day
+                cookieCache: {
+                    enabled: true,
+                    maxAge: 5 * 60, // Cache validation result for 5 minutes
+                },
+            },
+            // Explicitly set cookie options for development
+            trustedOrigins: ['http://localhost:3000', 'http://localhost:8080'],
         });
     },
     inject: [ConfigService],
