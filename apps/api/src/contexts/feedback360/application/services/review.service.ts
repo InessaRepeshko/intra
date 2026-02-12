@@ -7,6 +7,7 @@ import {
     CreateQuestionPayload,
     CreateReviewPayload,
     CycleStage,
+    IdentityRole,
     QuestionSearchQuery,
     RespondentCategory,
     RespondentSearchQuery,
@@ -21,11 +22,13 @@ import {
 } from '@intra/shared-kernel';
 import {
     BadRequestException,
+    ForbiddenException,
     Inject,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { CompetenceService } from 'src/contexts/library/application/services/competence.service';
 import { QuestionTemplateService } from 'src/contexts/library/application/services/question-template.service';
 import { PrismaService } from 'src/database/prisma.service';
@@ -136,10 +139,47 @@ export class ReviewService {
         return this.reviews.search(query);
     }
 
-    async getById(id: number): Promise<ReviewDomain> {
+    async getById(id: number, actor?: UserDomain): Promise<ReviewDomain> {
         const review = await this.reviews.findById(id);
         if (!review) throw new NotFoundException('Review not found');
+
+        await this.checkAccessToReview(review, actor);
+
         return review;
+    }
+
+    private async checkAccessToReview(
+        review: ReviewDomain,
+        actor?: UserDomain,
+    ): Promise<void> {
+        if (!actor) return;
+
+        const isAdminOrHr =
+            actor.roles?.includes(IdentityRole.ADMIN) ||
+            actor.roles?.includes(IdentityRole.HR);
+
+        if (isAdminOrHr) return;
+
+        const isManagerOfReview = review.managerId === actor.id;
+        const isRateeOfReview = review.rateeId === actor.id;
+
+        if (isManagerOfReview || isRateeOfReview) return;
+
+        const respondents = await this.respondents.listByReview(review.id!, {
+            respondentId: actor.id,
+        });
+
+        if (respondents.length > 0) return;
+
+        const reviewers = await this.reviewers.listByReview(review.id!, {
+            reviewerId: actor.id,
+        });
+
+        if (reviewers.length > 0) return;
+
+        throw new ForbiddenException(
+            'You do not have permission to view this review',
+        );
     }
 
     async update(
@@ -271,8 +311,9 @@ export class ReviewService {
     async listQuestionRelations(
         reviewId: number,
         query: ReviewQuestionRelationSearchQuery,
+        actor?: UserDomain,
     ): Promise<ReviewQuestionRelationDomain[]> {
-        await this.getById(reviewId);
+        await this.getById(reviewId, actor);
         return this.questionRelations.listByReview(reviewId, query);
     }
 
@@ -281,8 +322,11 @@ export class ReviewService {
         await this.questionRelations.unlink(reviewId, questionId);
     }
 
-    async addAnswer(payload: CreateAnswerPayload): Promise<AnswerDomain> {
-        await this.getById(payload.reviewId);
+    async addAnswer(
+        payload: CreateAnswerPayload,
+        actor: UserDomain,
+    ): Promise<AnswerDomain> {
+        await this.getById(payload.reviewId, actor);
 
         const answer = AnswerDomain.create({
             reviewId: payload.reviewId,
@@ -332,7 +376,13 @@ export class ReviewService {
     async updateRespondent(
         id: number,
         patch: UpdateRespondentPayload,
+        actor: UserDomain,
     ): Promise<RespondentDomain> {
+        await this.checkAccessToUpdateResponseStatus(
+            id,
+            actor,
+        );
+
         const updated = await this.respondents.updateById(id, patch);
 
         // Reactive Trigger: Check if all responses completed
@@ -349,6 +399,25 @@ export class ReviewService {
         }
 
         return updated;
+    }
+
+    private async checkAccessToUpdateResponseStatus(
+        relationId: number,
+        actor?: UserDomain,
+    ): Promise<void> {
+        if (!actor) return;
+
+        const isAdmin = actor.roles?.includes(IdentityRole.ADMIN);
+
+        if (isAdmin) return;
+
+        const respondent = await this.respondents.getById(relationId);
+
+        if (respondent.respondentId === actor.id) return;
+
+        throw new ForbiddenException(
+            'You do not have permission to update response status for this review',
+        );
     }
 
     async listRespondents(
@@ -380,9 +449,34 @@ export class ReviewService {
     async listReviewers(
         reviewId: number,
         query: ReviewerSearchQuery,
+        actor: UserDomain,
     ): Promise<ReviewerDomain[]> {
-        await this.getById(reviewId);
+        await this.checkAccessToReviewers(reviewId, actor);
         return this.reviewers.listByReview(reviewId, query);
+    }
+
+    private async checkAccessToReviewers(
+        reviewId: number,
+        actor?: UserDomain,
+    ): Promise<void> {
+        if (!actor) return;
+
+        const isAdminOrHr =
+            actor.roles?.includes(IdentityRole.ADMIN) ||
+            actor.roles?.includes(IdentityRole.HR);
+
+        if (isAdminOrHr) return;
+
+        const review = await this.getById(reviewId);
+
+        const isManagerOfReview = review.managerId === actor.id;
+        const isRateeOfReview = review.rateeId === actor.id;
+
+        if (isManagerOfReview || isRateeOfReview) return;
+
+        throw new ForbiddenException(
+            'You do not have permission to view reviewers of this review',
+        );
     }
 
     async removeReviewer(id: number): Promise<void> {

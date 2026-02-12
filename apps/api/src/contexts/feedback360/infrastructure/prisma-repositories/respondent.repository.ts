@@ -5,7 +5,7 @@ import {
     SortDirection,
     UpdateRespondentPayload,
 } from '@intra/shared-kernel';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import {
     RESPONDENT_REPOSITORY,
@@ -26,6 +26,18 @@ export class RespondentRepository implements RespondentRepositoryPort {
         });
 
         return RespondentMapper.toDomain(created);
+    }
+
+    async getById(id: number): Promise<RespondentDomain> {
+        const respondent = await this.prisma.respondent.findUnique({
+            where: { id },
+        });
+
+        if (!respondent) {
+            throw new NotFoundException(`Respondent with id ${id} not found`);
+        }
+
+        return RespondentMapper.toDomain(respondent);
     }
 
     async listByReview(

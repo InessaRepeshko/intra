@@ -103,8 +103,11 @@ export class ReviewController {
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
     @ApiResponse({ status: HttpStatus.OK, type: ReviewResponse })
     @ApiReadErrorResponses()
-    async getById(@Param('id') id: string): Promise<ReviewResponse> {
-        const review = await this.reviews.getById(Number(id));
+    async getById(
+        @Param('id') id: string,
+        @CurrentUser() actor: UserDomain,
+    ): Promise<ReviewResponse> {
+        const review = await this.reviews.getById(Number(id), actor);
         return ReviewHttpMapper.toResponse(review);
     }
 
@@ -172,10 +175,12 @@ export class ReviewController {
     async listQuestions(
         @Param('id') id: string,
         @Query() query: ReviewQuestionRelationQueryDto,
+        @CurrentUser() actor: UserDomain,
     ): Promise<ReviewQuestionRelationResponse[]> {
         const relations = await this.reviews.listQuestionRelations(
             Number(id),
             query,
+            actor,
         );
         return relations.map(ReviewQuestionRelationHttpMapper.toResponse);
     }
@@ -213,25 +218,24 @@ export class ReviewController {
     async addAnswer(
         @Param('id') id: string,
         @Body() dto: CreateAnswerDto,
+        @CurrentUser() actor: UserDomain,
     ): Promise<AnswerResponse> {
-        const created = await this.reviews.addAnswer({
-            reviewId: Number(id),
-            questionId: dto.questionId,
-            respondentCategory: dto.respondentCategory,
-            answerType: dto.answerType,
-            numericalValue: dto.numericalValue,
-            textValue: dto.textValue,
-        });
+        const created = await this.reviews.addAnswer(
+            {
+                reviewId: Number(id),
+                questionId: dto.questionId,
+                respondentCategory: dto.respondentCategory,
+                answerType: dto.answerType,
+                numericalValue: dto.numericalValue,
+                textValue: dto.textValue,
+            },
+            actor,
+        );
         return AnswerHttpMapper.toResponse(created);
     }
 
     @Get(':id/answers')
-    @Roles(
-        IdentityRole.ADMIN,
-        IdentityRole.HR,
-        IdentityRole.MANAGER,
-        IdentityRole.EMPLOYEE,
-    )
+    @Roles(IdentityRole.ADMIN)
     @ApiOperation({ summary: 'List answers to Review' })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
     @ApiQuery({ type: AnswerQueryDto })
@@ -320,10 +324,12 @@ export class ReviewController {
     async updateRespondent(
         @Param('relationId') relationId: string,
         @Body() dto: UpdateRespondentDto,
+        @CurrentUser() actor: UserDomain,
     ): Promise<RespondentResponse> {
         const updated = await this.reviews.updateRespondent(
             Number(relationId),
             dto,
+            actor,
         );
         return RespondentHttpMapper.toResponse(updated);
     }
@@ -386,8 +392,9 @@ export class ReviewController {
     async listReviewers(
         @Param('id') id: string,
         @Query() query: ReviewerQueryDto,
+        @CurrentUser() actor: UserDomain,
     ): Promise<ReviewerResponse[]> {
-        const reviewers = await this.reviews.listReviewers(Number(id), query);
+        const reviewers = await this.reviews.listReviewers(Number(id), query, actor);
         return reviewers.map(ReviewerHttpMapper.toResponse);
     }
 
