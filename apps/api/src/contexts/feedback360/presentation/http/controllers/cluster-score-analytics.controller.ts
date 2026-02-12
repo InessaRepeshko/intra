@@ -1,3 +1,4 @@
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -11,6 +12,7 @@ import {
     Post,
     Query,
     SerializeOptions,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -21,6 +23,9 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import {
     ApiCreateAndUpdateErrorResponses,
     ApiDeletionErrorResponses,
@@ -38,6 +43,8 @@ import { ClusterScoreAnalyticsResponse } from '../models/cluster-score-analytics
 @Controller('feedback360/cluster-score-analytics')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ClusterScoreAnalyticsResponse })
+@UseGuards(AuthSessionGuard, RolesGuard)
+@Roles(IdentityRole.ADMIN, IdentityRole.HR)
 export class ClusterScoreAnalyticsController {
     constructor(private readonly service: ClusterScoreAnalyticsService) {}
 
@@ -66,6 +73,7 @@ export class ClusterScoreAnalyticsController {
     }
 
     @Get()
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER)
     @ApiOperation({ summary: 'Search cluster score analytics' })
     @ApiQuery({ type: ClusterScoreAnalyticsQueryDto })
     @ApiResponse({
@@ -85,6 +93,7 @@ export class ClusterScoreAnalyticsController {
     }
 
     @Get(':id')
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER)
     @ApiOperation({ summary: 'Get cluster score analytics by id' })
     @ApiParam({
         name: 'id',
@@ -128,6 +137,7 @@ export class ClusterScoreAnalyticsController {
     }
 
     @Get('cycle/:cycleId')
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER)
     @ApiOperation({ summary: 'Get cluster score analytics by cycle id' })
     @ApiParam({ name: 'cycleId', description: 'Cycle id', type: 'number' })
     @ApiResponse({

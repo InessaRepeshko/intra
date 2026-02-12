@@ -1,3 +1,4 @@
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -12,6 +13,7 @@ import {
     Put,
     Query,
     SerializeOptions,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -22,6 +24,9 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import {
     ApiCreateAndUpdateErrorResponses,
     ApiDeletionErrorResponses,
@@ -40,6 +45,8 @@ import { UserResponse } from '../models/user.response';
 @Controller('identity/users')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserResponse })
+@UseGuards(AuthSessionGuard, RolesGuard)
+@Roles(IdentityRole.ADMIN)
 export class IdentityUsersController {
     constructor(private readonly service: IdentityUserService) {}
 
@@ -65,6 +72,7 @@ export class IdentityUsersController {
     }
 
     @Get()
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR)
     @ApiOperation({ summary: 'Search users (default sort ascending by id)' })
     @ApiQuery({ type: UserQueryDto })
     @ApiResponse({ status: HttpStatus.OK, type: UserResponse, isArray: true })
@@ -77,6 +85,7 @@ export class IdentityUsersController {
     }
 
     @Get(':id')
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR)
     @ApiOperation({ summary: 'Get a user by id' })
     @ApiParam({ name: 'id', type: 'number', description: 'Id of user' })
     @ApiResponse({ status: HttpStatus.OK, type: UserResponse })
@@ -89,6 +98,7 @@ export class IdentityUsersController {
     }
 
     @Patch(':id')
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR)
     @ApiOperation({ summary: 'Update a user' })
     @ApiParam({ name: 'id', type: 'number', description: 'Id of user' })
     @ApiBody({ type: UpdateUserDto })

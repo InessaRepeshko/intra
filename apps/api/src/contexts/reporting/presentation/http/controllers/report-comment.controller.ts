@@ -1,3 +1,4 @@
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -8,6 +9,7 @@ import {
     ParseIntPipe,
     Post,
     SerializeOptions,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -17,6 +19,9 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 import { ReportCommentService } from '../../../application/services/report-comment.service';
 import { ReportCommentDomain } from '../../../domain/report-comment.domain';
@@ -28,6 +33,8 @@ import { ReportCommentResponse } from '../models/report-comment.response';
 @Controller('reporting/comments')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ReportCommentResponse })
+@UseGuards(AuthSessionGuard, RolesGuard)
+@Roles(IdentityRole.ADMIN, IdentityRole.HR)
 export class ReportCommentController {
     constructor(private readonly commentService: ReportCommentService) {}
 

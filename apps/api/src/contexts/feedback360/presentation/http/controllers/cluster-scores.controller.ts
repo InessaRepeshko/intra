@@ -1,3 +1,4 @@
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -10,6 +11,7 @@ import {
     Post,
     Query,
     SerializeOptions,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -20,6 +22,9 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import {
     ApiCreateAndUpdateErrorResponses,
     ApiDeletionErrorResponses,
@@ -37,6 +42,8 @@ import { ClusterScoreResponse } from '../models/cluster-score.response';
 @Controller('feedback360/cluster-scores')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ClusterScoreResponse })
+@UseGuards(AuthSessionGuard, RolesGuard)
+@Roles(IdentityRole.ADMIN, IdentityRole.HR)
 export class ClusterScoresController {
     constructor(private readonly reviews: ReviewService) {}
 

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AuthModule } from 'src/auth/auth.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { OrganisationModule } from '../organisation/organisation.module';
 import { CLUSTER_REPOSITORY } from './application/ports/cluster.repository.port';
@@ -21,7 +22,7 @@ import { CompetencesController } from './presentation/http/controllers/competenc
 import { QuestionTemplatesController } from './presentation/http/controllers/question-templates.controller';
 
 @Module({
-    imports: [DatabaseModule, OrganisationModule],
+    imports: [DatabaseModule, AuthModule, OrganisationModule],
     controllers: [
         CompetencesController,
         ClustersController,

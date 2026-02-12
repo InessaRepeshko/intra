@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { AuthModule } from 'src/auth/auth.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { Feedback360Module } from '../feedback360/feedback360.module';
 import { CLUSTER_REPOSITORY } from '../library/application/ports/cluster.repository.port';
@@ -20,7 +21,12 @@ import { ReportCommentController } from './presentation/http/controllers/report-
 import { ReportingController } from './presentation/http/controllers/reporting.controller';
 
 @Module({
-    imports: [EventEmitterModule.forRoot(), DatabaseModule, Feedback360Module],
+    imports: [
+        EventEmitterModule.forRoot(),
+        DatabaseModule,
+        AuthModule,
+        Feedback360Module,
+    ],
     controllers: [
         ReportingController,
         ReportAnalyticsController,

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { IdentityModule } from '../contexts/identity/identity.module';
 import { AuthController } from './auth.controller';
@@ -8,7 +8,7 @@ import { AuthSessionGuard } from './guards/auth-session.guard';
 import { RolesGuard } from './guards/roles.guard';
 
 @Module({
-    imports: [ConfigModule, IdentityModule],
+    imports: [ConfigModule, forwardRef(() => IdentityModule)],
     controllers: [AuthController],
     providers: [betterAuthProvider, AuthService, AuthSessionGuard, RolesGuard],
     exports: [AuthService, AuthSessionGuard, RolesGuard],

@@ -1,3 +1,4 @@
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -11,6 +12,7 @@ import {
     Post,
     Query,
     SerializeOptions,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -21,12 +23,17 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import {
     ApiCreateAndUpdateErrorResponses,
     ApiDeletionErrorResponses,
     ApiListReadErrorResponses,
     ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { CycleService } from '../../../application/services/cycle.service';
 import { CreateCycleDto } from '../dto/cycles/create-cycle.dto';
 import { CycleQueryDto } from '../dto/cycles/cycle-query.dto';
@@ -38,6 +45,8 @@ import { CycleResponse } from '../models/cycle.response';
 @Controller('feedback360/cycles')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: CycleResponse })
+@UseGuards(AuthSessionGuard, RolesGuard)
+@Roles(IdentityRole.ADMIN, IdentityRole.HR)
 export class CyclesController {
     constructor(private readonly cycles: CycleService) {}
 
@@ -101,8 +110,6 @@ export class CyclesController {
     }
 
     @Post(':id/force-finish')
-    // @UseGuards(AuthSessionGuard, RolesGuard)
-    // @Roles(IdentityRole.ADMIN, IdentityRole.HR)
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: 'Force finish 360-Feedback cycle (HR/Admin only)',
@@ -112,13 +119,13 @@ export class CyclesController {
     @ApiCreateAndUpdateErrorResponses()
     async forceFinish(
         @Param('id') id: string,
-        // @CurrentUser() user: UserDomain,
+        @CurrentUser() user: UserDomain,
     ): Promise<CycleResponse> {
         const cycleId = Number(id);
-        // const actorId = user.id!;
-        // const actorName = user.fullName;
+        const actorId = user.id!;
+        const actorName = user.fullName;
 
-        await this.cycles.finish(cycleId, 0, 'Admin');
+        await this.cycles.finish(cycleId, actorId, actorName);
         const updated = await this.cycles.getById(cycleId);
         return CycleHttpMapper.toResponse(updated);
     }

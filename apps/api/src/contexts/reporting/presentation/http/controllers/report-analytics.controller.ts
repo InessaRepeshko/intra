@@ -1,3 +1,4 @@
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     ClassSerializerInterceptor,
     Controller,
@@ -6,9 +7,13 @@ import {
     Param,
     ParseIntPipe,
     SerializeOptions,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
 import { ReportAnalyticsService } from '../../../application/services/report-analytics.service';
 import { ReportAnalyticsHttpMapper } from '../mappers/report-analytics.http.mapper';
@@ -18,6 +23,13 @@ import { ReportAnalyticsResponse } from '../models/report-analytics.response';
 @Controller('reporting/analytics')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ReportAnalyticsResponse })
+@UseGuards(AuthSessionGuard, RolesGuard)
+@Roles(
+    IdentityRole.ADMIN,
+    IdentityRole.HR,
+    IdentityRole.MANAGER,
+    IdentityRole.EMPLOYEE,
+)
 export class ReportAnalyticsController {
     constructor(private readonly analyticsService: ReportAnalyticsService) {}
 
