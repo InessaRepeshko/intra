@@ -144,6 +144,9 @@
         "responses": {
           "200": {
             "description": "User successfully logged out"
+          },
+          "401": {
+            "description": "User is not authenticated"
           }
         },
         "summary": "Logout current user",

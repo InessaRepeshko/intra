@@ -471,6 +471,57 @@ Table reporting_comments {
   question feedback360_questions
 }
 
+Table auth_user {
+  id String [pk]
+  email String [unique, not null]
+  emailVerified Boolean [not null, default: false]
+  emailVerifiedAt DateTime
+  name String
+  image String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  sessions auth_session [not null]
+  accounts auth_account [not null]
+}
+
+Table auth_session {
+  id String [pk]
+  userId String [not null]
+  token String [unique, not null]
+  expiresAt DateTime [not null]
+  ipAddress String
+  userAgent String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  user auth_user [not null]
+}
+
+Table auth_account {
+  id String [pk]
+  userId String [not null]
+  accountId String [not null]
+  providerId String [not null]
+  accessToken String
+  refreshToken String
+  idToken String
+  accessTokenExpiresAt DateTime
+  refreshTokenExpiresAt DateTime
+  scope String
+  password String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  user auth_user [not null]
+}
+
+Table auth_verification {
+  id String [pk]
+  identifier String [not null]
+  value String [not null]
+  expiresAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+}
+
 Enum IdentityRole {
   ADMIN
   HR
@@ -644,3 +695,7 @@ Ref: reporting_analytics.competenceId > library_competences.id [delete: No Actio
 Ref: reporting_comments.reportId > reporting_reports.id [delete: No Action]
 
 Ref: reporting_comments.questionId > feedback360_questions.id [delete: No Action]
+
+Ref: auth_session.userId > auth_user.id [delete: Cascade]
+
+Ref: auth_account.userId > auth_user.id [delete: Cascade]
