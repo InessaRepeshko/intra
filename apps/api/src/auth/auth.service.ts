@@ -231,6 +231,15 @@ export class AuthService {
         return { userId: user.id!, session };
     }
 
+    async logout(req: Request, res: Response): Promise<void> {
+        const betterAuthResponse = await this.auth.api.signOut({
+            headers: req.headers as any,
+            asResponse: true,
+        });
+
+        await this.copySetCookies(betterAuthResponse as any, res);
+    }
+
     private buildCallbackUrl(): string {
         const protocol = this.config.get<string>('APP_PROTOCOL') ?? 'http';
         const host = this.config.get<string>('APP_HOST') ?? 'localhost';

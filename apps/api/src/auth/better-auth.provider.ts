@@ -11,7 +11,7 @@ const buildBaseUrl = (config: ConfigService): string => {
     if (explicit) return explicit;
     const protocol = config.get<string>('APP_PROTOCOL') ?? 'http';
     const host = config.get<string>('APP_HOST') ?? 'localhost';
-    const port = config.get<string>('APP_PORT');
+    const port = config.get<string>('APP_PORT') ?? '8080';
     if (!port || protocol === 'https') {
         return `${protocol}://${host}`;
     }

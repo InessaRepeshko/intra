@@ -31,6 +31,22 @@
         ]
       }
     },
+    "/auth/login": {
+      "get": {
+        "description": "Since password login is disabled, this endpoint redirects to the Google OAuth2 login page.",
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "responses": {
+          "302": {
+            "description": "Redirects to Google OAuth2 login page"
+          }
+        },
+        "summary": "Redirects to Google Login",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/auth/google/callback": {
       "get": {
         "operationId": "AuthController_googleCallback",
@@ -116,6 +132,21 @@
           }
         },
         "summary": "Dev/Test login - authenticate as any user",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User successfully logged out"
+          }
+        },
+        "summary": "Logout current user",
         "tags": [
           "Auth"
         ]
