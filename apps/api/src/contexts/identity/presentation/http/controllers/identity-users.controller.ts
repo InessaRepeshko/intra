@@ -72,7 +72,12 @@ export class IdentityUsersController {
     }
 
     @Get()
-    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER, IdentityRole.EMPLOYEE)
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Search users (default sort ascending by id)' })
     @ApiQuery({ type: UserQueryDto })
     @ApiResponse({ status: HttpStatus.OK, type: UserResponse, isArray: true })
@@ -85,7 +90,12 @@ export class IdentityUsersController {
     }
 
     @Get(':id')
-    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER, IdentityRole.EMPLOYEE)
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Get a user by id' })
     @ApiParam({ name: 'id', type: 'number', description: 'Id of user' })
     @ApiResponse({ status: HttpStatus.OK, type: UserResponse })

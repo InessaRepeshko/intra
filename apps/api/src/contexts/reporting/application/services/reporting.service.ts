@@ -8,8 +8,19 @@ import {
     RespondentCategory,
     ResponseStatus,
 } from '@intra/shared-kernel';
-import { ForbiddenException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+    ForbiddenException,
+    Inject,
+    Injectable,
+    Logger,
+    NotFoundException,
+} from '@nestjs/common';
 import Decimal from 'decimal.js';
+import {
+    REVIEWER_REPOSITORY,
+    ReviewerRepositoryPort,
+} from 'src/contexts/feedback360/application/ports/reviewer.repository.port';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import {
     ANSWER_REPOSITORY,
     AnswerRepositoryPort,
@@ -54,8 +65,6 @@ import {
     REPORT_REPOSITORY,
     ReportRepositoryPort,
 } from '../ports/report.repository.port';
-import { UserDomain } from 'src/contexts/identity/domain/user.domain';
-import { REVIEWER_REPOSITORY, ReviewerRepositoryPort } from 'src/contexts/feedback360/application/ports/reviewer.repository.port';
 
 @Injectable()
 export class ReportingService {
@@ -86,7 +95,7 @@ export class ReportingService {
 
     async getById(id: number, actor?: UserDomain): Promise<ReportDomain> {
         const report = await this.reports.findById(id);
-        
+
         if (!report) {
             throw new NotFoundException(`Report with id ${id} was not found`);
         }
@@ -136,7 +145,10 @@ export class ReportingService {
         );
     }
 
-    async getByReviewId(reviewId: number, actor?: UserDomain): Promise<ReportDomain> {
+    async getByReviewId(
+        reviewId: number,
+        actor?: UserDomain,
+    ): Promise<ReportDomain> {
         const report = await this.reports.findByReviewId(reviewId);
         if (!report) {
             throw new NotFoundException(
@@ -730,7 +742,7 @@ export class ReportingService {
     }
 
     /**
-     * Calculates the percentage difference between two values 
+     * Calculates the percentage difference between two values
      * by subtracting the comparison value from the base value and dividing by the base value.
      * Formula: ((base - comparison) / base) * 100
      * @param comparison The comparison value.

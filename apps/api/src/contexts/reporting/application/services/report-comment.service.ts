@@ -1,10 +1,10 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { ReportCommentDomain } from '../../domain/report-comment.domain';
 import {
     REPORT_COMMENT_REPOSITORY,
     ReportCommentRepositoryPort,
 } from '../ports/report-comment.repository.port';
-import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { ReportingService } from './reporting.service';
 
 @Injectable()
@@ -15,9 +15,12 @@ export class ReportCommentService {
         private readonly reportingService: ReportingService,
     ) {}
 
-    async getByReportId(reportId: number, actor?: UserDomain): Promise<ReportCommentDomain[]> {
+    async getByReportId(
+        reportId: number,
+        actor?: UserDomain,
+    ): Promise<ReportCommentDomain[]> {
         await this.reportingService.getById(reportId, actor);
-        
+
         const comments = await this.comments.findByReportId(reportId);
 
         if (!comments || comments.length === 0) {

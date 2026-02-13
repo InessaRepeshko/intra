@@ -1,7 +1,6 @@
 import {
     CLUSTER_SCORE_ANALYTICS_CONSTRAINTS,
     ClusterScoreAnalyticsSearchQuery,
-    IdentityRole,
     UpdateClusterScoreAnalyticsPayload,
     UpsertClusterScoreAnalyticsPayload,
 } from '@intra/shared-kernel';
@@ -23,7 +22,6 @@ import {
     ClusterScoreRepositoryPort,
 } from '../ports/cluster-score.repository.port';
 import { CycleService } from './cycle.service';
-import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 
 @Injectable()
 export class ClusterScoreAnalyticsService {

@@ -384,10 +384,7 @@ export class ReviewService {
         patch: UpdateRespondentPayload,
         actor: UserDomain,
     ): Promise<RespondentDomain> {
-        await this.checkAccessToUpdateResponseStatus(
-            id,
-            actor,
-        );
+        await this.checkAccessToUpdateResponseStatus(id, actor);
 
         const updated = await this.respondents.updateById(id, patch);
 

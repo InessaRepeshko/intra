@@ -1,11 +1,10 @@
-import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
 import {
     REPORT_ANALYTICS_REPOSITORY,
     ReportAnalyticsRepositoryPort,
 } from '../ports/report-analytics.repository.port';
-import { UserDomain } from 'src/contexts/identity/domain/user.domain';
-import { IdentityRole } from '@intra/shared-kernel';
 import { ReportingService } from './reporting.service';
 
 @Injectable()
@@ -16,7 +15,10 @@ export class ReportAnalyticsService {
         private readonly reportingService: ReportingService,
     ) {}
 
-    async getByReportId(reportId: number, actor?: UserDomain): Promise<ReportAnalyticsDomain[]> {
+    async getByReportId(
+        reportId: number,
+        actor?: UserDomain,
+    ): Promise<ReportAnalyticsDomain[]> {
         await this.reportingService.getById(reportId, actor);
 
         const analytics = await this.analytics.findByReportId(reportId);
@@ -30,7 +32,10 @@ export class ReportAnalyticsService {
         return analytics;
     }
 
-    async getById(id: number, actor?: UserDomain): Promise<ReportAnalyticsDomain> {
+    async getById(
+        id: number,
+        actor?: UserDomain,
+    ): Promise<ReportAnalyticsDomain> {
         const analytics = await this.analytics.findById(id);
 
         if (!analytics) {

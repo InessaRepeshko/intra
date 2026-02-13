@@ -67,7 +67,12 @@ export class CompetencesController {
     }
 
     @Get()
-    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER, IdentityRole.EMPLOYEE)
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Search competences' })
     @ApiQuery({ type: CompetenceQueryDto })
     @ApiResponse({
@@ -84,7 +89,12 @@ export class CompetencesController {
     }
 
     @Get(':id')
-    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER, IdentityRole.EMPLOYEE)
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Get competence by id' })
     @ApiParam({ name: 'id', type: 'number', required: true })
     @ApiResponse({ status: HttpStatus.OK, type: CompetenceResponse })

@@ -394,7 +394,11 @@ export class ReviewController {
         @Query() query: ReviewerQueryDto,
         @CurrentUser() actor: UserDomain,
     ): Promise<ReviewerResponse[]> {
-        const reviewers = await this.reviews.listReviewers(Number(id), query, actor);
+        const reviewers = await this.reviews.listReviewers(
+            Number(id),
+            query,
+            actor,
+        );
         return reviewers.map(ReviewerHttpMapper.toResponse);
     }
 

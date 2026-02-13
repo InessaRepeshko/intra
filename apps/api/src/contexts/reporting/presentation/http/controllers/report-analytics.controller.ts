@@ -11,15 +11,15 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { ReportAnalyticsService } from '../../../application/services/report-analytics.service';
 import { ReportAnalyticsHttpMapper } from '../mappers/report-analytics.http.mapper';
 import { ReportAnalyticsResponse } from '../models/report-analytics.response';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 
 @ApiTags('Reporting / Analytics')
 @Controller('reporting/analytics')
@@ -52,7 +52,10 @@ export class ReportAnalyticsController {
         @Param('reportId', ParseIntPipe) reportId: number,
         @CurrentUser() actor: UserDomain,
     ): Promise<ReportAnalyticsResponse[]> {
-        const analytics = await this.analyticsService.getByReportId(reportId, actor);
+        const analytics = await this.analyticsService.getByReportId(
+            reportId,
+            actor,
+        );
         return analytics.map((a) => ReportAnalyticsHttpMapper.toResponse(a));
     }
 

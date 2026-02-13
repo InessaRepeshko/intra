@@ -1,5 +1,10 @@
-import { AnswerType, IdentityRole, ReportTextAnswerDto } from '@intra/shared-kernel';
+import {
+    AnswerType,
+    IdentityRole,
+    ReportTextAnswerDto,
+} from '@intra/shared-kernel';
 import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import {
     ANSWER_REPOSITORY,
     AnswerRepositoryPort,
@@ -9,7 +14,6 @@ import {
     ReviewQuestionRelationRepositoryPort,
 } from '../../../feedback360/application/ports/review-question-relation.repository.port';
 import { ReviewQuestionRelationDomain } from '../../../feedback360/domain/review-question-relation.domain';
-import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 
 @Injectable()
 export class TextAnswerService {
@@ -20,9 +24,12 @@ export class TextAnswerService {
         private readonly relations: ReviewQuestionRelationRepositoryPort,
     ) {}
 
-    async listByReview(reviewId: number, actor?: UserDomain): Promise<ReportTextAnswerDto[]> {
+    async listByReview(
+        reviewId: number,
+        actor?: UserDomain,
+    ): Promise<ReportTextAnswerDto[]> {
         await this.checkAccessToTextAnswers(actor);
-        
+
         const [answers, relations] = await Promise.all([
             this.answers.list({
                 reviewId,
@@ -56,9 +63,7 @@ export class TextAnswerService {
      * as an admin or hr.
      * @param actor The actor to check access for.
      */
-    private async checkAccessToTextAnswers(
-        actor?: UserDomain,
-    ): Promise<void> {
+    private async checkAccessToTextAnswers(actor?: UserDomain): Promise<void> {
         if (!actor) return;
 
         const isAdminOrHr =
