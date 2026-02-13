@@ -66,6 +66,7 @@ export class TeamsController {
     }
 
     @Get()
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER, IdentityRole.EMPLOYEE)
     @ApiOperation({ summary: 'Search teams' })
     @ApiQuery({ type: TeamQueryDto })
     @ApiResponse({ status: HttpStatus.OK, type: TeamResponse, isArray: true })
@@ -76,6 +77,7 @@ export class TeamsController {
     }
 
     @Get(':id')
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER, IdentityRole.EMPLOYEE)
     @ApiOperation({ summary: 'Get a team by id' })
     @ApiParam({ name: 'id', type: 'number', description: 'Id of team' })
     @ApiResponse({ status: HttpStatus.OK, type: TeamResponse })
@@ -128,6 +130,7 @@ export class TeamsController {
     }
 
     @Get(':id/members')
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER, IdentityRole.EMPLOYEE)
     @ApiOperation({ summary: 'Get the team members' })
     @ApiParam({ name: 'id', type: 'number', description: 'Id of team' })
     @ApiResponse({ status: HttpStatus.OK, type: [TeamMemberResponse] })

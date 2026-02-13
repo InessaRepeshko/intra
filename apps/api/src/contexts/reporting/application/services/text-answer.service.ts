@@ -1,5 +1,5 @@
-import { AnswerType, ReportTextAnswerDto } from '@intra/shared-kernel';
-import { Inject, Injectable } from '@nestjs/common';
+import { AnswerType, IdentityRole, ReportTextAnswerDto } from '@intra/shared-kernel';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import {
     ANSWER_REPOSITORY,
     AnswerRepositoryPort,
@@ -9,6 +9,7 @@ import {
     ReviewQuestionRelationRepositoryPort,
 } from '../../../feedback360/application/ports/review-question-relation.repository.port';
 import { ReviewQuestionRelationDomain } from '../../../feedback360/domain/review-question-relation.domain';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 
 @Injectable()
 export class TextAnswerService {
@@ -19,7 +20,9 @@ export class TextAnswerService {
         private readonly relations: ReviewQuestionRelationRepositoryPort,
     ) {}
 
-    async listByReview(reviewId: number): Promise<ReportTextAnswerDto[]> {
+    async listByReview(reviewId: number, actor?: UserDomain): Promise<ReportTextAnswerDto[]> {
+        await this.checkAccessToTextAnswers(actor);
+        
         const [answers, relations] = await Promise.all([
             this.answers.list({
                 reviewId,
@@ -46,5 +49,26 @@ export class TextAnswerService {
                     textValue: answer.textValue!,
                 };
             });
+    }
+
+    /**
+     * Checks if the actor has access to the text answers
+     * as an admin or hr.
+     * @param actor The actor to check access for.
+     */
+    private async checkAccessToTextAnswers(
+        actor?: UserDomain,
+    ): Promise<void> {
+        if (!actor) return;
+
+        const isAdminOrHr =
+            actor?.roles?.includes(IdentityRole.ADMIN) ||
+            actor?.roles?.includes(IdentityRole.HR);
+
+        if (isAdminOrHr) return;
+
+        throw new ForbiddenException(
+            'You do not have permission to view text answers for this review',
+        );
     }
 }

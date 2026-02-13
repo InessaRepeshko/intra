@@ -3,11 +3,12 @@ import {
     CompetenceAccumulator,
     EntitySummaryTotals,
     EntityType,
+    IdentityRole,
     REPORT_ANALYTICS_CONSTRAINTS,
     RespondentCategory,
     ResponseStatus,
 } from '@intra/shared-kernel';
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import Decimal from 'decimal.js';
 import {
     ANSWER_REPOSITORY,
@@ -53,6 +54,8 @@ import {
     REPORT_REPOSITORY,
     ReportRepositoryPort,
 } from '../ports/report.repository.port';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
+import { REVIEWER_REPOSITORY, ReviewerRepositoryPort } from 'src/contexts/feedback360/application/ports/reviewer.repository.port';
 
 @Injectable()
 export class ReportingService {
@@ -67,6 +70,8 @@ export class ReportingService {
         private readonly commentsRepo: ReportCommentRepositoryPort,
         @Inject(RESPONDENT_REPOSITORY)
         private readonly respondents: RespondentRepositoryPort,
+        @Inject(REVIEWER_REPOSITORY)
+        private readonly reviewers: ReviewerRepositoryPort,
         @Inject(ANSWER_REPOSITORY)
         private readonly answers: AnswerRepositoryPort,
         @Inject(REVIEW_QUESTION_RELATION_REPOSITORY)
@@ -79,22 +84,67 @@ export class ReportingService {
         private readonly clusterScores: ClusterScoreRepositoryPort,
     ) {}
 
-    async getById(id: number): Promise<ReportDomain> {
+    async getById(id: number, actor?: UserDomain): Promise<ReportDomain> {
         const report = await this.reports.findById(id);
+        
         if (!report) {
             throw new NotFoundException(`Report with id ${id} was not found`);
         }
 
+        await this.checkAccessToReport(report, actor);
+
         return report;
     }
 
-    async getByReviewId(reviewId: number): Promise<ReportDomain> {
+    /**
+     * Checks if the actor has access to the report.
+     * @param report The report to check access for.
+     * @param actor The actor to check access for.
+     */
+    async checkAccessToReport(
+        report: ReportDomain,
+        actor?: UserDomain,
+    ): Promise<void> {
+        if (!actor) return;
+
+        const isAdminOrHr =
+            actor?.roles?.includes(IdentityRole.ADMIN) ||
+            actor?.roles?.includes(IdentityRole.HR);
+
+        if (isAdminOrHr) return;
+
+        const review = await this.reviews.findById(report.reviewId);
+
+        if (!review) {
+            throw new NotFoundException(`Review for report ${report.id} was not found. 
+                Unable to check access to report`);
+        }
+
+        const isManagerOfReview = review.managerId === actor.id;
+        const isRateeOfReview = review.rateeId === actor.id;
+
+        if (isManagerOfReview || isRateeOfReview) return;
+
+        const reviewers = await this.reviewers.listByReview(review.id!, {
+            reviewerId: actor.id,
+        });
+
+        if (reviewers.length > 0) return;
+
+        throw new ForbiddenException(
+            'You do not have permission to view this report',
+        );
+    }
+
+    async getByReviewId(reviewId: number, actor?: UserDomain): Promise<ReportDomain> {
         const report = await this.reports.findByReviewId(reviewId);
         if (!report) {
             throw new NotFoundException(
                 `Report for review ${reviewId} was not found`,
             );
         }
+
+        await this.checkAccessToReport(report, actor);
 
         return report;
     }
@@ -680,7 +730,8 @@ export class ReportingService {
     }
 
     /**
-     * Calculates the percentage difference between two values by subtracting the comparison value from the base value and dividing by the base value.
+     * Calculates the percentage difference between two values 
+     * by subtracting the comparison value from the base value and dividing by the base value.
      * Formula: ((base - comparison) / base) * 100
      * @param comparison The comparison value.
      * @param base The base value.

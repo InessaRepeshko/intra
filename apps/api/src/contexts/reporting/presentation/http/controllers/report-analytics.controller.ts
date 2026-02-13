@@ -18,6 +18,8 @@ import { ApiReadErrorResponses } from 'src/common/documentation/api.error.respon
 import { ReportAnalyticsService } from '../../../application/services/report-analytics.service';
 import { ReportAnalyticsHttpMapper } from '../mappers/report-analytics.http.mapper';
 import { ReportAnalyticsResponse } from '../models/report-analytics.response';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 
 @ApiTags('Reporting / Analytics')
 @Controller('reporting/analytics')
@@ -48,8 +50,9 @@ export class ReportAnalyticsController {
     @ApiReadErrorResponses()
     async getByReportId(
         @Param('reportId', ParseIntPipe) reportId: number,
+        @CurrentUser() actor: UserDomain,
     ): Promise<ReportAnalyticsResponse[]> {
-        const analytics = await this.analyticsService.getByReportId(reportId);
+        const analytics = await this.analyticsService.getByReportId(reportId, actor);
         return analytics.map((a) => ReportAnalyticsHttpMapper.toResponse(a));
     }
 
@@ -64,8 +67,9 @@ export class ReportAnalyticsController {
     @ApiReadErrorResponses()
     async getById(
         @Param('id', ParseIntPipe) id: number,
+        @CurrentUser() actor: UserDomain,
     ): Promise<ReportAnalyticsResponse> {
-        const analytics = await this.analyticsService.getById(id);
+        const analytics = await this.analyticsService.getById(id, actor);
         return ReportAnalyticsHttpMapper.toResponse(analytics);
     }
 }

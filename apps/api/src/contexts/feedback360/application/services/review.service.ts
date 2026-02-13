@@ -148,6 +148,12 @@ export class ReviewService {
         return review;
     }
 
+    /**
+     * Checks if the actor has access to the review
+     * as an admin, HR, manager, ratee, respondent, or reviewer.
+     * @param review The review to check access for.
+     * @param actor The actor to check access for.
+     */
     private async checkAccessToReview(
         review: ReviewDomain,
         actor?: UserDomain,
@@ -155,8 +161,8 @@ export class ReviewService {
         if (!actor) return;
 
         const isAdminOrHr =
-            actor.roles?.includes(IdentityRole.ADMIN) ||
-            actor.roles?.includes(IdentityRole.HR);
+            actor?.roles?.includes(IdentityRole.ADMIN) ||
+            actor?.roles?.includes(IdentityRole.HR);
 
         if (isAdminOrHr) return;
 
@@ -401,13 +407,19 @@ export class ReviewService {
         return updated;
     }
 
+    /**
+     * Checks if the actor has access to update the response status of a respondent
+     * as an admin or the respondent themselves.
+     * @param relationId The respondent identifier.
+     * @param actor The actor to check access for.
+     */
     private async checkAccessToUpdateResponseStatus(
         relationId: number,
         actor?: UserDomain,
     ): Promise<void> {
         if (!actor) return;
 
-        const isAdmin = actor.roles?.includes(IdentityRole.ADMIN);
+        const isAdmin = actor?.roles?.includes(IdentityRole.ADMIN);
 
         if (isAdmin) return;
 
@@ -455,6 +467,12 @@ export class ReviewService {
         return this.reviewers.listByReview(reviewId, query);
     }
 
+    /**
+     * Checks if the actor has access to the reviewers of the review
+     * as an admin, hr, manager, or ratee.
+     * @param reviewId The review identifier.
+     * @param actor The actor to check access for.
+     */
     private async checkAccessToReviewers(
         reviewId: number,
         actor?: UserDomain,
@@ -462,8 +480,8 @@ export class ReviewService {
         if (!actor) return;
 
         const isAdminOrHr =
-            actor.roles?.includes(IdentityRole.ADMIN) ||
-            actor.roles?.includes(IdentityRole.HR);
+            actor?.roles?.includes(IdentityRole.ADMIN) ||
+            actor?.roles?.includes(IdentityRole.HR);
 
         if (isAdminOrHr) return;
 
@@ -595,8 +613,9 @@ export class ReviewService {
     }
 
     /**
-     * REACTIVE TRIGGER: Check if all respondents completed their responses
-     * If yes, automatically transition to PREPARING_REPORT
+     * REACTIVE TRIGGER: Checks if all respondents for a review have completed their responses.
+     * If yes, automatically transitions the review to the PREPARING_REPORT stage.
+     * @param reviewId The review identifier.
      */
     async checkReviewCompletion(reviewId: number): Promise<void> {
         const review = await this.getById(reviewId);
@@ -629,8 +648,9 @@ export class ReviewService {
     }
 
     /**
-     * REACTIVE TRIGGER: Check if all respondents in cycle completed
-     * If yes, automatically finish the cycle
+     * REACTIVE TRIGGER: Checks if all respondents in a cycle have completed their responses.
+     * If yes, automatically transitions the cycle to the FINISHED stage.
+     * @param cycleId The cycle identifier.
      */
     async checkCompletion(cycleId: number): Promise<void> {
         const cycle = await this.cycles.getById(cycleId);

@@ -60,6 +60,7 @@ export class ClusterScoresController {
     }
 
     @Get()
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER)
     @ApiOperation({ summary: 'List cluster scores' })
     @ApiQuery({ type: ClusterScoreQueryDto })
     @ApiResponse({
@@ -77,6 +78,7 @@ export class ClusterScoresController {
     }
 
     @Get(':id')
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER)
     @ApiOperation({ summary: 'Get cluster score by id' })
     @ApiParam({ name: 'id', description: 'Cluster score id', type: 'number' })
     @ApiResponse({
@@ -102,6 +104,7 @@ export class ClusterScoresController {
     }
 
     @Get('cycle/:cycleId')
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER)
     @ApiOperation({ summary: 'Get cluster scores by cycle id' })
     @ApiParam({ name: 'cycleId', description: 'Cycle id', type: 'number' })
     @ApiResponse({

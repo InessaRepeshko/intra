@@ -20,6 +20,8 @@ import { TextAnswerService } from '../../../application/services/text-answer.ser
 import { ReportHttpMapper } from '../mappers/report.http.mapper';
 import { ReportResponse } from '../models/report.response';
 import { TextAnswerResponse } from '../models/text-answer.response';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
 @ApiTags('Reporting / Reports')
 @Controller('reporting/reports')
@@ -49,8 +51,9 @@ export class ReportingController {
     @ApiReadErrorResponses()
     async getById(
         @Param('id', ParseIntPipe) id: number,
+        @CurrentUser() actor: UserDomain,
     ): Promise<ReportResponse> {
-        const report = await this.reporting.getById(id);
+        const report = await this.reporting.getById(id, actor);
         return ReportHttpMapper.toResponse(report);
     }
 
@@ -65,8 +68,9 @@ export class ReportingController {
     @ApiReadErrorResponses()
     async getByReviewId(
         @Param('reviewId', ParseIntPipe) reviewId: number,
+        @CurrentUser() actor: UserDomain,
     ): Promise<ReportResponse> {
-        const report = await this.reporting.getByReviewId(reviewId);
+        const report = await this.reporting.getByReviewId(reviewId, actor);
         return ReportHttpMapper.toResponse(report);
     }
 
@@ -85,8 +89,9 @@ export class ReportingController {
     @ApiReadErrorResponses()
     async getTextAnswers(
         @Param('reviewId', ParseIntPipe) reviewId: number,
+        @CurrentUser() actor: UserDomain,
     ): Promise<TextAnswerResponse[]> {
-        const answers = await this.textAnswerService.listByReview(reviewId);
+        const answers = await this.textAnswerService.listByReview(reviewId, actor);
         return answers.map(ReportHttpMapper.toTextAnswerResponse);
     }
 }

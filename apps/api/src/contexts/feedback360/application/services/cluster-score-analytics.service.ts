@@ -1,6 +1,7 @@
 import {
     CLUSTER_SCORE_ANALYTICS_CONSTRAINTS,
     ClusterScoreAnalyticsSearchQuery,
+    IdentityRole,
     UpdateClusterScoreAnalyticsPayload,
     UpsertClusterScoreAnalyticsPayload,
 } from '@intra/shared-kernel';
@@ -22,6 +23,7 @@ import {
     ClusterScoreRepositoryPort,
 } from '../ports/cluster-score.repository.port';
 import { CycleService } from './cycle.service';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 
 @Injectable()
 export class ClusterScoreAnalyticsService {
@@ -124,6 +126,10 @@ export class ClusterScoreAnalyticsService {
         return this.analytics.getByCycleId(cycleId);
     }
 
+    /**
+     * Generates analytics metrics for a cycle.
+     * @param cycleId The cycle identifier.
+     */
     async generateAnalyticsForCycle(cycleId: number): Promise<void> {
         await this.cycles.getById(cycleId);
 
@@ -173,6 +179,12 @@ export class ClusterScoreAnalyticsService {
         }
     }
 
+    /**
+     * Validates the scores for a cluster.
+     * @param min The minimum score.
+     * @param max The maximum score.
+     * @param avg The average score.
+     */
     private async validateScores(
         min: Decimal,
         max: Decimal,
@@ -190,6 +202,11 @@ export class ClusterScoreAnalyticsService {
         }
     }
 
+    /**
+     * Validates the bounds for a cluster.
+     * @param lower The lower bound.
+     * @param upper The upper bound.
+     */
     private async validateBounds(
         lower: Decimal,
         upper: Decimal,

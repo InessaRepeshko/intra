@@ -65,6 +65,7 @@ export class ClustersController {
     }
 
     @Get()
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER, IdentityRole.EMPLOYEE)
     @ApiOperation({ summary: 'Search clusters' })
     @ApiQuery({ type: ClusterQueryDto })
     @ApiResponse({
@@ -79,6 +80,7 @@ export class ClustersController {
     }
 
     @Get(':id')
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER, IdentityRole.EMPLOYEE)
     @ApiOperation({ summary: 'Get cluster by id' })
     @ApiParam({ name: 'id', type: 'number', required: true })
     @ApiResponse({ status: HttpStatus.OK, type: ClusterResponse })

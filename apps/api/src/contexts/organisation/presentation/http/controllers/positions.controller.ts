@@ -83,6 +83,7 @@ export class PositionsController {
     }
 
     @Get(':id')
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER, IdentityRole.EMPLOYEE)
     @ApiOperation({ summary: 'Get a position by id' })
     @ApiParam({ name: 'id', type: 'number', description: 'Id of position' })
     @ApiResponse({ status: HttpStatus.OK, type: PositionResponse })

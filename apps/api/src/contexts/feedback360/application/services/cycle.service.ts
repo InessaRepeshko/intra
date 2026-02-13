@@ -89,7 +89,7 @@ export class CycleService {
         await this.getById(id);
         await this.cycles.deleteById(id);
     }
-
+    
     async finish(
         cycleId: number,
         actorId: number = 0,
