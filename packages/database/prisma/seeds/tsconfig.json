@@ -1,0 +1,10 @@
+{
+  "extends": "../../../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "../../../../",
+    "paths": {
+      "@intra/database": ["packages/database/src/generated"],
+      "@intra/database/*": ["packages/database/src/generated/*"]
+    }
+  }
+}
