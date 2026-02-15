@@ -1,5 +1,5 @@
-import { IdentityRole } from "../../enums/identity-role.enum";
-import { IdentityStatus } from "../../enums/identity-status.enum";
+import { IdentityRole } from '../../enums/identity-role.enum';
+import { IdentityStatus } from '../../enums/identity-status.enum';
 
 export interface UserDto {
     id: number;
@@ -8,8 +8,9 @@ export interface UserDto {
     lastName: string;
     fullName: string | null;
     email: string;
+    avatarUrl: string | null;
     status: IdentityStatus;
-    positionId: number;
+    positionId: number | null;
     teamId: number | null;
     managerId: number | null;
     roles: IdentityRole[];

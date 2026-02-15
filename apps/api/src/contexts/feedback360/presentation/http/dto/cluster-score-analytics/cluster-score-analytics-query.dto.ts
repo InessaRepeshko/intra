@@ -32,6 +32,40 @@ export class ClusterScoreAnalyticsQueryDto {
     clusterId?: number;
 
     @ApiPropertyOptional({
+        example: 5,
+        description: 'Filter by lower bound',
+        type: 'number',
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+    })
+    @ToOptionalInt({
+        min: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        max: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+    })
+    @IsOptional()
+    @IsInt()
+    @Min(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN)
+    @Max(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX)
+    lowerBound?: number;
+
+    @ApiPropertyOptional({
+        example: 5,
+        description: 'Filter by upper bound',
+        type: 'number',
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+    })
+    @ToOptionalInt({
+        min: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,
+        max: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX,
+    })
+    @IsOptional()
+    @IsInt()
+    @Min(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN)
+    @Max(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX)
+    upperBound?: number;
+
+    @ApiPropertyOptional({
         example: 10,
         description: 'Filter by employees count',
         type: 'number',

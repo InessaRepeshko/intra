@@ -1,5 +1,5 @@
-import { AnswerType } from "../../enums/answer-type.enum";
-import { QuestionTemplateStatus } from "../../enums/question-template-status.enum";
+import { AnswerType } from '../../enums/answer-type.enum';
+import { QuestionTemplateStatus } from '../../enums/question-template-status.enum';
 
 export type UpdateQuestionTemplatePayload = Partial<{
     competenceId: number;

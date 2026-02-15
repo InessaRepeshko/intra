@@ -11,7 +11,8 @@ import {
     ReviewQuestionRelationRepositoryPort,
 } from '../../application/ports/review-question-relation.repository.port';
 import { ReviewQuestionRelationDomain } from '../../domain/review-question-relation.domain';
-import { Feedback360Mapper } from './feedback360.mapper';
+import { QuestionMapper } from '../mappers/question.mapper';
+import { ReviewQuestionRelationMapper } from '../mappers/review-question-relation.mapper';
 
 @Injectable()
 export class ReviewQuestionRelationRepository implements ReviewQuestionRelationRepositoryPort {
@@ -23,6 +24,7 @@ export class ReviewQuestionRelationRepository implements ReviewQuestionRelationR
     async link(
         relation: ReviewQuestionRelationDomain,
     ): Promise<ReviewQuestionRelationDomain> {
+        const prismaRelation = ReviewQuestionRelationMapper.toPrisma(relation);
         const created = await this.prisma.reviewQuestionRelation.upsert({
             where: {
                 reviewId_questionId: {
@@ -30,29 +32,17 @@ export class ReviewQuestionRelationRepository implements ReviewQuestionRelationR
                     questionId: relation.questionId,
                 },
             },
-            create: {
-                reviewId: relation.reviewId,
-                questionId: relation.questionId,
-                questionTitle: relation.questionTitle,
-                answerType: Feedback360Mapper.toPrismaAnswerType(
-                    relation.answerType,
-                ),
-                competenceId: relation.competenceId,
-                competenceTitle: relation.competenceTitle,
-                isForSelfassessment: relation.isForSelfassessment,
-            },
+            create: prismaRelation,
             update: {
-                questionTitle: relation.questionTitle,
-                answerType: Feedback360Mapper.toPrismaAnswerType(
-                    relation.answerType,
-                ),
-                competenceId: relation.competenceId,
-                competenceTitle: relation.competenceTitle,
-                isForSelfassessment: relation.isForSelfassessment,
+                questionTitle: prismaRelation.questionTitle,
+                answerType: prismaRelation.answerType,
+                competenceId: prismaRelation.competenceId,
+                competenceTitle: prismaRelation.competenceTitle,
+                isForSelfassessment: prismaRelation.isForSelfassessment,
             },
         });
 
-        return Feedback360Mapper.toQuestionRelationDomain(created);
+        return ReviewQuestionRelationMapper.toDomain(created);
     }
 
     async listByReview(
@@ -66,7 +56,7 @@ export class ReviewQuestionRelationRepository implements ReviewQuestionRelationR
             where,
             orderBy,
         });
-        return relations.map(Feedback360Mapper.toQuestionRelationDomain);
+        return relations.map(ReviewQuestionRelationMapper.toDomain);
     }
 
     async unlink(reviewId: number, questionId: number): Promise<void> {
@@ -105,8 +95,7 @@ export class ReviewQuestionRelationRepository implements ReviewQuestionRelationR
                 : {}),
             ...(answerType
                 ? {
-                      answerType:
-                          Feedback360Mapper.toPrismaAnswerType(answerType),
+                      answerType: QuestionMapper.toPrismaAnswerType(answerType),
                   }
                 : {}),
             ...(competenceId ? { competenceId } : {}),

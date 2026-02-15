@@ -108,25 +108,26 @@ export default async function seedPositions(
     const positions: PositionMap = new Map();
 
     for (const position of POSITION_SEED_DATA) {
-        const existing = await prisma.position.findFirst({ where: { title: position.title } });
+        const existing = await prisma.position.findFirst({
+            where: { title: position.title },
+        });
         const record = existing
             ? await prisma.position.update({
-                where: { id: existing.id },
-                data: {
-                    title: position.title,
-                    description: position.description ?? null,
-                },
-            })
+                  where: { id: existing.id },
+                  data: {
+                      title: position.title,
+                      description: position.description ?? null,
+                  },
+              })
             : await prisma.position.create({
-                data: {
-                    title: position.title,
-                    description: position.description ?? null,
-                },
-            });
+                  data: {
+                      title: position.title,
+                      description: position.description ?? null,
+                  },
+              });
 
         positions.set(position.title, { id: record.id });
     }
 
     return positions;
 }
-

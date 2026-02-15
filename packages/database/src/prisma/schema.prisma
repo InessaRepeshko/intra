@@ -35,19 +35,19 @@ enum IdentityStatus {
 }
 
 model User {
-  id           Int            @id @default(autoincrement())
-  firstName    String         @map("first_name") @db.VarChar(100)
-  secondName   String?        @map("second_name") @db.VarChar(100)
-  lastName     String         @map("last_name") @db.VarChar(100)
-  fullName     String         @map("full_name") @db.VarChar(302)
-  email        String         @unique @db.VarChar(100)
-  passwordHash String         @map("password_hash") @db.VarChar(300)
-  status       IdentityStatus @default(ACTIVE)
-  positionId   Int            @map("position_id")
-  teamId       Int?           @map("team_id")
-  managerId    Int?           @map("manager_id")
-  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt    DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+  id         Int            @id @default(autoincrement())
+  firstName  String         @map("first_name") @db.VarChar(100)
+  secondName String?        @map("second_name") @db.VarChar(100)
+  lastName   String         @map("last_name") @db.VarChar(100)
+  fullName   String         @map("full_name") @db.VarChar(302)
+  email      String         @unique @db.VarChar(100)
+  avatarUrl  String?        @map("avatar_url") @db.Text
+  status     IdentityStatus @default(ACTIVE)
+  positionId Int?           @map("position_id")
+  teamId     Int?           @map("team_id")
+  managerId  Int?           @map("manager_id")
+  createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt  DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
   // --- Identity ---
   userRoles UserRole[]
@@ -63,12 +63,12 @@ model User {
   managedReviews Review[] @relation("managed_reviews")
 
   // --- Feedback360 (Participant side) ---
-  reviewsAsRatee    Review[]       @relation("reviews_as_ratee")
-  responses         Respondent[]   @relation("user_responses")
-  reviewsAsReviewer Reviewer[]     @relation("reviews_as_reviewer")
-  reviewsAsManager  Review[]       @relation("review_as_manager")
-  clusterScores     ClusterScore[] @relation("cluster_ratee_scores")
-  answers           Answer[]
+  reviewsAsRatee     Review[]             @relation("reviews_as_ratee")
+  responses          Respondent[]         @relation("user_responses")
+  reviewsAsReviewer  Reviewer[]           @relation("reviews_as_reviewer")
+  reviewsAsManager   Review[]             @relation("review_as_manager")
+  clusterScores      ClusterScore[]       @relation("cluster_ratee_scores")
+  stageChangeHistory ReviewStageHistory[] @relation("stage_change_actor")
 
   @@index([managerId])
   @@index([positionId])
@@ -207,6 +207,7 @@ model Competence {
   reviewQuestions           Question[]
   reviewQuestionRelations   ReviewQuestionRelation[]
   clusters                  Cluster[]
+  reportAnalytics           ReportAnalytics[]
 
   @@map("library_competences")
 }
@@ -214,8 +215,8 @@ model Competence {
 model Cluster {
   id           Int      @id @default(autoincrement())
   competenceId Int      @map("competence_id")
-  lowerBound   Float    @map("lower_bound")
-  upperBound   Float    @map("upper_bound")
+  lowerBound   Decimal  @map("lower_bound") @db.Decimal(10, 4)
+  upperBound   Decimal  @map("upper_bound") @db.Decimal(10, 4)
   title        String   @db.VarChar(255)
   description  String   @db.Text
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(0)
@@ -320,7 +321,10 @@ enum ReviewStage {
   SELF_ASSESSMENT      @map("self_assessment")
   WAITING_TO_START     @map("waiting_to_start")
   IN_PROGRESS          @map("in_progress")
-  RESEARCH             @map("research")
+  PREPARING_REPORT     @map("preparing_report")
+  PROCESSING_BY_HR     @map("processing_by_hr")
+  PUBLISHED            @map("published")
+  ANALYSIS             @map("analysis")
   FINISHED             @map("finished")
 
   @@map("feedback360_review_stage")
@@ -396,6 +400,7 @@ model Review {
   respondents             Respondent[]
   reviewers               Reviewer[]
   clusterScores           ClusterScore[]
+  reviewStageHistories    ReviewStageHistory[]
 
   @@index([cycleId])
   @@index([hrId])
@@ -423,6 +428,8 @@ model Question {
   competence              Competence?              @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   answers                 Answer[]
   reviewQuestionRelations ReviewQuestionRelation[]
+  reportComments          ReportComment[]
+  reportAnalytics         ReportAnalytics[]
 
   @@index([cycleId])
   @@index([questionTemplateId])
@@ -464,8 +471,6 @@ model Answer {
 
   question Question @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   review   Review   @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user     User?    @relation(fields: [userId], references: [id])
-  userId   Int?
 
   @@index([reviewId])
   @@index([questionId])
@@ -478,9 +483,9 @@ model ClusterScore {
   id           Int      @id @default(autoincrement())
   cycleId      Int?     @map("cycle_id")
   clusterId    Int      @map("cluster_id")
-  rateeId      Int      @map("user_id")
+  rateeId      Int      @map("ratee_id")
   reviewId     Int      @map("review_id")
-  score        Float
+  score        Decimal  @db.Decimal(10, 4)
   answersCount Int      @default(0) @map("answers_count")
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
@@ -503,9 +508,11 @@ model ClusterScoreAnalytics {
   cycleId        Int      @map("cycle_id")
   clusterId      Int      @map("cluster_id")
   employeesCount Int      @default(0) @map("employees_count")
-  minScore       Float    @map("min_score")
-  maxScore       Float    @map("max_score")
-  averageScore   Float    @map("average_score")
+  lowerBound     Decimal  @map("lower_bound") @db.Decimal(10, 4)
+  upperBound     Decimal  @map("upper_bound") @db.Decimal(10, 4)
+  minScore       Decimal  @map("min_score") @db.Decimal(10, 4)
+  maxScore       Decimal  @map("max_score") @db.Decimal(10, 4)
+  averageScore   Decimal  @map("average_score") @db.Decimal(10, 4)
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
@@ -574,6 +581,25 @@ model Reviewer {
   @@map("feedback360_reviewers")
 }
 
+model ReviewStageHistory {
+  id            Int         @id @default(autoincrement())
+  reviewId      Int         @map("review_id")
+  fromStage     ReviewStage @map("from_stage")
+  toStage       ReviewStage @map("to_stage")
+  changedById   Int?        @map("changed_by_id")
+  changedByName String?     @map("changed_by_name") @db.VarChar(302)
+  reason        String?     @db.Text
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamp(0)
+
+  review    Review @relation(fields: [reviewId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  changedBy User?  @relation("stage_change_actor", fields: [changedById], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([reviewId])
+  @@index([changedById])
+  @@index([createdAt])
+  @@map("feedback360_review_stage_history")
+}
+
 /**
  * ==================== Reporting ====================
  */
@@ -593,18 +619,29 @@ enum CommentSentiment {
 }
 
 model Report {
-  id                           Int      @id @default(autoincrement())
-  reviewId                     Int      @unique() @map("review_id")
-  cycleId                      Int?     @map("cycle_id")
-  turnoutOfTeam                Float?   @map("turnout_of_team")
-  turnoutOfOther               Float?   @map("turnout_of_other")
-  totalAverageBySelfAssessment Float?   @map("total_average_by_self_assessment")
-  totalAverageByTeam           Float?   @map("total_average_by_team")
-  totalAverageByOthers         Float?   @map("total_average_by_others")
-  totalDeltaBySelfAssessment   Float?   @map("total_delta_by_self_assessment")
-  totalDeltaByTeam             Float?   @map("total_delta_by_team")
-  totalDeltaByOthers           Float?   @map("total_delta_by_others")
-  createdAt                    DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  id                            Int      @id @default(autoincrement())
+  reviewId                      Int      @unique() @map("review_id")
+  cycleId                       Int?     @map("cycle_id")
+  respondentCount               Int      @map("respondent_count")
+  turnoutPctOfTeam              Decimal? @map("turnout_pct_of_team") @db.Decimal(10, 4)
+  turnoutPctOfOther             Decimal? @map("turnout_pct_of_other") @db.Decimal(10, 4)
+  questionTotAvgBySelf          Decimal? @map("question_tot_avg_by_self") @db.Decimal(10, 4)
+  questionTotAvgByTeam          Decimal? @map("question_tot_avg_by_team") @db.Decimal(10, 4)
+  questionTotAvgByOthers        Decimal? @map("question_tot_avg_by_others") @db.Decimal(10, 4)
+  questionTotPctBySelf          Decimal? @map("question_tot_pct_by_self") @db.Decimal(10, 4)
+  questionTotPctByTeam          Decimal? @map("question_tot_pct_by_team") @db.Decimal(10, 4)
+  questionTotPctByOthers        Decimal? @map("question_tot_pct_by_others") @db.Decimal(10, 4)
+  questionTotDeltaPctByTeam     Decimal? @map("question_tot_delta_pct_by_team") @db.Decimal(10, 4)
+  questionTotDeltaPctByOthers   Decimal? @map("question_tot_delta_pct_by_others") @db.Decimal(10, 4)
+  competenceTotAvgBySelf        Decimal? @map("competence_tot_avg_by_self") @db.Decimal(10, 4)
+  competenceTotAvgByTeam        Decimal? @map("competence_tot_avg_by_team") @db.Decimal(10, 4)
+  competenceTotAvgByOthers      Decimal? @map("competence_tot_avg_by_others") @db.Decimal(10, 4)
+  competenceTotPctBySelf        Decimal? @map("competence_tot_pct_by_self") @db.Decimal(10, 4)
+  competenceTotPctByTeam        Decimal? @map("competence_tot_pct_by_team") @db.Decimal(10, 4)
+  competenceTotPctByOthers      Decimal? @map("competence_tot_pct_by_others") @db.Decimal(10, 4)
+  competenceTotDeltaPctByTeam   Decimal? @map("competence_tot_delta_pct_by_team") @db.Decimal(10, 4)
+  competenceTotDeltaPctByOthers Decimal? @map("competence_tot_delta_pct_by_others") @db.Decimal(10, 4)
+  createdAt                     DateTime @default(now()) @map("created_at") @db.Timestamp(0)
 
   review    Review            @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cycle     Cycle?            @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -616,38 +653,48 @@ model Report {
 }
 
 model ReportAnalytics {
-  id                      Int        @id @default(autoincrement())
-  reportId                Int        @map("report_id")
-  entityType              EntityType @map("entity_type")
-  entityId                Int?       @map("entity_id")
-  entityTitle             String     @map("entity_title") @db.Text
-  averageBySelfAssessment Float?     @map("average_by_self_assessment")
-  averageByTeam           Float?     @map("average_by_team")
-  averageByOther          Float?     @map("average_by_other")
-  deltaBySelfAssessment   Float?     @map("delta_by_self_assessment")
-  deltaByTeam             Float?     @map("delta_by_team")
-  deltaByOther            Float?     @map("delta_by_other")
-  dimension               String?    @map("dimension") @db.VarChar(255)
-  createdAt               DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+  id                         Int        @id @default(autoincrement())
+  reportId                   Int        @map("report_id")
+  entityType                 EntityType @map("entity_type")
+  questionId                 Int?       @map("question_id")
+  questionTitle              String?    @map("question_title") @db.Text
+  competenceId               Int?       @map("competence_id")
+  competenceTitle            String?    @map("competence_title") @db.Text
+  averageBySelfAssessment    Decimal?   @map("average_by_self_assessment") @db.Decimal(10, 4)
+  averageByTeam              Decimal?   @map("average_by_team") @db.Decimal(10, 4)
+  averageByOther             Decimal?   @map("average_by_other") @db.Decimal(10, 4)
+  percentageBySelfAssessment Decimal?   @map("percentage_by_self_assessment") @db.Decimal(10, 4)
+  percentageByTeam           Decimal?   @map("percentage_by_team") @db.Decimal(10, 4)
+  percentageByOther          Decimal?   @map("percentage_by_other") @db.Decimal(10, 4)
+  deltaPercentageByTeam      Decimal?   @map("delta_percentage_by_team") @db.Decimal(10, 4)
+  deltaPercentageByOther     Decimal?   @map("delta_percentage_by_other") @db.Decimal(10, 4)
+  createdAt                  DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
 
-  report Report @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  report     Report      @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question   Question?   @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  competence Competence? @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([reportId, entityType, entityId])
   @@index([reportId])
+  @@index([questionId])
+  @@index([competenceId])
   @@map("reporting_analytics")
 }
 
 model ReportComment {
-  id                 Int                @id @default(autoincrement())
-  reportId           Int                @map("report_id")
-  comment            String?            @db.Text
-  commentSentiment   CommentSentiment   @default(POSITIVE) @map("comment_sentiment")
-  numberOfMentions   Int?               @map("number_of_mentions")
-  respondentCategory RespondentCategory @map("respondent_category")
-  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamp(0)
+  id                   Int                  @id @default(autoincrement())
+  reportId             Int                  @map("report_id")
+  questionId           Int                  @map("question_id")
+  questionTitle        String               @map("question_title") @db.Text
+  comment              String               @db.Text
+  respondentCategories RespondentCategory[] @map("respondent_categories")
+  commentSentiment     CommentSentiment?    @default(POSITIVE) @map("comment_sentiment")
+  numberOfMentions     Int                  @map("number_of_mentions")
+  createdAt            DateTime             @default(now()) @map("created_at") @db.Timestamp(0)
 
-  report Report @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  report   Report    @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question Question? @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([reportId])
+  @@index([questionId])
   @@map("reporting_comments")
 }

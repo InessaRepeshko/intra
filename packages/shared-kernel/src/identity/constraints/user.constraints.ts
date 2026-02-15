@@ -6,8 +6,8 @@ const USER_NAME = {
     PATTERN: {
         ONLY_LETTERS: /^[a-zA-Z-]+$/, // only English letters and hyphens
         ONLY_LETTERS_AND_NUMBERS: /^[a-zA-Z0-9_-]+$/, // only English letters, numbers, and hyphens
-    }
-}
+    },
+};
 
 export const USER_CONSTRAINTS = {
     NAME: {
@@ -31,9 +31,4 @@ export const USER_CONSTRAINTS = {
         },
         PATTERN: USER_NAME.PATTERN.ONLY_LETTERS_AND_NUMBERS,
     },
-    PASSWORD_HASH: {
-        LENGTH: {
-            MAX: 300,
-        },
-    },
-}
+};

@@ -12,7 +12,7 @@ import {
     CycleRepositoryPort,
 } from '../../application/ports/cycle.repository.port';
 import { CycleDomain } from '../../domain/cycle.domain';
-import { Feedback360Mapper } from './feedback360.mapper';
+import { CycleMapper } from '../mappers/cycle.mapper';
 
 @Injectable()
 export class CycleRepository implements CycleRepositoryPort {
@@ -22,27 +22,15 @@ export class CycleRepository implements CycleRepositoryPort {
 
     async create(cycle: CycleDomain): Promise<CycleDomain> {
         const created = await this.prisma.cycle.create({
-            data: {
-                title: cycle.title,
-                description: cycle.description,
-                hrId: cycle.hrId,
-                minRespondentsThreshold: cycle.minRespondentsThreshold,
-                stage: Feedback360Mapper.toPrismaCycleStage(cycle.stage),
-                isActive: cycle.isActive,
-                startDate: cycle.startDate,
-                reviewDeadline: cycle.reviewDeadline,
-                approvalDeadline: cycle.approvalDeadline,
-                responseDeadline: cycle.responseDeadline,
-                endDate: cycle.endDate,
-            },
+            data: CycleMapper.toPrisma(cycle),
         });
 
-        return Feedback360Mapper.toCycleDomain(created);
+        return CycleMapper.toDomain(created);
     }
 
     async findById(id: number): Promise<CycleDomain | null> {
         const cycle = await this.prisma.cycle.findUnique({ where: { id } });
-        return cycle ? Feedback360Mapper.toCycleDomain(cycle) : null;
+        return cycle ? CycleMapper.toDomain(cycle) : null;
     }
 
     async search(query: CycleSearchQuery): Promise<CycleDomain[]> {
@@ -54,7 +42,7 @@ export class CycleRepository implements CycleRepositoryPort {
             orderBy,
         });
 
-        return items.map(Feedback360Mapper.toCycleDomain);
+        return items.map(CycleMapper.toDomain);
     }
 
     async updateById(
@@ -67,14 +55,12 @@ export class CycleRepository implements CycleRepositoryPort {
                 ...patch,
                 ...(patch.stage
                     ? {
-                          stage: Feedback360Mapper.toPrismaCycleStage(
-                              patch.stage,
-                          ),
+                          stage: CycleMapper.toPrismaStage(patch.stage),
                       }
                     : {}),
             },
         });
-        return Feedback360Mapper.toCycleDomain(updated);
+        return CycleMapper.toDomain(updated);
     }
 
     async deleteById(id: number): Promise<void> {
@@ -123,9 +109,7 @@ export class CycleRepository implements CycleRepositoryPort {
                 : {}),
             ...(hrId ? { hrId } : {}),
             ...(minRespondentsThreshold ? { minRespondentsThreshold } : {}),
-            ...(stage
-                ? { stage: Feedback360Mapper.toPrismaCycleStage(stage) }
-                : {}),
+            ...(stage ? { stage: CycleMapper.toPrismaStage(stage) } : {}),
             ...(isActive !== undefined ? { isActive } : {}),
             ...(startDate ? { startDate } : {}),
             ...(reviewDeadline ? { reviewDeadline } : {}),

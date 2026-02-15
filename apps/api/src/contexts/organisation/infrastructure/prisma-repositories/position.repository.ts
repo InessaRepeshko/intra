@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { PositionRepositoryPort } from '../../application/ports/position.repository.port';
 import { PositionDomain } from '../../domain/position.domain';
-import { OrganisationMapper } from './organisation.mapper';
+import { PositionMapper } from '../mappers/position.mapper';
 
 @Injectable()
 export class PositionRepository implements PositionRepositoryPort {
@@ -17,17 +17,14 @@ export class PositionRepository implements PositionRepositoryPort {
 
     async create(position: PositionDomain): Promise<PositionDomain> {
         const created = await this.prisma.position.create({
-            data: {
-                title: position.title,
-                description: position.description,
-            },
+            data: PositionMapper.toPrisma(position),
         });
-        return OrganisationMapper.toPositionDomain(created);
+        return PositionMapper.toDomain(created);
     }
 
     async findById(id: number): Promise<PositionDomain | null> {
         const found = await this.prisma.position.findUnique({ where: { id } });
-        return found ? OrganisationMapper.toPositionDomain(found) : null;
+        return found ? PositionMapper.toDomain(found) : null;
     }
 
     async search(query: PositionSearchQuery): Promise<PositionDomain[]> {
@@ -39,7 +36,7 @@ export class PositionRepository implements PositionRepositoryPort {
             orderBy,
         });
 
-        return items.map(OrganisationMapper.toPositionDomain);
+        return items.map(PositionMapper.toDomain);
     }
 
     async updateById(
@@ -50,7 +47,7 @@ export class PositionRepository implements PositionRepositoryPort {
             where: { id },
             data: patch,
         });
-        return OrganisationMapper.toPositionDomain(updated);
+        return PositionMapper.toDomain(updated);
     }
 
     async deleteById(id: number): Promise<void> {

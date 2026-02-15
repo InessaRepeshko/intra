@@ -32,6 +32,7 @@ import { AddTeamMemberDto } from '../dto/teams/add-team-member.dto';
 import { CreateTeamDto } from '../dto/teams/create-team.dto';
 import { TeamQueryDto } from '../dto/teams/team-query.dto';
 import { UpdateTeamDto } from '../dto/teams/update-team.dto';
+import { TeamMembershipHttpMapper } from '../mappers/team-membership.http.mapper';
 import { TeamHttpMapper } from '../mappers/team.http.mapper';
 import { TeamMemberResponse } from '../models/team-member.response';
 import { TeamResponse } from '../models/team.response';
@@ -116,7 +117,7 @@ export class TeamsController {
             { memberId: dto.memberId, isPrimary: dto.isPrimary },
             { withUser: true },
         );
-        return TeamHttpMapper.toMemberResponse(membership);
+        return TeamMembershipHttpMapper.toResponse(membership);
     }
 
     @Get(':id/members')
@@ -128,7 +129,7 @@ export class TeamsController {
         const members = await this.service.listMembers(Number(id), {
             withUsers: true,
         });
-        return members.map(TeamHttpMapper.toMemberResponse);
+        return members.map(TeamMembershipHttpMapper.toResponse);
     }
 
     @Delete(':id/members/:memberId')

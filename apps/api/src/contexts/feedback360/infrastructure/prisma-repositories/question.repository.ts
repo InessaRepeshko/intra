@@ -11,7 +11,7 @@ import {
     QuestionRepositoryPort,
 } from '../../application/ports/question.repository.port';
 import { QuestionDomain } from '../../domain/question.domain';
-import { Feedback360Mapper } from './feedback360.mapper';
+import { QuestionMapper } from '../mappers/question.mapper';
 
 @Injectable()
 export class QuestionRepository implements QuestionRepositoryPort {
@@ -21,33 +21,24 @@ export class QuestionRepository implements QuestionRepositoryPort {
 
     async create(question: QuestionDomain): Promise<QuestionDomain> {
         const created = await this.prisma.question.create({
-            data: {
-                cycleId: question.cycleId,
-                questionTemplateId: question.questionTemplateId,
-                title: question.title,
-                answerType: Feedback360Mapper.toPrismaAnswerType(
-                    question.answerType,
-                ),
-                competenceId: question.competenceId,
-                isForSelfassessment: question.isForSelfassessment,
-            },
+            data: QuestionMapper.toPrisma(question),
         });
 
-        return Feedback360Mapper.toQuestionDomain(created);
+        return QuestionMapper.toDomain(created);
     }
 
     async findById(id: number): Promise<QuestionDomain | null> {
         const question = await this.prisma.question.findUnique({
             where: { id },
         });
-        return question ? Feedback360Mapper.toQuestionDomain(question) : null;
+        return question ? QuestionMapper.toDomain(question) : null;
     }
 
     async search(query: QuestionSearchQuery): Promise<QuestionDomain[]> {
         const where = this.buildWhere(query);
         const orderBy = this.buildOrder(query);
         const items = await this.prisma.question.findMany({ where, orderBy });
-        return items.map(Feedback360Mapper.toQuestionDomain);
+        return items.map(QuestionMapper.toDomain);
     }
 
     async deleteById(id: number): Promise<void> {
@@ -71,8 +62,7 @@ export class QuestionRepository implements QuestionRepositoryPort {
                 : {}),
             ...(answerType
                 ? {
-                      answerType:
-                          Feedback360Mapper.toPrismaAnswerType(answerType),
+                      answerType: QuestionMapper.toPrismaAnswerType(answerType),
                   }
                 : {}),
             ...(competenceId ? { competenceId } : {}),

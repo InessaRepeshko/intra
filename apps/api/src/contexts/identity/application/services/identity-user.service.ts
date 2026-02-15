@@ -20,8 +20,6 @@ import { IDENTITY_USER_REPOSITORY } from '../ports/user.repository.port';
 
 export type UpdateUserCommand = Partial<Omit<CreateUserPayload, 'email'>>;
 
-const PASSWORD_PLACEHOLDER = '__external_auth__';
-
 @Injectable()
 export class IdentityUserService {
     constructor(
@@ -44,9 +42,9 @@ export class IdentityUserService {
                     payload.lastName,
                 ),
             email: payload.email,
-            passwordHash: payload.passwordHash ?? PASSWORD_PLACEHOLDER,
+            avatarUrl: payload.avatarUrl,
             status: payload.status ?? IdentityStatus.ACTIVE,
-            positionId: payload.positionId,
+            positionId: payload.positionId ?? null,
             teamId: payload.teamId ?? null,
             managerId: payload.managerId ?? null,
             roles: payload.roles ?? [],
@@ -66,6 +64,13 @@ export class IdentityUserService {
         const user = await this.users.findById(id, opts);
         if (!user) throw new NotFoundException('User not found');
         return user;
+    }
+
+    async findByEmail(
+        email: string,
+        opts?: { withRoles?: boolean },
+    ): Promise<UserDomain | null> {
+        return this.users.findByEmail(email, opts);
     }
 
     async update(id: number, patch: UpdateUserCommand): Promise<UserDomain> {
@@ -113,6 +118,42 @@ export class IdentityUserService {
         }
 
         return this.users.replaceRoles(userId, uniqueRoles);
+    }
+
+    async upsertExternalUser(payload: {
+        email: string;
+        firstName: string;
+        lastName: string;
+        secondName: string | undefined;
+        avatarUrl?: string;
+    }): Promise<UserDomain> {
+        const existing = await this.users.findByEmail(payload.email, {
+            withRoles: true,
+        });
+
+        if (existing) {
+            return existing;
+        }
+
+        const createdUser = UserDomain.create({
+            firstName: payload.firstName,
+            secondName: payload.secondName,
+            lastName: payload.lastName,
+            fullName: this.buildFullName(
+                payload.firstName,
+                payload.secondName,
+                payload.lastName,
+            ),
+            email: payload.email,
+            avatarUrl: payload.avatarUrl,
+            status: IdentityStatus.ACTIVE,
+            positionId: null,
+            teamId: null,
+            managerId: null,
+            roles: [IdentityRole.EMPLOYEE],
+        });
+
+        return this.users.create(createdUser);
     }
 
     private buildFullName(

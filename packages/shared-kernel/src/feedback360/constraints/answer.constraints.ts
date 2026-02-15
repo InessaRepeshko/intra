@@ -1,9 +1,9 @@
-import { GLOBAL_CONSTRAINTS } from "../../common/constraints/global.constraints";
+import { GLOBAL_CONSTRAINTS } from '../../common/constraints/global.constraints';
 
 export const ANSWER_CONSTRAINTS = {
     NUMERICAL_VALUE: {
-        MIN: 0,
-        MAX: 5,
+        MIN: GLOBAL_CONSTRAINTS.SCORE.MIN,
+        MAX: GLOBAL_CONSTRAINTS.SCORE.MAX,
     },
     TEXT_VALUE: {
         LENGTH: {

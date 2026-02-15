@@ -1,4 +1,4 @@
-import { IdentityStatus } from "../../enums/identity-status.enum";
+import { IdentityStatus } from '../../enums/identity-status.enum';
 
 export type UpdateUserPayload = Partial<{
     firstName: string;
@@ -7,7 +7,7 @@ export type UpdateUserPayload = Partial<{
     fullName: string;
     passwordHash: string;
     status: IdentityStatus;
-    positionId: number;
+    positionId: number | null;
     teamId: number | null;
     managerId: number | null;
 }>;

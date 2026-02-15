@@ -1,4 +1,7 @@
-import { PrismaClient, ReviewStage as PrismaReviewStage } from '@intra/database';
+import {
+    PrismaClient,
+    ReviewStage as PrismaReviewStage,
+} from '@intra/database';
 import { ReviewStage } from '@intra/shared-kernel';
 import type { UserMap } from '../identity/users';
 import type { CycleMap } from './cycles';
@@ -19,37 +22,37 @@ export const REVIEW_SEED_DATA: ReviewSeed[] = [
     {
         rateeEmail: 'serhii.oliinyk@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'Strong H1 performance, team productivity increased by 20%',
     },
     {
         rateeEmail: 'pavlo.lytvyn@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'Excellent technical leadership in new architecture initiative',
     },
     {
         rateeEmail: 'viktoria.moroz@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'QA process improvements reduced bugs by 30%',
     },
     {
         rateeEmail: 'olga.ivanchuk@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'Led successful product redesign, positive user feedback',
     },
     {
         rateeEmail: 'natalya.tkachenko@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'HR initiatives improved employee satisfaction scores',
     },
     {
         rateeEmail: 'dmytro.kovalenko@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'CTO demonstrating strategic vision for tech stack evolution',
     },
 
@@ -58,43 +61,43 @@ export const REVIEW_SEED_DATA: ReviewSeed[] = [
     {
         rateeEmail: 'taras.rudenko@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'Outstanding year, delivered 3 major features with high quality',
     },
     {
         rateeEmail: 'petro.koval@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'Strong mentorship of junior developers, excellent code reviews',
     },
     {
         rateeEmail: 'ivan.sydorenko@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'Grew significantly, ready for senior promotion consideration',
     },
     {
         rateeEmail: 'oksana.savchenko@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'Created comprehensive test automation framework',
     },
     {
         rateeEmail: 'tetiana.bondar@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'Good progress in API testing and performance testing skills',
     },
     {
         rateeEmail: 'kateryna.romanchuk@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'Creative design solutions, strong collaboration with engineering',
     },
     {
         rateeEmail: 'yevhenii.tkachuk@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        stage: ReviewStage.FINISHED,
+        stage: ReviewStage.IN_PROGRESS,
         hrNote: 'Solid year, consistent delivery on assigned tasks',
     },
 
@@ -198,11 +201,13 @@ export default async function seedReviews(
     for (const reviewData of REVIEW_SEED_DATA) {
         // Get the cycle for this review
         const cycle = await prisma.cycle.findFirst({
-            where: { title: reviewData.cycleTitle }
+            where: { title: reviewData.cycleTitle },
         });
 
         if (!cycle) {
-            console.warn(`⚠️ Cycle "${reviewData.cycleTitle}" not found, skipping review for ${reviewData.rateeEmail}`);
+            console.warn(
+                `⚠️ Cycle "${reviewData.cycleTitle}" not found, skipping review for ${reviewData.rateeEmail}`,
+            );
             continue;
         }
 
@@ -218,17 +223,23 @@ export default async function seedReviews(
         });
 
         if (!rateeUser) {
-            console.warn(`⚠️ User ${reviewData.rateeEmail} not found, skipping review`);
+            console.warn(
+                `⚠️ User ${reviewData.rateeEmail} not found, skipping review`,
+            );
             continue;
         }
 
         // Get ratee position
         const position = rateeUser.positionId
-            ? await prisma.position.findUnique({ where: { id: rateeUser.positionId } })
+            ? await prisma.position.findUnique({
+                  where: { id: rateeUser.positionId },
+              })
             : null;
 
         if (!position) {
-            console.warn(`⚠️ Position for user ${reviewData.rateeEmail} not found, skipping review`);
+            console.warn(
+                `⚠️ Position for user ${reviewData.rateeEmail} not found, skipping review`,
+            );
             continue;
         }
 
@@ -247,11 +258,15 @@ export default async function seedReviews(
                 where: { id: rateeUser.managerId },
             });
             if (manager) {
-                managerFullName = manager.fullName || `${manager.firstName} ${manager.lastName}`;
+                managerFullName =
+                    manager.fullName ||
+                    `${manager.firstName} ${manager.lastName}`;
                 // If user has direct relation to position
                 // Check schema: User has positionId.
                 if (manager.positionId) {
-                    const managerPos = await prisma.position.findUnique({ where: { id: manager.positionId } });
+                    const managerPos = await prisma.position.findUnique({
+                        where: { id: manager.positionId },
+                    });
                     if (managerPos) {
                         managerPositionId = managerPos.id;
                         managerPositionTitle = managerPos.title;
@@ -272,11 +287,14 @@ export default async function seedReviews(
 
         const reviewDataPayload = {
             rateeId: rateeUser.id,
-            rateeFullName: rateeUser.fullName || `${rateeUser.firstName} ${rateeUser.lastName}`,
+            rateeFullName:
+                rateeUser.fullName ||
+                `${rateeUser.firstName} ${rateeUser.lastName}`,
             rateePositionId: position.id,
             rateePositionTitle: position.title,
             hrId: hrUser.id,
-            hrFullName: hrUser.fullName || `${hrUser.firstName} ${hrUser.lastName}`,
+            hrFullName:
+                hrUser.fullName || `${hrUser.firstName} ${hrUser.lastName}`,
             hrNote: reviewData.hrNote,
             teamId,
             teamTitle,
@@ -286,17 +304,19 @@ export default async function seedReviews(
             managerPositionTitle,
             cycleId: cycle.id,
             reportId: null,
-            stage: reviewData.stage.toString().toUpperCase() as unknown as PrismaReviewStage,
+            stage: reviewData.stage
+                .toString()
+                .toUpperCase() as unknown as PrismaReviewStage,
         };
 
         const record = existing
             ? await prisma.review.update({
-                where: { id: existing.id },
-                data: reviewDataPayload,
-            })
+                  where: { id: existing.id },
+                  data: reviewDataPayload,
+              })
             : await prisma.review.create({
-                data: reviewDataPayload,
-            });
+                  data: reviewDataPayload,
+              });
 
         reviewMap.set(mapKey, { id: record.id });
     }

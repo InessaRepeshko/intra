@@ -1,9 +1,8 @@
 import {
+    AnswerType as PrismaAnswerType,
     PrismaClient,
     RespondentCategory as PrismaRespondentCategory,
-    AnswerType as PrismaAnswerType
 } from '@intra/database';
-import { RespondentCategory, AnswerType } from '@intra/shared-kernel';
 import type { ReviewMap } from './reviews';
 
 // Sample text feedback comments for Ukrainian company context
@@ -41,25 +40,33 @@ function getRandomScore(isHighPerformer: boolean, isCritical: boolean): number {
     // Regular: 3-4 for critical, 2-4 for others
     if (isHighPerformer) {
         return isCritical
-            ? Math.floor(Math.random() * 2) + 4  // 4-5
+            ? Math.floor(Math.random() * 2) + 4 // 4-5
             : Math.floor(Math.random() * 3) + 3; // 3-5
     } else {
         return isCritical
-            ? Math.floor(Math.random() * 2) + 3  // 3-4
+            ? Math.floor(Math.random() * 2) + 3 // 3-4
             : Math.floor(Math.random() * 3) + 2; // 2-4
     }
 }
 
 // Determine if employee is high performer based on position
 function isHighPerformer(positionTitle: string): boolean {
-    return positionTitle.includes('Senior') ||
+    return (
+        positionTitle.includes('Senior') ||
         positionTitle.includes('Lead') ||
-        positionTitle.includes('Director');
+        positionTitle.includes('Director')
+    );
 }
 
 // Determine if competence is critical for position
-function isCriticalCompetence(competenceCode: string, positionTitle: string): boolean {
-    if (positionTitle.includes('Software Engineer') || positionTitle.includes('Tech Lead')) {
+function isCriticalCompetence(
+    competenceCode: string,
+    positionTitle: string,
+): boolean {
+    if (
+        positionTitle.includes('Software Engineer') ||
+        positionTitle.includes('Tech Lead')
+    ) {
         return ['TECH', 'DELIV', 'QUAL', 'COLLAB'].includes(competenceCode);
     }
     if (positionTitle.includes('QA Engineer')) {
@@ -110,15 +117,21 @@ export default async function seedAnswers(
             for (const rqr of review.reviewQuestionRelations) {
                 const question = rqr.question;
 
-                // Skip if this is a self-assessment question but respondent is not self
-                if (question.isForSelfassessment && respondent.category !== 'SELF_ASSESSMENT') {
-                    continue;
-                }
+                // // Skip if this is a self-assessment question but respondent is not self
+                // if (
+                //     question.isForSelfassessment &&
+                //     respondent.category !== 'SELF_ASSESSMENT'
+                // ) {
+                //     continue;
+                // }
 
-                // Skip if this is not for self-assessment but respondent is self
-                if (!question.isForSelfassessment && respondent.category === 'SELF_ASSESSMENT') {
-                    continue;
-                }
+                // // Skip if this is not for self-assessment but respondent is self
+                // if (
+                //     !question.isForSelfassessment &&
+                //     respondent.category === 'SELF_ASSESSMENT'
+                // ) {
+                //     continue;
+                // }
 
                 const existing = await prisma.answer.findFirst({
                     where: {
@@ -131,7 +144,10 @@ export default async function seedAnswers(
                 if (existing) continue;
 
                 const competenceCode = question.competence?.code ?? '';
-                const isCritical = isCriticalCompetence(competenceCode, review.rateePositionTitle);
+                const isCritical = isCriticalCompetence(
+                    competenceCode,
+                    review.rateePositionTitle,
+                );
 
                 // Create answer based on question type
                 if (question.answerType === 'NUMERICAL_SCALE') {
@@ -141,31 +157,30 @@ export default async function seedAnswers(
                         data: {
                             reviewId: review.id,
                             questionId: question.id,
-                            respondentCategory: respondent.category as unknown as PrismaRespondentCategory,
-                            answerType: 'NUMERICAL_SCALE' as unknown as PrismaAnswerType,
+                            respondentCategory:
+                                respondent.category as unknown as PrismaRespondentCategory,
+                            answerType:
+                                'NUMERICAL_SCALE' as unknown as PrismaAnswerType,
                             numericalValue: score,
                             textValue: null,
                         },
                     });
                 } else if (question.answerType === 'TEXT_FIELD') {
-                    // 70% chance of providing text feedback for TEXT_FIELD questions
-                    const shouldProvideComment = Math.random() < 0.7;
+                    const isPositiveFeedback = Math.random() < 0.75; // 75% positive
+                    const comment = getRandomComment(isPositiveFeedback);
 
-                    if (shouldProvideComment) {
-                        const isPositiveFeedback = Math.random() < 0.75; // 75% positive
-                        const comment = getRandomComment(isPositiveFeedback);
-
-                        await prisma.answer.create({
-                            data: {
-                                reviewId: review.id,
-                                questionId: question.id,
-                                respondentCategory: respondent.category as unknown as PrismaRespondentCategory,
-                                answerType: 'TEXT_FIELD' as unknown as PrismaAnswerType,
-                                numericalValue: null,
-                                textValue: comment,
-                            },
-                        });
-                    }
+                    await prisma.answer.create({
+                        data: {
+                            reviewId: review.id,
+                            questionId: question.id,
+                            respondentCategory:
+                                respondent.category as unknown as PrismaRespondentCategory,
+                            answerType:
+                                'TEXT_FIELD' as unknown as PrismaAnswerType,
+                            numericalValue: null,
+                            textValue: comment,
+                        },
+                    });
                 }
             }
         }

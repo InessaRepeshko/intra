@@ -5,3 +5,5 @@ export enum PositionSortField {
     CREATED_AT = 'createdAt',
     UPDATED_AT = 'updatedAt',
 }
+
+export const POSITION_SORT_FIELDS = Object.values(PositionSortField);

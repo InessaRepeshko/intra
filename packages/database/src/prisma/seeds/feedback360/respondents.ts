@@ -1,11 +1,11 @@
 import {
     PrismaClient,
     RespondentCategory as PrismaRespondentCategory,
-    ResponseStatus as PrismaResponseStatus
+    ResponseStatus as PrismaResponseStatus,
 } from '@intra/database';
 import { RespondentCategory, ResponseStatus } from '@intra/shared-kernel';
-import type { ReviewMap } from './reviews';
 import type { UserMap } from '../identity/users';
+import type { ReviewMap } from './reviews';
 
 type RespondentSeed = {
     rateeEmail: string;
@@ -29,14 +29,21 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'serhii.oliinyk@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        respondentEmails: ['pavlo.lytvyn@intra.com', 'taras.rudenko@intra.com', 'petro.koval@intra.com'],
+        respondentEmails: [
+            'pavlo.lytvyn@intra.com',
+            'taras.rudenko@intra.com',
+            'petro.koval@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
     {
         rateeEmail: 'serhii.oliinyk@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        respondentEmails: ['viktoria.moroz@intra.com', 'dmytro.kovalenko@intra.com'],
+        respondentEmails: [
+            'viktoria.moroz@intra.com',
+            'dmytro.kovalenko@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -52,14 +59,21 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'pavlo.lytvyn@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        respondentEmails: ['taras.rudenko@intra.com', 'petro.koval@intra.com', 'ivan.sydorenko@intra.com'],
+        respondentEmails: [
+            'taras.rudenko@intra.com',
+            'petro.koval@intra.com',
+            'ivan.sydorenko@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
     {
         rateeEmail: 'pavlo.lytvyn@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        respondentEmails: ['viktoria.moroz@intra.com', 'olga.ivanchuk@intra.com'],
+        respondentEmails: [
+            'viktoria.moroz@intra.com',
+            'olga.ivanchuk@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -75,14 +89,20 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'viktoria.moroz@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        respondentEmails: ['oksana.savchenko@intra.com', 'tetiana.bondar@intra.com'],
+        respondentEmails: [
+            'oksana.savchenko@intra.com',
+            'tetiana.bondar@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
     {
         rateeEmail: 'viktoria.moroz@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        respondentEmails: ['serhii.oliinyk@intra.com', 'pavlo.lytvyn@intra.com'],
+        respondentEmails: [
+            'serhii.oliinyk@intra.com',
+            'pavlo.lytvyn@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -105,7 +125,11 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'olga.ivanchuk@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        respondentEmails: ['pavlo.lytvyn@intra.com', 'taras.rudenko@intra.com', 'oksana.savchenko@intra.com'],
+        respondentEmails: [
+            'pavlo.lytvyn@intra.com',
+            'taras.rudenko@intra.com',
+            'oksana.savchenko@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -121,7 +145,10 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'natalya.tkachenko@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        respondentEmails: ['mariia.pavlenko@intra.com', 'yulia.kravchenko@intra.com'],
+        respondentEmails: [
+            'mariia.pavlenko@intra.com',
+            'yulia.kravchenko@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -144,14 +171,20 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'dmytro.kovalenko@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        respondentEmails: ['serhii.oliinyk@intra.com', 'viktoria.moroz@intra.com'],
+        respondentEmails: [
+            'serhii.oliinyk@intra.com',
+            'viktoria.moroz@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
     {
         rateeEmail: 'dmytro.kovalenko@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        respondentEmails: ['oleksandr.bondarenko@intra.com', 'iryna.shevchenko@intra.com'],
+        respondentEmails: [
+            'oleksandr.bondarenko@intra.com',
+            'iryna.shevchenko@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -168,14 +201,21 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'taras.rudenko@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        respondentEmails: ['petro.koval@intra.com', 'ivan.sydorenko@intra.com', 'yevhenii.tkachuk@intra.com'],
+        respondentEmails: [
+            'petro.koval@intra.com',
+            'ivan.sydorenko@intra.com',
+            'yevhenii.tkachuk@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
     {
         rateeEmail: 'taras.rudenko@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        respondentEmails: ['oksana.savchenko@intra.com', 'olga.ivanchuk@intra.com'],
+        respondentEmails: [
+            'oksana.savchenko@intra.com',
+            'olga.ivanchuk@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -191,14 +231,21 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'petro.koval@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        respondentEmails: ['taras.rudenko@intra.com', 'ivan.sydorenko@intra.com', 'mykola.petrenko@intra.com'],
+        respondentEmails: [
+            'taras.rudenko@intra.com',
+            'ivan.sydorenko@intra.com',
+            'mykola.petrenko@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
     {
         rateeEmail: 'petro.koval@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        respondentEmails: ['tetiana.bondar@intra.com', 'kateryna.romanchuk@intra.com'],
+        respondentEmails: [
+            'tetiana.bondar@intra.com',
+            'kateryna.romanchuk@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -214,7 +261,11 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'ivan.sydorenko@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        respondentEmails: ['yevhenii.tkachuk@intra.com', 'mykola.petrenko@intra.com', 'taras.rudenko@intra.com'],
+        respondentEmails: [
+            'yevhenii.tkachuk@intra.com',
+            'mykola.petrenko@intra.com',
+            'taras.rudenko@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -237,7 +288,11 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'oksana.savchenko@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        respondentEmails: ['tetiana.bondar@intra.com', 'vasyl.lysenko@intra.com', 'viktoria.moroz@intra.com'],
+        respondentEmails: [
+            'tetiana.bondar@intra.com',
+            'vasyl.lysenko@intra.com',
+            'viktoria.moroz@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -260,7 +315,10 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'tetiana.bondar@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        respondentEmails: ['oksana.savchenko@intra.com', 'vasyl.lysenko@intra.com'],
+        respondentEmails: [
+            'oksana.savchenko@intra.com',
+            'vasyl.lysenko@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -299,7 +357,11 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'yevhenii.tkachuk@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        respondentEmails: ['ivan.sydorenko@intra.com', 'petro.koval@intra.com', 'taras.rudenko@intra.com'],
+        respondentEmails: [
+            'ivan.sydorenko@intra.com',
+            'petro.koval@intra.com',
+            'taras.rudenko@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -317,14 +379,21 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'taras.rudenko@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['petro.koval@intra.com', 'ivan.sydorenko@intra.com', 'yevhenii.tkachuk@intra.com'],
+        respondentEmails: [
+            'petro.koval@intra.com',
+            'ivan.sydorenko@intra.com',
+            'yevhenii.tkachuk@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
     {
         rateeEmail: 'taras.rudenko@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['oksana.savchenko@intra.com', 'olga.ivanchuk@intra.com'],
+        respondentEmails: [
+            'oksana.savchenko@intra.com',
+            'olga.ivanchuk@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -340,14 +409,21 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'petro.koval@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['taras.rudenko@intra.com', 'ivan.sydorenko@intra.com', 'mykola.petrenko@intra.com'],
+        respondentEmails: [
+            'taras.rudenko@intra.com',
+            'ivan.sydorenko@intra.com',
+            'mykola.petrenko@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
     {
         rateeEmail: 'petro.koval@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['tetiana.bondar@intra.com', 'kateryna.romanchuk@intra.com'],
+        respondentEmails: [
+            'tetiana.bondar@intra.com',
+            'kateryna.romanchuk@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.IN_PROGRESS,
     },
@@ -363,7 +439,11 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'ivan.sydorenko@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['yevhenii.tkachuk@intra.com', 'mykola.petrenko@intra.com', 'taras.rudenko@intra.com'],
+        respondentEmails: [
+            'yevhenii.tkachuk@intra.com',
+            'mykola.petrenko@intra.com',
+            'taras.rudenko@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -386,7 +466,11 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'yevhenii.tkachuk@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['ivan.sydorenko@intra.com', 'petro.koval@intra.com', 'taras.rudenko@intra.com'],
+        respondentEmails: [
+            'ivan.sydorenko@intra.com',
+            'petro.koval@intra.com',
+            'taras.rudenko@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.IN_PROGRESS,
     },
@@ -402,7 +486,10 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'mykola.petrenko@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['ivan.sydorenko@intra.com', 'yevhenii.tkachuk@intra.com'],
+        respondentEmails: [
+            'ivan.sydorenko@intra.com',
+            'yevhenii.tkachuk@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -418,14 +505,22 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'pavlo.lytvyn@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['taras.rudenko@intra.com', 'petro.koval@intra.com', 'ivan.sydorenko@intra.com', 'yevhenii.tkachuk@intra.com'],
+        respondentEmails: [
+            'taras.rudenko@intra.com',
+            'petro.koval@intra.com',
+            'ivan.sydorenko@intra.com',
+            'yevhenii.tkachuk@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
     {
         rateeEmail: 'pavlo.lytvyn@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['viktoria.moroz@intra.com', 'olga.ivanchuk@intra.com'],
+        respondentEmails: [
+            'viktoria.moroz@intra.com',
+            'olga.ivanchuk@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -441,14 +536,21 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'serhii.oliinyk@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['pavlo.lytvyn@intra.com', 'taras.rudenko@intra.com', 'petro.koval@intra.com'],
+        respondentEmails: [
+            'pavlo.lytvyn@intra.com',
+            'taras.rudenko@intra.com',
+            'petro.koval@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
     {
         rateeEmail: 'serhii.oliinyk@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['viktoria.moroz@intra.com', 'olga.ivanchuk@intra.com'],
+        respondentEmails: [
+            'viktoria.moroz@intra.com',
+            'olga.ivanchuk@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.IN_PROGRESS,
     },
@@ -464,7 +566,11 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'oksana.savchenko@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['tetiana.bondar@intra.com', 'vasyl.lysenko@intra.com', 'viktoria.moroz@intra.com'],
+        respondentEmails: [
+            'tetiana.bondar@intra.com',
+            'vasyl.lysenko@intra.com',
+            'viktoria.moroz@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -487,7 +593,10 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'tetiana.bondar@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['oksana.savchenko@intra.com', 'vasyl.lysenko@intra.com'],
+        respondentEmails: [
+            'oksana.savchenko@intra.com',
+            'vasyl.lysenko@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.IN_PROGRESS,
     },
@@ -503,7 +612,10 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'vasyl.lysenko@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['tetiana.bondar@intra.com', 'oksana.savchenko@intra.com'],
+        respondentEmails: [
+            'tetiana.bondar@intra.com',
+            'oksana.savchenko@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -519,14 +631,21 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'viktoria.moroz@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['oksana.savchenko@intra.com', 'tetiana.bondar@intra.com', 'vasyl.lysenko@intra.com'],
+        respondentEmails: [
+            'oksana.savchenko@intra.com',
+            'tetiana.bondar@intra.com',
+            'vasyl.lysenko@intra.com',
+        ],
         category: RespondentCategory.TEAM,
         responseStatus: ResponseStatus.COMPLETED,
     },
     {
         rateeEmail: 'viktoria.moroz@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['serhii.oliinyk@intra.com', 'pavlo.lytvyn@intra.com'],
+        respondentEmails: [
+            'serhii.oliinyk@intra.com',
+            'pavlo.lytvyn@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -549,7 +668,11 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'olga.ivanchuk@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['pavlo.lytvyn@intra.com', 'taras.rudenko@intra.com', 'oksana.savchenko@intra.com'],
+        respondentEmails: [
+            'pavlo.lytvyn@intra.com',
+            'taras.rudenko@intra.com',
+            'oksana.savchenko@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -578,6 +701,37 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     },
 ];
 
+function getRespondentDates(cycleTitle: string, status: ResponseStatus) {
+    const invitedAt = new Date('2026-01-16T10:00:00Z');
+    let respondedAt: Date | null = null;
+    let canceledAt: Date | null = null;
+
+    if (cycleTitle === 'Mid-Year Performance Review 2025') {
+        invitedAt.setFullYear(2025);
+        invitedAt.setMonth(4);
+        invitedAt.setDate(2);
+        if (status === ResponseStatus.COMPLETED) {
+            respondedAt = new Date('2025-05-18T14:30:00Z');
+        }
+    } else if (cycleTitle === 'Annual Performance Review 2025') {
+        invitedAt.setFullYear(2025);
+        invitedAt.setMonth(10);
+        invitedAt.setDate(2);
+        if (status === ResponseStatus.COMPLETED) {
+            respondedAt = new Date('2025-11-18T16:00:00Z');
+        }
+    } else {
+        invitedAt.setFullYear(2026);
+        invitedAt.setMonth(0);
+        invitedAt.setDate(16);
+        if (status === ResponseStatus.COMPLETED) {
+            respondedAt = new Date('2026-01-20T15:30:00Z');
+        }
+    }
+
+    return { invitedAt, respondedAt, canceledAt };
+}
+
 export default async function seedRespondents(
     prisma: PrismaClient,
     reviewMap: ReviewMap,
@@ -589,7 +743,9 @@ export default async function seedRespondents(
         const reviewRef = reviewMap.get(mapKey);
 
         if (!reviewRef) {
-            console.warn(`⚠️ Review for ${data.rateeEmail} in cycle "${data.cycleTitle}" not found`);
+            console.warn(
+                `⚠️ Review for ${data.rateeEmail} in cycle "${data.cycleTitle}" not found`,
+            );
             continue;
         }
 
@@ -605,7 +761,9 @@ export default async function seedRespondents(
 
             // Get respondent position
             const position = respondentUser.positionId
-                ? await prisma.position.findUnique({ where: { id: respondentUser.positionId } })
+                ? await prisma.position.findUnique({
+                      where: { id: respondentUser.positionId },
+                  })
                 : null;
 
             if (!position) {
@@ -625,27 +783,10 @@ export default async function seedRespondents(
             if (existing) continue;
 
             // Set dates based on cycle and response status
-            let invitedAt: Date;
-            let respondedAt: Date | null = null;
-            let canceledAt: Date | null = null;
-
-            if (data.cycleTitle === 'Mid-Year Performance Review 2025') {
-                invitedAt = new Date('2025-05-02T10:00:00Z');
-                if (data.responseStatus === ResponseStatus.COMPLETED) {
-                    respondedAt = new Date('2025-05-18T14:30:00Z');
-                }
-            } else if (data.cycleTitle === 'Annual Performance Review 2025') {
-                invitedAt = new Date('2025-11-02T10:00:00Z');
-                if (data.responseStatus === ResponseStatus.COMPLETED) {
-                    respondedAt = new Date('2025-11-18T16:00:00Z');
-                }
-            } else {
-                // 2026 cycle
-                invitedAt = new Date('2026-01-16T10:00:00Z');
-                if (data.responseStatus === ResponseStatus.COMPLETED) {
-                    respondedAt = new Date('2026-01-20T15:30:00Z');
-                }
-            }
+            const { invitedAt, respondedAt, canceledAt } = getRespondentDates(
+                data.cycleTitle,
+                data.responseStatus,
+            );
 
             // Get respondent team info
             const respondentWithMemberships = await prisma.user.findUnique({
@@ -653,11 +794,12 @@ export default async function seedRespondents(
                 include: {
                     memberships: {
                         where: { isPrimary: true },
-                        include: { team: true }
-                    }
-                }
+                        include: { team: true },
+                    },
+                },
             });
-            const respondentTeam = respondentWithMemberships?.memberships[0]?.team;
+            const respondentTeam =
+                respondentWithMemberships?.memberships[0]?.team;
             const teamId = respondentTeam?.id ?? null;
             const teamTitle = respondentTeam?.title ?? null;
 
@@ -665,11 +807,17 @@ export default async function seedRespondents(
                 data: {
                     reviewId: reviewRef.id,
                     respondentId: respondentUser.id,
-                    category: data.category.toString().toUpperCase() as unknown as PrismaRespondentCategory,
-                    responseStatus: data.responseStatus.toString().toUpperCase() as unknown as PrismaResponseStatus,
+                    category: data.category
+                        .toString()
+                        .toUpperCase() as unknown as PrismaRespondentCategory,
+                    responseStatus: data.responseStatus
+                        .toString()
+                        .toUpperCase() as unknown as PrismaResponseStatus,
                     positionId: position.id,
                     positionTitle: position.title,
-                    fullName: respondentUser.fullName || `${respondentUser.firstName} ${respondentUser.lastName}`,
+                    fullName:
+                        respondentUser.fullName ||
+                        `${respondentUser.firstName} ${respondentUser.lastName}`,
                     teamId,
                     teamTitle,
                     invitedAt,
@@ -678,5 +826,62 @@ export default async function seedRespondents(
                 },
             });
         }
+    }
+
+    for (const reviewRef of reviewMap.values()) {
+        const existingSelf = await prisma.respondent.findFirst({
+            where: {
+                reviewId: reviewRef.id,
+                category: 'SELF_ASSESSMENT',
+            },
+        });
+
+        if (existingSelf) continue;
+
+        const review = await prisma.review.findUnique({
+            where: { id: reviewRef.id },
+            include: {
+                ratee: true,
+                cycle: true,
+            },
+        });
+
+        if (
+            !review ||
+            !review.ratee ||
+            !review.cycle ||
+            !review.rateePositionId ||
+            !review.rateePositionTitle
+        ) {
+            continue;
+        }
+
+        const { invitedAt, respondedAt, canceledAt } = getRespondentDates(
+            review.cycle.title,
+            ResponseStatus.COMPLETED,
+        );
+
+        const fullName =
+            review.rateeFullName ||
+            `${review.ratee.firstName} ${review.ratee.lastName}`;
+
+        await prisma.respondent.create({
+            data: {
+                reviewId: review.id,
+                respondentId: review.ratee.id,
+                category:
+                    RespondentCategory.SELF_ASSESSMENT.toString().toUpperCase() as unknown as PrismaRespondentCategory,
+                responseStatus:
+                    ResponseStatus.COMPLETED.toString().toUpperCase() as unknown as PrismaResponseStatus,
+                positionId: review.rateePositionId,
+                positionTitle: review.rateePositionTitle,
+                fullName,
+                teamId: review.teamId,
+                teamTitle: review.teamTitle,
+                invitedAt,
+                respondedAt,
+                canceledAt,
+            },
+        });
     }
 }

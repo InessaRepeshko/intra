@@ -113,15 +113,13 @@ export class CreateUserDto {
     email!: string;
 
     @ApiPropertyOptional({
-        description: `Precomputed password hash or placeholder for external authentication`,
-        example: '__external_auth__',
-        maximum: USER_CONSTRAINTS.PASSWORD_HASH.LENGTH.MAX,
+        description: `User's avatar URL from external provider (Google)`,
+        example: 'https://lh3.googleusercontent.com/a/ACg8oc...',
         type: 'string',
     })
     @IsOptional()
     @IsString()
-    @MaxLength(USER_CONSTRAINTS.PASSWORD_HASH.LENGTH.MAX)
-    passwordHash?: string;
+    avatarUrl?: string;
 
     @ApiPropertyOptional({
         description: `User's status`,
@@ -139,12 +137,13 @@ export class CreateUserDto {
         description: `Position ID`,
         type: 'number',
         example: 1,
+        nullable: true,
     })
     @IsOptional()
     @ToOptionalInt({ min: 1 })
     @IsInt()
     @IsPositive()
-    positionId!: number;
+    positionId?: number | null;
 
     @ApiPropertyOptional({
         description: `Team ID`,

@@ -646,20 +646,28 @@ export default async function seedPositionQuestionTemplateRelations(
     for (const item of POSITION_QUESTION_TEMPLATES_SEED_DATA) {
         const position = positionMap.get(item.positionTitle);
         if (!position) {
-            console.warn(`⚠️ Position ${item.positionTitle} not found, skip question links`);
+            console.warn(
+                `⚠️ Position ${item.positionTitle} not found, skip question links`,
+            );
             continue;
         }
 
         for (const title of item.questionTemplateTitles) {
             const question = questionTemplateMap.get(title);
             if (!question) {
-                console.warn(`⚠️ Question template "${title}" not found, skip link for ${item.positionTitle}`);
+                console.warn(
+                    `⚠️ Question template "${title}" not found, skip link for ${item.positionTitle}`,
+                );
                 continue;
             }
 
-            const existing = await prisma.positionQuestionTemplateRelation.findFirst({
-                where: { positionId: position.id, questionTemplateId: question.id },
-            });
+            const existing =
+                await prisma.positionQuestionTemplateRelation.findFirst({
+                    where: {
+                        positionId: position.id,
+                        questionTemplateId: question.id,
+                    },
+                });
 
             if (existing) continue;
 
@@ -672,4 +680,3 @@ export default async function seedPositionQuestionTemplateRelations(
         }
     }
 }
-

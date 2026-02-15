@@ -19,3 +19,5 @@ export enum ReviewSortField {
     CREATED_AT = 'createdAt',
     UPDATED_AT = 'updatedAt',
 }
+
+export const REVIEW_SORT_FIELDS = Object.values(ReviewSortField);

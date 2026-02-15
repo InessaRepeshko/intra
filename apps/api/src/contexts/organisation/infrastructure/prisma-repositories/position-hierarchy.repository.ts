@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { PositionHierarchyRepositoryPort } from '../../application/ports/position-hierarchy.repository.port';
 import type { PositionHierarchyDomain } from '../../domain/position-hierarchy.domain';
-import { OrganisationMapper } from './organisation.mapper';
+import { PositionHierarchyMapper } from '../mappers/position-hierarchy.mapper';
 
 @Injectable()
 export class PositionHierarchyRepository implements PositionHierarchyRepositoryPort {
@@ -17,7 +17,7 @@ export class PositionHierarchyRepository implements PositionHierarchyRepositoryP
             const created = await this.prisma.positionHierarchy.create({
                 data: { superiorPositionId, subordinatePositionId },
             });
-            return OrganisationMapper.toPositionHierarchyDomain(created);
+            return PositionHierarchyMapper.toDomain(created);
         } catch (error) {
             if (
                 error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -33,10 +33,7 @@ export class PositionHierarchyRepository implements PositionHierarchyRepositoryP
                         },
                     },
                 );
-                if (existing)
-                    return OrganisationMapper.toPositionHierarchyDomain(
-                        existing,
-                    );
+                if (existing) return PositionHierarchyMapper.toDomain(existing);
             }
             throw error;
         }
@@ -58,7 +55,7 @@ export class PositionHierarchyRepository implements PositionHierarchyRepositoryP
             where: { superiorPositionId },
             orderBy: { createdAt: 'desc' },
         });
-        return relations.map(OrganisationMapper.toPositionHierarchyDomain);
+        return relations.map(PositionHierarchyMapper.toDomain);
     }
 
     async listSuperiors(
@@ -68,6 +65,6 @@ export class PositionHierarchyRepository implements PositionHierarchyRepositoryP
             where: { subordinatePositionId },
             orderBy: { createdAt: 'desc' },
         });
-        return relations.map(OrganisationMapper.toPositionHierarchyDomain);
+        return relations.map(PositionHierarchyMapper.toDomain);
     }
 }

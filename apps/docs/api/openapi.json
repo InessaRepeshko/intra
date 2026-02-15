@@ -16,6 +16,111 @@
         ]
       }
     },
+    "/auth/google": {
+      "get": {
+        "operationId": "AuthController_googleLogin",
+        "parameters": [],
+        "responses": {
+          "302": {
+            "description": "Redirects to Google OAuth2 login page"
+          }
+        },
+        "summary": "Initiate Google OAuth2 login",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "operationId": "AuthController_googleCallback",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "\n            Possible reasons:\n            - Missing 'code' or 'state' parameters in the request query.\n            - Google profile is missing required 'given_name' (first name) or 'family_name' (last name).\n        "
+          },
+          "401": {
+            "description": "\n            Possible reasons:\n            - Invalid OAuth state (CSRF protection).\n            - Failed to exchange authorization code for tokens.\n            - Google did not return access or ID tokens.\n            - Failed to fetch user profile from Google.\n        "
+          }
+        },
+        "summary": "Handle Google OAuth2 callback",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "operationId": "AuthController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The current user profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authenticated"
+          }
+        },
+        "summary": "Get current user profile",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/dev/login": {
+      "post": {
+        "description": "Development endpoint to quickly login as any registered user by email. Only available in non-production environments.",
+        "operationId": "AuthController_devLogin",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "User email for dev login",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevLoginRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully logged in as the specified user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "\n            Possible reasons:\n            - Dev login is not available in production environment.\n            - User with the specified email does not exist.\n        "
+          }
+        },
+        "summary": "Dev/Test login - authenticate as any user",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/identity/users": {
       "post": {
         "operationId": "IdentityUsersController_create",
@@ -4091,6 +4196,50 @@
         ]
       }
     },
+    "/feedback360/cycles/{id}/force-finish": {
+      "post": {
+        "operationId": "CyclesController_forceFinish",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Cycle id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CycleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Force finish 360-Feedback cycle (HR/Admin only)",
+        "tags": [
+          "Feedback360 / Cycles"
+        ]
+      }
+    },
     "/feedback360/reviews": {
       "post": {
         "operationId": "ReviewController_create",
@@ -4314,7 +4463,10 @@
                 "SELF_ASSESSMENT",
                 "WAITING_TO_START",
                 "IN_PROGRESS",
-                "RESEARCH",
+                "PREPARING_REPORT",
+                "PROCESSING_BY_HR",
+                "PUBLISHED",
+                "ANALYSIS",
                 "FINISHED"
               ]
             }
@@ -6253,6 +6405,44 @@
         ]
       }
     },
+    "/feedback360/reviews/{id}/force-complete": {
+      "post": {
+        "description": "Manually transition review to PREPARING_REPORT stage, even if some responses are pending",
+        "operationId": "ReviewController_forceComplete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Review id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review stage changed to PREPARING_REPORT"
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "summary": "Force complete Review (HR/Admin only)",
+        "tags": [
+          "Feedback360 / Reviews"
+        ]
+      }
+    },
     "/feedback360/questions": {
       "post": {
         "operationId": "QuestionsController_create",
@@ -6804,6 +6994,42 @@
       }
     },
     "/feedback360/cluster-scores/{id}": {
+      "get": {
+        "operationId": "ClusterScoresController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Cluster score id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClusterScoreWithRelationsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get cluster score by id",
+        "tags": [
+          "Feedback360 / Cluster Scores"
+        ]
+      },
       "delete": {
         "operationId": "ClusterScoresController_delete",
         "parameters": [
@@ -6835,6 +7061,44 @@
           }
         },
         "summary": "Delete cluster score",
+        "tags": [
+          "Feedback360 / Cluster Scores"
+        ]
+      }
+    },
+    "/feedback360/cluster-scores/cycle/{cycleId}": {
+      "get": {
+        "operationId": "ClusterScoresController_getByCycleId",
+        "parameters": [
+          {
+            "name": "cycleId",
+            "required": true,
+            "in": "path",
+            "description": "Cycle id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default sort by ascending cluster id and score",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClusterScoreWithRelationsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get cluster scores by cycle id",
         "tags": [
           "Feedback360 / Cluster Scores"
         ]
@@ -6907,6 +7171,30 @@
             }
           },
           {
+            "name": "lowerBound",
+            "required": false,
+            "in": "query",
+            "description": "Filter by lower bound",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "name": "upperBound",
+            "required": false,
+            "in": "query",
+            "description": "Filter by upper bound",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
             "name": "employeesCount",
             "required": false,
             "in": "query",
@@ -6967,6 +7255,8 @@
                 "cycleId",
                 "clusterId",
                 "employeesCount",
+                "lowerBound",
+                "upperBound",
                 "minScore",
                 "maxScore",
                 "averageScore",
@@ -7007,6 +7297,30 @@
             "in": "query",
             "schema": {
               "example": 3,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by lower bound",
+            "required": false,
+            "name": "lowerBound",
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by upper bound",
+            "required": false,
+            "name": "upperBound",
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 5,
+              "example": 5,
               "type": "number"
             }
           },
@@ -7232,6 +7546,351 @@
 >>>>>>> origin/main
         ]
       }
+    },
+    "/feedback360/cluster-score-analytics/cycle/{cycleId}": {
+      "get": {
+        "operationId": "ClusterScoreAnalyticsController_getByCycleId",
+        "parameters": [
+          {
+            "name": "cycleId",
+            "required": true,
+            "in": "path",
+            "description": "Cycle id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClusterScoreAnalyticsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get cluster score analytics by cycle id",
+        "tags": [
+          "Feedback360 / Cluster Score Analytics"
+        ]
+      }
+    },
+    "/reporting/reports/{id}": {
+      "get": {
+        "operationId": "ReportingController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Report identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get report by id",
+        "tags": [
+          "Reporting / Reports"
+        ]
+      }
+    },
+    "/reporting/reports/review/{reviewId}": {
+      "get": {
+        "operationId": "ReportingController_getByReviewId",
+        "parameters": [
+          {
+            "name": "reviewId",
+            "required": true,
+            "in": "path",
+            "description": "Feedback360 review identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get report by review id",
+        "tags": [
+          "Reporting / Reports"
+        ]
+      }
+    },
+    "/reporting/reports/reviews/{reviewId}/text-answers": {
+      "get": {
+        "operationId": "ReportingController_getTextAnswers",
+        "parameters": [
+          {
+            "name": "reviewId",
+            "required": true,
+            "in": "path",
+            "description": "Feedback360 review identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TextAnswerResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get anonymized text answers for a review",
+        "tags": [
+          "Reporting / Reports"
+        ]
+      }
+    },
+    "/reporting/analytics/report/{reportId}": {
+      "get": {
+        "operationId": "ReportAnalyticsController_getByReportId",
+        "parameters": [
+          {
+            "name": "reportId",
+            "required": true,
+            "in": "path",
+            "description": "Report identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportAnalyticsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get analytics by report id",
+        "tags": [
+          "Reporting / Analytics"
+        ]
+      }
+    },
+    "/reporting/analytics/{id}": {
+      "get": {
+        "operationId": "ReportAnalyticsController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Analytics identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportAnalyticsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get analytics by id",
+        "tags": [
+          "Reporting / Analytics"
+        ]
+      }
+    },
+    "/reporting/comments/report/{reportId}": {
+      "get": {
+        "operationId": "ReportCommentController_getByReportId",
+        "parameters": [
+          {
+            "name": "reportId",
+            "required": true,
+            "in": "path",
+            "description": "Report identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportCommentResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get comments by report id",
+        "tags": [
+          "Reporting / Comments"
+        ]
+      }
+    },
+    "/reporting/comments/{id}": {
+      "get": {
+        "operationId": "ReportCommentController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Comment identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportCommentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get comment by id",
+        "tags": [
+          "Reporting / Comments"
+        ]
+      }
+    },
+    "/reporting/comments": {
+      "post": {
+        "operationId": "ReportCommentController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReportCommentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportCommentResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create report comment",
+        "tags": [
+          "Reporting / Comments"
+        ]
+      }
     }
   },
   "info": {
@@ -7244,136 +7903,25 @@
   "servers": [],
   "components": {
     "schemas": {
-      "CreateUserDto": {
+      "LoginResponseDto": {
         "type": "object",
         "properties": {
-          "firstName": {
-            "type": "string",
-            "description": "User's first name",
-<<<<<<< HEAD
-            "minimum": 1,
-            "maximum": 100,
-            "example": "Valerii"
+          "userId": {
+            "type": "number",
+            "description": "ID of the logged in user",
+            "example": 1,
+            "nullable": false
           },
-          "secondName": {
-            "type": "string",
-            "description": "User's second name",
-            "minimum": 1,
-            "maximum": 100,
-            "example": "Valeriiovych"
-=======
-            "minLength": 1,
-            "maxLength": 100,
-            "example": "Valerii"
-          },
-          "secondName": {
+          "session": {
             "type": "object",
-            "description": "User's second name",
-            "minLength": 1,
-            "maxLength": 100,
-            "example": "Velychko"
->>>>>>> origin/main
-          },
-          "lastName": {
-            "type": "string",
-            "description": "User's last name",
-<<<<<<< HEAD
-            "minimum": 1,
-            "maximum": 100,
-            "example": "Velychko"
-          },
-          "fullName": {
-            "type": "string",
-            "description": "User's full name",
-            "minimum": 1,
-            "maximum": 302,
-            "example": "Valerii Velychko"
-=======
-            "minLength": 1,
-            "maxLength": 100,
-            "example": "Valeriiovych"
->>>>>>> origin/main
-          },
-          "email": {
-            "type": "string",
-            "description": "User's email",
-<<<<<<< HEAD
-            "minimum": 1,
-            "maximum": 100,
-=======
-            "minLength": 1,
-            "maxLength": 100,
->>>>>>> origin/main
-            "example": "valerii.velychko@example.com"
-          },
-          "passwordHash": {
-            "type": "string",
-            "description": "Precomputed password hash or placeholder for external authentication",
-            "example": "__external_auth__",
-<<<<<<< HEAD
-            "maximum": 300
-=======
-            "maxLength": 300
->>>>>>> origin/main
-          },
-          "status": {
-            "type": "string",
-            "description": "User's status",
-            "enum": [
-<<<<<<< HEAD
-              "ACTIVE",
-              "INACTIVE"
-            ],
-            "default": "ACTIVE",
-            "example": "ACTIVE"
-=======
-              "active",
-              "inactive"
-            ],
-            "default": "active",
-            "example": "active"
->>>>>>> origin/main
-          },
-          "positionId": {
-            "type": "number",
-            "description": "Position ID",
-            "example": 1
-          },
-          "teamId": {
-            "type": "number",
-            "description": "Team ID",
-<<<<<<< HEAD
-            "example": 10,
-            "nullable": true
-=======
-            "example": 10
->>>>>>> origin/main
-          },
-          "managerId": {
-            "type": "number",
-            "description": "Manager ID",
-<<<<<<< HEAD
-            "example": 2,
-            "nullable": true
-          },
-          "roles": {
-            "description": "User's roles",
-            "example": [
-              "MANAGER"
-            ],
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-=======
-            "example": 2
->>>>>>> origin/main
+            "description": "Session data",
+            "example": {},
+            "additionalProperties": true
           }
         },
         "required": [
-          "firstName",
-          "lastName",
-          "email"
+          "userId",
+          "session"
         ]
       },
       "UserResponse": {
@@ -7421,31 +7969,12 @@
             "description": "User email",
             "minimum": 1,
             "maximum": 100
-=======
-            "example": 1
           },
-          "firstName": {
+          "avatarUrl": {
             "type": "string",
-            "example": "Valerii"
-          },
-          "secondName": {
-            "type": "object",
-            "example": "Velychko",
+            "example": "https://lh3.googleusercontent.com/a/ACg8oc...",
+            "description": "User avatar URL",
             "nullable": true
-          },
-          "lastName": {
-            "type": "string",
-            "example": "Valeriiovych"
-          },
-          "fullName": {
-            "type": "object",
-            "example": "Valerii Valeriiovych Velychko",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "example": "valerii.velychko@example.com"
->>>>>>> origin/main
           },
           "status": {
             "type": "string",
@@ -7466,11 +7995,8 @@
           "positionId": {
             "type": "number",
             "example": 1,
-<<<<<<< HEAD
-            "description": "User position ID"
-=======
+            "description": "User position ID",
             "nullable": true
->>>>>>> origin/main
           },
           "teamId": {
             "type": "number",
@@ -7548,6 +8074,7 @@
           "lastName",
           "fullName",
           "email",
+          "avatarUrl",
           "status",
           "positionId",
           "teamId",
@@ -7555,6 +8082,112 @@
           "roles",
           "createdAt",
           "updatedAt"
+        ]
+      },
+      "DevLoginRequestDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email of the user to login as (for development/testing)",
+            "example": "john.doe@intra.com",
+            "nullable": false,
+            "format": "email",
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "maximum": 100,
+            "minimum": 1
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "User's first name",
+            "minimum": 1,
+            "maximum": 100,
+            "example": "Valerii"
+          },
+          "secondName": {
+            "type": "string",
+            "description": "User's second name",
+            "minimum": 1,
+            "maximum": 100,
+            "example": "Valeriiovych"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User's last name",
+            "minimum": 1,
+            "maximum": 100,
+            "example": "Velychko"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "User's full name",
+            "minimum": 1,
+            "maximum": 302,
+            "example": "Valerii Velychko"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "minimum": 1,
+            "maximum": 100,
+            "example": "valerii.velychko@example.com"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "description": "User's avatar URL from external provider (Google)",
+            "example": "https://lh3.googleusercontent.com/a/ACg8oc..."
+          },
+          "status": {
+            "type": "string",
+            "description": "User's status",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "default": "ACTIVE",
+            "example": "ACTIVE"
+          },
+          "positionId": {
+            "type": "number",
+            "description": "Position ID",
+            "example": 1,
+            "nullable": true
+          },
+          "teamId": {
+            "type": "number",
+            "description": "Team ID",
+            "example": 10,
+            "nullable": true
+          },
+          "managerId": {
+            "type": "number",
+            "description": "Manager ID",
+            "example": 2,
+            "nullable": true
+          },
+          "roles": {
+            "description": "User's roles",
+            "example": [
+              "MANAGER"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "email"
         ]
       },
       "UpdateUserDto": {
@@ -7619,15 +8252,10 @@
 >>>>>>> origin/main
             "example": "valerii.velychko@example.com"
           },
-          "passwordHash": {
+          "avatarUrl": {
             "type": "string",
-            "description": "Precomputed password hash or placeholder for external authentication",
-            "example": "__external_auth__",
-<<<<<<< HEAD
-            "maximum": 300
-=======
-            "maxLength": 300
->>>>>>> origin/main
+            "description": "User's avatar URL from external provider (Google)",
+            "example": "https://lh3.googleusercontent.com/a/ACg8oc..."
           },
           "status": {
             "type": "string",
@@ -7650,7 +8278,8 @@
           "positionId": {
             "type": "number",
             "description": "Position ID",
-            "example": 1
+            "example": 1,
+            "nullable": true
           },
           "teamId": {
             "type": "number",
@@ -9094,7 +9723,10 @@
               "SELF_ASSESSMENT",
               "WAITING_TO_START",
               "IN_PROGRESS",
-              "RESEARCH",
+              "PREPARING_REPORT",
+              "PROCESSING_BY_HR",
+              "PUBLISHED",
+              "ANALYSIS",
               "FINISHED"
             ],
             "example": "VERIFICATION_BY_HR",
@@ -9226,7 +9858,10 @@
               "SELF_ASSESSMENT",
               "WAITING_TO_START",
               "IN_PROGRESS",
-              "RESEARCH",
+              "PREPARING_REPORT",
+              "PROCESSING_BY_HR",
+              "PUBLISHED",
+              "ANALYSIS",
               "FINISHED"
             ],
             "example": "VERIFICATION_BY_HR",
@@ -9368,7 +10003,10 @@
               "SELF_ASSESSMENT",
               "WAITING_TO_START",
               "IN_PROGRESS",
-              "RESEARCH",
+              "PREPARING_REPORT",
+              "PROCESSING_BY_HR",
+              "PUBLISHED",
+              "ANALYSIS",
               "FINISHED"
             ],
             "example": "VERIFICATION_BY_HR",
@@ -10248,6 +10886,92 @@
           "updatedAt"
         ]
       },
+      "ClusterScoreWithRelationsResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "Cluster score id"
+          },
+          "cycleId": {
+            "type": "number",
+            "example": 1,
+            "description": "Cycle id",
+            "nullable": true
+          },
+          "clusterId": {
+            "type": "number",
+            "example": 3,
+            "description": "Cluster id"
+          },
+          "rateeId": {
+            "type": "number",
+            "example": 7,
+            "description": "Ratee id"
+          },
+          "reviewId": {
+            "type": "number",
+            "example": 2,
+            "description": "Review id"
+          },
+          "score": {
+            "type": "number",
+            "example": 4.3,
+            "description": "Cluster score",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "answersCount": {
+            "type": "number",
+            "example": 5,
+            "description": "Number of answers this score is based on",
+            "minimum": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Created at",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Updated at",
+            "format": "date-time"
+          },
+          "cluster": {
+            "nullable": false,
+            "description": "Library cluster data",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ClusterResponse"
+              }
+            ]
+          },
+          "ratee": {
+            "nullable": false,
+            "description": "Ratee data",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserResponse"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "clusterId",
+          "rateeId",
+          "reviewId",
+          "score",
+          "answersCount",
+          "createdAt",
+          "updatedAt",
+          "cluster",
+          "ratee"
+        ]
+      },
       "UpsertClusterScoreAnalyticsDto": {
         "type": "object",
         "properties": {
@@ -10260,6 +10984,20 @@
             "type": "number",
             "example": 3,
             "description": "Cluster ID"
+          },
+          "lowerBound": {
+            "type": "number",
+            "example": 5,
+            "description": "Lower bound",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "upperBound": {
+            "type": "number",
+            "example": 5,
+            "description": "Upper bound",
+            "minimum": 0,
+            "maximum": 5
           },
           "employeesCount": {
             "type": "number",
@@ -10292,6 +11030,8 @@
         "required": [
           "cycleId",
           "clusterId",
+          "lowerBound",
+          "upperBound",
           "employeesCount",
           "minScore",
           "maxScore",
@@ -10315,6 +11055,20 @@
             "type": "number",
             "example": 2,
             "description": "Cluster ID"
+          },
+          "lowerBound": {
+            "type": "number",
+            "example": 5,
+            "description": "Lower bound",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "upperBound": {
+            "type": "number",
+            "example": 5,
+            "description": "Upper bound",
+            "minimum": 0,
+            "maximum": 5
           },
           "employeesCount": {
             "type": "number",
@@ -10360,6 +11114,8 @@
           "id",
           "cycleId",
           "clusterId",
+          "lowerBound",
+          "upperBound",
           "employeesCount",
           "minScore",
           "maxScore",
@@ -10399,10 +11155,814 @@
             "maximum": 5
           }
         }
-=======
-          "childId"
+      },
+      "QuestionSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "number",
+            "example": 101,
+            "description": "Question identifier"
+          },
+          "questionTitle": {
+            "type": "string",
+            "example": "Provides constructive feedback",
+            "description": "Question title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "averageBySelfAssessment": {
+            "type": "number",
+            "example": 4,
+            "description": "Average score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByTeam": {
+            "type": "number",
+            "example": 4.2,
+            "description": "Average score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByOther": {
+            "type": "number",
+            "example": 3.8,
+            "description": "Average score by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "percentageBySelfAssessment": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByTeam": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByOther": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByTeam": {
+            "type": "number",
+            "example": 10,
+            "description": "Delta between self and team averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByOther": {
+            "type": "number",
+            "example": -5,
+            "description": "Delta between self and other averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "questionId",
+          "questionTitle",
+          "averageBySelfAssessment",
+          "averageByTeam",
+          "averageByOther",
+          "percentageBySelfAssessment",
+          "percentageByTeam",
+          "percentageByOther",
+          "deltaPercentageByTeam",
+          "deltaPercentageByOther"
         ]
->>>>>>> origin/main
+      },
+      "QuestionSummaryTotalsResponse": {
+        "type": "object",
+        "properties": {
+          "averageBySelfAssessment": {
+            "type": "number",
+            "example": 4.2,
+            "description": "Average question score across all questions by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByTeam": {
+            "type": "number",
+            "example": 4.3,
+            "description": "Average question score across all questions by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByOther": {
+            "type": "number",
+            "example": 4.1,
+            "description": "Average question score across all questions by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "percentageBySelfAssessment": {
+            "type": "number",
+            "example": 84,
+            "description": "Self assessment average expressed as percentage of scale maximum",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByTeam": {
+            "type": "number",
+            "example": 86,
+            "description": "Team average expressed as percentage of scale maximum",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByOther": {
+            "type": "number",
+            "example": 82,
+            "description": "Other respondents average expressed as percentage of scale maximum",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByTeam": {
+            "type": "number",
+            "example": 10,
+            "description": "Delta between self and team averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByOther": {
+            "type": "number",
+            "example": -5,
+            "description": "Delta between self and other averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "averageBySelfAssessment",
+          "averageByTeam",
+          "averageByOther",
+          "percentageBySelfAssessment",
+          "percentageByTeam",
+          "percentageByOther",
+          "deltaPercentageByTeam",
+          "deltaPercentageByOther"
+        ]
+      },
+      "CompetenceSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "competenceId": {
+            "type": "number",
+            "example": 12,
+            "description": "Competence identifier"
+          },
+          "competenceTitle": {
+            "type": "string",
+            "example": "Strategic Thinking",
+            "description": "Competence title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "averageBySelfAssessment": {
+            "type": "number",
+            "example": 4.1,
+            "description": "Average score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByTeam": {
+            "type": "number",
+            "example": 4.3,
+            "description": "Average score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByOther": {
+            "type": "number",
+            "example": 4,
+            "description": "Average score by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "percentageBySelfAssessment": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByTeam": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByOther": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByTeam": {
+            "type": "number",
+            "example": 5,
+            "description": "Delta between self and team averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByOther": {
+            "type": "number",
+            "example": -3,
+            "description": "Delta between self and other averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "competenceId",
+          "averageBySelfAssessment",
+          "averageByTeam",
+          "averageByOther",
+          "percentageBySelfAssessment",
+          "percentageByTeam",
+          "percentageByOther",
+          "deltaPercentageByTeam",
+          "deltaPercentageByOther"
+        ]
+      },
+      "CompetenceSummaryTotalsResponse": {
+        "type": "object",
+        "properties": {
+          "averageBySelfAssessment": {
+            "type": "number",
+            "example": 4.2,
+            "description": "Average competence score across all competencies by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByTeam": {
+            "type": "number",
+            "example": 4.3,
+            "description": "Average competence score across all competencies by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByOther": {
+            "type": "number",
+            "example": 4.1,
+            "description": "Average competence score across all competencies by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "percentageBySelfAssessment": {
+            "type": "number",
+            "example": 84,
+            "description": "Self assessment average expressed as percentage of scale maximum",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByTeam": {
+            "type": "number",
+            "example": 86,
+            "description": "Team average expressed as percentage of scale maximum",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByOther": {
+            "type": "number",
+            "example": 82,
+            "description": "Other respondents average expressed as percentage of scale maximum",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByTeam": {
+            "type": "number",
+            "example": 10,
+            "description": "Delta between self and team averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByOther": {
+            "type": "number",
+            "example": -5,
+            "description": "Delta between self and other averages (%)",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "averageBySelfAssessment",
+          "averageByTeam",
+          "averageByOther",
+          "percentageBySelfAssessment",
+          "percentageByTeam",
+          "percentageByOther",
+          "deltaPercentageByTeam",
+          "deltaPercentageByOther"
+        ]
+      },
+      "ReportCommentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "Comment id",
+            "nullable": false
+          },
+          "reportId": {
+            "type": "number",
+            "example": 1,
+            "description": "Report id",
+            "nullable": false
+          },
+          "questionId": {
+            "type": "number",
+            "example": 1,
+            "description": "Question id",
+            "nullable": false
+          },
+          "questionTitle": {
+            "type": "string",
+            "example": "Question title",
+            "description": "Question title",
+            "nullable": false,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "comment": {
+            "type": "string",
+            "example": "Comment",
+            "description": "Comment",
+            "nullable": false,
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "respondentCategories": {
+            "type": "array",
+            "description": "Respondent categories",
+            "nullable": false,
+            "items": {
+              "type": "string",
+              "enum": [
+                "SELF_ASSESSMENT",
+                "TEAM",
+                "OTHER"
+              ]
+            }
+          },
+          "commentSentiment": {
+            "type": "string",
+            "enum": [
+              "NEGATIVE",
+              "POSITIVE"
+            ],
+            "description": "Comment sentiment",
+            "nullable": true
+          },
+          "numberOfMentions": {
+            "type": "number",
+            "example": 3,
+            "description": "Number of mentions",
+            "nullable": false,
+            "minimum": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Created at",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "reportId",
+          "questionId",
+          "questionTitle",
+          "comment",
+          "respondentCategories",
+          "numberOfMentions",
+          "createdAt"
+        ]
+      },
+      "ReportResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "Report id",
+            "nullable": false
+          },
+          "reviewId": {
+            "type": "number",
+            "example": 1,
+            "description": "Review id",
+            "nullable": false
+          },
+          "cycleId": {
+            "type": "number",
+            "example": 1,
+            "description": "Cycle id",
+            "nullable": true
+          },
+          "respondentCount": {
+            "type": "number",
+            "example": 10,
+            "description": "Respondent count",
+            "nullable": false,
+            "minimum": 3
+          },
+          "turnoutPctOfTeam": {
+            "type": "number",
+            "example": 100,
+            "description": "Turnout of team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "turnoutPctOfOther": {
+            "type": "number",
+            "example": 100,
+            "description": "Turnout of other",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2025-01-01T00:00:00.000Z",
+            "description": "Created at",
+            "format": "date-time"
+          },
+          "questionSummaries": {
+            "default": [],
+            "nullable": false,
+            "description": "Question-level summary analytics",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionSummaryResponse"
+            }
+          },
+          "questionSummaryTotals": {
+            "nullable": true,
+            "description": "Aggregated question scores and percentages across all questions",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionSummaryTotalsResponse"
+              }
+            ]
+          },
+          "competenceSummaries": {
+            "default": [],
+            "nullable": false,
+            "description": "Competence-level summary analytics",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompetenceSummaryResponse"
+            }
+          },
+          "competenceSummaryTotals": {
+            "nullable": true,
+            "description": "Aggregated competence scores and percentages across all competencies",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CompetenceSummaryTotalsResponse"
+              }
+            ]
+          },
+          "comments": {
+            "default": [],
+            "nullable": true,
+            "description": "Review report comments",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportCommentResponse"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "reviewId",
+          "respondentCount",
+          "createdAt",
+          "questionSummaries",
+          "competenceSummaries"
+        ]
+      },
+      "TextAnswerResponse": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "number",
+            "example": 101,
+            "description": "Question identifier"
+          },
+          "questionTitle": {
+            "type": "string",
+            "example": "Handles conflicts constructively",
+            "description": "Related question title",
+            "nullable": true
+          },
+          "respondentCategory": {
+            "type": "string",
+            "enum": [
+              "SELF_ASSESSMENT",
+              "TEAM",
+              "OTHER"
+            ],
+            "example": "TEAM",
+            "description": "Category of respondent who provided the text answer"
+          },
+          "textValue": {
+            "type": "string",
+            "example": "Always listens before giving advice.",
+            "description": "Text value provided by respondent"
+          }
+        },
+        "required": [
+          "questionId",
+          "respondentCategory",
+          "textValue"
+        ]
+      },
+      "ReportAnalyticsResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "Analytics ID"
+          },
+          "reportId": {
+            "type": "number",
+            "example": 1,
+            "description": "Report ID"
+          },
+          "entityType": {
+            "type": "string",
+            "enum": [
+              "QUESTION",
+              "COMPETENCE"
+            ],
+            "example": "QUESTION",
+            "description": "Entity type"
+          },
+          "questionId": {
+            "type": "number",
+            "example": 1,
+            "description": "Question ID",
+            "nullable": true
+          },
+          "questionTitle": {
+            "type": "string",
+            "example": "Listens actively before responding.",
+            "description": "Question title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "competenceId": {
+            "type": "number",
+            "example": 1,
+            "description": "Competence ID",
+            "nullable": true
+          },
+          "competenceTitle": {
+            "type": "string",
+            "example": "Leadership",
+            "description": "Competence title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "averageBySelfAssessment": {
+            "type": "number",
+            "example": 4,
+            "description": "Average score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByTeam": {
+            "type": "number",
+            "example": 5,
+            "description": "Average score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByOther": {
+            "type": "number",
+            "example": 5,
+            "description": "Average score by other",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "percentageBySelfAssessment": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByTeam": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByOther": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByTeam": {
+            "type": "number",
+            "example": 15,
+            "description": "Delta score by team",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByOther": {
+            "type": "number",
+            "example": -10,
+            "description": "Delta score by other",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T00:00:00.000Z",
+            "description": "Created at"
+          }
+        },
+        "required": [
+          "id",
+          "reportId",
+          "entityType",
+          "percentageBySelfAssessment",
+          "percentageByTeam",
+          "percentageByOther",
+          "createdAt"
+        ]
+      },
+      "CreateReportCommentDto": {
+        "type": "object",
+        "properties": {
+          "reportId": {
+            "type": "number",
+            "example": 1,
+            "description": "Report id"
+          },
+          "questionId": {
+            "type": "number",
+            "example": 1,
+            "description": "Question id"
+          },
+          "questionTitle": {
+            "type": "string",
+            "example": "Question title",
+            "description": "Question title",
+            "minimum": 1,
+            "maximum": 255
+          },
+          "comment": {
+            "type": "string",
+            "example": "Comment summary",
+            "description": "Summarized comment",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "respondentCategories": {
+            "type": "array",
+            "example": [
+              "TEAM"
+            ],
+            "description": "Respondent categories who mentioned this comment",
+            "items": {
+              "type": "string",
+              "enum": [
+                "SELF_ASSESSMENT",
+                "TEAM",
+                "OTHER"
+              ]
+            }
+          },
+          "commentSentiment": {
+            "type": "string",
+            "enum": [
+              "NEGATIVE",
+              "POSITIVE"
+            ],
+            "description": "Sentiment of the comment"
+          },
+          "numberOfMentions": {
+            "type": "number",
+            "example": 3,
+            "description": "Number of mentions",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "reportId",
+          "questionId",
+          "questionTitle",
+          "comment",
+          "respondentCategories",
+          "numberOfMentions"
+        ]
       }
     }
   }

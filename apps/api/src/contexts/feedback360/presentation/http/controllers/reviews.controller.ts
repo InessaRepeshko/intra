@@ -41,7 +41,11 @@ import { ReviewerQueryDto } from '../dto/reviewers/reviewer-query.dto';
 import { CreateReviewDto } from '../dto/reviews/create-review.dto';
 import { ReviewQueryDto } from '../dto/reviews/review-query.dto';
 import { UpdateReviewDto } from '../dto/reviews/update-review.dto';
-import { Feedback360HttpMapper } from '../mappers/feedback360.http.mapper';
+import { AnswerHttpMapper } from '../mappers/answer.http.mapper';
+import { RespondentHttpMapper } from '../mappers/respondent.http.mapper';
+import { ReviewQuestionRelationHttpMapper } from '../mappers/review-question-relation.http.mapper';
+import { ReviewHttpMapper } from '../mappers/review.http.mapper';
+import { ReviewerHttpMapper } from '../mappers/reviewer.http.mapper';
 import { AnswerResponse } from '../models/answer.response';
 import { RespondentResponse } from '../models/respondent.response';
 import { ReviewQuestionRelationResponse } from '../models/review-question-relation.response';
@@ -62,7 +66,7 @@ export class ReviewController {
     @ApiCreateAndUpdateErrorResponses()
     async create(@Body() dto: CreateReviewDto): Promise<ReviewResponse> {
         const created = await this.reviews.create(dto);
-        return Feedback360HttpMapper.toReviewResponse(created);
+        return ReviewHttpMapper.toResponse(created);
     }
 
     @Get()
@@ -77,7 +81,7 @@ export class ReviewController {
     @ApiListReadErrorResponses()
     async search(@Query() query: ReviewQueryDto): Promise<ReviewResponse[]> {
         const items = await this.reviews.search(query);
-        return items.map(Feedback360HttpMapper.toReviewResponse);
+        return items.map(ReviewHttpMapper.toResponse);
     }
 
     @Get(':id')
@@ -87,7 +91,7 @@ export class ReviewController {
     @ApiReadErrorResponses()
     async getById(@Param('id') id: string): Promise<ReviewResponse> {
         const review = await this.reviews.getById(Number(id));
-        return Feedback360HttpMapper.toReviewResponse(review);
+        return ReviewHttpMapper.toResponse(review);
     }
 
     @Patch(':id')
@@ -101,7 +105,7 @@ export class ReviewController {
         @Body() dto: UpdateReviewDto,
     ): Promise<ReviewResponse> {
         const updated = await this.reviews.update(Number(id), dto);
-        return Feedback360HttpMapper.toReviewResponse(updated);
+        return ReviewHttpMapper.toResponse(updated);
     }
 
     @Delete(':id')
@@ -131,7 +135,7 @@ export class ReviewController {
             reviewId: Number(id),
             questionId: dto.questionId,
         });
-        return Feedback360HttpMapper.toReviewQuestionRelationResponse(relation);
+        return ReviewQuestionRelationHttpMapper.toResponse(relation);
     }
 
     @Get(':id/questions')
@@ -153,9 +157,7 @@ export class ReviewController {
             Number(id),
             query,
         );
-        return relations.map(
-            Feedback360HttpMapper.toReviewQuestionRelationResponse,
-        );
+        return relations.map(ReviewQuestionRelationHttpMapper.toResponse);
     }
 
     @Delete(':id/questions/:questionId')
@@ -194,7 +196,7 @@ export class ReviewController {
             numericalValue: dto.numericalValue,
             textValue: dto.textValue,
         });
-        return Feedback360HttpMapper.toAnswerResponse(created);
+        return AnswerHttpMapper.toResponse(created);
     }
 
     @Get(':id/answers')
@@ -216,7 +218,7 @@ export class ReviewController {
             Number(id),
             query.respondentCategory as RespondentCategory | undefined,
         );
-        return answers.map(Feedback360HttpMapper.toAnswerResponse);
+        return answers.map(AnswerHttpMapper.toResponse);
     }
 
     @Post(':id/respondents')
@@ -245,7 +247,7 @@ export class ReviewController {
             canceledAt: dto.canceledAt,
             respondedAt: dto.respondedAt,
         });
-        return Feedback360HttpMapper.toRespondentResponse(relation);
+        return RespondentHttpMapper.toResponse(relation);
     }
 
     @Get(':id/respondents')
@@ -264,7 +266,7 @@ export class ReviewController {
         @Query() query: RespondentQueryDto,
     ): Promise<RespondentResponse[]> {
         const relations = await this.reviews.listRespondents(Number(id), query);
-        return relations.map(Feedback360HttpMapper.toRespondentResponse);
+        return relations.map(RespondentHttpMapper.toResponse);
     }
 
     @Patch('respondents/:relationId')
@@ -285,7 +287,7 @@ export class ReviewController {
             Number(relationId),
             dto,
         );
-        return Feedback360HttpMapper.toRespondentResponse(updated);
+        return RespondentHttpMapper.toResponse(updated);
     }
 
     @Delete('respondents/:relationId')
@@ -323,7 +325,7 @@ export class ReviewController {
             teamId: dto.teamId,
             teamTitle: dto.teamTitle,
         });
-        return Feedback360HttpMapper.toReviewerResponse(created);
+        return ReviewerHttpMapper.toResponse(created);
     }
 
     @Get(':id/reviewers')
@@ -342,7 +344,7 @@ export class ReviewController {
         @Query() query: ReviewerQueryDto,
     ): Promise<ReviewerResponse[]> {
         const reviewers = await this.reviews.listReviewers(Number(id), query);
-        return reviewers.map(Feedback360HttpMapper.toReviewerResponse);
+        return reviewers.map(ReviewerHttpMapper.toResponse);
     }
 
     @Delete('reviewers/:relationId')
@@ -359,5 +361,38 @@ export class ReviewController {
         @Param('relationId') relationId: string,
     ): Promise<void> {
         await this.reviews.removeReviewer(Number(relationId));
+    }
+
+    /**
+     * MANUAL TRIGGER: HR force-completes a review
+     * Transitions review to PREPARING_REPORT regardless of pending responses
+     */
+    @Post(':id/force-complete')
+    // @UseGuards(AuthSessionGuard, RolesGuard)
+    // @Roles(IdentityRole.ADMIN, IdentityRole.HR)
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: 'Force complete Review (HR/Admin only)',
+        description:
+            'Manually transition review to PREPARING_REPORT stage, even if some responses are pending',
+    })
+    @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Review stage changed to PREPARING_REPORT',
+    })
+    @ApiCreateAndUpdateErrorResponses()
+    async forceComplete(
+        @Param('id') id: string,
+        // @CurrentUser() user: UserDomain,
+    ): Promise<{ message: string }> {
+        // const actorId = user.id!;
+        // const actorName = user.fullName!;
+
+        await this.reviews.forceCompleteReview(Number(id), 0, 'Admin');
+
+        return {
+            message: `Review ${id} has been force-completed and moved to PREPARING_REPORT stage`,
+        };
     }
 }

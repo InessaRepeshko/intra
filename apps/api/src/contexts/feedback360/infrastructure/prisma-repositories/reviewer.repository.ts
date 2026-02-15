@@ -11,7 +11,7 @@ import {
     ReviewerRepositoryPort,
 } from '../../application/ports/reviewer.repository.port';
 import { ReviewerDomain } from '../../domain/reviewer.domain';
-import { Feedback360Mapper } from './feedback360.mapper';
+import { ReviewerMapper } from '../mappers/reviewer.mapper';
 
 @Injectable()
 export class ReviewerRepository implements ReviewerRepositoryPort {
@@ -19,19 +19,11 @@ export class ReviewerRepository implements ReviewerRepositoryPort {
 
     constructor(private readonly prisma: PrismaService) {}
 
-    async create(relation: ReviewerDomain): Promise<ReviewerDomain> {
+    async create(reviewer: ReviewerDomain): Promise<ReviewerDomain> {
         const created = await this.prisma.reviewer.create({
-            data: {
-                reviewId: relation.reviewId,
-                reviewerId: relation.reviewerId,
-                fullName: relation.fullName,
-                positionId: relation.positionId,
-                positionTitle: relation.positionTitle,
-                teamId: relation.teamId,
-                teamTitle: relation.teamTitle,
-            },
+            data: ReviewerMapper.toPrisma(reviewer),
         });
-        return Feedback360Mapper.toReviewerDomain(created);
+        return ReviewerMapper.toDomain(created);
     }
 
     async listByReview(
@@ -42,7 +34,7 @@ export class ReviewerRepository implements ReviewerRepositoryPort {
         where.reviewId = reviewId;
         const orderBy = this.buildOrder(query);
         const items = await this.prisma.reviewer.findMany({ where, orderBy });
-        return items.map(Feedback360Mapper.toReviewerDomain);
+        return items.map(ReviewerMapper.toDomain);
     }
 
     async deleteById(id: number): Promise<void> {

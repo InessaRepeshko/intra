@@ -12,7 +12,8 @@ import {
     ClusterScoreAnalyticsRepositoryPort,
 } from '../../application/ports/cluster-score-analytics.repository.port';
 import { ClusterScoreAnalyticsDomain } from '../../domain/cluster-score-analytics.domain';
-import { Feedback360Mapper } from './feedback360.mapper';
+import { ClusterScoreAnalyticsMapper } from '../mappers/cluster-score-analytics.mapper';
+import { ClusterScoreMapper } from '../mappers/cluster-score.mapper';
 
 @Injectable()
 export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRepositoryPort {
@@ -24,6 +25,7 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
     async upsert(
         analytics: ClusterScoreAnalyticsDomain,
     ): Promise<ClusterScoreAnalyticsDomain> {
+        const prismaAnalytics = ClusterScoreAnalyticsMapper.toPrisma(analytics);
         const saved = await this.prisma.clusterScoreAnalytics.upsert({
             where: {
                 cycleId_clusterId: {
@@ -31,32 +33,23 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
                     clusterId: analytics.clusterId,
                 },
             },
-            create: {
-                cycleId: analytics.cycleId,
-                clusterId: analytics.clusterId,
-                employeesCount: analytics.employeesCount,
-                minScore: analytics.minScore,
-                maxScore: analytics.maxScore,
-                averageScore: analytics.averageScore,
-            },
+            create: prismaAnalytics,
             update: {
-                employeesCount: analytics.employeesCount,
-                minScore: analytics.minScore,
-                maxScore: analytics.maxScore,
-                averageScore: analytics.averageScore,
+                employeesCount: prismaAnalytics.employeesCount,
+                minScore: prismaAnalytics.minScore,
+                maxScore: prismaAnalytics.maxScore,
+                averageScore: prismaAnalytics.averageScore,
             },
         });
 
-        return Feedback360Mapper.toClusterScoreAnalyticsDomain(saved);
+        return ClusterScoreAnalyticsMapper.toDomain(saved);
     }
 
     async findById(id: number): Promise<ClusterScoreAnalyticsDomain | null> {
         const item = await this.prisma.clusterScoreAnalytics.findUnique({
             where: { id },
         });
-        return item
-            ? Feedback360Mapper.toClusterScoreAnalyticsDomain(item)
-            : null;
+        return item ? ClusterScoreAnalyticsMapper.toDomain(item) : null;
     }
 
     async search(
@@ -69,7 +62,7 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
             where,
             orderBy,
         });
-        return items.map(Feedback360Mapper.toClusterScoreAnalyticsDomain);
+        return items.map(ClusterScoreAnalyticsMapper.toDomain);
     }
 
     async updateById(
@@ -81,11 +74,20 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
             data: patch,
         });
 
-        return Feedback360Mapper.toClusterScoreAnalyticsDomain(updated);
+        return ClusterScoreAnalyticsMapper.toDomain(updated);
     }
 
     async deleteById(id: number): Promise<void> {
         await this.prisma.clusterScoreAnalytics.delete({ where: { id } });
+    }
+
+    async getByCycleId(
+        cycleId: number,
+    ): Promise<ClusterScoreAnalyticsDomain[]> {
+        const items = await this.prisma.clusterScoreAnalytics.findMany({
+            where: { cycleId },
+        });
+        return items.map(ClusterScoreAnalyticsMapper.toDomain);
     }
 
     private buildWhere(
@@ -103,9 +105,24 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
             ...(cycleId ? { cycleId } : {}),
             ...(clusterId ? { clusterId } : {}),
             ...(employeesCount ? { employeesCount } : {}),
-            ...(minScore ? { minScore } : {}),
-            ...(maxScore ? { maxScore } : {}),
-            ...(averageScore ? { averageScore } : {}),
+            ...(minScore !== undefined
+                ? {
+                      minScore:
+                          ClusterScoreMapper.toScoreDecimalString(minScore),
+                  }
+                : {}),
+            ...(maxScore !== undefined
+                ? {
+                      maxScore:
+                          ClusterScoreMapper.toScoreDecimalString(maxScore),
+                  }
+                : {}),
+            ...(averageScore !== undefined
+                ? {
+                      averageScore:
+                          ClusterScoreMapper.toScoreDecimalString(averageScore),
+                  }
+                : {}),
         };
     }
 

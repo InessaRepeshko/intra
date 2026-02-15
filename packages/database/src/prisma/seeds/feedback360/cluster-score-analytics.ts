@@ -1,14 +1,13 @@
 import { PrismaClient } from '@intra/database';
-import type { ReviewMap } from './reviews';
+import Decimal from 'decimal.js';
 import type { CycleMap } from './cycles';
+import type { ReviewMap } from './reviews';
 
 export default async function seedClusterScoreAnalytics(
     prisma: PrismaClient,
     reviewMap: ReviewMap,
     cycleMap: CycleMap,
 ) {
-    // console.log('🔄 Seeding Cycle Cluster Analytics...');
-
     // Get all clusters (library templates)
     const clusters = await prisma.cluster.findMany({
         include: {
@@ -44,10 +43,12 @@ export default async function seedClusterScoreAnalytics(
 
             if (clusterScores.length === 0) continue;
 
-            const scores = clusterScores.map(cs => cs.score);
-            const minScore = Math.min(...scores);
-            const maxScore = Math.max(...scores);
-            const averageScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+            const scores = clusterScores.map((cs) => new Decimal(cs.score));
+            const minScore = Decimal.min(...scores);
+            const maxScore = Decimal.max(...scores);
+            const averageScore = scores
+                .reduce((a, b) => a.plus(b), new Decimal(0))
+                .dividedBy(scores.length);
             const employeesCount = clusterScores.length;
 
             // Check if analytics already exist
@@ -66,12 +67,16 @@ export default async function seedClusterScoreAnalytics(
                     where: { id: existing.id },
                     data: {
                         employeesCount,
-                        minScore,
-                        maxScore,
-                        averageScore,
+                        minScore: minScore.toDecimalPlaces(4).toString(),
+                        maxScore: maxScore.toDecimalPlaces(4).toString(),
+                        averageScore: averageScore
+                            .toDecimalPlaces(4)
+                            .toString(),
                     },
                 });
-                console.log(`✅ Updated analytics for ${cluster.competence.code} (${cluster.lowerBound}-${cluster.upperBound}) in cycle "${cycle.title}": ${employeesCount} employees`);
+                console.log(
+                    `✅ Updated analytics for ${cluster.competence.code} (${cluster.lowerBound}-${cluster.upperBound}) in cycle "${cycle.title}": ${employeesCount} employees`,
+                );
             } else {
                 // Create new analytics
                 await prisma.clusterScoreAnalytics.create({
@@ -79,15 +84,16 @@ export default async function seedClusterScoreAnalytics(
                         cycleId: cycle.id,
                         clusterId: cluster.id,
                         employeesCount,
-                        minScore,
-                        maxScore,
-                        averageScore,
+                        lowerBound: cluster.lowerBound,
+                        upperBound: cluster.upperBound,
+                        minScore: minScore.toDecimalPlaces(4).toString(),
+                        maxScore: maxScore.toDecimalPlaces(4).toString(),
+                        averageScore: averageScore
+                            .toDecimalPlaces(4)
+                            .toString(),
                     },
                 });
-                // console.log(`✅ Created analytics for ${cluster.competence.code} (${cluster.lowerBound}-${cluster.upperBound}) in cycle "${cycle.title}": ${employeesCount} employees`);
             }
         }
     }
-
-    // console.log('✅ Cycle Cluster Analytics seeded successfully');
 }

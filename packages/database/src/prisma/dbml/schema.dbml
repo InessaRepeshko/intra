@@ -9,9 +9,9 @@ Table identity_users {
   lastName String [not null]
   fullName String [not null]
   email String [unique, not null]
-  passwordHash String [not null]
+  avatarUrl String
   status IdentityStatus [not null, default: 'ACTIVE']
-  positionId Int [not null]
+  positionId Int
   teamId Int
   managerId Int
   createdAt DateTime [default: `now()`, not null]
@@ -28,7 +28,7 @@ Table identity_users {
   reviewsAsReviewer feedback360_reviewers [not null]
   reviewsAsManager feedback360_reviews [not null]
   clusterScores feedback360_cluster_scores [not null]
-  answers feedback360_answers [not null]
+  stageChangeHistory feedback360_review_stage_history [not null]
 }
 
 Table identity_roles {
@@ -122,13 +122,14 @@ Table library_competences {
   reviewQuestions feedback360_questions [not null]
   reviewQuestionRelations feedback360_review_question_relations [not null]
   clusters library_clusters [not null]
+  reportAnalytics reporting_analytics [not null]
 }
 
 Table library_clusters {
   id Int [pk, increment]
   competenceId Int [not null]
-  lowerBound Float [not null]
-  upperBound Float [not null]
+  lowerBound Decimal [not null]
+  upperBound Decimal [not null]
   title String [not null]
   description String [not null]
   createdAt DateTime [default: `now()`, not null]
@@ -251,6 +252,7 @@ Table feedback360_reviews {
   respondents feedback360_respondents [not null]
   reviewers feedback360_reviewers [not null]
   clusterScores feedback360_cluster_scores [not null]
+  reviewStageHistories feedback360_review_stage_history [not null]
 }
 
 Table feedback360_questions {
@@ -267,6 +269,8 @@ Table feedback360_questions {
   competence library_competences
   answers feedback360_answers [not null]
   reviewQuestionRelations feedback360_review_question_relations [not null]
+  reportComments reporting_comments [not null]
+  reportAnalytics reporting_analytics [not null]
 }
 
 Table feedback360_review_question_relations {
@@ -299,8 +303,6 @@ Table feedback360_answers {
   createdAt DateTime [default: `now()`, not null]
   question feedback360_questions [not null]
   review feedback360_reviews [not null]
-  user identity_users
-  userId Int
 }
 
 Table feedback360_cluster_scores {
@@ -309,7 +311,7 @@ Table feedback360_cluster_scores {
   clusterId Int [not null]
   rateeId Int [not null]
   reviewId Int [not null]
-  score Float [not null]
+  score Decimal [not null]
   answersCount Int [not null, default: 0]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
@@ -328,9 +330,11 @@ Table feedback360_cluster_score_analytics {
   cycleId Int [not null]
   clusterId Int [not null]
   employeesCount Int [not null, default: 0]
-  minScore Float [not null]
-  maxScore Float [not null]
-  averageScore Float [not null]
+  lowerBound Decimal [not null]
+  upperBound Decimal [not null]
+  minScore Decimal [not null]
+  maxScore Decimal [not null]
+  averageScore Decimal [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   cycle feedback360_cycles [not null]
@@ -388,18 +392,42 @@ Table feedback360_reviewers {
   }
 }
 
+Table feedback360_review_stage_history {
+  id Int [pk, increment]
+  reviewId Int [not null]
+  fromStage ReviewStage [not null]
+  toStage ReviewStage [not null]
+  changedById Int
+  changedByName String
+  reason String
+  createdAt DateTime [default: `now()`, not null]
+  review feedback360_reviews [not null]
+  changedBy identity_users
+}
+
 Table reporting_reports {
   id Int [pk, increment]
   reviewId Int [unique, not null]
   cycleId Int
-  turnoutOfTeam Float
-  turnoutOfOther Float
-  totalAverageBySelfAssessment Float
-  totalAverageByTeam Float
-  totalAverageByOthers Float
-  totalDeltaBySelfAssessment Float
-  totalDeltaByTeam Float
-  totalDeltaByOthers Float
+  respondentCount Int [not null]
+  turnoutPctOfTeam Decimal
+  turnoutPctOfOther Decimal
+  questionTotAvgBySelf Decimal
+  questionTotAvgByTeam Decimal
+  questionTotAvgByOthers Decimal
+  questionTotPctBySelf Decimal
+  questionTotPctByTeam Decimal
+  questionTotPctByOthers Decimal
+  questionTotDeltaPctByTeam Decimal
+  questionTotDeltaPctByOthers Decimal
+  competenceTotAvgBySelf Decimal
+  competenceTotAvgByTeam Decimal
+  competenceTotAvgByOthers Decimal
+  competenceTotPctBySelf Decimal
+  competenceTotPctByTeam Decimal
+  competenceTotPctByOthers Decimal
+  competenceTotDeltaPctByTeam Decimal
+  competenceTotDeltaPctByOthers Decimal
   createdAt DateTime [default: `now()`, not null]
   review feedback360_reviews [not null]
   cycle feedback360_cycles
@@ -411,32 +439,36 @@ Table reporting_analytics {
   id Int [pk, increment]
   reportId Int [not null]
   entityType EntityType [not null]
-  entityId Int
-  entityTitle String [not null]
-  averageBySelfAssessment Float
-  averageByTeam Float
-  averageByOther Float
-  deltaBySelfAssessment Float
-  deltaByTeam Float
-  deltaByOther Float
-  dimension String
+  questionId Int
+  questionTitle String
+  competenceId Int
+  competenceTitle String
+  averageBySelfAssessment Decimal
+  averageByTeam Decimal
+  averageByOther Decimal
+  percentageBySelfAssessment Decimal
+  percentageByTeam Decimal
+  percentageByOther Decimal
+  deltaPercentageByTeam Decimal
+  deltaPercentageByOther Decimal
   createdAt DateTime [default: `now()`, not null]
   report reporting_reports [not null]
-
-  indexes {
-    (reportId, entityType, entityId) [unique]
-  }
+  question feedback360_questions
+  competence library_competences
 }
 
 Table reporting_comments {
   id Int [pk, increment]
   reportId Int [not null]
-  comment String
-  commentSentiment CommentSentiment [not null, default: 'POSITIVE']
-  numberOfMentions Int
-  respondentCategory RespondentCategory [not null]
+  questionId Int [not null]
+  questionTitle String [not null]
+  comment String [not null]
+  respondentCategories RespondentCategory[] [not null]
+  commentSentiment CommentSentiment [default: 'POSITIVE']
+  numberOfMentions Int [not null]
   createdAt DateTime [default: `now()`, not null]
   report reporting_reports [not null]
+  question feedback360_questions
 }
 
 Enum IdentityRole {
@@ -484,7 +516,10 @@ Enum ReviewStage {
   SELF_ASSESSMENT
   WAITING_TO_START
   IN_PROGRESS
-  RESEARCH
+  PREPARING_REPORT
+  PROCESSING_BY_HR
+  PUBLISHED
+  ANALYSIS
   FINISHED
 }
 
@@ -566,8 +601,6 @@ Ref: feedback360_answers.questionId > feedback360_questions.id [delete: No Actio
 
 Ref: feedback360_answers.reviewId > feedback360_reviews.id [delete: No Action]
 
-Ref: feedback360_answers.userId > identity_users.id
-
 Ref: feedback360_cluster_scores.rateeId > identity_users.id [delete: No Action]
 
 Ref: feedback360_cluster_scores.cycleId > feedback360_cycles.id [delete: No Action]
@@ -594,10 +627,20 @@ Ref: feedback360_reviewers.reviewId > feedback360_reviews.id [delete: No Action]
 
 Ref: feedback360_reviewers.teamId > org_teams.id [delete: No Action]
 
+Ref: feedback360_review_stage_history.reviewId > feedback360_reviews.id [delete: Cascade]
+
+Ref: feedback360_review_stage_history.changedById > identity_users.id [delete: Set Null]
+
 Ref: reporting_reports.reviewId - feedback360_reviews.id [delete: No Action]
 
 Ref: reporting_reports.cycleId > feedback360_cycles.id [delete: No Action]
 
 Ref: reporting_analytics.reportId > reporting_reports.id [delete: No Action]
 
+Ref: reporting_analytics.questionId > feedback360_questions.id [delete: No Action]
+
+Ref: reporting_analytics.competenceId > library_competences.id [delete: No Action]
+
 Ref: reporting_comments.reportId > reporting_reports.id [delete: No Action]
+
+Ref: reporting_comments.questionId > feedback360_questions.id [delete: No Action]

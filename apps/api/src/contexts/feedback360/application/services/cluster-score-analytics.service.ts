@@ -1,4 +1,5 @@
 import {
+    CLUSTER_SCORE_ANALYTICS_CONSTRAINTS,
     ClusterScoreAnalyticsSearchQuery,
     UpdateClusterScoreAnalyticsPayload,
     UpsertClusterScoreAnalyticsPayload,
@@ -9,11 +10,17 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
+import Decimal from 'decimal.js';
+import { ClusterService } from '../../../library/application/services/cluster.service';
 import { ClusterScoreAnalyticsDomain } from '../../domain/cluster-score-analytics.domain';
 import {
     CLUSTER_SCORE_ANALYTICS_REPOSITORY,
     ClusterScoreAnalyticsRepositoryPort,
 } from '../ports/cluster-score-analytics.repository.port';
+import {
+    CLUSTER_SCORE_REPOSITORY,
+    ClusterScoreRepositoryPort,
+} from '../ports/cluster-score.repository.port';
 import { CycleService } from './cycle.service';
 
 @Injectable()
@@ -21,26 +28,34 @@ export class ClusterScoreAnalyticsService {
     constructor(
         @Inject(CLUSTER_SCORE_ANALYTICS_REPOSITORY)
         private readonly analytics: ClusterScoreAnalyticsRepositoryPort,
+        @Inject(CLUSTER_SCORE_REPOSITORY)
+        private readonly clusterScores: ClusterScoreRepositoryPort,
         private readonly cycles: CycleService,
+        private readonly clusters: ClusterService,
     ) {}
 
     async upsert(
         payload: UpsertClusterScoreAnalyticsPayload,
     ): Promise<ClusterScoreAnalyticsDomain> {
         await this.cycles.getById(payload.cycleId);
-        await this.validateScores(
-            payload.minScore,
-            payload.maxScore,
-            payload.averageScore,
-        );
+        const minScore = new Decimal(payload.minScore);
+        const maxScore = new Decimal(payload.maxScore);
+        const averageScore = new Decimal(payload.averageScore);
+        const lowerBound = new Decimal(payload.lowerBound);
+        const upperBound = new Decimal(payload.upperBound);
+
+        await this.validateBounds(lowerBound, upperBound);
+        await this.validateScores(minScore, maxScore, averageScore);
 
         const domain = ClusterScoreAnalyticsDomain.create({
             cycleId: payload.cycleId,
             clusterId: payload.clusterId,
             employeesCount: payload.employeesCount,
-            minScore: payload.minScore,
-            maxScore: payload.maxScore,
-            averageScore: payload.averageScore,
+            lowerBound,
+            upperBound,
+            minScore,
+            maxScore,
+            averageScore,
         });
 
         return this.analytics.upsert(domain);
@@ -65,9 +80,18 @@ export class ClusterScoreAnalyticsService {
     ): Promise<ClusterScoreAnalyticsDomain> {
         const current = await this.getById(id);
 
-        const minScore = patch.minScore ?? current.minScore;
-        const maxScore = patch.maxScore ?? current.maxScore;
-        const averageScore = patch.averageScore ?? current.averageScore;
+        const minScore =
+            patch.minScore !== undefined
+                ? new Decimal(patch.minScore)
+                : current.minScore;
+        const maxScore =
+            patch.maxScore !== undefined
+                ? new Decimal(patch.maxScore)
+                : current.maxScore;
+        const averageScore =
+            patch.averageScore !== undefined
+                ? new Decimal(patch.averageScore)
+                : current.averageScore;
 
         await this.validateScores(minScore, maxScore, averageScore);
 
@@ -94,19 +118,95 @@ export class ClusterScoreAnalyticsService {
         await this.analytics.deleteById(id);
     }
 
+    async getByCycleId(
+        cycleId: number,
+    ): Promise<ClusterScoreAnalyticsDomain[]> {
+        return this.analytics.getByCycleId(cycleId);
+    }
+
+    async generateAnalyticsForCycle(cycleId: number): Promise<void> {
+        await this.cycles.getById(cycleId);
+
+        const clusters = await this.clusters.search({});
+
+        for (const cluster of clusters) {
+            if (!cluster.id) {
+                continue;
+            }
+
+            const clusterScores = await this.clusterScores.list({
+                cycleId,
+                clusterId: cluster.id,
+            });
+
+            if (!clusterScores.length) {
+                continue;
+            }
+
+            const scores = clusterScores.map((cs) => new Decimal(cs.score));
+            const minScore = Decimal.min(...scores).toDecimalPlaces(4);
+            const maxScore = Decimal.max(...scores).toDecimalPlaces(4);
+            const averageScore = scores
+                .reduce((a, b) => a.plus(b), new Decimal(0))
+                .dividedBy(scores.length)
+                .toDecimalPlaces(4);
+            const employeesCount = clusterScores.length;
+
+            const lowerBound = new Decimal(cluster.lowerBound);
+            const upperBound = new Decimal(cluster.upperBound);
+
+            await this.validateBounds(lowerBound, upperBound);
+            await this.validateScores(minScore, maxScore, averageScore);
+
+            const domain = ClusterScoreAnalyticsDomain.create({
+                cycleId,
+                clusterId: cluster.id,
+                employeesCount,
+                lowerBound,
+                upperBound,
+                minScore,
+                maxScore,
+                averageScore,
+            });
+
+            await this.analytics.upsert(domain);
+        }
+    }
+
     private async validateScores(
-        min: number,
-        max: number,
-        avg: number,
+        min: Decimal,
+        max: Decimal,
+        avg: Decimal,
     ): Promise<void> {
-        if (min > max) {
+        if (min.gt(max)) {
             throw new BadRequestException(
                 'Min score must be less than or equal to max score',
             );
         }
-        if (avg < min || avg > max) {
+        if (avg.lt(min) || avg.gt(max)) {
             throw new BadRequestException(
                 'Average score must be between min and max scores',
+            );
+        }
+    }
+
+    private async validateBounds(
+        lower: Decimal,
+        upper: Decimal,
+    ): Promise<void> {
+        if (lower.lt(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN)) {
+            throw new BadRequestException(
+                'Lower bound must be greater than or equal to min score',
+            );
+        }
+        if (upper.gt(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MAX)) {
+            throw new BadRequestException(
+                'Upper bound must be less than or equal to max score',
+            );
+        }
+        if (lower.gt(upper)) {
+            throw new BadRequestException(
+                'Lower bound must be less than or equal to upper bound',
             );
         }
     }

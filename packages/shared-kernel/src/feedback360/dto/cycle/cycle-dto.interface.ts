@@ -1,4 +1,4 @@
-import { CycleStage } from "../../enums/cycle-stage.enum";
+import { CycleStage } from '../../enums/cycle-stage.enum';
 
 export interface CycleDto {
     id: number;

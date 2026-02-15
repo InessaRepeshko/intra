@@ -6,3 +6,5 @@ export enum TeamSortField {
     CREATED_AT = 'createdAt',
     UPDATED_AT = 'updatedAt',
 }
+
+export const TEAM_SORT_FIELDS = Object.values(TeamSortField);

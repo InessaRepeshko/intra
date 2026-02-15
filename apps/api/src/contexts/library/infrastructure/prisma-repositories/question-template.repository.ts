@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { QuestionTemplateRepositoryPort } from '../../application/ports/question-template.repository.port';
 import { QuestionTemplateDomain } from '../../domain/question-template.domain';
-import { LibraryMapper } from './library.mapper';
+import { QuestionTemplateMapper } from '../mappers/question-template.mapper';
 
 @Injectable()
 export class QuestionTemplateRepository implements QuestionTemplateRepositoryPort {
@@ -18,23 +18,18 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
     async create(
         question: QuestionTemplateDomain,
     ): Promise<QuestionTemplateDomain> {
+        const prismaQuestion = QuestionTemplateMapper.toPrisma(question);
+        prismaQuestion.positionRelations = {
+            create: question.positionIds.map((positionId) => ({
+                positionId,
+            })),
+        };
         const created = await this.prisma.questionTemplate.create({
-            data: {
-                title: question.title,
-                answerType: question.answerType,
-                competenceId: question.competenceId,
-                isForSelfassessment: question.isForSelfassessment,
-                status: question.status,
-                positionRelations: {
-                    create: question.positionIds.map((positionId) => ({
-                        positionId,
-                    })),
-                },
-            },
+            data: prismaQuestion,
             include: { positionRelations: { select: { positionId: true } } },
         });
 
-        return LibraryMapper.toQuestionTemplateDomain(created);
+        return QuestionTemplateMapper.toDomain(created);
     }
 
     async findById(id: number): Promise<QuestionTemplateDomain | null> {
@@ -43,9 +38,7 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
             include: { positionRelations: { select: { positionId: true } } },
         });
 
-        return question
-            ? LibraryMapper.toQuestionTemplateDomain(question)
-            : null;
+        return question ? QuestionTemplateMapper.toDomain(question) : null;
     }
 
     async search(
@@ -60,7 +53,7 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
             include: { positionRelations: { select: { positionId: true } } },
         });
 
-        return items.map(LibraryMapper.toQuestionTemplateDomain);
+        return items.map(QuestionTemplateMapper.toDomain);
     }
 
     async updateById(
@@ -75,7 +68,7 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
             include: { positionRelations: { select: { positionId: true } } },
         });
 
-        return LibraryMapper.toQuestionTemplateDomain(updated);
+        return QuestionTemplateMapper.toDomain(updated);
     }
 
     async deleteById(id: number): Promise<void> {

@@ -1,4 +1,4 @@
-import { GLOBAL_CONSTRAINTS } from "../../common/constraints/global.constraints";
+import { GLOBAL_CONSTRAINTS } from '../../common/constraints/global.constraints';
 
 export const QUESTION_TEMPLATE_CONSTRAINTS = {
     TITLE: {
@@ -8,4 +8,3 @@ export const QUESTION_TEMPLATE_CONSTRAINTS = {
         },
     },
 };
-

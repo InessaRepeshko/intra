@@ -6,7 +6,9 @@ import {
     UpdateCyclePayload,
 } from '@intra/shared-kernel';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CycleDomain } from '../../domain/cycle.domain';
+import { CycleStageChangedEvent } from '../events/cycle-stage-changed.event';
 import {
     CYCLE_REPOSITORY,
     CycleRepositoryPort,
@@ -17,6 +19,7 @@ export class CycleService {
     constructor(
         @Inject(CYCLE_REPOSITORY)
         private readonly cycles: CycleRepositoryPort,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async create(payload: CreateCyclePayload): Promise<CycleDomain> {
@@ -85,5 +88,34 @@ export class CycleService {
     async delete(id: number): Promise<void> {
         await this.getById(id);
         await this.cycles.deleteById(id);
+    }
+
+    async finish(
+        cycleId: number,
+        actorId: number = 0,
+        actorName: string | null = 'System',
+    ): Promise<void> {
+        const cycle = await this.getById(cycleId);
+
+        if (cycle.stage === CycleStage.FINISHED) {
+            return;
+        }
+
+        await this.cycles.updateById(cycleId, {
+            stage: CycleStage.FINISHED,
+            isActive: false,
+        });
+
+        this.eventEmitter.emit(
+            'cycle.stage.changed',
+            new CycleStageChangedEvent(
+                cycleId,
+                cycle.stage,
+                CycleStage.FINISHED,
+                actorId,
+                actorName,
+                'Cycle finished',
+            ),
+        );
     }
 }

@@ -66,6 +66,15 @@ export class UserResponse implements UserDto {
     email!: string;
 
     @ApiProperty({
+        example: 'https://lh3.googleusercontent.com/a/ACg8oc...',
+        description: 'User avatar URL',
+        type: 'string',
+        nullable: true,
+    })
+    @Expose()
+    avatarUrl!: string | null;
+
+    @ApiProperty({
         enum: IdentityStatus,
         example: IdentityStatus.ACTIVE,
         description: 'User status',
@@ -78,9 +87,10 @@ export class UserResponse implements UserDto {
         type: Number,
         example: 1,
         description: 'User position ID',
+        nullable: true,
     })
     @Expose()
-    positionId!: number;
+    positionId!: number | null;
 
     @ApiProperty({
         type: Number,

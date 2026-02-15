@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { CompetenceQuestionTemplateRelationRepositoryPort } from '../../application/ports/competence-question-template-relation.repository.port';
 import { CompetenceQuestionTemplateRelationDomain } from '../../domain/competence-question-template-relation.domain';
-import { LibraryMapper } from './library.mapper';
+import { CompetenceQuestionTemplateRelationMapper } from '../mappers/competence-question-template-relation.mapper';
 
 @Injectable()
 export class CompetenceQuestionTemplateRelationRepository implements CompetenceQuestionTemplateRelationRepositoryPort {
@@ -18,9 +18,7 @@ export class CompetenceQuestionTemplateRelationRepository implements CompetenceQ
                 await this.prisma.competenceQuestionTemplateRelation.create({
                     data: { competenceId, questionTemplateId },
                 });
-            return LibraryMapper.toCompetenceQuestionTemplateRelationDomain(
-                relation,
-            );
+            return CompetenceQuestionTemplateRelationMapper.toDomain(relation);
         } catch (error) {
             if (
                 error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -38,7 +36,7 @@ export class CompetenceQuestionTemplateRelationRepository implements CompetenceQ
                         },
                     );
                 if (existing)
-                    return LibraryMapper.toCompetenceQuestionTemplateRelationDomain(
+                    return CompetenceQuestionTemplateRelationMapper.toDomain(
                         existing,
                     );
             }
@@ -63,9 +61,7 @@ export class CompetenceQuestionTemplateRelationRepository implements CompetenceQ
                 where: { competenceId },
                 orderBy: { createdAt: 'desc' },
             });
-        return relations.map(
-            LibraryMapper.toCompetenceQuestionTemplateRelationDomain,
-        );
+        return relations.map(CompetenceQuestionTemplateRelationMapper.toDomain);
     }
 
     async listByQuestionTemplate(
@@ -76,9 +72,7 @@ export class CompetenceQuestionTemplateRelationRepository implements CompetenceQ
                 where: { questionTemplateId },
                 orderBy: { createdAt: 'desc' },
             });
-        return relations.map(
-            LibraryMapper.toCompetenceQuestionTemplateRelationDomain,
-        );
+        return relations.map(CompetenceQuestionTemplateRelationMapper.toDomain);
     }
 
     async replaceForCompetence(

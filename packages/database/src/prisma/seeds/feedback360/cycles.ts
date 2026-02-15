@@ -8,7 +8,8 @@ export type CycleMap = Map<string, { id: number }>;
 export const CYCLE_SEED_DATA = [
     {
         title: 'Mid-Year Performance Review 2025',
-        description: 'Mid-year 360-degree feedback cycle focusing on H1 2025 achievements and development areas',
+        description:
+            'Mid-year 360-degree feedback cycle focusing on H1 2025 achievements and development areas',
         stage: CycleStage.FINISHED,
         isActive: false,
         minRespondentsThreshold: 3,
@@ -20,7 +21,8 @@ export const CYCLE_SEED_DATA = [
     },
     {
         title: 'Annual Performance Review 2025',
-        description: 'Year-end 360-degree feedback cycle for comprehensive 2025 performance evaluation',
+        description:
+            'Year-end 360-degree feedback cycle for comprehensive 2025 performance evaluation',
         stage: CycleStage.FINISHED,
         isActive: false,
         minRespondentsThreshold: 3,
@@ -32,7 +34,8 @@ export const CYCLE_SEED_DATA = [
     },
     {
         title: 'Annual Performance Review 2026',
-        description: 'Annual 360-degree feedback cycle for evaluating employee performance, competencies, and growth opportunities',
+        description:
+            'Annual 360-degree feedback cycle for evaluating employee performance, competencies, and growth opportunities',
         stage: CycleStage.ACTIVE,
         isActive: true,
         minRespondentsThreshold: 3,
@@ -59,40 +62,46 @@ export default async function seedCycles(
     }
 
     for (const cycle of CYCLE_SEED_DATA) {
-        const existing = await prisma.cycle.findFirst({ where: { title: cycle.title } });
+        const existing = await prisma.cycle.findFirst({
+            where: { title: cycle.title },
+        });
 
         const record = existing
             ? await prisma.cycle.update({
-                where: { id: existing.id },
-                data: {
-                    title: cycle.title,
-                    description: cycle.description,
-                    hrId: hrUser.id,
-                    stage: cycle.stage.toString().toUpperCase() as unknown as PrismaCycleStage,
-                    isActive: cycle.isActive,
-                    minRespondentsThreshold: cycle.minRespondentsThreshold,
-                    startDate: cycle.startDate,
-                    reviewDeadline: cycle.reviewDeadline,
-                    approvalDeadline: cycle.approvalDeadline,
-                    responseDeadline: cycle.responseDeadline,
-                    endDate: cycle.endDate,
-                },
-            })
+                  where: { id: existing.id },
+                  data: {
+                      title: cycle.title,
+                      description: cycle.description,
+                      hrId: hrUser.id,
+                      stage: cycle.stage
+                          .toString()
+                          .toUpperCase() as unknown as PrismaCycleStage,
+                      isActive: cycle.isActive,
+                      minRespondentsThreshold: cycle.minRespondentsThreshold,
+                      startDate: cycle.startDate,
+                      reviewDeadline: cycle.reviewDeadline,
+                      approvalDeadline: cycle.approvalDeadline,
+                      responseDeadline: cycle.responseDeadline,
+                      endDate: cycle.endDate,
+                  },
+              })
             : await prisma.cycle.create({
-                data: {
-                    title: cycle.title,
-                    description: cycle.description,
-                    hrId: hrUser.id,
-                    stage: cycle.stage.toString().toUpperCase() as unknown as PrismaCycleStage,
-                    isActive: cycle.isActive,
-                    minRespondentsThreshold: cycle.minRespondentsThreshold,
-                    startDate: cycle.startDate,
-                    reviewDeadline: cycle.reviewDeadline,
-                    approvalDeadline: cycle.approvalDeadline,
-                    responseDeadline: cycle.responseDeadline,
-                    endDate: cycle.endDate,
-                },
-            });
+                  data: {
+                      title: cycle.title,
+                      description: cycle.description,
+                      hrId: hrUser.id,
+                      stage: cycle.stage
+                          .toString()
+                          .toUpperCase() as unknown as PrismaCycleStage,
+                      isActive: cycle.isActive,
+                      minRespondentsThreshold: cycle.minRespondentsThreshold,
+                      startDate: cycle.startDate,
+                      reviewDeadline: cycle.reviewDeadline,
+                      approvalDeadline: cycle.approvalDeadline,
+                      responseDeadline: cycle.responseDeadline,
+                      endDate: cycle.endDate,
+                  },
+              });
 
         cycleMap.set(cycle.title, { id: record.id });
     }

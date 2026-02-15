@@ -9,3 +9,5 @@ export enum ReviewerSortField {
     TEAM_TITLE = 'teamTitle',
     CREATED_AT = 'createdAt',
 }
+
+export const REVIEWER_SORT_FIELDS = Object.values(ReviewerSortField);

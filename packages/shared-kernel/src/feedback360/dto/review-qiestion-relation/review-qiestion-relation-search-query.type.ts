@@ -1,6 +1,6 @@
-import { SortDirection } from "../../../common/enums/sort-direction.enum";
-import { AnswerType } from "../../../library/enums/answer-type.enum";
-import { ReviewQuestionRelationSortField } from "../../enums/review-qiestion-relation-sort-field.enum";
+import { SortDirection } from '../../../common/enums/sort-direction.enum';
+import { AnswerType } from '../../../library/enums/answer-type.enum';
+import { ReviewQuestionRelationSortField } from '../../enums/review-qiestion-relation-sort-field.enum';
 
 export type ReviewQuestionRelationSearchQuery = {
     reviewId?: number;
@@ -11,5 +11,5 @@ export type ReviewQuestionRelationSearchQuery = {
     competenceTitle?: string;
     isForSelfassessment?: boolean;
     sortBy?: ReviewQuestionRelationSortField;
-    sortDirection?: SortDirection
+    sortDirection?: SortDirection;
 };

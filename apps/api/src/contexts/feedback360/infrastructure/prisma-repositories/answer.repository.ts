@@ -11,7 +11,9 @@ import {
     AnswerRepositoryPort,
 } from '../../application/ports/answer.repository.port';
 import { AnswerDomain } from '../../domain/answer.domain';
-import { Feedback360Mapper } from './feedback360.mapper';
+import { AnswerMapper } from '../mappers/answer.mapper';
+import { QuestionMapper } from '../mappers/question.mapper';
+import { RespondentMapper } from '../mappers/respondent.mapper';
 
 @Injectable()
 export class AnswerRepository implements AnswerRepositoryPort {
@@ -21,30 +23,17 @@ export class AnswerRepository implements AnswerRepositoryPort {
 
     async create(answer: AnswerDomain): Promise<AnswerDomain> {
         const created = await this.prisma.answer.create({
-            data: {
-                reviewId: answer.reviewId,
-                questionId: answer.questionId,
-                respondentCategory:
-                    Feedback360Mapper.toPrismaRespondentCategory(
-                        answer.respondentCategory,
-                    ),
-                answerType: Feedback360Mapper.toPrismaAnswerType(
-                    answer.answerType,
-                ),
-                numericalValue: answer.numericalValue,
-                textValue: answer.textValue,
-                createdAt: answer.createdAt,
-            },
+            data: AnswerMapper.toPrisma(answer),
         });
 
-        return Feedback360Mapper.toAnswerDomain(created);
+        return AnswerMapper.toDomain(created);
     }
 
     async list(query: AnswerSearchQuery): Promise<AnswerDomain[]> {
         const where = this.buildWhere(query);
         const orderBy = this.buildOrder(query);
         const answers = await this.prisma.answer.findMany({ where, orderBy });
-        return answers.map(Feedback360Mapper.toAnswerDomain);
+        return answers.map(AnswerMapper.toDomain);
     }
 
     async deleteById(id: number): Promise<void> {
@@ -66,15 +55,12 @@ export class AnswerRepository implements AnswerRepositoryPort {
             ...(respondentCategory
                 ? {
                       respondentCategory:
-                          Feedback360Mapper.toPrismaRespondentCategory(
-                              respondentCategory,
-                          ),
+                          RespondentMapper.toPrismaCategory(respondentCategory),
                   }
                 : {}),
             ...(answerType
                 ? {
-                      answerType:
-                          Feedback360Mapper.toPrismaAnswerType(answerType),
+                      answerType: QuestionMapper.toPrismaAnswerType(answerType),
                   }
                 : {}),
             ...(numericalValue ? { numericalValue } : {}),

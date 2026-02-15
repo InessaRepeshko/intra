@@ -1,5 +1,5 @@
-import { SortDirection } from "../../../common/enums/sort-direction.enum";
-import { ClusterSortField } from "../../enums/cluster-sort-field.enum";
+import { SortDirection } from '../../../common/enums/sort-direction.enum';
+import { ClusterSortField } from '../../enums/cluster-sort-field.enum';
 
 export type ClusterSearchQuery = {
     competenceId?: number;

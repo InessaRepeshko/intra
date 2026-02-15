@@ -6,9 +6,11 @@ import {
     CreateAnswerPayload,
     CreateQuestionPayload,
     CreateReviewPayload,
+    CycleStage,
     QuestionSearchQuery,
     RespondentCategory,
     RespondentSearchQuery,
+    ResponseStatus,
     ReviewerSearchQuery,
     ReviewQuestionRelationSearchQuery,
     ReviewSearchQuery,
@@ -17,16 +19,31 @@ import {
     UpdateReviewPayload,
     UpsertClusterScorePayload,
 } from '@intra/shared-kernel';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Inject,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CompetenceService } from 'src/contexts/library/application/services/competence.service';
 import { QuestionTemplateService } from 'src/contexts/library/application/services/question-template.service';
+import { PrismaService } from 'src/database/prisma.service';
 import { AnswerDomain } from '../../domain/answer.domain';
+import { ClusterScoreWithRelationsDomain } from '../../domain/cluster-score-with-relations.domain';
 import { ClusterScoreDomain } from '../../domain/cluster-score.domain';
 import { QuestionDomain } from '../../domain/question.domain';
 import { RespondentDomain } from '../../domain/respondent.domain';
 import { ReviewQuestionRelationDomain } from '../../domain/review-question-relation.domain';
+import { ReviewStageHistoryDomain } from '../../domain/review-stage-history.domain';
 import { ReviewDomain } from '../../domain/review.domain';
 import { ReviewerDomain } from '../../domain/reviewer.domain';
+import {
+    REVIEW_STAGE_TRANSITIONS,
+    SYSTEM_ACTOR_ID,
+    TRANSITION_REASONS,
+} from '../constants/review-stage-transitions';
+import { ReviewStageChangedEvent } from '../events/review-stage-changed.event';
 import {
     ANSWER_REPOSITORY,
     AnswerRepositoryPort,
@@ -47,6 +64,10 @@ import {
     REVIEW_QUESTION_RELATION_REPOSITORY,
     ReviewQuestionRelationRepositoryPort,
 } from '../ports/review-question-relation.repository.port';
+import {
+    REVIEW_STAGE_HISTORY_REPOSITORY,
+    ReviewStageHistoryRepositoryPort,
+} from '../ports/review-stage-history.repository.port';
 import {
     REVIEW_REPOSITORY,
     ReviewRepositoryPort,
@@ -74,9 +95,13 @@ export class ReviewService {
         private readonly reviewers: ReviewerRepositoryPort,
         @Inject(CLUSTER_SCORE_REPOSITORY)
         private readonly clusterScores: ClusterScoreRepositoryPort,
+        @Inject(REVIEW_STAGE_HISTORY_REPOSITORY)
+        private readonly stageHistory: ReviewStageHistoryRepositoryPort,
+        private readonly prisma: PrismaService,
         private readonly questionTemplates: QuestionTemplateService,
         private readonly competences: CompetenceService,
         private readonly cycles: CycleService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async create(payload: CreateReviewPayload): Promise<ReviewDomain> {
@@ -308,7 +333,22 @@ export class ReviewService {
         id: number,
         patch: UpdateRespondentPayload,
     ): Promise<RespondentDomain> {
-        return this.respondents.updateById(id, patch);
+        const updated = await this.respondents.updateById(id, patch);
+
+        // Reactive Trigger: Check if all responses completed
+        if (
+            patch.responseStatus === ResponseStatus.COMPLETED ||
+            patch.responseStatus === ResponseStatus.CANCELED
+        ) {
+            await this.checkReviewCompletion(updated.reviewId);
+
+            const review = await this.getById(updated.reviewId);
+            if (review.cycleId) {
+                await this.checkCompletion(review.cycleId);
+            }
+        }
+
+        return updated;
     }
 
     async listRespondents(
@@ -374,7 +414,184 @@ export class ReviewService {
         return this.clusterScores.list(query);
     }
 
+    async getClusterScoreById(
+        id: number,
+    ): Promise<ClusterScoreWithRelationsDomain> {
+        return this.clusterScores.getById(id);
+    }
+
+    async getClusterScoreByCycleId(
+        cycleId: number,
+    ): Promise<ClusterScoreWithRelationsDomain[]> {
+        return this.clusterScores.getByCycleId(cycleId);
+    }
+
     async removeClusterScore(id: number): Promise<void> {
         await this.clusterScores.deleteById(id);
+    }
+
+    /**
+     * Centralized method for stage transitions with validation and history tracking
+     * @param reviewId ID of the review
+     * @param nextStage Target stage
+     * @param actorId User ID who initiated the change (0 for system)
+     * @param actorName Full name of the actor
+     * @param reason Optional reason for the transition
+     */
+    async changeStage(
+        reviewId: number,
+        nextStage: ReviewStage,
+        actorId: number = SYSTEM_ACTOR_ID,
+        actorName: string | null = 'System',
+        reason?: string,
+    ): Promise<void> {
+        const review = await this.getById(reviewId);
+        const currentStage = review.stage;
+
+        // Validate transition is allowed
+        const allowedTransitions = REVIEW_STAGE_TRANSITIONS[currentStage];
+        if (!allowedTransitions.includes(nextStage)) {
+            throw new BadRequestException(
+                `Invalid stage transition from ${currentStage} to ${nextStage}`,
+            );
+        }
+
+        // Perform update and history logging in a transaction
+        await this.prisma.$transaction(async (tx) => {
+            // Update review stage
+            await tx.review.update({
+                where: { id: reviewId },
+                data: { stage: nextStage },
+            });
+
+            // Create history record
+            const history = ReviewStageHistoryDomain.create({
+                reviewId,
+                fromStage: currentStage,
+                toStage: nextStage,
+                changedById: actorId || null,
+                changedByName: actorName,
+                reason,
+            });
+
+            await this.stageHistory.create(history);
+        });
+
+        // Emit event for other modules to react
+        this.eventEmitter.emit(
+            'review.stage.changed',
+            new ReviewStageChangedEvent(
+                reviewId,
+                currentStage,
+                nextStage,
+                actorId,
+                actorName,
+                reason,
+            ),
+        );
+    }
+
+    /**
+     * Get stage change history for a review
+     */
+    async getStageHistory(
+        reviewId: number,
+    ): Promise<ReviewStageHistoryDomain[]> {
+        return this.stageHistory.findByReviewId(reviewId);
+    }
+
+    /**
+     * REACTIVE TRIGGER: Check if all respondents completed their responses
+     * If yes, automatically transition to PREPARING_REPORT
+     */
+    async checkReviewCompletion(reviewId: number): Promise<void> {
+        const review = await this.getById(reviewId);
+
+        // Only check if review is currently in progress
+        if (review.stage !== ReviewStage.IN_PROGRESS) {
+            return;
+        }
+
+        // Get all respondents for this review
+        const respondents = await this.respondents.listByReview(reviewId, {});
+
+        // Check if there are any pending or in-progress respondents
+        const hasPendingResponses = respondents.some(
+            (r) =>
+                r.responseStatus === ResponseStatus.PENDING ||
+                r.responseStatus === ResponseStatus.IN_PROGRESS,
+        );
+
+        // If no pending responses, trigger report generation
+        if (!hasPendingResponses && respondents.length > 0) {
+            await this.changeStage(
+                reviewId,
+                ReviewStage.PREPARING_REPORT,
+                SYSTEM_ACTOR_ID,
+                'System',
+                TRANSITION_REASONS.ALL_RESPONSES_COLLECTED,
+            );
+        }
+    }
+
+    /**
+     * REACTIVE TRIGGER: Check if all respondents in cycle completed
+     * If yes, automatically finish the cycle
+     */
+    async checkCompletion(cycleId: number): Promise<void> {
+        const cycle = await this.cycles.getById(cycleId);
+
+        if (cycle.stage !== CycleStage.ACTIVE) {
+            return;
+        }
+
+        const reviews = await this.search({ cycleId });
+        if (!reviews.length) {
+            return;
+        }
+
+        let totalRespondents = 0;
+
+        for (const review of reviews) {
+            const respondents = await this.respondents.listByReview(
+                review.id!,
+                {},
+            );
+            totalRespondents += respondents.length;
+
+            const hasPendingResponses = respondents.some(
+                (r) =>
+                    r.responseStatus === ResponseStatus.PENDING ||
+                    r.responseStatus === ResponseStatus.IN_PROGRESS,
+            );
+
+            if (hasPendingResponses) {
+                return;
+            }
+        }
+
+        if (totalRespondents === 0) {
+            return;
+        }
+
+        await this.cycles.finish(cycleId);
+    }
+
+    /**
+     * MANUAL TRIGGER: HR force-completes a review
+     * Transitions review to PREPARING_REPORT regardless of pending responses
+     */
+    async forceCompleteReview(
+        reviewId: number,
+        actorId: number,
+        actorName: string,
+    ): Promise<void> {
+        await this.changeStage(
+            reviewId,
+            ReviewStage.PREPARING_REPORT,
+            actorId,
+            actorName,
+            TRANSITION_REASONS.HR_FORCE_COMPLETION,
+        );
     }
 }

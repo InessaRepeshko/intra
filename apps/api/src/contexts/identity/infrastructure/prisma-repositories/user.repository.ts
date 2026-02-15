@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-import { IdentityStatus, Prisma } from '@intra/database';
+import { Prisma } from '@intra/database';
 import {
     IdentityRole,
     SortDirection,
@@ -11,7 +10,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { UserRepositoryPort } from '../../application/ports/user.repository.port';
 import { UserDomain } from '../../domain/user.domain';
-import { IdentityMapper, UserWithRoles } from './identity.mapper';
+import { UserMapper, UserWithRoles } from '../mappers/user.mapper';
 
 @Injectable()
 export class UserRepository implements UserRepositoryPort {
@@ -19,33 +18,11 @@ export class UserRepository implements UserRepositoryPort {
 
     async create(user: UserDomain): Promise<UserDomain> {
         const created = await this.prisma.user.create({
-            data: {
-                firstName: user.firstName,
-                secondName: user.secondName,
-                lastName: user.lastName,
-                fullName: user.fullName,
-                email: user.email,
-                passwordHash: user.passwordHash,
-                status: user.status as IdentityStatus,
-                positionId: user.positionId,
-                teamId: user.teamId,
-                managerId: user.managerId,
-                ...(user.roles.length
-                    ? {
-                          userRoles: {
-                              createMany: {
-                                  data: user.roles.map((roleCode) => ({
-                                      roleCode,
-                                  })),
-                              },
-                          },
-                      }
-                    : {}),
-            },
+            data: UserMapper.toPrisma(user),
             include: this.withRolesInclude(true),
         });
 
-        return IdentityMapper.toUserDomain(created);
+        return UserMapper.toDomain(created);
     }
 
     async findById(
@@ -57,7 +34,19 @@ export class UserRepository implements UserRepositoryPort {
             include: this.withRolesInclude(opts?.withRoles),
         });
 
-        return user ? IdentityMapper.toUserDomain(user) : null;
+        return user ? UserMapper.toDomain(user) : null;
+    }
+
+    async findByEmail(
+        email: string,
+        opts?: { withRoles?: boolean },
+    ): Promise<UserDomain | null> {
+        const user = await this.prisma.user.findUnique({
+            where: { email },
+            include: this.withRolesInclude(opts?.withRoles),
+        });
+
+        return user ? UserMapper.toDomain(user) : null;
     }
 
     async search(query: UserSearchQuery): Promise<UserDomain[]> {
@@ -70,9 +59,7 @@ export class UserRepository implements UserRepositoryPort {
             include: this.withRolesInclude(true),
         });
 
-        return items.map((u) =>
-            IdentityMapper.toUserDomain(u as UserWithRoles),
-        );
+        return items.map((u) => UserMapper.toDomain(u as UserWithRoles));
     }
 
     async updateById(
@@ -90,7 +77,7 @@ export class UserRepository implements UserRepositoryPort {
             include: this.withRolesInclude(true),
         });
 
-        return IdentityMapper.toUserDomain(updated);
+        return UserMapper.toDomain(updated);
     }
 
     async deleteById(id: number): Promise<void> {
@@ -185,7 +172,7 @@ export class UserRepository implements UserRepositoryPort {
                 : {}),
             ...(status ? { status } : {}),
             ...(teamId ? { teamId } : {}),
-            ...(positionId ? { positionId } : {}),
+            ...(positionId !== undefined ? { positionId } : {}),
             ...(managerId ? { managerId } : {}),
             ...(roles?.length
                 ? { userRoles: { some: { roleCode: { in: roles } } } }

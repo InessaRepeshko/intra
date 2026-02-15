@@ -5,12 +5,14 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app';
 import databaseConfig from './config/database';
 import { Feedback360Module } from './contexts/feedback360/feedback360.module';
 import { IdentityModule } from './contexts/identity/identity.module';
 import { LibraryModule } from './contexts/library/library.module';
 import { OrganisationModule } from './contexts/organisation/organisation.module';
+import { ReportingModule } from './contexts/reporting/reporting.module';
 import { DatabaseModule } from './database/database.module';
 
 @Module({
@@ -24,10 +26,12 @@ import { DatabaseModule } from './database/database.module';
             serveRoot: '/public',
         }),
         DatabaseModule,
+        AuthModule,
         IdentityModule,
         OrganisationModule,
         LibraryModule,
         Feedback360Module,
+        ReportingModule,
     ],
     controllers: [AppController],
     providers: [AppService],

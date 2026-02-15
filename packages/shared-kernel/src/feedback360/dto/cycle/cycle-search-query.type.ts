@@ -1,6 +1,6 @@
-import { SortDirection } from "../../../common/enums/sort-direction.enum";
-import { CycleSortField } from "../../enums/cycle-sort-field.enum";
-import { CycleStage } from "../../enums/cycle-stage.enum";
+import { SortDirection } from '../../../common/enums/sort-direction.enum';
+import { CycleSortField } from '../../enums/cycle-sort-field.enum';
+import { CycleStage } from '../../enums/cycle-stage.enum';
 
 export type CycleSearchQuery = {
     title?: string;

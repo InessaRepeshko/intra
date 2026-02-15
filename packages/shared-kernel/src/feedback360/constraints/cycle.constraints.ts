@@ -1,5 +1,4 @@
-import { GLOBAL_CONSTRAINTS } from "../../common/constraints/global.constraints";
-
+import { GLOBAL_CONSTRAINTS } from '../../common/constraints/global.constraints';
 
 export const CYCLE_CONSTRAINTS = {
     TITLE: {
@@ -15,6 +14,6 @@ export const CYCLE_CONSTRAINTS = {
         },
     },
     ANONYMITY_THRESHOLD: {
-        MIN: 3
+        MIN: GLOBAL_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN,
     },
 };

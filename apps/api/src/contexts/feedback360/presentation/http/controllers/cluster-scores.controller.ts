@@ -24,12 +24,15 @@ import {
     ApiCreateAndUpdateErrorResponses,
     ApiDeletionErrorResponses,
     ApiListReadErrorResponses,
+    ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
 import { ReviewService } from '../../../application/services/review.service';
 import { ClusterScoreQueryDto } from '../dto/cluster-scores/cluster-score-query.dto';
 import { UpsertClusterScoreDto } from '../dto/cluster-scores/upsert-cluster-score.dto';
-import { Feedback360HttpMapper } from '../mappers/feedback360.http.mapper';
+import { ClusterScoreHttpMapper } from '../mappers/cluster-score.http.mapper';
+import { ClusterScoreWithRelationsResponse } from '../models/cluster-score-with-relations.response';
 import { ClusterScoreResponse } from '../models/cluster-score.response';
+
 @ApiTags('Feedback360 / Cluster Scores')
 @Controller('feedback360/cluster-scores')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -46,7 +49,7 @@ export class ClusterScoresController {
         @Body() dto: UpsertClusterScoreDto,
     ): Promise<ClusterScoreResponse> {
         const saved = await this.reviews.upsertClusterScore(dto);
-        return Feedback360HttpMapper.toClusterScoreResponse(saved);
+        return ClusterScoreHttpMapper.toResponse(saved);
     }
 
     @Get()
@@ -63,7 +66,22 @@ export class ClusterScoresController {
         @Query() query: ClusterScoreQueryDto,
     ): Promise<ClusterScoreResponse[]> {
         const scores = await this.reviews.listClusterScores(query);
-        return scores.map(Feedback360HttpMapper.toClusterScoreResponse);
+        return scores.map((score) => ClusterScoreHttpMapper.toResponse(score));
+    }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Get cluster score by id' })
+    @ApiParam({ name: 'id', description: 'Cluster score id', type: 'number' })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: ClusterScoreWithRelationsResponse,
+    })
+    @ApiReadErrorResponses()
+    async getById(
+        @Param('id') id: string,
+    ): Promise<ClusterScoreWithRelationsResponse> {
+        const score = await this.reviews.getClusterScoreById(Number(id));
+        return ClusterScoreHttpMapper.toResponseWithRelations(score);
     }
 
     @Delete(':id')
@@ -74,5 +92,26 @@ export class ClusterScoresController {
     @ApiDeletionErrorResponses()
     async delete(@Param('id') id: string): Promise<void> {
         await this.reviews.removeClusterScore(Number(id));
+    }
+
+    @Get('cycle/:cycleId')
+    @ApiOperation({ summary: 'Get cluster scores by cycle id' })
+    @ApiParam({ name: 'cycleId', description: 'Cycle id', type: 'number' })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: ClusterScoreWithRelationsResponse,
+        isArray: true,
+        description: 'Default sort by ascending cluster id and score',
+    })
+    @ApiListReadErrorResponses()
+    async getByCycleId(
+        @Param('cycleId') cycleId: string,
+    ): Promise<ClusterScoreWithRelationsResponse[]> {
+        const scores = await this.reviews.getClusterScoreByCycleId(
+            Number(cycleId),
+        );
+        return scores.map((score) =>
+            ClusterScoreHttpMapper.toResponseWithRelations(score),
+        );
     }
 }

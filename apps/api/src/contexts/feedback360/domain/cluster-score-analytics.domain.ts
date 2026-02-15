@@ -1,11 +1,15 @@
+import Decimal from 'decimal.js';
+
 export type ClusterScoreAnalyticsProps = {
     id?: number;
     cycleId: number;
     clusterId: number;
+    lowerBound: Decimal.Value;
+    upperBound: Decimal.Value;
     employeesCount: number;
-    minScore: number;
-    maxScore: number;
-    averageScore: number;
+    minScore: Decimal.Value;
+    maxScore: Decimal.Value;
+    averageScore: Decimal.Value;
     createdAt?: Date;
     updatedAt?: Date;
 };
@@ -14,10 +18,12 @@ export class ClusterScoreAnalyticsDomain {
     readonly id?: number;
     readonly cycleId: number;
     readonly clusterId: number;
+    readonly lowerBound: Decimal;
+    readonly upperBound: Decimal;
     readonly employeesCount: number;
-    readonly minScore: number;
-    readonly maxScore: number;
-    readonly averageScore: number;
+    readonly minScore: Decimal;
+    readonly maxScore: Decimal;
+    readonly averageScore: Decimal;
     readonly createdAt?: Date;
     readonly updatedAt?: Date;
 
@@ -25,10 +31,12 @@ export class ClusterScoreAnalyticsDomain {
         this.id = props.id;
         this.cycleId = props.cycleId;
         this.clusterId = props.clusterId;
+        this.lowerBound = new Decimal(props.lowerBound);
+        this.upperBound = new Decimal(props.upperBound);
         this.employeesCount = props.employeesCount;
-        this.minScore = props.minScore;
-        this.maxScore = props.maxScore;
-        this.averageScore = props.averageScore;
+        this.minScore = new Decimal(props.minScore);
+        this.maxScore = new Decimal(props.maxScore);
+        this.averageScore = new Decimal(props.averageScore);
         this.createdAt = props.createdAt;
         this.updatedAt = props.updatedAt;
     }

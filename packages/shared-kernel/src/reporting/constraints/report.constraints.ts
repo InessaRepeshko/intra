@@ -1,0 +1,15 @@
+import { GLOBAL_CONSTRAINTS } from '../../common/constraints/global.constraints';
+
+export const REPORT_CONSTRAINTS = {
+    RESPONDENT_COUNT: {
+        MIN: GLOBAL_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN,
+    },
+    SCORE: {
+        MIN: GLOBAL_CONSTRAINTS.SCORE.MIN,
+        MAX: GLOBAL_CONSTRAINTS.SCORE.MAX,
+    },
+    PERCENTAGE: {
+        MIN: GLOBAL_CONSTRAINTS.PERCENTAGE.MIN,
+        MAX: GLOBAL_CONSTRAINTS.PERCENTAGE.MAX,
+    },
+};

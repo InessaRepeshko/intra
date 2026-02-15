@@ -21,4 +21,5 @@ export interface ClusterScoreAnalyticsRepositoryPort {
         patch: UpdateClusterScoreAnalyticsPayload,
     ): Promise<ClusterScoreAnalyticsDomain>;
     deleteById(id: number): Promise<void>;
+    getByCycleId(cycleId: number): Promise<ClusterScoreAnalyticsDomain[]>;
 }

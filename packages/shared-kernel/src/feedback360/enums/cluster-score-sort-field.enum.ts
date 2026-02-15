@@ -9,3 +9,5 @@ export enum ClusterScoreSortField {
     CREATED_AT = 'createdAt',
     UPDATED_AT = 'updatedAt',
 }
+
+export const CLUSTER_SCORE_SORT_FIELDS = Object.values(ClusterScoreSortField);

@@ -1,4 +1,7 @@
-import { PrismaClient, IdentityRole as PrismaIdentityRole } from '@intra/database';
+import {
+    PrismaClient,
+    IdentityRole as PrismaIdentityRole,
+} from '@intra/database';
 import { IdentityRole } from '@intra/shared-kernel';
 
 export default async function seedUserRoles(prisma: PrismaClient) {

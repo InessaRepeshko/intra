@@ -5,7 +5,8 @@
         "build": {
             "dependsOn": [
                 "^build",
-                "^db:generate"
+                "^db:generate",
+                "format",
             ],
             "outputs": [
                 "dist/**",
@@ -67,7 +68,8 @@
             "cache": false
         },
         "format": {
-            "cache": false
+            "cache": false,
+            "outputLogs": "errors-only"
         },
         "lint": {
             "outputs": [],
@@ -125,7 +127,7 @@
         },
         "refresh:test": {
             "cache": false
-        }
+        },
     }
 =======
   "$schema": "https://turbo.build/schema.json",
