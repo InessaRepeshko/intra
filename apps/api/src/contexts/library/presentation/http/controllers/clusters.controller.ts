@@ -1,3 +1,4 @@
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -11,6 +12,7 @@ import {
     Post,
     Query,
     SerializeOptions,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -21,6 +23,9 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import {
     ApiCreateAndUpdateErrorResponses,
     ApiDeletionErrorResponses,
@@ -38,6 +43,8 @@ import { ClusterResponse } from '../models/cluster.response';
 @Controller('library/clusters')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ClusterResponse })
+@UseGuards(AuthSessionGuard, RolesGuard)
+@Roles(IdentityRole.ADMIN, IdentityRole.HR)
 export class ClustersController {
     constructor(private readonly service: ClusterService) {}
 
@@ -58,6 +65,12 @@ export class ClustersController {
     }
 
     @Get()
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Search clusters' })
     @ApiQuery({ type: ClusterQueryDto })
     @ApiResponse({
@@ -72,6 +85,12 @@ export class ClustersController {
     }
 
     @Get(':id')
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Get cluster by id' })
     @ApiParam({ name: 'id', type: 'number', required: true })
     @ApiResponse({ status: HttpStatus.OK, type: ClusterResponse })

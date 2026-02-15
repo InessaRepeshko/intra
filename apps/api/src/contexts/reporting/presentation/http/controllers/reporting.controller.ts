@@ -1,3 +1,4 @@
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     ClassSerializerInterceptor,
     Controller,
@@ -6,10 +7,16 @@ import {
     Param,
     ParseIntPipe,
     SerializeOptions,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { ReportingService } from '../../../application/services/reporting.service';
 import { TextAnswerService } from '../../../application/services/text-answer.service';
 import { ReportHttpMapper } from '../mappers/report.http.mapper';
@@ -20,6 +27,13 @@ import { TextAnswerResponse } from '../models/text-answer.response';
 @Controller('reporting/reports')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ReportResponse })
+@UseGuards(AuthSessionGuard, RolesGuard)
+@Roles(
+    IdentityRole.ADMIN,
+    IdentityRole.HR,
+    IdentityRole.MANAGER,
+    IdentityRole.EMPLOYEE,
+)
 export class ReportingController {
     constructor(
         private readonly reporting: ReportingService,
@@ -37,8 +51,9 @@ export class ReportingController {
     @ApiReadErrorResponses()
     async getById(
         @Param('id', ParseIntPipe) id: number,
+        @CurrentUser() actor: UserDomain,
     ): Promise<ReportResponse> {
-        const report = await this.reporting.getById(id);
+        const report = await this.reporting.getById(id, actor);
         return ReportHttpMapper.toResponse(report);
     }
 
@@ -53,8 +68,9 @@ export class ReportingController {
     @ApiReadErrorResponses()
     async getByReviewId(
         @Param('reviewId', ParseIntPipe) reviewId: number,
+        @CurrentUser() actor: UserDomain,
     ): Promise<ReportResponse> {
-        const report = await this.reporting.getByReviewId(reviewId);
+        const report = await this.reporting.getByReviewId(reviewId, actor);
         return ReportHttpMapper.toResponse(report);
     }
 
@@ -73,8 +89,12 @@ export class ReportingController {
     @ApiReadErrorResponses()
     async getTextAnswers(
         @Param('reviewId', ParseIntPipe) reviewId: number,
+        @CurrentUser() actor: UserDomain,
     ): Promise<TextAnswerResponse[]> {
-        const answers = await this.textAnswerService.listByReview(reviewId);
+        const answers = await this.textAnswerService.listByReview(
+            reviewId,
+            actor,
+        );
         return answers.map(ReportHttpMapper.toTextAnswerResponse);
     }
 }

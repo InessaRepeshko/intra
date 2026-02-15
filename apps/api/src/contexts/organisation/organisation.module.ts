@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AuthModule } from 'src/auth/auth.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { IdentityModule } from '../identity/identity.module';
 import { ORGANISATION_POSITION_HIERARCHY_REPOSITORY } from './application/ports/position-hierarchy.repository.port';
@@ -14,7 +15,7 @@ import { PositionsController } from './presentation/http/controllers/positions.c
 import { TeamsController } from './presentation/http/controllers/teams.controller';
 
 @Module({
-    imports: [DatabaseModule, IdentityModule],
+    imports: [DatabaseModule, AuthModule, IdentityModule],
     controllers: [TeamsController, PositionsController],
     providers: [
         TeamService,

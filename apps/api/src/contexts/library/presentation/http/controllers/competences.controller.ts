@@ -1,3 +1,4 @@
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -11,6 +12,7 @@ import {
     Post,
     Query,
     SerializeOptions,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -21,6 +23,9 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import {
     ApiCreateAndUpdateErrorResponses,
     ApiDeletionErrorResponses,
@@ -40,6 +45,8 @@ import { CompetenceResponse } from '../models/competence.response';
 @Controller('library/competences')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: CompetenceResponse })
+@UseGuards(AuthSessionGuard, RolesGuard)
+@Roles(IdentityRole.ADMIN, IdentityRole.HR)
 export class CompetencesController {
     constructor(private readonly service: CompetenceService) {}
 
@@ -60,6 +67,12 @@ export class CompetencesController {
     }
 
     @Get()
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Search competences' })
     @ApiQuery({ type: CompetenceQueryDto })
     @ApiResponse({
@@ -76,6 +89,12 @@ export class CompetencesController {
     }
 
     @Get(':id')
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Get competence by id' })
     @ApiParam({ name: 'id', type: 'number', required: true })
     @ApiResponse({ status: HttpStatus.OK, type: CompetenceResponse })

@@ -1,4 +1,4 @@
-import { RespondentCategory } from '@intra/shared-kernel';
+import { IdentityRole, RespondentCategory } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -12,6 +12,7 @@ import {
     Post,
     Query,
     SerializeOptions,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -22,12 +23,17 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import {
     ApiCreateAndUpdateErrorResponses,
     ApiDeletionErrorResponses,
     ApiListReadErrorResponses,
     ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
+import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { ReviewService } from '../../../application/services/review.service';
 import { AnswerQueryDto } from '../dto/answers/answer-query.dto';
 import { CreateAnswerDto } from '../dto/answers/create-answer.dto';
@@ -56,6 +62,8 @@ import { ReviewerResponse } from '../models/reviewer.response';
 @Controller('feedback360/reviews')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: ReviewResponse })
+@UseGuards(AuthSessionGuard, RolesGuard)
+@Roles(IdentityRole.ADMIN, IdentityRole.HR)
 export class ReviewController {
     constructor(private readonly reviews: ReviewService) {}
 
@@ -85,12 +93,21 @@ export class ReviewController {
     }
 
     @Get(':id')
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Get Review by id' })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
     @ApiResponse({ status: HttpStatus.OK, type: ReviewResponse })
     @ApiReadErrorResponses()
-    async getById(@Param('id') id: string): Promise<ReviewResponse> {
-        const review = await this.reviews.getById(Number(id));
+    async getById(
+        @Param('id') id: string,
+        @CurrentUser() actor: UserDomain,
+    ): Promise<ReviewResponse> {
+        const review = await this.reviews.getById(Number(id), actor);
         return ReviewHttpMapper.toResponse(review);
     }
 
@@ -139,6 +156,12 @@ export class ReviewController {
     }
 
     @Get(':id/questions')
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'List questions in Review' })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
     @ApiQuery({ type: ReviewQuestionRelationQueryDto })
@@ -152,10 +175,12 @@ export class ReviewController {
     async listQuestions(
         @Param('id') id: string,
         @Query() query: ReviewQuestionRelationQueryDto,
+        @CurrentUser() actor: UserDomain,
     ): Promise<ReviewQuestionRelationResponse[]> {
         const relations = await this.reviews.listQuestionRelations(
             Number(id),
             query,
+            actor,
         );
         return relations.map(ReviewQuestionRelationHttpMapper.toResponse);
     }
@@ -179,6 +204,12 @@ export class ReviewController {
     }
 
     @Post(':id/answers')
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Add answer to Review' })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
     @ApiBody({ type: CreateAnswerDto })
@@ -187,19 +218,24 @@ export class ReviewController {
     async addAnswer(
         @Param('id') id: string,
         @Body() dto: CreateAnswerDto,
+        @CurrentUser() actor: UserDomain,
     ): Promise<AnswerResponse> {
-        const created = await this.reviews.addAnswer({
-            reviewId: Number(id),
-            questionId: dto.questionId,
-            respondentCategory: dto.respondentCategory,
-            answerType: dto.answerType,
-            numericalValue: dto.numericalValue,
-            textValue: dto.textValue,
-        });
+        const created = await this.reviews.addAnswer(
+            {
+                reviewId: Number(id),
+                questionId: dto.questionId,
+                respondentCategory: dto.respondentCategory,
+                answerType: dto.answerType,
+                numericalValue: dto.numericalValue,
+                textValue: dto.textValue,
+            },
+            actor,
+        );
         return AnswerHttpMapper.toResponse(created);
     }
 
     @Get(':id/answers')
+    @Roles(IdentityRole.ADMIN)
     @ApiOperation({ summary: 'List answers to Review' })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
     @ApiQuery({ type: AnswerQueryDto })
@@ -270,6 +306,12 @@ export class ReviewController {
     }
 
     @Patch('respondents/:relationId')
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Update respondent status' })
     @ApiParam({
         name: 'relationId',
@@ -282,10 +324,12 @@ export class ReviewController {
     async updateRespondent(
         @Param('relationId') relationId: string,
         @Body() dto: UpdateRespondentDto,
+        @CurrentUser() actor: UserDomain,
     ): Promise<RespondentResponse> {
         const updated = await this.reviews.updateRespondent(
             Number(relationId),
             dto,
+            actor,
         );
         return RespondentHttpMapper.toResponse(updated);
     }
@@ -329,6 +373,12 @@ export class ReviewController {
     }
 
     @Get(':id/reviewers')
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'List reviewers to Review' })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
     @ApiQuery({ type: ReviewerQueryDto })
@@ -342,8 +392,13 @@ export class ReviewController {
     async listReviewers(
         @Param('id') id: string,
         @Query() query: ReviewerQueryDto,
+        @CurrentUser() actor: UserDomain,
     ): Promise<ReviewerResponse[]> {
-        const reviewers = await this.reviews.listReviewers(Number(id), query);
+        const reviewers = await this.reviews.listReviewers(
+            Number(id),
+            query,
+            actor,
+        );
         return reviewers.map(ReviewerHttpMapper.toResponse);
     }
 
@@ -368,8 +423,6 @@ export class ReviewController {
      * Transitions review to PREPARING_REPORT regardless of pending responses
      */
     @Post(':id/force-complete')
-    // @UseGuards(AuthSessionGuard, RolesGuard)
-    // @Roles(IdentityRole.ADMIN, IdentityRole.HR)
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: 'Force complete Review (HR/Admin only)',
@@ -384,12 +437,12 @@ export class ReviewController {
     @ApiCreateAndUpdateErrorResponses()
     async forceComplete(
         @Param('id') id: string,
-        // @CurrentUser() user: UserDomain,
+        @CurrentUser() user: UserDomain,
     ): Promise<{ message: string }> {
-        // const actorId = user.id!;
-        // const actorName = user.fullName!;
+        const actorId = user.id!;
+        const actorName = user.fullName!;
 
-        await this.reviews.forceCompleteReview(Number(id), 0, 'Admin');
+        await this.reviews.forceCompleteReview(Number(id), actorId, actorName);
 
         return {
             message: `Review ${id} has been force-completed and moved to PREPARING_REPORT stage`,

@@ -37,7 +37,8 @@
         "@intra/shared-kernel": "workspace:*",
         "@nestjs/event-emitter": "^3.0.1",
         "better-auth": "^1.4.18",
-        "decimal.js": "^10.6.0"
+        "decimal.js": "^10.6.0",
+        "pg": "^8.17.2"
     },
     "devDependencies": {
         "@nestjs/schedule": "^6.1.0"

@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
+import { AuthModule } from 'src/auth/auth.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { IDENTITY_ROLE_REPOSITORY } from './application/ports/role.repository.port';
 import { IDENTITY_USER_REPOSITORY } from './application/ports/user.repository.port';
@@ -11,7 +11,7 @@ import { IdentityRolesController } from './presentation/http/controllers/identit
 import { IdentityUsersController } from './presentation/http/controllers/identity-users.controller';
 
 @Module({
-    imports: [DatabaseModule],
+    imports: [DatabaseModule, forwardRef(() => AuthModule)],
     controllers: [IdentityUsersController, IdentityRolesController],
     providers: [
         IdentityUserService,

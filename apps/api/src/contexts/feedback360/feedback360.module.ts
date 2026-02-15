@@ -100,6 +100,7 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
         ANSWER_REPOSITORY,
         REVIEW_QUESTION_RELATION_REPOSITORY,
         REVIEW_REPOSITORY,
+        REVIEWER_REPOSITORY,
     ],
 })
 export class Feedback360Module {}

@@ -10,6 +10,7 @@ export const RESPONDENT_REPOSITORY = Symbol(
 
 export interface RespondentRepositoryPort {
     create(relation: RespondentDomain): Promise<RespondentDomain>;
+    getById(id: number): Promise<RespondentDomain>;
     listByReview(
         reviewId: number,
         query: RespondentSearchQuery,

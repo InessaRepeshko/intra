@@ -124,6 +124,10 @@ export class ClusterScoreAnalyticsService {
         return this.analytics.getByCycleId(cycleId);
     }
 
+    /**
+     * Generates analytics metrics for a cycle.
+     * @param cycleId The cycle identifier.
+     */
     async generateAnalyticsForCycle(cycleId: number): Promise<void> {
         await this.cycles.getById(cycleId);
 
@@ -173,6 +177,12 @@ export class ClusterScoreAnalyticsService {
         }
     }
 
+    /**
+     * Validates the scores for a cluster.
+     * @param min The minimum score.
+     * @param max The maximum score.
+     * @param avg The average score.
+     */
     private async validateScores(
         min: Decimal,
         max: Decimal,
@@ -190,6 +200,11 @@ export class ClusterScoreAnalyticsService {
         }
     }
 
+    /**
+     * Validates the bounds for a cluster.
+     * @param lower The lower bound.
+     * @param upper The upper bound.
+     */
     private async validateBounds(
         lower: Decimal,
         upper: Decimal,

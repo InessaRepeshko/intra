@@ -1,3 +1,4 @@
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -11,6 +12,7 @@ import {
     Post,
     Query,
     SerializeOptions,
+    UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -21,6 +23,9 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import {
     ApiCreateAndUpdateErrorResponses,
     ApiDeletionErrorResponses,
@@ -40,6 +45,8 @@ import { PositionResponse } from '../models/position.response';
 @Controller('organisation/positions')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: PositionResponse })
+@UseGuards(AuthSessionGuard, RolesGuard)
+@Roles(IdentityRole.ADMIN, IdentityRole.HR)
 export class PositionsController {
     constructor(
         private readonly positions: PositionService,
@@ -76,6 +83,12 @@ export class PositionsController {
     }
 
     @Get(':id')
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Get a position by id' })
     @ApiParam({ name: 'id', type: 'number', description: 'Id of position' })
     @ApiResponse({ status: HttpStatus.OK, type: PositionResponse })

@@ -11,6 +11,15 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const configService = app.get(ConfigService);
 
+    // Enable CORS with credentials support for cookie-based authentication
+    app.enableCors({
+        origin: true, // In production, specify exact frontend URL
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+        exposedHeaders: ['set-cookie'],
+    });
+
     app.enableShutdownHooks();
     setupGlobalPipes(app);
     app.useGlobalInterceptors(

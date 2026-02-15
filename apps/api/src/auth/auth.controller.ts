@@ -1,15 +1,13 @@
 import {
     Body,
-    ClassSerializerInterceptor,
     Controller,
     Get,
+    HttpCode,
     HttpStatus,
     Post,
     Req,
     Res,
-    SerializeOptions,
     UseGuards,
-    UseInterceptors,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
@@ -27,8 +25,6 @@ import { RolesGuard } from './guards/roles.guard';
 @ApiTags('Auth')
 @Controller('auth')
 @UseGuards(AuthSessionGuard, RolesGuard)
-@UseInterceptors(ClassSerializerInterceptor)
-@SerializeOptions({ type: UserResponse })
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
@@ -42,6 +38,21 @@ export class AuthController {
     async googleLogin(@Res() res: Response) {
         const url = this.authService.getGoogleRedirectUrl(res);
         return res.redirect(url);
+    }
+
+    @Get('login')
+    @Public()
+    @ApiOperation({
+        summary: 'Redirects to Google Login',
+        description:
+            'Since password login is disabled, this endpoint redirects to the Google OAuth2 login page.',
+    })
+    @ApiResponse({
+        status: HttpStatus.FOUND,
+        description: 'Redirects to Google OAuth2 login page',
+    })
+    async login(@Res() res: Response) {
+        return res.redirect('/auth/google');
     }
 
     @Get('google/callback')
@@ -121,5 +132,23 @@ export class AuthController {
         @Res({ passthrough: true }) res: Response,
     ): Promise<LoginResponseDto> {
         return this.authService.devLogin(dto.email, res);
+    }
+
+    @Post('logout')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Logout current user' })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'User successfully logged out',
+    })
+    @ApiResponse({
+        status: HttpStatus.UNAUTHORIZED,
+        description: 'User is not authenticated',
+    })
+    async logout(
+        @Req() req: Request,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<void> {
+        return this.authService.logout(req, res);
     }
 }
