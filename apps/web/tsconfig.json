@@ -36,6 +36,18 @@
       "@intra/web": [
         "src/*"
       ],
+      "@shared/*": [
+        "src/shared/*"
+      ],
+      "@shared/ui/*": [
+        "src/shared/ui/*"
+      ],
+      "@utils/*": [
+        "src/shared/utils/*"
+      ],
+      "@hooks/*": [
+        "src/shared/hooks/*"
+      ],
     }
   },
   "include": [

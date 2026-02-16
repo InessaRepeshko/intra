@@ -13,6 +13,8 @@
         "dev:web": "turbo run dev --filter=@intra/web",
         "build": "turbo run build",
         "build:api": "turbo run build --filter=@intra/api",
+        "build:shared": "turbo run build --filter=@intra/shared-kernel",
+        "build:database": "turbo run build --filter=@intra/database",
         "build:web": "turbo run build --filter=@intra/web",
         "clean": "rm -rf node_modules dist .turbo **/**/node_modules **/**/dist **/**/.turbo **/**/.next",
         "lint": "turbo run lint",

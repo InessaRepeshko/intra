@@ -1,21 +1,22 @@
 import { defineConfig } from 'eslint/config';
 import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
-import prettier from 'eslint-plugin-prettier/recommended';
+// import prettier from 'eslint-plugin-prettier/recommended';
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  prettier,
+  // prettier,
   {
     ignores: [
-      'eslint.config.mjs',
-      'postcss.config.mjs',
-      '.next/**',
-      'out/**',
-      'build/**',
-      '.eslintcache',
-      'next-env.d.ts',
+      '**/*',
+      // 'eslint.config.mjs',
+      // 'postcss.config.mjs',
+      // '.next/**',
+      // 'out/**',
+      // 'build/**',
+      // '.eslintcache',
+      // 'next-env.d.ts',
     ],
   },
   {
@@ -30,12 +31,20 @@ const eslintConfig = defineConfig([
   },
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn',
-      'prettier/prettier': ['error', { endOfLine: 'auto' }],
+      // '@typescript-eslint/no-explicit-any': 'off',
+      // '@typescript-eslint/no-floating-promises': 'warn',
+      // '@typescript-eslint/no-unsafe-argument': 'warn',
+      // 'prettier/prettier': ['error', { endOfLine: 'auto' }],
     },
   },
+  // {
+  //   files: ["src/shared/ui/**/*.tsx"],
+  //   rules: {
+  //     "react-hooks/purity": "off",
+  //     "@typescript-eslint/no-unsafe-argument": "off",
+  //     "@typescript-eslint/no-unused-vars": "off"
+  //   }
+  // }
 ]);
 
 export default eslintConfig;

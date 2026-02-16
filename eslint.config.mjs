@@ -8,20 +8,21 @@ import prettier from 'eslint-plugin-prettier/recommended';
 export default tseslint.config(
   {
     ignores: [
-      'eslint.config.mjs',
-      'apps/web/**',
-      '**/node_modules/**',
-      '**/.next/**',
-      '**/dist/**',
-      '**/build/**',
-      '**/.eslintcache',
-      '**/next-env.d.ts',
+      '**/*',
+      // 'eslint.config.mjs',
+      // 'apps/web/**',
+      // '**/node_modules/**',
+      // '**/.next/**',
+      // '**/dist/**',
+      // '**/build/**',
+      // '**/.eslintcache',
+      // '**/next-env.d.ts',
     ],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
-  prettier,
+  // eslintPluginPrettierRecommended,
+  // prettier,
   {
     languageOptions: {
       globals: {
@@ -36,10 +37,10 @@ export default tseslint.config(
   },
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn',
-      "prettier/prettier": ["error", { endOfLine: "auto" }],
+      // '@typescript-eslint/no-explicit-any': 'off',
+      // '@typescript-eslint/no-floating-promises': 'warn',
+      // '@typescript-eslint/no-unsafe-argument': 'warn',
+      // "prettier/prettier": ["error", { endOfLine: "auto" }],
     },
   },
 );

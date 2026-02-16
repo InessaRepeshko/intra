@@ -138,8 +138,14 @@ export {
 } from './feedback360/enums/cluster-score-analytics-sort-field.enum';
 
 export type { CreateCyclePayload } from './feedback360/dto/cycle/create-cycle-payload.type';
-export type { CycleDto } from './feedback360/dto/cycle/cycle-dto.interface';
-export type { CycleSearchQuery } from './feedback360/dto/cycle/cycle-search-query.type';
+export type {
+    CycleDto,
+    CycleResponseDto,
+} from './feedback360/dto/cycle/cycle-dto.interface';
+export type {
+    CycleFilterQuery,
+    CycleSearchQuery,
+} from './feedback360/dto/cycle/cycle-search-query.type';
 export type { UpdateCyclePayload } from './feedback360/dto/cycle/update-cycle-payload.type';
 export {
     CYCLE_SORT_FIELDS,

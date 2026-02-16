@@ -2,7 +2,7 @@ import { SortDirection } from '../../../common/enums/sort-direction.enum';
 import { CycleSortField } from '../../enums/cycle-sort-field.enum';
 import { CycleStage } from '../../enums/cycle-stage.enum';
 
-export type CycleSearchQuery = {
+export type CycleSearchBaseQuery<TDate = Date> = {
     title?: string;
     description?: string;
     search?: string;
@@ -10,11 +10,15 @@ export type CycleSearchQuery = {
     minRespondentsThreshold?: number;
     stage?: CycleStage;
     isActive?: boolean;
-    startDate?: Date;
-    reviewDeadline?: Date;
-    approvalDeadline?: Date;
-    responseDeadline?: Date;
-    endDate?: Date;
+    startDate?: TDate;
+    reviewDeadline?: TDate;
+    approvalDeadline?: TDate;
+    responseDeadline?: TDate;
+    endDate?: TDate;
     sortBy?: CycleSortField;
     sortDirection?: SortDirection;
 };
+
+export type CycleSearchQuery = CycleSearchBaseQuery<Date>;
+
+export type CycleFilterQuery = CycleSearchBaseQuery<string>;

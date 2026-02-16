@@ -1,6 +1,6 @@
 import { CycleStage } from '../../enums/cycle-stage.enum';
 
-export interface CycleDto {
+export interface CycleBaseDto<TDate = Date> {
     id: number;
     title: string;
     description?: string | null;
@@ -8,11 +8,15 @@ export interface CycleDto {
     minRespondentsThreshold: number;
     stage: CycleStage;
     isActive?: boolean;
-    startDate: Date;
-    reviewDeadline?: Date | null;
-    approvalDeadline?: Date | null;
-    responseDeadline?: Date | null;
-    endDate: Date;
-    createdAt: Date;
-    updatedAt: Date;
+    startDate: TDate;
+    reviewDeadline?: TDate | null;
+    approvalDeadline?: TDate | null;
+    responseDeadline?: TDate | null;
+    endDate: TDate;
+    createdAt: TDate;
+    updatedAt: TDate;
 }
+
+export type CycleDto = CycleBaseDto<Date>;
+
+export type CycleResponseDto = CycleBaseDto<string>;

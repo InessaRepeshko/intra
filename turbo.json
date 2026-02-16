@@ -5,7 +5,7 @@
             "dependsOn": [
                 "^build",
                 "^db:generate",
-                "format",
+                "^format"
             ],
             "outputs": [
                 "dist/**",
@@ -126,6 +126,6 @@
         },
         "refresh:test": {
             "cache": false
-        },
+        }
     }
 }
