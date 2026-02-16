@@ -206,7 +206,7 @@ export class AuthService {
             const cookie: any = await ctx.createAuthCookie(token);
             // cookie might be { name, value, attributes }
             if (cookie && cookie.name && cookie.value) {
-                res.cookie(cookie.name, cookie.value, cookie.attributes as any);
+                res.cookie(cookie.name, cookie.value, cookie.attributes);
             } else {
                 // Fallback
                 res.cookie('better-auth.session_token', token, {
@@ -347,13 +347,13 @@ export class AuthService {
         betterAuthResponse: BetterAuthResponse,
         res: Response,
     ) {
-        const headerValue = (betterAuthResponse as any)?.headers?.get
-            ? (betterAuthResponse as any).headers.get('set-cookie')
+        const headerValue = betterAuthResponse?.headers?.get
+            ? betterAuthResponse.headers.get('set-cookie')
             : null;
         const setCookies =
             headerValue ??
-            ((betterAuthResponse as any)?.headers?.raw
-                ? (betterAuthResponse as any).headers.raw()['set-cookie']
+            (betterAuthResponse?.headers?.raw
+                ? betterAuthResponse.headers.raw()['set-cookie']
                 : undefined);
 
         if (!setCookies) {
@@ -404,7 +404,7 @@ export class AuthService {
     ): Promise<unknown> {
         if (!betterAuthResponse?.json) return null;
         try {
-            return await (betterAuthResponse as any).json();
+            return await betterAuthResponse.json();
         } catch {
             return null;
         }

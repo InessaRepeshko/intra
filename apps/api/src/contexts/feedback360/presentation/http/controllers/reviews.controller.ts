@@ -1,4 +1,4 @@
-import { IdentityRole, RespondentCategory } from '@intra/shared-kernel';
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -252,7 +252,7 @@ export class ReviewController {
     ): Promise<AnswerResponse[]> {
         const answers = await this.reviews.listAnswers(
             Number(id),
-            query.respondentCategory as RespondentCategory | undefined,
+            query.respondentCategory,
         );
         return answers.map(AnswerHttpMapper.toResponse);
     }
@@ -440,7 +440,7 @@ export class ReviewController {
         @CurrentUser() user: UserDomain,
     ): Promise<{ message: string }> {
         const actorId = user.id!;
-        const actorName = user.fullName!;
+        const actorName = user.fullName;
 
         await this.reviews.forceCompleteReview(Number(id), actorId, actorName);
 
