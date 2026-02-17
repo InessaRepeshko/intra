@@ -24,7 +24,7 @@ import {
 
 const ITEMS_PER_PAGE = 5;
 
-export function CyclesList() {
+export function CyclesListTable() {
     const [search, setSearch] = useState('');
     const [stage, setStage] = useState('ALL');
     const [dateRange, setDateRange] = useState<DateRange | undefined>(

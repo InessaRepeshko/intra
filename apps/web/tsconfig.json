@@ -39,13 +39,19 @@
       "@shared/*": [
         "src/shared/*"
       ],
-      "@shared/ui/*": [
-        "src/shared/ui/*"
+      "@/shared/*": [
+        "src/shared/*"
       ],
-      "@utils/*": [
+      "@shared/ui/*": [
+        "src/shared/components/ui/*"
+      ],
+      "@/shared/ui/*": [
+        "src/shared/components/ui/*"
+      ],
+      "@shared/utils/*": [
         "src/shared/utils/*"
       ],
-      "@hooks/*": [
+      "@shared/hooks/*": [
         "src/shared/hooks/*"
       ],
     }
