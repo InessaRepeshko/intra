@@ -1,26 +1,29 @@
 'use client';
 
-import { Plus } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
-import { mockCycles } from '@/entities/cycle/model/mocks';
 import {
-    CycleResponse,
-    CycleStage,
-    SortDirection,
-} from '@/entities/cycle/model/types';
+    useCyclesQuery,
+    useReviewCountsQuery,
+} from '@/entities/cycle/api/cycle.queries';
+import type { Cycle } from '@/entities/cycle/model/mapper';
+import { CycleStage, SortDirection } from '@/entities/cycle/model/types';
 import { CyclesFilters } from '@/entities/cycle/ui/cycles-filters';
 import { CyclesPagination } from '@/entities/cycle/ui/cycles-pagination';
 import { CyclesTable } from '@/entities/cycle/ui/cycles-table';
-import { Button } from '@/shared/ui/button';
+import { CreateCycleForm } from '@/features/manage-cycles/create-cycle/ui/CreateCycleForm';
+import { DeleteCycleDialog } from '@/features/manage-cycles/delete-cycle/ui/DeleteCycleDialog';
+import { ForceFinishCycleDialog } from '@/features/manage-cycles/force-finish-cycle/ui/ForceFinishCycleButton';
+import { Button } from '@/shared/components/ui/button';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/shared/ui/card';
+} from '@/shared/components/ui/card';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -35,6 +38,30 @@ export function CyclesListTable() {
         SortDirection.DESC,
     );
     const [currentPage, setCurrentPage] = useState(1);
+
+    // Feature dialogs state
+    const [forceFinishCycle, setForceFinishCycle] = useState<Cycle | null>(
+        null,
+    );
+    const [deleteCycle, setDeleteCycle] = useState<Cycle | null>(null);
+
+    // Build query params
+    const queryParams = useMemo(() => {
+        const params: Record<string, unknown> = {};
+
+        if (search.trim()) params.search = search.trim();
+        if (stage !== 'ALL') params.stage = stage;
+        if (sortField) params.sortBy = sortField;
+        if (sortDirection) params.sortDirection = sortDirection;
+
+        return params;
+    }, [search, stage, sortField, sortDirection]);
+
+    const { data: cycles = [], isLoading, isError } = useCyclesQuery(queryParams);
+
+    // Fetch review counts for all cycles
+    const cycleIds = cycles.map((c) => c.id);
+    const { reviewCounts } = useReviewCountsQuery(cycleIds);
 
     const handleSort = (field: string) => {
         if (sortField === field) {
@@ -59,57 +86,23 @@ export function CyclesListTable() {
         setCurrentPage(1);
     };
 
+    // Client-side date range filtering (dates not part of search query)
     const filteredCycles = useMemo(() => {
-        let result: CycleResponse[] = [...mockCycles];
+        let result = cycles;
 
-        // Search filter
-        if (search.trim()) {
-            const q = search.toLowerCase();
-            result = result.filter(
-                (c) =>
-                    c.title.toLowerCase().includes(q) ||
-                    c.description?.toLowerCase().includes(q),
-            );
-        }
-
-        // Stage filter
-        if (stage !== 'ALL') {
-            result = result.filter((c) => c.stage === stage);
-        }
-
-        // Date range filter
         if (dateRange?.from) {
             const from = dateRange.from.getTime();
             result = result.filter(
-                (c) => new Date(c.startDate).getTime() >= from,
+                (c) => c.startDate.getTime() >= from,
             );
         }
         if (dateRange?.to) {
             const to = dateRange.to.getTime();
-            result = result.filter((c) => new Date(c.endDate).getTime() <= to);
+            result = result.filter((c) => c.endDate.getTime() <= to);
         }
 
-        // Sorting
-        result.sort((a, b) => {
-            let comparison = 0;
-            const field = sortField as keyof CycleResponse;
-
-            const aVal = a[field] ?? '';
-            const bVal = b[field] ?? '';
-
-            if (typeof aVal === 'string' && typeof bVal === 'string') {
-                comparison = aVal.localeCompare(bVal);
-            } else if (typeof aVal === 'number' && typeof bVal === 'number') {
-                comparison = aVal - bVal;
-            }
-
-            return sortDirection === SortDirection.ASC
-                ? comparison
-                : -comparison;
-        });
-
         return result;
-    }, [search, stage, dateRange, sortField, sortDirection]);
+    }, [cycles, dateRange]);
 
     const totalPages = Math.ceil(filteredCycles.length / ITEMS_PER_PAGE);
     const paginatedCycles = filteredCycles.slice(
@@ -118,10 +111,10 @@ export function CyclesListTable() {
     );
 
     // Summary stats
-    const activeCycles = mockCycles.filter(
+    const activeCycles = cycles.filter(
         (c) => c.stage === CycleStage.ACTIVE,
     ).length;
-    const totalCycles = mockCycles.length;
+    const totalCycles = cycles.length;
 
     return (
         <main className="min-h-screen bg-muted/30">
@@ -145,10 +138,14 @@ export function CyclesListTable() {
                             total cycles.
                         </p>
                     </div>
-                    <Button size="lg" className="shrink-0">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Create New Cycle
-                    </Button>
+                    <CreateCycleForm
+                        trigger={
+                            <Button size="lg" className="shrink-0">
+                                <Plus className="mr-2 h-4 w-4" />
+                                Create New Cycle
+                            </Button>
+                        }
+                    />
                 </div>
 
                 {/* Main Card */}
@@ -156,7 +153,7 @@ export function CyclesListTable() {
                     <CardHeader className="pb-4">
                         <CardTitle className="text-lg">All Cycles</CardTitle>
                         <CardDescription>
-                            Search, filter, and manage your feedback cycles.
+                            Search, filter, and manage feedback 360° cycles.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-6">
@@ -180,25 +177,61 @@ export function CyclesListTable() {
                             onReset={handleReset}
                         />
 
-                        {/* Table */}
-                        <CyclesTable
-                            cycles={paginatedCycles}
-                            sortField={sortField}
-                            sortDirection={sortDirection}
-                            onSort={handleSort}
-                        />
+                        {/* Loading State */}
+                        {isLoading && (
+                            <div className="flex items-center justify-center py-16">
+                                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                            </div>
+                        )}
 
-                        {/* Pagination */}
-                        <CyclesPagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            totalItems={filteredCycles.length}
-                            limit={ITEMS_PER_PAGE}
-                            onPageChange={setCurrentPage}
-                        />
+                        {/* Error State */}
+                        {isError && (
+                            <div className="flex flex-col items-center justify-center py-16 text-center">
+                                <h3 className="text-lg font-semibold text-destructive">
+                                    Failed to load cycles
+                                </h3>
+                                <p className="mt-1 text-sm text-muted-foreground">
+                                    Please try refreshing the page.
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Table */}
+                        {!isLoading && !isError && (
+                            <>
+                                <CyclesTable
+                                    cycles={paginatedCycles}
+                                    reviewCounts={reviewCounts}
+                                    sortField={sortField}
+                                    sortDirection={sortDirection}
+                                    onSort={handleSort}
+                                    onForceFinish={setForceFinishCycle}
+                                    onDelete={setDeleteCycle}
+                                />
+
+                                {/* Pagination */}
+                                <CyclesPagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    totalItems={filteredCycles.length}
+                                    limit={ITEMS_PER_PAGE}
+                                    onPageChange={setCurrentPage}
+                                />
+                            </>
+                        )}
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Feature Dialogs */}
+            <ForceFinishCycleDialog
+                cycle={forceFinishCycle}
+                onClose={() => setForceFinishCycle(null)}
+            />
+            <DeleteCycleDialog
+                cycle={deleteCycle}
+                onClose={() => setDeleteCycle(null)}
+            />
         </main>
     );
 }

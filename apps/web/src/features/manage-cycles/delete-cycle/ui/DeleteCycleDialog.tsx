@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import type { Cycle } from '@/entities/cycle/model/mapper';
 import {
     AlertDialog,
@@ -12,20 +14,17 @@ import {
     AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog';
 
-import { useForceFinishCycleMutation } from '../api/force-finish.mutation';
+import { useDeleteCycleMutation } from '../api/delete-cycle.mutation';
 
-interface ForceFinishCycleDialogProps {
+interface DeleteCycleDialogProps {
     cycle: Cycle | null;
     onClose: () => void;
 }
 
-export function ForceFinishCycleDialog({
-    cycle,
-    onClose,
-}: ForceFinishCycleDialogProps) {
-    const mutation = useForceFinishCycleMutation();
+export function DeleteCycleDialog({ cycle, onClose }: DeleteCycleDialogProps) {
+    const mutation = useDeleteCycleMutation();
 
-    const handleForceFinish = () => {
+    const handleDelete = () => {
         if (!cycle) return;
         mutation.mutate(cycle.id, {
             onSuccess: () => onClose(),
@@ -36,14 +35,14 @@ export function ForceFinishCycleDialog({
         <AlertDialog open={!!cycle} onOpenChange={() => onClose()}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Force Finish Cycle</AlertDialogTitle>
+                    <AlertDialogTitle>Delete Cycle</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to force finish{' '}
+                        Are you sure you want to delete{' '}
                         <span className="font-semibold text-foreground">
                             &ldquo;{cycle?.title}&rdquo;
                         </span>
-                        ? This will immediately end the cycle and all pending
-                        reviews will be closed. This action cannot be undone.
+                        ? This will permanently remove the cycle and all
+                        associated feedback data. This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -51,13 +50,11 @@ export function ForceFinishCycleDialog({
                         Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
-                        onClick={handleForceFinish}
+                        onClick={handleDelete}
                         disabled={mutation.isPending}
-                        className="bg-amber-600 text-white hover:bg-amber-700"
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     >
-                        {mutation.isPending
-                            ? 'Finishing...'
-                            : 'Force Finish'}
+                        {mutation.isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

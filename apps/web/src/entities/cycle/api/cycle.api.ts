@@ -1,0 +1,58 @@
+import type { CycleFilterQuery, CycleResponseDto } from '@intra/shared-kernel';
+
+import { apiClient } from '@/shared/api/api-client';
+
+const CYCLES_BASE = '/feedback360/cycles';
+const REVIEWS_BASE = '/feedback360/reviews';
+
+export async function fetchCycles(
+    params?: CycleFilterQuery,
+): Promise<CycleResponseDto[]> {
+    const { data } = await apiClient.get<CycleResponseDto[]>(CYCLES_BASE, { params });
+    return data;
+}
+
+export async function fetchCycleById(id: number): Promise<CycleResponseDto> {
+    const { data } = await apiClient.get<CycleResponseDto>(`${CYCLES_BASE}/${id}`);
+    return data;
+}
+
+export async function createCycle(
+    payload: Record<string, unknown>,
+): Promise<CycleResponseDto> {
+    const { data } = await apiClient.post<CycleResponseDto>(CYCLES_BASE, payload);
+    return data;
+}
+
+export async function updateCycle(
+    id: number,
+    payload: Record<string, unknown>,
+): Promise<CycleResponseDto> {
+    const { data } = await apiClient.patch<CycleResponseDto>(
+        `${CYCLES_BASE}/${id}`,
+        payload,
+    );
+    return data;
+}
+
+export async function deleteCycle(id: number): Promise<void> {
+    await apiClient.delete(`${CYCLES_BASE}/${id}`);
+}
+
+export async function forceFinishCycle(
+    id: number,
+): Promise<CycleResponseDto> {
+    const { data } = await apiClient.post<CycleResponseDto>(
+        `${CYCLES_BASE}/${id}/force-finish`,
+    );
+    return data;
+}
+
+export async function fetchReviewCountByCycleId(
+    cycleId: number,
+): Promise<number> {
+    const { data } = await apiClient.get<unknown[]>(REVIEWS_BASE, {
+        params: { cycleId },
+    });
+    return data.length;
+}

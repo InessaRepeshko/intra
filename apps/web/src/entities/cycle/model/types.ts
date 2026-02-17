@@ -6,8 +6,8 @@ import {
 } from '@intra/shared-kernel';
 
 export enum SortDirection {
-    ASC = 'ASC',
-    DESC = 'DESC',
+    ASC = 'asc',
+    DESC = 'desc',
 }
 
 export { CycleSortField, CycleStage };
