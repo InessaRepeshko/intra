@@ -218,4 +218,8 @@ export type { QuestionAccumulator } from './reporting/dto/question/question-accu
 export type { ReportEntitySummaryTotalsDto } from './reporting/dto/report-entity-summary-totals-dto.interface';
 
 /* Auth */
-export type { AuthResponseDto } from './auth/dto/auth-response-dto.interface';
+export type {
+    AuthDto,
+    AuthSession,
+    AuthUser,
+} from './auth/dto/auth-dto.interface';

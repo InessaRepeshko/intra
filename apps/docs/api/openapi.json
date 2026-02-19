@@ -7647,6 +7647,92 @@
   "servers": [],
   "components": {
     "schemas": {
+      "AuthUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "User ID",
+            "example": 1,
+            "nullable": false
+          },
+          "name": {
+            "type": "string",
+            "description": "User name",
+            "example": "John Doe",
+            "nullable": false
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "john.doe@gmail.com",
+            "nullable": false
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "description": "Email verification status",
+            "example": true,
+            "nullable": false
+          },
+          "image": {
+            "type": "string",
+            "description": "User image",
+            "example": "https://lh3.googleusercontent.com/link-to-image",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "User creation date",
+            "example": "2022-01-01T00:00:00.000Z",
+            "nullable": false
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "User update date",
+            "example": "2022-01-01T00:00:00.000Z",
+            "nullable": false
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "emailVerified",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AuthSessionDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Session token",
+            "example": "eyJhbGciOcCI6IkpXVCJ9...",
+            "nullable": false
+          },
+          "user": {
+            "description": "User data",
+            "nullable": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AuthUserDto"
+              }
+            ]
+          },
+          "redirect": {
+            "type": "boolean",
+            "description": "Redirect flag",
+            "example": false,
+            "nullable": false
+          }
+        },
+        "required": [
+          "token",
+          "user",
+          "redirect"
+        ]
+      },
       "LoginResponseDto": {
         "type": "object",
         "properties": {
@@ -7657,10 +7743,13 @@
             "nullable": false
           },
           "session": {
-            "type": "object",
             "description": "Session data",
-            "example": {},
-            "additionalProperties": true
+            "nullable": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AuthSessionDto"
+              }
+            ]
           }
         },
         "required": [

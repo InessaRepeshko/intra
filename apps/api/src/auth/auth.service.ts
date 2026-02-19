@@ -12,7 +12,8 @@ import {
     BETTER_AUTH_INSTANCE,
     BetterAuthInstance,
 } from './better-auth.provider';
-import { LoginResponseDto } from './dto/login-response.dto';
+import { AuthResponseDto } from './dto/auth-response.dto';
+import { AuthMapper } from './mappers/auth.mapper';
 
 type BetterAuthResponse = any;
 
@@ -74,7 +75,7 @@ export class AuthService {
     async handleGoogleCallback(
         req: Request,
         res: Response,
-    ): Promise<LoginResponseDto> {
+    ): Promise<AuthResponseDto> {
         const code = req.query.code as string | undefined;
         const state = req.query.state as string | undefined;
         if (!code) throw new BadRequestException('Missing code');
@@ -91,7 +92,7 @@ export class AuthService {
                     token: tokens.id_token,
                     accessToken: tokens.access_token,
                 },
-                callbackURL: this.getFrontendUrl(),
+                callbackURL: this.getFrontendUrl() + '/me',
                 disableRedirect: true,
             },
             asResponse: true,
@@ -116,7 +117,7 @@ export class AuthService {
             avatarUrl: profile.picture,
         });
 
-        return { userId: user.id!, session };
+        return AuthMapper.toAuthResponse(user.id!, session);
     }
 
     async getSessionFromRequest(req: Request): Promise<{
@@ -139,7 +140,7 @@ export class AuthService {
      * Dev/Test login - allows authenticating as any user by email
      * IMPORTANT: This should only be used in development/testing environments
      */
-    async devLogin(email: string, res: Response): Promise<LoginResponseDto> {
+    async devLogin(email: string, res: Response): Promise<AuthResponseDto> {
         // Check if not in production
         if (this.isProd) {
             throw new UnauthorizedException(
@@ -224,7 +225,7 @@ export class AuthService {
             });
         }
 
-        return { userId: user.id!, session };
+        return AuthMapper.toAuthResponse(user.id!, session);
     }
 
     async logout(req: Request, res: Response): Promise<void> {
@@ -364,8 +365,8 @@ export class AuthService {
         const cookies = Array.isArray(setCookies)
             ? setCookies
             : typeof setCookies === 'string'
-              ? setCookies.split(', ').filter((c) => c.includes('='))
-              : [setCookies];
+                ? setCookies.split(', ').filter((c) => c.includes('='))
+                : [setCookies];
 
         for (const cookieStr of cookies) {
             const parts = cookieStr.split(';').map((p) => p.trim());
