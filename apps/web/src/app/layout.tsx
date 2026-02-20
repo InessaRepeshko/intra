@@ -9,9 +9,16 @@ const _geist = Geist({ subsets: ['latin'] });
 const _geistMono = Geist_Mono({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: '360° Feedback Cycles | HR Admin',
+    title: 'Intra 360° Feedback Platform',
     description:
         'Manage and monitor 360° feedback cycles across your organization',
+    keywords: [
+        '360 feedback',
+        'performance review',
+        'employee feedback',
+        'HR platform',
+        'people analytics',
+    ],
 };
 
 export default function RootLayout({

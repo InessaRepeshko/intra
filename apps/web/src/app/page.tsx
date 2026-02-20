@@ -1,11 +1,27 @@
-export default function Home() {
+import { Header } from "@/widgets/landing/ui/header"
+import { HeroSection } from "@/widgets/landing/ui/hero-section"
+import { OverviewSection } from "@/widgets/landing/ui/overview-section"
+import { HowItWorksSection } from "@/widgets/landing/ui/how-it-works-section"
+import { KeyFeaturesSection } from "@/widgets/landing/ui/key-features-section"
+import { ProblemSolutionSection } from "@/widgets/landing/ui/problem-solution-section"
+import { SecuritySection } from "@/widgets/landing/ui/security-section"
+import { CtaSection } from "@/widgets/landing/ui/cta-section"
+import { Footer } from "@/widgets/landing/ui/footer"
+
+export default function LandingPage() {
     return (
-        <main className="min-h-screen bg-muted/30">
-            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                <h1 className="text-3xl font-bold tracking-tight text-foreground text-balance">
-                    Home Page
-                </h1>
-            </div>
-        </main>
-    );
+        <div className="min-h-screen bg-background text-foreground">
+            <Header />
+            <main>
+                <HeroSection />
+                <OverviewSection />
+                <HowItWorksSection />
+                <KeyFeaturesSection />
+                <ProblemSolutionSection />
+                <SecuritySection />
+                <CtaSection />
+            </main>
+            <Footer />
+        </div>
+    )
 }

@@ -54,6 +54,9 @@
       "@shared/hooks/*": [
         "src/shared/hooks/*"
       ],
+      "@/public/*": [
+        "public/*"
+      ]
     }
   },
   "include": [
