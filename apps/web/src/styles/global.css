@@ -2,7 +2,6 @@
 
 @tailwind utilities;
 
-
 @tailwind components;
 
 body {
@@ -14,12 +13,6 @@ body {
         text-wrap: balance;
     }
 }
-
-
-
-
-
-
 
 @layer base {
     :root {

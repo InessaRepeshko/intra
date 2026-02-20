@@ -49,7 +49,7 @@ function ProfileContent() {
 
     return (
         <div className="flex flex-col gap-6">
-            <PageHeader title="My Profile" />
+            <PageHeader title="Profile" />
 
             {/* Profile Header */}
             <div className="flex items-center gap-4">

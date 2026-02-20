@@ -1,5 +1,6 @@
 'use client';
 
+import { devLogin, login } from '@/entities/auth/api/auth.api';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
@@ -7,7 +8,6 @@ import { Label } from '@/shared/ui/label';
 import { Separator } from '@/shared/ui/separator';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { login, devLogin } from '@/entities/auth/api/auth.api';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -28,12 +28,12 @@ export default function LoginPage() {
             await devLogin(email);
             // After successful login, redirect to the dashboard
             // The AuthContext on the dashboard will automatically fetch user data
-            router.push('/');
+            router.push('/profile');
         } catch (err: any) {
             console.error('Dev login failed:', err);
             setError(
                 err.response?.data?.message ||
-                'Failed to login. Please ensure the email is correct.'
+                'Failed to login. Please ensure the email is correct.',
             );
         } finally {
             setIsLoading(false);
@@ -123,7 +123,7 @@ export default function LoginPage() {
                                 className="w-full"
                                 disabled={isLoading || !email}
                             >
-                                {isLoading ? "Logging in..." : "Dev Login"}
+                                {isLoading ? 'Logging in...' : 'Dev Login'}
                             </Button>
                         </form>
                     </CardContent>

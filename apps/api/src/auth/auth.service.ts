@@ -225,7 +225,10 @@ export class AuthService {
             });
         }
 
-        return AuthMapper.toAuthResponse(user.id!, session);
+        return AuthMapper.toAuthResponse(user.id!, {
+            ...session,
+            user: baUser,
+        });
     }
 
     async logout(req: Request, res: Response): Promise<void> {
@@ -238,8 +241,10 @@ export class AuthService {
     }
 
     private buildCallbackUrl(): string {
-        const protocol = this.config.get<string>('APP_FRONTEND_PROTOCOL') ?? 'http';
-        const host = this.config.get<string>('APP_FRONTEND_HOST') ?? 'localhost';
+        const protocol =
+            this.config.get<string>('APP_FRONTEND_PROTOCOL') ?? 'http';
+        const host =
+            this.config.get<string>('APP_FRONTEND_HOST') ?? 'localhost';
         const port = this.config.get<string>('APP_FRONTEND_PORT');
         if (!port || protocol === 'https') {
             return `${protocol}://${host}/auth/google/callback`;
@@ -365,8 +370,8 @@ export class AuthService {
         const cookies = Array.isArray(setCookies)
             ? setCookies
             : typeof setCookies === 'string'
-                ? setCookies.split(', ').filter((c) => c.includes('='))
-                : [setCookies];
+              ? setCookies.split(', ').filter((c) => c.includes('='))
+              : [setCookies];
 
         for (const cookieStr of cookies) {
             const parts = cookieStr.split(';').map((p) => p.trim());

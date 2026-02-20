@@ -6,7 +6,6 @@ import {
 
 export class AuthMapper {
     static toAuthResponse(userId: number, session: any): AuthResponseDto {
-        console.log(session, userId);
         return {
             userId,
             session: AuthMapper.toSessionResponse(session),

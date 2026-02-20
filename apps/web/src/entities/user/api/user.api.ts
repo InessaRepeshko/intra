@@ -12,9 +12,10 @@ import { apiClient } from '@/shared/api/api-client';
 const USERS_BASE = 'identity/users';
 const POSITIONS_BASE = 'organization/positions';
 const TEAMS_BASE = 'organization/teams';
+const AUTH_BASE = 'auth';
 
 export async function fetchCurrentUser(): Promise<UserDto> {
-    const response = await apiClient.get<UserDto>(`${USERS_BASE}/me`);
+    const response = await apiClient.get<UserDto>(`${AUTH_BASE}/me`);
     return response.data;
 }
 

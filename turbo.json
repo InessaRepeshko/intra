@@ -5,7 +5,8 @@
             "dependsOn": [
                 "^build",
                 "^db:generate",
-                "^format"
+                "^format",
+                "format"
             ],
             "outputs": [
                 "dist/**",
@@ -68,7 +69,7 @@
         },
         "format": {
             "cache": false,
-            // "outputLogs": "errors-only"
+            "outputLogs": "errors-only"
         },
         "lint": {
             "outputs": [],

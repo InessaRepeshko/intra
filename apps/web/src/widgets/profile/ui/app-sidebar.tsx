@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import logo from '@/public/logo.png';
 
 interface NavItem {
     title: string;
@@ -35,7 +36,7 @@ interface NavItem {
 const navItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: '/',
+        href: '/dashboard',
         icon: LayoutDashboard,
     },
     {
@@ -83,7 +84,7 @@ const navItems: NavItem[] = [
         roles: [IdentityRole.HR, IdentityRole.ADMIN],
     },
     {
-        title: 'My Profile',
+        title: 'Profile',
         href: '/profile',
         icon: User,
     },
@@ -103,15 +104,13 @@ export function AppSidebar() {
     );
 
     return (
-        <aside className="flex h-screen w-64 flex-col border-r border-sidebar-border bg-sidebar">
-            <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
-                    I
-                </div>
-                <span className="text-lg font-semibold text-sidebar-foreground">
-                    Intra 360
-                </span>
-            </div>
+        <aside className="flex h-screen w-64 flex-col border-r border-sidebar-border">
+            <Link href="/" className="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
+                <img src={logo.src} alt="Intra" className="h-8 w-8" />
+                    <span className="text-2xl font-semibold tracking-tight text-foreground">
+                        Intra
+                    </span>
+            </Link>
 
             <ScrollArea className="flex-1 px-3 py-4">
                 <nav className="flex flex-col gap-1">
@@ -193,12 +192,14 @@ export function AppSidebar() {
                             {user.positionTitle}
                         </p>
                     </div>
-                    <button
-                        className="text-muted-foreground hover:text-foreground transition-colors"
-                        aria-label="Log out"
-                    >
-                        <LogOut className="h-4 w-4" />
+                    <Link href="/logout">
+                        <button
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                            aria-label="Log out"
+                        >
+                            <LogOut className="h-4 w-4" />
                     </button>
+                    </Link>
                 </div>
             </div>
         </aside>
