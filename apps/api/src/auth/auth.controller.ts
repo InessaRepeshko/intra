@@ -17,8 +17,8 @@ import { UserResponse } from '../contexts/identity/presentation/http/models/user
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
-import { DevLoginRequestDto } from './dto/dev-login-request.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
+import { DevLoginRequestDto } from './dto/dev-login-request.dto';
 import { AuthSessionGuard } from './guards/auth-session.guard';
 import { RolesGuard } from './guards/roles.guard';
 
@@ -26,7 +26,7 @@ import { RolesGuard } from './guards/roles.guard';
 @Controller('auth')
 @UseGuards(AuthSessionGuard, RolesGuard)
 export class AuthController {
-    constructor(private readonly authService: AuthService) { }
+    constructor(private readonly authService: AuthService) {}
 
     @Get('google')
     @Public()

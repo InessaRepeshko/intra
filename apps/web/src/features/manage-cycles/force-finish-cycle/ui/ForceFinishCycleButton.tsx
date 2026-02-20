@@ -55,9 +55,7 @@ export function ForceFinishCycleDialog({
                         disabled={mutation.isPending}
                         className="bg-amber-600 text-white hover:bg-amber-700"
                     >
-                        {mutation.isPending
-                            ? 'Finishing...'
-                            : 'Force Finish'}
+                        {mutation.isPending ? 'Finishing...' : 'Force Finish'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

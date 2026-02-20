@@ -20,7 +20,8 @@ export function ProblemSolutionSection() {
                         Modernizing the Feedback Experience
                     </h2>
                     <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground text-pretty">
-                        Ditch the spreadsheets and embrace automated, anonymous, and actionable 360° reviews.
+                        Ditch the spreadsheets and embrace automated, anonymous,
+                        and actionable 360° reviews.
                     </p>
                 </div>
 
@@ -37,31 +38,55 @@ export function ProblemSolutionSection() {
                         <div className="space-y-4">
                             <div className="flex gap-4">
                                 <div className="flex-shrink-0">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 font-semibold text-sm">✗</div>
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 font-semibold text-sm">
+                                        ✗
+                                    </div>
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-foreground mb-1">Spreadsheet Chaos</h3>
-                                    <p className="text-sm text-muted-foreground">Manual survey collection in Excel creates silos, version conflicts, and lost responses.</p>
+                                    <h3 className="font-semibold text-foreground mb-1">
+                                        Spreadsheet Chaos
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        Manual survey collection in Excel
+                                        creates silos, version conflicts, and
+                                        lost responses.
+                                    </p>
                                 </div>
                             </div>
 
                             <div className="flex gap-4">
                                 <div className="flex-shrink-0">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 font-semibold text-sm">✗</div>
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 font-semibold text-sm">
+                                        ✗
+                                    </div>
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-foreground mb-1">Subjective Results</h3>
-                                    <p className="text-sm text-muted-foreground">Without anonymity, feedback becomes politically motivated and loses credibility.</p>
+                                    <h3 className="font-semibold text-foreground mb-1">
+                                        Subjective Results
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        Without anonymity, feedback becomes
+                                        politically motivated and loses
+                                        credibility.
+                                    </p>
                                 </div>
                             </div>
 
                             <div className="flex gap-4">
                                 <div className="flex-shrink-0">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 font-semibold text-sm">✗</div>
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 font-semibold text-sm">
+                                        ✗
+                                    </div>
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-foreground mb-1">Delayed Insights</h3>
-                                    <p className="text-sm text-muted-foreground">Processing and analyzing results manually takes weeks, and actionable insights come too late.</p>
+                                    <h3 className="font-semibold text-foreground mb-1">
+                                        Delayed Insights
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        Processing and analyzing results
+                                        manually takes weeks, and actionable
+                                        insights come too late.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -80,31 +105,56 @@ export function ProblemSolutionSection() {
                             <div className="space-y-4">
                                 <div className="flex gap-4">
                                     <div className="flex-shrink-0">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-pink-200 to-yellow-200 text-white font-semibold text-sm">✓</div>
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-pink-200 to-yellow-200 text-white font-semibold text-sm">
+                                            ✓
+                                        </div>
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold text-foreground mb-1">Automatic Workflows</h3>
-                                        <p className="text-sm text-muted-foreground">Set deadlines and reminders once. Intra handles distribution, collection, and aggregation automatically.</p>
+                                        <h3 className="font-semibold text-foreground mb-1">
+                                            Automatic Workflows
+                                        </h3>
+                                        <p className="text-sm text-muted-foreground">
+                                            Set deadlines and reminders once.
+                                            Intra handles distribution,
+                                            collection, and aggregation
+                                            automatically.
+                                        </p>
                                     </div>
                                 </div>
 
                                 <div className="flex gap-4">
                                     <div className="flex-shrink-0">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-pink-200 to-yellow-200 text-white font-semibold text-sm">✓</div>
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-pink-200 to-yellow-200 text-white font-semibold text-sm">
+                                            ✓
+                                        </div>
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold text-foreground mb-1">100% Anonymous</h3>
-                                        <p className="text-sm text-muted-foreground">Complete anonymization ensures honest feedback without fear of repercussions or bias.</p>
+                                        <h3 className="font-semibold text-foreground mb-1">
+                                            100% Anonymous
+                                        </h3>
+                                        <p className="text-sm text-muted-foreground">
+                                            Complete anonymization ensures
+                                            honest feedback without fear of
+                                            repercussions or bias.
+                                        </p>
                                     </div>
                                 </div>
 
                                 <div className="flex gap-4">
                                     <div className="flex-shrink-0">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-pink-200 to-yellow-200 text-white font-semibold text-sm">✓</div>
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-pink-200 to-yellow-200 text-white font-semibold text-sm">
+                                            ✓
+                                        </div>
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold text-foreground mb-1">Instant Insights</h3>
-                                        <p className="text-sm text-muted-foreground">Visual reports and analytics are ready immediately, so you can act on feedback right away.</p>
+                                        <h3 className="font-semibold text-foreground mb-1">
+                                            Instant Insights
+                                        </h3>
+                                        <p className="text-sm text-muted-foreground">
+                                            Visual reports and analytics are
+                                            ready immediately, so you can act on
+                                            feedback right away.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -113,5 +163,5 @@ export function ProblemSolutionSection() {
                 </div>
             </div>
         </section>
-    )
+    );
 }

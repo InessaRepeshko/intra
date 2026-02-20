@@ -1,7 +1,6 @@
-import type { CycleFilterQuery } from '@intra/shared-kernel';
 import { useQueries, useQuery } from '@tanstack/react-query';
-
 import { type Cycle, mapCycleDtoToModel } from '../model/mapper';
+import { CycleFilterQuery } from '../model/types';
 import {
     fetchCycleById,
     fetchCycles,

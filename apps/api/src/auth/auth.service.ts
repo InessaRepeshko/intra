@@ -238,9 +238,9 @@ export class AuthService {
     }
 
     private buildCallbackUrl(): string {
-        const protocol = this.config.get<string>('APP_PROTOCOL') ?? 'http';
-        const host = this.config.get<string>('APP_HOST') ?? 'localhost';
-        const port = this.config.get<string>('APP_PORT');
+        const protocol = this.config.get<string>('APP_FRONTEND_PROTOCOL') ?? 'http';
+        const host = this.config.get<string>('APP_FRONTEND_HOST') ?? 'localhost';
+        const port = this.config.get<string>('APP_FRONTEND_PORT');
         if (!port || protocol === 'https') {
             return `${protocol}://${host}/auth/google/callback`;
         }

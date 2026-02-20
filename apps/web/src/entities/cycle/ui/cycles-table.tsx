@@ -29,8 +29,8 @@ import {
     TableHeader,
     TableRow,
 } from '@/shared/components/ui/table';
-import { StageBadge } from './stage-badge';
 import { SortDirection } from '../model/types';
+import { StageBadge } from './stage-badge';
 
 interface CyclesTableProps {
     cycles: Cycle[];

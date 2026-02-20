@@ -1,8 +1,12 @@
-
-import { AuthSessionDto, AuthUserDto, AuthResponseDto } from '../dto/auth-response.dto';
+import {
+    AuthResponseDto,
+    AuthSessionDto,
+    AuthUserDto,
+} from '../dto/auth-response.dto';
 
 export class AuthMapper {
     static toAuthResponse(userId: number, session: any): AuthResponseDto {
+        console.log(session, userId);
         return {
             userId,
             session: AuthMapper.toSessionResponse(session),

@@ -57,7 +57,11 @@ export function CyclesListTable() {
         return params;
     }, [search, stage, sortField, sortDirection]);
 
-    const { data: cycles = [], isLoading, isError } = useCyclesQuery(queryParams);
+    const {
+        data: cycles = [],
+        isLoading,
+        isError,
+    } = useCyclesQuery(queryParams);
 
     // Fetch review counts for all cycles
     const cycleIds = cycles.map((c) => c.id);
@@ -92,9 +96,7 @@ export function CyclesListTable() {
 
         if (dateRange?.from) {
             const from = dateRange.from.getTime();
-            result = result.filter(
-                (c) => c.startDate.getTime() >= from,
-            );
+            result = result.filter((c) => c.startDate.getTime() >= from);
         }
         if (dateRange?.to) {
             const to = dateRange.to.getTime();

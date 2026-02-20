@@ -6,6 +6,7 @@ import { CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { cn } from '@/lib/utils';
 import { Button } from '@/shared/components/ui/button';
 import { Calendar } from '@/shared/components/ui/calendar';
 import {
@@ -25,13 +26,9 @@ import {
     PopoverTrigger,
 } from '@/shared/components/ui/popover';
 import { Textarea } from '@/shared/components/ui/textarea';
-import { cn } from '@/lib/utils';
 
 import { useCreateCycleMutation } from '../api/create-cycle.mutation';
-import {
-    createCycleSchema,
-    type CreateCycleFormValues,
-} from '../model/schema';
+import { createCycleSchema, type CreateCycleFormValues } from '../model/schema';
 
 function DatePickerField({
     value,
@@ -173,15 +170,14 @@ export function CreateCycleForm({ trigger }: CreateCycleFormProps) {
                                 placeholder="3"
                                 {...form.register('minRespondentsThreshold')}
                             />
-                            {form.formState.errors
-                                .minRespondentsThreshold && (
-                                    <p className="text-sm text-destructive">
-                                        {
-                                            form.formState.errors
-                                                .minRespondentsThreshold.message
-                                        }
-                                    </p>
-                                )}
+                            {form.formState.errors.minRespondentsThreshold && (
+                                <p className="text-sm text-destructive">
+                                    {
+                                        form.formState.errors
+                                            .minRespondentsThreshold.message
+                                    }
+                                </p>
+                            )}
                         </div>
                     </div>
 
@@ -242,10 +238,7 @@ export function CreateCycleForm({ trigger }: CreateCycleFormProps) {
                                 <DatePickerField
                                     value={form.watch('responseDeadline')}
                                     onChange={(date) =>
-                                        form.setValue(
-                                            'responseDeadline',
-                                            date,
-                                        )
+                                        form.setValue('responseDeadline', date)
                                     }
                                     placeholder="Response"
                                 />
@@ -269,10 +262,7 @@ export function CreateCycleForm({ trigger }: CreateCycleFormProps) {
                                 <DatePickerField
                                     value={form.watch('approvalDeadline')}
                                     onChange={(date) =>
-                                        form.setValue(
-                                            'approvalDeadline',
-                                            date,
-                                        )
+                                        form.setValue('approvalDeadline', date)
                                     }
                                     placeholder="Approval"
                                 />
@@ -288,10 +278,7 @@ export function CreateCycleForm({ trigger }: CreateCycleFormProps) {
                         >
                             Cancel
                         </Button>
-                        <Button
-                            type="submit"
-                            disabled={mutation.isPending}
-                        >
+                        <Button type="submit" disabled={mutation.isPending}>
                             {mutation.isPending
                                 ? 'Creating...'
                                 : 'Create Cycle'}

@@ -1,6 +1,5 @@
-import Link from "next/link"
-import { Button } from "@/shared/ui/button"
-import { ArrowRight } from "lucide-react"
+import { Button } from '@/shared/ui/button';
+import Link from 'next/link';
 
 export function CtaSection() {
     return (
@@ -18,11 +17,15 @@ export function CtaSection() {
                     Start building a feedback culture today
                 </h2>
                 <p className="relative mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground text-pretty">
-                    Sign in with your Google workspace account and launch your first
-                    360-degree review cycle in minutes.
+                    Sign in with your Google workspace account and launch your
+                    first 360-degree review cycle in minutes.
                 </p>
                 <div className="relative mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                    <Button size="lg" className="gap-2 rounded-full px-8 text-base" asChild>
+                    <Button
+                        size="lg"
+                        className="gap-2 rounded-full px-8 text-base"
+                        asChild
+                    >
                         <Link href="/auth/google">
                             <span className="relative flex h-4 w-4">
                                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/80" />
@@ -42,5 +45,5 @@ export function CtaSection() {
                 </div>
             </div>
         </section>
-    )
+    );
 }

@@ -1,19 +1,18 @@
-import type { CycleResponseDto } from '@intra/shared-kernel';
+import type { CycleResponseDto } from '@/entities/cycle/model/types';
 
 /**
  * Frontend Cycle model with Date objects instead of ISO strings.
  */
-export interface Cycle
-    extends Omit<
-        CycleResponseDto,
-        | 'startDate'
-        | 'endDate'
-        | 'reviewDeadline'
-        | 'approvalDeadline'
-        | 'responseDeadline'
-        | 'createdAt'
-        | 'updatedAt'
-    > {
+export interface Cycle extends Omit<
+    CycleResponseDto,
+    | 'startDate'
+    | 'endDate'
+    | 'reviewDeadline'
+    | 'approvalDeadline'
+    | 'responseDeadline'
+    | 'createdAt'
+    | 'updatedAt'
+> {
     startDate: Date;
     endDate: Date;
     reviewDeadline: Date | null;

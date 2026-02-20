@@ -1,10 +1,12 @@
-import Link from "next/link"
-import { Button } from "@/shared/ui/button"
-import { ArrowRight } from "lucide-react"
+import { Button } from '@/shared/ui/button';
+import Link from 'next/link';
 
 export function HeroSection() {
     return (
-        <section id="hero" className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-32">
+        <section
+            id="hero"
+            className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-32"
+        >
             {/* Background gradient */}
             <div className="pointer-events-none absolute inset-0">
                 <div className="absolute top-0 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-gradient-to-b from-foreground/[0.04] to-transparent blur-3xl" />
@@ -13,22 +15,22 @@ export function HeroSection() {
 
             {/* Badge */}
             <div className="relative mb-8 inline-flex items-center gap-4 rounded-full border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 px-8 py-3 text-xl text-muted-foreground backdrop-blur-sm">
-                <span className="bg-gradient-to-r from-pink-600 to-amber-600 bg-clip-text text-transparent font-medium">360° Feedback Platform</span>
+                <span className="bg-gradient-to-r from-pink-600 to-amber-600 bg-clip-text text-transparent font-medium">
+                    360° Feedback Platform
+                </span>
             </div>
 
             {/* Heading */}
             <h1 className="relative max-w-4xl text-center text-5xl font-bold leading-[1.1] tracking-tight text-foreground md:text-7xl lg:text-8xl text-balance">
-                {" "}
+                {' '}
                 <span className="bg-gradient-to-r from-foreground via-foreground/80 to-foreground bg-clip-text text-transparent">
                     The complete
                 </span>
-                <br />
-                {" "}
+                <br />{' '}
                 <span className="bg-gradient-to-r from-foreground via-foreground/70 to-foreground bg-clip-text text-transparent">
                     platform for
                 </span>
-                <br />
-                {" "}
+                <br />{' '}
                 <span className="bg-gradient-to-r from-foreground via-foreground/60 to-foreground bg-clip-text text-transparent">
                     people growth
                 </span>
@@ -36,13 +38,18 @@ export function HeroSection() {
 
             {/* Subheading */}
             <p className="relative mt-6 max-w-2xl text-center text-lg leading-relaxed text-muted-foreground md:text-xl text-pretty">
-                Run structured 360-degree performance reviews with role-based access,
-                competence libraries, and actionable analytics that drive real growth.
+                Run structured 360-degree performance reviews with role-based
+                access, competence libraries, and actionable analytics that
+                drive real growth.
             </p>
 
             {/* CTAs */}
             <div className="relative mt-10 flex flex-col items-center gap-4 sm:flex-row">
-                <Button size="lg" className="gap-2 rounded-full px-8 text-base" asChild>
+                <Button
+                    size="lg"
+                    className="gap-2 rounded-full px-8 text-base"
+                    asChild
+                >
                     <Link href="/auth/google">
                         <span className="relative flex h-4 w-4">
                             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/80" />
@@ -60,7 +67,7 @@ export function HeroSection() {
                     <Link href="#how-it-works">See How It Works</Link>
                 </Button>
             </div>
-            
+
             {/* 
             Highlight section
             <div className="relative mt-32 w-full max-w-3xl">
@@ -95,5 +102,5 @@ export function HeroSection() {
             </div> 
             */}
         </section>
-    )
+    );
 }

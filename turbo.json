@@ -68,7 +68,7 @@
         },
         "format": {
             "cache": false,
-            "outputLogs": "errors-only"
+            // "outputLogs": "errors-only"
         },
         "lint": {
             "outputs": [],

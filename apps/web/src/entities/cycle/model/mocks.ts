@@ -1,6 +1,6 @@
-import { CycleResponse, CycleStage } from './types';
+import { CycleResponseDto, CycleStage } from './types';
 
-export const mockCycles: CycleResponse[] = [
+export const mockCycles: CycleResponseDto[] = [
     {
         id: 1,
         title: 'Q1 2026 Performance Review',

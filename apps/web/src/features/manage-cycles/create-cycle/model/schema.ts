@@ -5,10 +5,7 @@ export const createCycleSchema = z
     .object({
         title: z
             .string()
-            .min(
-                CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN,
-                'Title is required',
-            )
+            .min(CYCLE_CONSTRAINTS.TITLE.LENGTH.MIN, 'Title is required')
             .max(
                 CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX,
                 `Title must be at most ${CYCLE_CONSTRAINTS.TITLE.LENGTH.MAX} characters`,
@@ -21,10 +18,7 @@ export const createCycleSchema = z
             )
             .optional()
             .or(z.literal('')),
-        hrId: z.coerce
-            .number()
-            .int()
-            .min(1, 'HR ID must be a positive number'),
+        hrId: z.coerce.number().int().min(1, 'HR ID must be a positive number'),
         minRespondentsThreshold: z.coerce
             .number()
             .int()
