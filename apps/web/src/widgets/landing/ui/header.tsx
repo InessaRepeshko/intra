@@ -1,7 +1,7 @@
 'use client';
 
-import logo from '@/public/logo.png';
-import { Button } from '@/shared/ui/button';
+import logo from '@public/logo.png';
+import { Button } from '@shared/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';

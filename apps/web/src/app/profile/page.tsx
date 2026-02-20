@@ -1,11 +1,16 @@
 'use client';
 
-import { useAuth } from '@/lib/auth-context';
-import { mockRespondents, mockReviews } from '@/lib/mock-data';
-import { Avatar, AvatarFallback } from '@/shared/ui/avatar';
-import { Badge } from '@/shared/ui/badge';
-import { Button } from '@/shared/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
+import { useAuth } from '@entities/identity/user/model/auth-context';
+import { mockRespondents, mockReviews } from '@lib/mock-data';
+import { Avatar, AvatarFallback } from '@shared/components/ui/avatar';
+import { Badge } from '@shared/components/ui/badge';
+import { Button } from '@shared/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from '@shared/components/ui/card';
 import {
     Table,
     TableBody,
@@ -13,10 +18,10 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/shared/ui/table';
-import { DashboardLayout } from '@/widgets/profile/ui/dashboard-layout';
-import { PageHeader } from '@/widgets/profile/ui/page-header';
-import { StatusBadge } from '@/widgets/profile/ui/status-badge';
+} from '@shared/components/ui/table';
+import { PageHeader } from '@shared/ui/page-header';
+import { StatusBadge } from '@shared/ui/status-badge';
+import { DashboardLayout } from '@widgets/dashboard/dashboard-layout';
 import { Briefcase, Building2, ClipboardList, Mail } from 'lucide-react';
 import Link from 'next/link';
 

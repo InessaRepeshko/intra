@@ -1,6 +1,6 @@
 'use client';
 
-import { handleGoogleCallback } from '@/entities/auth/api/auth.api';
+import { handleGoogleCallback } from '@entities/identity/user/api/auth.api';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 
@@ -10,7 +10,7 @@ function AuthCallbackContent() {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        const params = searchParams.toString();
+        const params = searchParams?.toString();
         if (!params) {
             setError('Missing authentication parameters.');
             return;

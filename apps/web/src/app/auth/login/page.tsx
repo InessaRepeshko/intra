@@ -1,11 +1,11 @@
 'use client';
 
-import { devLogin, login } from '@/entities/auth/api/auth.api';
-import { Button } from '@/shared/ui/button';
-import { Card, CardContent } from '@/shared/ui/card';
-import { Input } from '@/shared/ui/input';
-import { Label } from '@/shared/ui/label';
-import { Separator } from '@/shared/ui/separator';
+import { devLogin, login } from '@entities/identity/user/api/auth.api';
+import { Button } from '@shared/components/ui/button';
+import { Card, CardContent } from '@shared/components/ui/card';
+import { Input } from '@shared/components/ui/input';
+import { Label } from '@shared/components/ui/label';
+import { Separator } from '@shared/components/ui/separator';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -33,7 +33,7 @@ export default function LoginPage() {
             console.error('Dev login failed:', err);
             setError(
                 err.response?.data?.message ||
-                'Failed to login. Please ensure the email is correct.',
+                    'Failed to login. Please ensure the email is correct.',
             );
         } finally {
             setIsLoading(false);
@@ -110,7 +110,7 @@ export default function LoginPage() {
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="anna.boyko@intra.com"
+                                    placeholder="User email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required

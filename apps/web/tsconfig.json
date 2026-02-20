@@ -27,35 +27,36 @@
     "rootDir": "./",
     "outDir": "./dist",
     "paths": {
-      "@/*": [
+      "@intra/web": [
         "./src/*"
       ],
-      "@src/*": [
+      "@/*": [
+        "./src/*",
         "src/*"
       ],
-      "@intra/web": [
-        "src/*"
+      "@public/*": [
+        "./public/*"
+      ],
+      "@src/*": [
+        "./src/*"
+      ],
+      "@entities/*": [
+        "./src/entities/*"
+      ],
+      "@features/*": [
+        "./src/features/*"
+      ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@pages/*": [
+        "./src/pages/*"
       ],
       "@shared/*": [
-        "src/shared/*"
+        "./src/shared/*"
       ],
-      "@/shared/*": [
-        "src/shared/*"
-      ],
-      "@shared/ui/*": [
-        "src/shared/components/ui/*"
-      ],
-      "@/shared/ui/*": [
-        "src/shared/components/ui/*"
-      ],
-      "@shared/utils/*": [
-        "src/shared/utils/*"
-      ],
-      "@shared/hooks/*": [
-        "src/shared/hooks/*"
-      ],
-      "@/public/*": [
-        "public/*"
+      "@widgets/*": [
+        "./src/widgets/*"
       ]
     }
   },
