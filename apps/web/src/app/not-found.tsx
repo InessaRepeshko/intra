@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { FileQuestionMark } from "lucide-react";
-import { ErrorPageLayout } from "@/shared/ui/error-page-layout";
+import { ErrorPageLayout } from '@shared/ui/error-page-layout';
+import { FileQuestionMark } from 'lucide-react';
 
 export default function NotFoundPage() {
     return (

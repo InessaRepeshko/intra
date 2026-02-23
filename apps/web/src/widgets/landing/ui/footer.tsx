@@ -6,9 +6,14 @@ export function Footer() {
         <footer className="border-t border-border px-6 py-12">
             <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 md:flex-row">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
-                    <img src={logo.src} alt="Intra" className="h-8 w-8" />
-                    <span className="text-2xl font-semibold tracking-tight text-foreground">
+                <Link
+                    href="/"
+                    className="flex items-center gap-3 group transition-opacity hover:opacity-80"
+                >
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
+                        <img src={logo.src} alt="Intra" className="h-7 w-7" />
+                    </div>
+                    <span className="text-2xl font-bold tracking-tight">
                         Intra
                     </span>
                 </Link>

@@ -7,6 +7,7 @@ import { Card, CardContent } from '@shared/components/ui/card';
 import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
 import { Separator } from '@shared/components/ui/separator';
+import { GoogleIcon } from '@shared/ui/google-icon';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -41,101 +42,190 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-background p-4">
-            <div className="w-full max-w-sm">
-                <div className="mb-10 text-center">
+        <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background p-4">
+            {/* Background decorative elements */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                {/* Top left gradient blob */}
+                <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+                {/* Bottom right gradient blob */}
+                <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
+                {/* Center subtle glow */}
+                <div className="absolute left-1/2 top-1/3 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-primary/5 via-transparent to-transparent blur-2xl" />
+                {/* Grid pattern */}
+                <div
+                    className="absolute inset-0 opacity-[0.015]"
+                    style={{
+                        backgroundImage: `linear-gradient(to right, hsl(var(--foreground)) 1px, transparent 1px),
+                                          linear-gradient(to bottom, hsl(var(--foreground)) 1px, transparent 1px)`,
+                        backgroundSize: '60px 60px',
+                    }}
+                />
+            </div>
+
+            {/* Main content */}
+            <div className="relative z-10 w-full max-w-md">
+                <div className="mb-8 flex flex-col items-center">
                     {/* Logo */}
                     <Link
                         href="/"
-                        className="mx-auto mb-10 flex h-20 w-20 items-center justify-center rounded-xl"
+                        className="group flex items-center gap-3 transition-opacity hover:opacity-80"
                     >
-                        <img
-                            src={logo.src}
-                            alt="Intra"
-                            className="h-full w-full"
-                        />
+                        <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
+                            <img
+                                src={logo.src}
+                                alt="Intra"
+                                className="h-10.5 w-10.5"
+                            />
+                        </div>
+                        <span className="text-4xl font-bold tracking-tight">
+                            Intra
+                        </span>
                     </Link>
-                    <h1 className="text-2xl font-bold text-foreground text-balance">
-                        Sign In to Intra
-                    </h1>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                        360-degree feedback platform for your organization
-                    </p>
+
+                    {/* Badge */}
+                    <div className="relative mt-4 mb-4 inline-flex items-center gap-4 ">
+                        <span className="bg-gradient-to-r from-pink-600 to-amber-600 bg-clip-text text-transparent font-medium">
+                            360° Feedback Platform
+                        </span>
+                    </div>
                 </div>
 
-                <Card>
-                    <CardContent className="py-2">
+                {/* Login Card */}
+                <Card className="border border-border/50 bg-background/80 shadow-2xl shadow-primary/5 backdrop-blur-xl">
+                    <CardContent className="p-8">
+                        <div className="mb-6 text-center">
+                            <h1 className="text-2xl font-semibold tracking-tight">
+                                Sign In
+                            </h1>
+                            <p className="mt-1.5 text-sm text-muted-foreground">
+                                Access your workspace and connect with your team
+                            </p>
+                        </div>
+
+                        {/* Google Sign In */}
                         <Button
-                            className="w-full"
+                            className="group relative w-full gap-2 rounded-full px-5"
                             size="lg"
                             onClick={handleGoogleLogin}
                             disabled={isLoading}
                         >
-                            <svg
-                                className="mr-2 h-5 w-5"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
-                                    fill="#4285F4"
-                                />
-                                <path
-                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                                    fill="#34A853"
-                                />
-                                <path
-                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                                    fill="#FBBC05"
-                                />
-                                <path
-                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                                    fill="#EA4335"
-                                />
-                            </svg>
-                            Sign In with Google
+                            <GoogleIcon />
+                            <span className="font-medium">
+                                Continue with Google
+                            </span>
                         </Button>
 
-                        <div className="my-10 flex items-center gap-3">
+                        {/* Divider */}
+                        <div className="my-10 flex items-center gap-4">
                             <Separator className="flex-1" />
-                            <span className="text-xs text-muted-foreground uppercase">
-                                or dev sign in
+                            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                or
                             </span>
                             <Separator className="flex-1" />
                         </div>
 
+                        {/* Dev Login Form */}
                         <form
                             onSubmit={handleDevLogin}
                             className="flex flex-col gap-4"
                         >
                             {error && (
-                                <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+                                <div className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
+                                    <svg
+                                        className="h-4 w-4 shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
                                     {error}
                                 </div>
                             )}
-                            <div className="flex flex-col gap-2 items-center justify-center">
-                                <Label htmlFor="email">Email</Label>
+
+                            <div className="space-y-2 flex flex-col items-center justify-center">
+                                <Label
+                                    htmlFor="email"
+                                    className="text-sm font-medium text-center"
+                                >
+                                    Email address
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="example@intra.com"
+                                    placeholder="name@company.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     disabled={isLoading}
-                                    className="w-full text-center"
+                                    className="text-center h-11 border-border/60 bg-background transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                                 />
                             </div>
+
                             <Button
                                 type="submit"
-                                className="w-full"
+                                className="h-11 w-full font-medium transition-all rounded-full px-5"
                                 disabled={isLoading || !email}
                             >
-                                {isLoading ? 'Signing in...' : 'Sign In'}
+                                {isLoading ? (
+                                    <span className="flex items-center gap-2">
+                                        <svg
+                                            className="h-4 w-4 animate-spin"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <circle
+                                                className="opacity-25"
+                                                cx="12"
+                                                cy="12"
+                                                r="10"
+                                                stroke="currentColor"
+                                                strokeWidth="4"
+                                                fill="none"
+                                            />
+                                            <path
+                                                className="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                            />
+                                        </svg>
+                                        Signing in...
+                                    </span>
+                                ) : (
+                                    'Sign In'
+                                )}
                             </Button>
                         </form>
+
+                        {/* Help Text */}
+                        <p className="mt-6 text-center text-xs text-muted-foreground">
+                            Need help? Contact your{' '}
+                            <span>IT administrator</span>
+                        </p>
                     </CardContent>
                 </Card>
+
+                {/* Legal Footer */}
+                <p className="mt-8 text-center text-xs text-muted-foreground/80">
+                    By signing in, you agree to our{' '}
+                    <a
+                        href="#"
+                        className="underline underline-offset-2 hover:text-foreground"
+                    >
+                        Terms of Service
+                    </a>{' '}
+                    and{' '}
+                    <a
+                        href="#"
+                        className="underline underline-offset-2 hover:text-foreground"
+                    >
+                        Privacy Policy
+                    </a>
+                </p>
             </div>
         </div>
     );

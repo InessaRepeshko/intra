@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         if (isError) {
-            router.push('/auth/login');
+            router.push('/signin');
         }
     }, [isError, router]);
 
