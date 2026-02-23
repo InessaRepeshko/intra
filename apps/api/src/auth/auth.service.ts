@@ -123,17 +123,45 @@ export class AuthService {
     async getSessionFromRequest(req: Request): Promise<{
         session: unknown;
     } | null> {
+        // 1. Try better-auth native session (cookie-based)
         try {
             const session = await this.auth.api.getSession({
                 headers: req.headers as any,
             });
-            if (!session) {
-                return null;
+            if (session) {
+                return { session };
             }
-            return { session };
-        } catch (error) {
-            return null;
+        } catch {
+            // fall through to Bearer lookup
         }
+
+        // 2. Fallback: Authorization: Bearer <token> (for cross-origin dev)
+        const authHeader = req.headers['authorization'] as string | undefined;
+        if (authHeader?.startsWith('Bearer ')) {
+            const token = authHeader.slice(7).trim();
+            try {
+                const ctx = await this.auth.$context;
+                const session = await ctx.adapter.findOne({
+                    model: 'authSession',
+                    where: [{ field: 'token', value: token }],
+                });
+                if (session) {
+                    const user = await ctx.adapter.findOne({
+                        model: 'authUser',
+                        where: [
+                            { field: 'id', value: (session as any).userId },
+                        ],
+                    });
+                    if (user) {
+                        return { session: { ...session, user } };
+                    }
+                }
+            } catch {
+                // ignore
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -163,19 +191,17 @@ export class AuthService {
         const adapter = ctx.adapter;
 
         // 1. Find or create user in Better Auth storage
-        // We look up by email.
+        // better-auth prisma adapter uses Prisma model name 'authUser'
         let baUser: any = await adapter.findOne({
-            model: 'user',
+            model: 'authUser',
             where: [{ field: 'email', value: email }],
         });
 
         if (!baUser) {
-            // Create user in Better Auth
-            // We use a random ID (or generic one) if we can't map to our Int ID easily
-            // But since this is dev login, we can just create a new record.
             baUser = await adapter.create({
-                model: 'user',
+                model: 'authUser',
                 data: {
+                    id: randomUUID(),
                     email: user.email,
                     emailVerified: true,
                     name: user.fullName,
@@ -185,14 +211,16 @@ export class AuthService {
             });
         }
 
-        // 2. Create session
+        // 2. Create session via better-auth prisma adapter
+        // model: 'authSession' matches Prisma model name; id must be provided
         const token = randomUUID();
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
 
         const session = await adapter.create({
-            model: 'session',
+            model: 'authSession',
             data: {
+                id: randomUUID(),
                 userId: baUser.id,
                 token: token,
                 expiresAt: expiresAt,
@@ -203,27 +231,13 @@ export class AuthService {
             },
         });
 
-        if (typeof ctx.createAuthCookie === 'function') {
-            const cookie: any = await ctx.createAuthCookie(token);
-            // cookie might be { name, value, attributes }
-            if (cookie && cookie.name && cookie.value) {
-                res.cookie(cookie.name, cookie.value, cookie.attributes);
-            } else {
-                // Fallback
-                res.cookie('better-auth.session_token', token, {
-                    httpOnly: true,
-                    secure: false,
-                    path: '/',
-                });
-            }
-        } else {
-            // Fallback
-            res.cookie('better-auth.session_token', token, {
-                httpOnly: true,
-                secure: false,
-                path: '/',
-            });
-        }
+        // Set session cookie so browser sends it on subsequent requests
+        res.cookie('better-auth.session_token', token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax',
+            path: '/',
+        });
 
         return AuthMapper.toAuthResponse(user.id!, {
             ...session,
@@ -370,8 +384,8 @@ export class AuthService {
         const cookies = Array.isArray(setCookies)
             ? setCookies
             : typeof setCookies === 'string'
-                ? setCookies.split(', ').filter((c) => c.includes('='))
-                : [setCookies];
+              ? setCookies.split(', ').filter((c) => c.includes('='))
+              : [setCookies];
 
         for (const cookieStr of cookies) {
             const parts = cookieStr.split(';').map((p) => p.trim());

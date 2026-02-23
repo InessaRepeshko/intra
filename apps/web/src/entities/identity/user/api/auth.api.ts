@@ -53,4 +53,7 @@ export async function devLogin(email: string): Promise<AuthDto> {
  */
 export async function logout(): Promise<void> {
     await apiClient.post(`${AUTH_BASE}/logout`);
+    if (typeof window !== 'undefined') {
+        localStorage.removeItem('session_token');
+    }
 }

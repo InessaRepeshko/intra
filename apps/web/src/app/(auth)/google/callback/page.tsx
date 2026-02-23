@@ -18,7 +18,10 @@ function AuthCallbackContent() {
         }
 
         handleGoogleCallback('?' + params)
-            .then(() => {
+            .then((auth) => {
+                if (auth.session?.token) {
+                    localStorage.setItem('session_token', auth.session.token);
+                }
                 router.push('/dashboard');
             })
             .catch((err: any) => {
@@ -50,14 +53,9 @@ function AuthCallbackContent() {
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-background">
-            <div className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-lg">
-                    I
-                </div>
-                <p className="text-sm text-muted-foreground animate-pulse">
-                    Completing sign in...
-                </p>
-            </div>
+            <p className="text-sm text-muted-foreground animate-pulse">
+                Completing sign in...
+            </p>
         </div>
     );
 }

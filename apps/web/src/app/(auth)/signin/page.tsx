@@ -28,7 +28,10 @@ export default function LoginPage() {
         setError('');
 
         try {
-            await devLogin(email);
+            const auth = await devLogin(email);
+            if (auth.session?.token) {
+                localStorage.setItem('session_token', auth.session.token);
+            }
             router.push('/dashboard');
         } catch (err: any) {
             console.error('Dev Signin failed:', err);
