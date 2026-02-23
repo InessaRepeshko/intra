@@ -1,11 +1,13 @@
 'use client';
 
 import { devLogin, login } from '@entities/identity/user/api/auth.api';
+import logo from '@public/logo.png';
 import { Button } from '@shared/components/ui/button';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
 import { Separator } from '@shared/components/ui/separator';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -26,14 +28,12 @@ export default function LoginPage() {
 
         try {
             await devLogin(email);
-            // After successful login, redirect to the dashboard
-            // The AuthContext on the dashboard will automatically fetch user data
-            router.push('/profile');
+            router.push('/dashboard');
         } catch (err: any) {
-            console.error('Dev login failed:', err);
+            console.error('Dev Signin failed:', err);
             setError(
                 err.response?.data?.message ||
-                    'Failed to login. Please ensure the email is correct.',
+                    'Failed to signin. Please ensure the email is correct.',
             );
         } finally {
             setIsLoading(false);
@@ -43,12 +43,20 @@ export default function LoginPage() {
     return (
         <div className="flex min-h-screen items-center justify-center bg-background p-4">
             <div className="w-full max-w-sm">
-                <div className="mb-8 text-center">
-                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-lg">
-                        I
-                    </div>
+                <div className="mb-10 text-center">
+                    {/* Logo */}
+                    <Link
+                        href="/"
+                        className="mx-auto mb-10 flex h-20 w-20 items-center justify-center rounded-xl"
+                    >
+                        <img
+                            src={logo.src}
+                            alt="Intra"
+                            className="h-full w-full"
+                        />
+                    </Link>
                     <h1 className="text-2xl font-bold text-foreground text-balance">
-                        Sign in to Intra
+                        Sign In to Intra
                     </h1>
                     <p className="mt-2 text-sm text-muted-foreground">
                         360-degree feedback platform for your organization
@@ -56,7 +64,7 @@ export default function LoginPage() {
                 </div>
 
                 <Card>
-                    <CardContent className="pt-6">
+                    <CardContent className="py-2">
                         <Button
                             className="w-full"
                             size="lg"
@@ -85,13 +93,13 @@ export default function LoginPage() {
                                     fill="#EA4335"
                                 />
                             </svg>
-                            Sign in with Google
+                            Sign In with Google
                         </Button>
 
-                        <div className="my-6 flex items-center gap-3">
+                        <div className="my-10 flex items-center gap-3">
                             <Separator className="flex-1" />
                             <span className="text-xs text-muted-foreground uppercase">
-                                or dev login
+                                or dev sign in
                             </span>
                             <Separator className="flex-1" />
                         </div>
@@ -105,25 +113,25 @@ export default function LoginPage() {
                                     {error}
                                 </div>
                             )}
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 items-center justify-center">
                                 <Label htmlFor="email">Email</Label>
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="User email"
+                                    placeholder="example@intra.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     disabled={isLoading}
+                                    className="w-full text-center"
                                 />
                             </div>
                             <Button
                                 type="submit"
-                                variant="outline"
                                 className="w-full"
                                 disabled={isLoading || !email}
                             >
-                                {isLoading ? 'Logging in...' : 'Dev Login'}
+                                {isLoading ? 'Signing in...' : 'Sign In'}
                             </Button>
                         </form>
                     </CardContent>

@@ -11,7 +11,7 @@ The system uses a secure authentication mechanism integrated with Google OAuth2 
 ### **Authentication Methods**
 - **Google OAuth2**: The primary authentication method. Users log in using their corporate Google accounts.
   - **Flow**: `GET /auth/google` -> Redirects to Google -> `GET /auth/google/callback` validates the token and creates/updates the user session.
-- **Development Login**: A special endpoint (`POST /auth/dev/login`) available only in non-production environments to simulate login for any user (e.g., for testing different roles).
+- **Development Login**: A special endpoint (`POST /auth/dev/signin`) available only in non-production environments to simulate login for any user (e.g., for testing different roles).
 
 ### **Authorization & Roles**
 The system implements strict **Role-Based Access Control (RBAC)**. Supported roles include:

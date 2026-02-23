@@ -20,6 +20,8 @@ export function login(): void {
 export async function handleGoogleCallback(
     searchParams: string,
 ): Promise<AuthDto> {
+    console.log('handleGoogleCallback called with:', searchParams);
+    console.log('API URL:', API_BASE_URL);
     const { data } = await apiClient.get<AuthDto>(
         `${AUTH_BASE}/google/callback${searchParams}`,
     );

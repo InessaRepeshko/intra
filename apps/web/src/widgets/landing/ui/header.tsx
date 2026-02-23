@@ -61,7 +61,7 @@ export function Header() {
                         className="gap-2 rounded-full px-5"
                         asChild
                     >
-                        <Link href="/auth/login">
+                        <Link href="/signin">
                             <GoogleIcon />
                             Sign in with Google
                         </Link>
@@ -98,7 +98,7 @@ export function Header() {
                         ))}
                         <div className="mt-3 flex flex-col gap-2 border-t border-border/50 pt-3">
                             <Button size="sm" className="gap-2" asChild>
-                                <Link href="/auth/login">
+                                <Link href="/signin">
                                     <GoogleIcon />
                                     Sign in with Google
                                 </Link>

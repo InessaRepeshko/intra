@@ -247,9 +247,9 @@ export class AuthService {
             this.config.get<string>('APP_FRONTEND_HOST') ?? 'localhost';
         const port = this.config.get<string>('APP_FRONTEND_PORT');
         if (!port || protocol === 'https') {
-            return `${protocol}://${host}/auth/google/callback`;
+            return `${protocol}://${host}/google/callback`;
         }
-        return `${protocol}://${host}:${port}/auth/google/callback`;
+        return `${protocol}://${host}:${port}/google/callback`;
     }
 
     private getFrontendUrl(): string {
@@ -325,7 +325,7 @@ export class AuthService {
             secure: this.isProd,
             sameSite: 'lax',
             maxAge: 10 * 60 * 1000,
-            path: '/auth/google/callback',
+            path: '/',
         });
     }
 
@@ -370,8 +370,8 @@ export class AuthService {
         const cookies = Array.isArray(setCookies)
             ? setCookies
             : typeof setCookies === 'string'
-              ? setCookies.split(', ').filter((c) => c.includes('='))
-              : [setCookies];
+                ? setCookies.split(', ').filter((c) => c.includes('='))
+                : [setCookies];
 
         for (const cookieStr of cookies) {
             const parts = cookieStr.split(';').map((p) => p.trim());

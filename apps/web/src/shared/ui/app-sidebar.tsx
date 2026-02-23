@@ -195,7 +195,7 @@ export function AppSidebar() {
                             {user.positionTitle}
                         </p>
                     </div>
-                    <Link href="/logout">
+                    <Link href="/signout">
                         <button
                             className="text-muted-foreground hover:text-foreground transition-colors"
                             aria-label="Log out"

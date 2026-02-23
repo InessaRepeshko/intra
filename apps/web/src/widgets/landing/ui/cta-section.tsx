@@ -26,7 +26,7 @@ export function CtaSection() {
                         className="gap-2 rounded-full px-8 text-base"
                         asChild
                     >
-                        <Link href="/auth/login">
+                        <Link href="/signin">
                             <span className="relative flex h-4 w-4">
                                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/80" />
                                 <span className="relative inline-flex h-4 w-4 rounded-full bg-white/100" />

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 
 function AuthCallbackContent() {
+    console.log('Current API URL:', process.env.NEXT_PUBLIC_API_URL);
     const router = useRouter();
     const searchParams = useSearchParams();
     const [error, setError] = useState('');
@@ -18,8 +19,7 @@ function AuthCallbackContent() {
 
         handleGoogleCallback('?' + params)
             .then(() => {
-                // Cookie is set by the backend, redirect to dashboard
-                router.push('/profile');
+                router.push('/dashboard');
             })
             .catch((err: any) => {
                 console.error('Google callback failed:', err);
@@ -38,7 +38,7 @@ function AuthCallbackContent() {
                         {error}
                     </div>
                     <button
-                        onClick={() => router.push('/auth/login')}
+                        onClick={() => router.push('/signin')}
                         className="text-sm text-muted-foreground underline hover:text-foreground"
                     >
                         Back to login
@@ -62,7 +62,6 @@ function AuthCallbackContent() {
     );
 }
 
-// Suspense is required because useSearchParams() needs it
 export default function AuthCallbackPage() {
     return (
         <Suspense
