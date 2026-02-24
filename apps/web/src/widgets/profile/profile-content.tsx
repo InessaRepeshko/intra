@@ -24,13 +24,7 @@ import { StatusBadge } from '@shared/ui/status-badge';
 import { Briefcase, Building2, ClipboardList, Mail } from 'lucide-react';
 import Link from 'next/link';
 
-export default function DashboardPage() {
-    return (
-        <DashboardContent />
-    );
-}
-
-function DashboardContent() {
+export function ProfileContent() {
     const { user } = useAuth();
 
     const myPendingSurveys = mockRespondents.filter(
@@ -42,8 +36,8 @@ function DashboardContent() {
             return review ? { ...resp, review } : null;
         })
         .filter(Boolean) as Array<
-            (typeof mockRespondents)[0] & { review: (typeof mockReviews)[0] }
-        >;
+        (typeof mockRespondents)[0] & { review: (typeof mockReviews)[0] }
+    >;
 
     const myReportsAsRatee = mockReviews.filter(
         (r) => r.rateeId === user.id && r.stage === 'REPORT_READY',
@@ -51,9 +45,9 @@ function DashboardContent() {
 
     return (
         <div className="flex flex-col my-2 mx-2 rounded-xl shadow-md bg-background">
-            <PageHeader title="Dashboard" />
+            <PageHeader title="Profile" />
             <div className="flex flex-col gap-6 p-6">
-                {/* Dashboard Header */}
+                {/* Profile Header */}
                 <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16">
                         <AvatarFallback className="text-xl bg-primary/10 text-primary">

@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-export function DashboardContent() {
+export function ProfileContent() {
     const { user, isHR, isAdmin } = useAuth();
 
     const activeCycles = mockCycles.filter(

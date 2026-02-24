@@ -30,7 +30,7 @@ import {
 
 const ITEMS_PER_PAGE = 5;
 
-export function CyclesListTable() {
+export function CyclesList() {
     const [search, setSearch] = useState('');
     const [stage, setStage] = useState('ALL');
     const [dateRange, setDateRange] = useState<DateRange | undefined>(

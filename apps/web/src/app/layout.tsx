@@ -4,6 +4,7 @@ import { Toaster } from 'sonner';
 
 import './globals.css';
 import { QueryProvider } from './providers/query-provider';
+import { ConditionalMainLayout } from '@widgets/layout/conditional-main-layout';
 
 const _geist = Geist({ subsets: ['latin'] });
 const _geistMono = Geist_Mono({ subsets: ['latin'] });
@@ -30,7 +31,9 @@ export default function RootLayout({
         <html lang="en">
             <body className="font-sans antialiased">
                 <QueryProvider>
-                    {children}
+                    <ConditionalMainLayout>
+                        {children}
+                    </ConditionalMainLayout>
                     <Toaster richColors position="top-right" />
                 </QueryProvider>
             </body>
