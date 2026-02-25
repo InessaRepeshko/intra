@@ -22,3 +22,8 @@ export type ReviewQueryDto = ReviewFilterQuery & {
     page?: number;
     limit?: number;
 };
+
+export enum SortDirection {
+    ASC = 'asc',
+    DESC = 'desc',
+}

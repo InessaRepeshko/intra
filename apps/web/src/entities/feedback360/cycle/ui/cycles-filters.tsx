@@ -1,41 +1,26 @@
 'use client';
 
-import { format } from 'date-fns';
-import { CalendarIcon, RotateCcw, Search } from 'lucide-react';
+import { RotateCcw, Search } from 'lucide-react';
 import type { DateRange } from 'react-day-picker';
 
 import { CycleStage } from '@entities/feedback360/cycle/model/types';
+import { stageConfig } from '@entities/feedback360/cycle/ui/stage-badge';
 import { Button } from '@shared/components/ui/button';
-import { Calendar } from '@shared/components/ui/calendar';
 import { Input } from '@shared/components/ui/input';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@shared/components/ui/popover';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@shared/components/ui/select';
-import { cn } from '@shared/lib/utils/cn';
+import { DateRangePicker } from '@shared/ui/date-range-picker';
+import { MultiSelect } from '@shared/ui/multi-select';
 
 interface CyclesFiltersProps {
     search: string;
     onSearchChange: (value: string) => void;
-    stage: string;
-    onStageChange: (value: string) => void;
+    stages: string[];
+    onStagesChange: (value: string[]) => void;
     dateRange: DateRange | undefined;
     onDateRangeChange: (range: DateRange | undefined) => void;
-    reviewCount: string;
-    onReviewCountChange: (value: string) => void;
     onReset: () => void;
 }
 
 const stageOptions = [
-    { value: 'ALL', label: 'All Statuses' },
     { value: CycleStage.NEW, label: 'New' },
     { value: CycleStage.ACTIVE, label: 'Active' },
     { value: CycleStage.FINISHED, label: 'Finished' },
@@ -43,27 +28,17 @@ const stageOptions = [
     { value: CycleStage.CANCELED, label: 'Canceled' },
 ];
 
-const reviewCountOptions = [
-    { value: 'ALL', label: 'All Reviews' },
-    { value: '0', label: 'No reviews' },
-    { value: '1-10', label: '1-10 reviews' },
-    { value: '11-50', label: '11-50 reviews' },
-    { value: '50+', label: '50+ reviews' },
-];
-
 export function CyclesFilters({
     search,
     onSearchChange,
-    stage,
-    onStageChange,
+    stages,
+    onStagesChange,
     dateRange,
     onDateRangeChange,
-    reviewCount,
-    onReviewCountChange,
     onReset,
 }: CyclesFiltersProps) {
     return (
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center flex-wrap">
             <div className="relative flex-1 lg:max-w-sm">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
@@ -74,67 +49,24 @@ export function CyclesFilters({
                 />
             </div>
 
-            <Select value={stage} onValueChange={onStageChange}>
-                <SelectTrigger className="w-full lg:w-[180px]">
-                    <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                    {stageOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
+            <MultiSelect
+                options={stageOptions.map((opt) => ({
+                    ...opt,
+                    badgeClassName:
+                        stageConfig[opt.value as CycleStage]?.className,
+                }))}
+                value={stages}
+                onValueChange={onStagesChange}
+                placeholder="All Stages"
+                emptyText="No stages found"
+                className="w-full lg:w-[150px] min-w-[max-content]"
+                showClear
+            />
 
-            <Select value={reviewCount} onValueChange={onReviewCountChange}>
-                <SelectTrigger className="w-full lg:w-[180px]">
-                    <SelectValue placeholder="Filter by reviews" />
-                </SelectTrigger>
-                <SelectContent>
-                    {reviewCountOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-
-            <Popover>
-                <PopoverTrigger asChild>
-                    <Button
-                        variant="outline"
-                        className={cn(
-                            'w-full justify-start text-left font-normal lg:w-[280px]',
-                            !dateRange && 'text-muted-foreground',
-                        )}
-                    >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {dateRange?.from ? (
-                            dateRange.to ? (
-                                <>
-                                    {format(dateRange.from, 'MMM dd, yyyy')} -{' '}
-                                    {format(dateRange.to, 'MMM dd, yyyy')}
-                                </>
-                            ) : (
-                                format(dateRange.from, 'MMM dd, yyyy')
-                            )
-                        ) : (
-                            <span>Filter by date range</span>
-                        )}
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                        initialFocus
-                        mode="range"
-                        defaultMonth={dateRange?.from}
-                        selected={dateRange}
-                        onSelect={onDateRangeChange}
-                        numberOfMonths={2}
-                    />
-                </PopoverContent>
-            </Popover>
+            <DateRangePicker
+                dateRange={dateRange}
+                onDateRangeChange={onDateRangeChange}
+            />
 
             <Button
                 variant="ghost"

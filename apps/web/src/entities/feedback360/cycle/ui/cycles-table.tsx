@@ -3,6 +3,7 @@
 import { format } from 'date-fns';
 import {
     ArrowUpDown,
+    Calendar,
     Eye,
     MoreHorizontal,
     Pencil,
@@ -159,11 +160,16 @@ export function CyclesTable({
                     >
                         <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0 flex-1">
-                                <p className="truncate font-medium text-foreground">
-                                    {cycle.title}
+                                <p className="flex items-center gap-2 font-medium text-foreground flex-wrap">
+                                    <span className="break-words">
+                                        {cycle.title}
+                                    </span>
+                                    <span className="whitespace-nowrap">
+                                        <StageBadge stage={cycle.stage} />
+                                    </span>
                                 </p>
                                 {cycle.description && (
-                                    <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
+                                    <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground truncate">
                                         {cycle.description}
                                     </p>
                                 )}
@@ -176,12 +182,15 @@ export function CyclesTable({
                         </div>
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                            <StageBadge stage={cycle.stage} />
-
-                            <span className="text-muted-foreground">
-                                {format(cycle.startDate, 'MMM dd, yyyy')}
-                                {' – '}
-                                {format(cycle.endDate, 'MMM dd, yyyy')}
+                            <span className="whitespace-nowrap flex flex-wrap gap-x-1 gap-y-0.5 text-muted-foreground items-center">
+                                <Calendar className="h-3.5 w-3.5" />
+                                <span className="break-words">
+                                    {format(cycle.startDate, 'MMM dd, yyyy')}
+                                </span>
+                                <span className="break-words">{' – '}</span>
+                                <span className="break-words">
+                                    {format(cycle.endDate, 'MMM dd, yyyy')}
+                                </span>
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">
@@ -219,7 +228,7 @@ export function CyclesTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[20%] min-w-[100px] whitespace-nowrap">
+                            <TableHead className="w-[20%] min-w-[100px] whitespace-nowrap text-center">
                                 <SortableHeader
                                     label="Status"
                                     field="stage"
@@ -237,8 +246,8 @@ export function CyclesTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[10%] min-w-[40px] whitespace-nowrap">
-                                <span className="sr-only">Actions</span>
+                            <TableHead className="w-[10%] min-w-[40px] whitespace-nowrap text-center">
+                                <span className="">Actions</span>
                             </TableHead>
                         </TableRow>
                     </TableHeader>
@@ -273,7 +282,7 @@ export function CyclesTable({
                                         </span>
                                     </div>
                                 </TableCell>
-                                <TableCell className="whitespace-nowrap">
+                                <TableCell className="whitespace-nowrap text-center">
                                     <StageBadge stage={cycle.stage} />
                                 </TableCell>
                                 <TableCell className="whitespace-nowrap text-center">
@@ -284,7 +293,7 @@ export function CyclesTable({
                                         </span>
                                     </div>
                                 </TableCell>
-                                <TableCell className="whitespace-nowrap">
+                                <TableCell className="whitespace-nowrap text-center">
                                     <CycleActionsMenu
                                         cycle={cycle}
                                         onForceFinish={onForceFinish}

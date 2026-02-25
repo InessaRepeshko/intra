@@ -1,18 +1,21 @@
 import { CycleStage } from '@entities/feedback360/cycle/model/types';
 import { cn } from '@shared/lib/utils/cn';
 
-const stageConfig: Record<CycleStage, { label: string; className: string }> = {
+export const stageConfig: Record<
+    CycleStage,
+    { label: string; className: string }
+> = {
     [CycleStage.NEW]: {
         label: 'New',
         className: 'bg-blue-100 text-blue-800 border-blue-200',
     },
     [CycleStage.ACTIVE]: {
         label: 'Active',
-        className: 'bg-green-100 text-green-800 border-green-200',
+        className: 'bg-amber-100 text-amber-800 border-amber-200',
     },
     [CycleStage.FINISHED]: {
         label: 'Finished',
-        className: 'bg-amber-100 text-amber-800 border-amber-200',
+        className: 'bg-green-100 text-green-800 border-green-200',
     },
     [CycleStage.ARCHIVED]: {
         label: 'Archived',

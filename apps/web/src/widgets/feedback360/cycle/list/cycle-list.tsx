@@ -14,7 +14,6 @@ import {
     SortDirection,
 } from '@entities/feedback360/cycle/model/types';
 import { CyclesFilters } from '@entities/feedback360/cycle/ui/cycles-filters';
-import { CyclesPagination } from '@entities/feedback360/cycle/ui/cycles-pagination';
 import { CyclesTable } from '@entities/feedback360/cycle/ui/cycles-table';
 import { CreateCycleForm } from '@features/feedback360/cycle/create/ui/CreateCycleForm';
 import { DeleteCycleDialog } from '@features/feedback360/cycle/delete/ui/DeleteCycleDialog';
@@ -27,16 +26,16 @@ import {
     CardHeader,
     CardTitle,
 } from '@shared/components/ui/card';
+import { TablePagination } from '@shared/ui/table-pagination';
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 export function CyclesList() {
     const [search, setSearch] = useState('');
-    const [stage, setStage] = useState('ALL');
+    const [stages, setStages] = useState<string[]>([]);
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
         undefined,
     );
-    const [reviewCount, setReviewCount] = useState('ALL');
     const [sortField, setSortField] = useState('createdAt');
     const [sortDirection, setSortDirection] = useState<SortDirection>(
         SortDirection.DESC,
@@ -49,12 +48,12 @@ export function CyclesList() {
     );
     const [deleteCycle, setDeleteCycle] = useState<Cycle | null>(null);
 
-    // Build query params (exclude client-side only fields like reviewCount)
+    // Build query params (exclude client-side only fields)
     const queryParams = useMemo(() => {
         const params: Record<string, unknown> = {};
 
         if (search.trim()) params.search = search.trim();
-        if (stage !== 'ALL') params.stage = stage;
+        if (stages.length === 1) params.stage = stages[0];
         // Only send sort params for server-side sortable fields
         if (sortField && sortField !== 'reviewCount') {
             params.sortBy = sortField;
@@ -62,7 +61,7 @@ export function CyclesList() {
         }
 
         return params;
-    }, [search, stage, sortField, sortDirection]);
+    }, [search, stages, sortField, sortDirection]);
 
     const {
         data: cycles = [],
@@ -90,9 +89,8 @@ export function CyclesList() {
 
     const handleReset = () => {
         setSearch('');
-        setStage('ALL');
+        setStages([]);
         setDateRange(undefined);
-        setReviewCount('ALL');
         setSortField('createdAt');
         setSortDirection(SortDirection.DESC);
         setCurrentPage(1);
@@ -111,27 +109,12 @@ export function CyclesList() {
             result = result.filter((c) => c.endDate.getTime() <= to);
         }
 
-        // Filter by review count
-        if (reviewCount !== 'ALL') {
-            result = result.filter((c) => {
-                const count = reviewCounts[c.id] ?? 0;
-                switch (reviewCount) {
-                    case '0':
-                        return count === 0;
-                    case '1-10':
-                        return count >= 1 && count <= 10;
-                    case '11-50':
-                        return count >= 11 && count <= 50;
-                    case '50+':
-                        return count > 50;
-                    default:
-                        return true;
-                }
-            });
+        if (stages.length > 0) {
+            result = result.filter((c) => c.stage && stages.includes(c.stage));
         }
 
         return result;
-    }, [cycles, dateRange, reviewCount, reviewCounts]);
+    }, [cycles, dateRange, stages]);
 
     // Client-side sorting for reviewCount
     const sortedCycles = useMemo(() => {
@@ -164,14 +147,13 @@ export function CyclesList() {
         <main className="min-h-screen">
             <div className="mx-auto max-w-8xl">
                 {/* Page Header */}
-                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
                             360° Feedback Cycles
                         </h1>
                         <p className="mt-1 text-muted-foreground">
-                            Manage and monitor feedback cycles across your
-                            organization.{' '}
+                            Manage and monitor cycles across your organization.{' '}
                             <span className="font-medium text-foreground">
                                 {activeCycles}
                             </span>{' '}
@@ -197,7 +179,7 @@ export function CyclesList() {
                     <CardHeader className="pb-4">
                         <CardTitle className="text-lg">All Cycles</CardTitle>
                         <CardDescription>
-                            Search, filter, and manage feedback 360° cycles.
+                            Search, filter, and manage cycles.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-6">
@@ -208,19 +190,14 @@ export function CyclesList() {
                                 setSearch(val);
                                 setCurrentPage(1);
                             }}
-                            stage={stage}
-                            onStageChange={(val) => {
-                                setStage(val);
+                            stages={stages}
+                            onStagesChange={(val) => {
+                                setStages(val);
                                 setCurrentPage(1);
                             }}
                             dateRange={dateRange}
                             onDateRangeChange={(range) => {
                                 setDateRange(range);
-                                setCurrentPage(1);
-                            }}
-                            reviewCount={reviewCount}
-                            onReviewCountChange={(val) => {
-                                setReviewCount(val);
                                 setCurrentPage(1);
                             }}
                             onReset={handleReset}
@@ -259,7 +236,8 @@ export function CyclesList() {
                                 />
 
                                 {/* Pagination */}
-                                <CyclesPagination
+                                <TablePagination
+                                    entityName="cycles"
                                     currentPage={currentPage}
                                     totalPages={totalPages}
                                     totalItems={filteredCycles.length}

@@ -4,6 +4,7 @@ import { CycleFilterQuery } from '../model/types';
 import {
     fetchCycleById,
     fetchCycles,
+    fetchCycleTitleById,
     fetchReviewCountByCycleId,
 } from './cycle.api';
 
@@ -17,6 +18,9 @@ export const cycleKeys = {
     reviewCounts: () => [...cycleKeys.all, 'reviewCounts'] as const,
     reviewCount: (cycleId: number) =>
         [...cycleKeys.reviewCounts(), cycleId] as const,
+    cycleTitles: () => [...cycleKeys.all, 'cycleTitles'] as const,
+    cycleTitle: (cycleId: number) =>
+        [...cycleKeys.cycleTitles(), cycleId] as const,
 };
 
 export function useCyclesQuery(params?: CycleFilterQuery) {
@@ -67,4 +71,33 @@ export function useReviewCountsQuery(cycleIds: number[]) {
     const isLoading = queries.some((q) => q.isLoading);
 
     return { reviewCounts, isLoading };
+}
+
+export function useCycleTitleQuery(cycleId: number) {
+    return useQuery<string>({
+        queryKey: cycleKeys.cycleTitle(cycleId),
+        queryFn: () => fetchCycleTitleById(cycleId),
+        enabled: cycleId > 0,
+    });
+}
+
+export function useCycleTitlesQuery(cycleIds: number[]) {
+    const queries = useQueries({
+        queries: cycleIds.map((cycleId) => ({
+            queryKey: cycleKeys.cycleTitle(cycleId),
+            queryFn: () => fetchCycleTitleById(cycleId),
+        })),
+    });
+
+    const cycleTitles: Record<number, string> = {};
+    cycleIds.forEach((cycleId, index) => {
+        const result = queries[index];
+        if (result.isSuccess && result.data !== undefined) {
+            cycleTitles[cycleId] = result.data;
+        }
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+
+    return { cycleTitles, isLoading };
 }

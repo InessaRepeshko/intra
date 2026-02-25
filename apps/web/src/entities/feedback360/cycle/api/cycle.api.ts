@@ -66,3 +66,10 @@ export async function fetchReviewCountByCycleId(
     });
     return data.length;
 }
+
+export async function fetchCycleTitleById(cycleId: number): Promise<string> {
+    const { data } = await apiClient.get<CycleResponseDto>(
+        `${CYCLES_BASE}/${cycleId}`,
+    );
+    return data.title;
+}

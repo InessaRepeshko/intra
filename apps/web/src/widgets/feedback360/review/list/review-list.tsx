@@ -1,25 +1,24 @@
 'use client';
 
-import { Loader2, Plus } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
+import { useCycleTitlesQuery } from '@entities/feedback360/cycle/api/cycle.queries';
 import {
-    useCyclesQuery,
-    useReviewCountsQuery,
-} from '@entities/feedback360/cycle/api/cycle.queries';
-import type { Cycle } from '@entities/feedback360/cycle/model/mappers';
+    useReviewAnswersCountsQuery,
+    useReviewQuestionCountsQuery,
+    useReviewRespondentCountsQuery,
+    useReviewReviewerCountsQuery,
+    useReviewsQuery,
+} from '@entities/feedback360/review/api/review.queries';
+import type { Review } from '@entities/feedback360/review/model/mappers';
 import {
-    CycleStage,
+    ReviewStage,
     SortDirection,
-} from '@entities/feedback360/cycle/model/types';
-import { CyclesFilters } from '@entities/feedback360/cycle/ui/cycles-filters';
-import { CyclesPagination } from '@entities/feedback360/cycle/ui/cycles-pagination';
-import { CyclesTable } from '@entities/feedback360/cycle/ui/cycles-table';
-import { CreateCycleForm } from '@features/feedback360/cycle/create/ui/CreateCycleForm';
-import { DeleteCycleDialog } from '@features/feedback360/cycle/delete/ui/DeleteCycleDialog';
-import { ForceFinishCycleDialog } from '@features/feedback360/cycle/force-finish/ui/ForceFinishCycleDialog';
-import { Button } from '@shared/components/ui/button';
+} from '@entities/feedback360/review/model/types';
+import { ReviewsFilters } from '@entities/feedback360/review/ui/reviews-filters';
+import { ReviewsTable } from '@entities/feedback360/review/ui/reviews-table';
 import {
     Card,
     CardContent,
@@ -27,16 +26,19 @@ import {
     CardHeader,
     CardTitle,
 } from '@shared/components/ui/card';
+import { TablePagination } from '@shared/ui/table-pagination';
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
-export function CyclesList() {
+export function ReviewsList() {
     const [search, setSearch] = useState('');
-    const [stage, setStage] = useState('ALL');
+    const [stages, setStages] = useState<string[]>([]);
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
         undefined,
     );
-    const [reviewCount, setReviewCount] = useState('ALL');
+    const [cycles, setCycles] = useState<string[]>([]);
+    const [teams, setTeams] = useState<string[]>([]);
+    const [positions, setPositions] = useState<string[]>([]);
     const [sortField, setSortField] = useState('createdAt');
     const [sortDirection, setSortDirection] = useState<SortDirection>(
         SortDirection.DESC,
@@ -44,35 +46,114 @@ export function CyclesList() {
     const [currentPage, setCurrentPage] = useState(1);
 
     // Feature dialogs state
-    const [forceFinishCycle, setForceFinishCycle] = useState<Cycle | null>(
+    const [forceFinishReview, setForceFinishReview] = useState<Review | null>(
         null,
     );
-    const [deleteCycle, setDeleteCycle] = useState<Cycle | null>(null);
+    const [deleteReview, setDeleteReview] = useState<Review | null>(null);
 
     // Build query params (exclude client-side only fields like reviewCount)
     const queryParams = useMemo(() => {
         const params: Record<string, unknown> = {};
 
         if (search.trim()) params.search = search.trim();
-        if (stage !== 'ALL') params.stage = stage;
+        if (stages.length === 1) params.stage = stages[0];
         // Only send sort params for server-side sortable fields
-        if (sortField && sortField !== 'reviewCount') {
+        if (sortField) {
             params.sortBy = sortField;
             params.sortDirection = sortDirection;
         }
+        if (cycles.length === 1 && cycles[0] !== 'None')
+            params.cycleTitle = cycles[0];
 
         return params;
-    }, [search, stage, sortField, sortDirection]);
+    }, [search, stages, sortField, sortDirection, cycles]);
 
     const {
-        data: cycles = [],
+        data: reviews = [],
         isLoading,
         isError,
-    } = useCyclesQuery(queryParams);
+    } = useReviewsQuery(queryParams);
 
-    // Fetch review counts for all cycles
-    const cycleIds = cycles.map((c) => c.id);
-    const { reviewCounts } = useReviewCountsQuery(cycleIds);
+    const { data: allReviewsData = [] } = useReviewsQuery({});
+
+    // Filter unique teams and positions
+    const teamOptions = useMemo(() => {
+        const uniqueTeams = new Map<number, { id: number; title: string }>();
+
+        allReviewsData.forEach((r) => {
+            if (r.teamId && r.teamTitle && r.teamTitle.trim() !== '') {
+                uniqueTeams.set(r.teamId, {
+                    id: r.teamId,
+                    title: r.teamTitle,
+                });
+            }
+        });
+
+        return Array.from(uniqueTeams.values()).sort((a, b) =>
+            a.title.localeCompare(b.title),
+        );
+    }, [allReviewsData]);
+
+    const positionOptions = useMemo(() => {
+        const uniquePositions = new Map<
+            number,
+            { id: number; title: string }
+        >();
+
+        allReviewsData.forEach((r) => {
+            if (
+                r.rateePositionId &&
+                r.rateePositionTitle &&
+                r.rateePositionTitle.trim() !== ''
+            ) {
+                uniquePositions.set(r.rateePositionId, {
+                    id: r.rateePositionId,
+                    title: r.rateePositionTitle,
+                });
+            }
+        });
+
+        return Array.from(uniquePositions.values()).sort((a, b) =>
+            a.title.localeCompare(b.title),
+        );
+    }, [allReviewsData]);
+
+    // Fetch question, answer, respondent and reviewer counts for all reviews
+    const reviewIds = reviews.map((r) => r.id);
+    const cycleIds = reviews
+        .map((r) => r.cycleId)
+        .filter((id) => id !== null && id !== undefined);
+    const { questionCounts } = useReviewQuestionCountsQuery(reviewIds);
+    const { answerCounts } = useReviewAnswersCountsQuery(reviewIds);
+    const { respondentCounts } = useReviewRespondentCountsQuery(reviewIds);
+    const { reviewerCounts } = useReviewReviewerCountsQuery(reviewIds);
+    const { cycleTitles } = useCycleTitlesQuery(cycleIds);
+
+    const cycleOptions = useMemo(() => {
+        const titles = new Set(
+            Object.values(cycleTitles).filter(
+                (title) => title && title.trim() !== '',
+            ),
+        );
+
+        const hasNoCycleReviews = allReviewsData.some(
+            (r) => r.cycleId === null || r.cycleId === undefined,
+        );
+
+        const sortedTitles = Array.from(titles).sort();
+        if (hasNoCycleReviews) {
+            sortedTitles.push('None');
+        }
+
+        return sortedTitles;
+    }, [cycleTitles, allReviewsData]);
+
+    const stageOptions = useMemo(() => {
+        const stages = new Set(
+            allReviewsData.map((r) => r.stage).filter(Boolean),
+        );
+        return Array.from(stages);
+    }, [allReviewsData]);
 
     const handleSort = (field: string) => {
         if (sortField === field) {
@@ -90,127 +171,197 @@ export function CyclesList() {
 
     const handleReset = () => {
         setSearch('');
-        setStage('ALL');
+        setStages([]);
         setDateRange(undefined);
-        setReviewCount('ALL');
+        setCycles([]);
+        setTeams([]);
+        setPositions([]);
         setSortField('createdAt');
         setSortDirection(SortDirection.DESC);
         setCurrentPage(1);
     };
 
-    // Client-side filtering for date range and review count
-    const filteredCycles = useMemo(() => {
-        let result = cycles;
+    // Client-side filtering for date range and cycle title
+    const filteredReviews = useMemo(() => {
+        let result = reviews;
+
+        if (search.trim()) {
+            const lowerSearch = search.toLowerCase();
+            result = result.filter(
+                (c) =>
+                    c.rateeFullName &&
+                    c.rateeFullName.toLowerCase().includes(lowerSearch),
+            );
+        }
 
         if (dateRange?.from) {
             const from = dateRange.from.getTime();
-            result = result.filter((c) => c.startDate.getTime() >= from);
+            result = result.filter((c) => c.createdAt.getTime() >= from);
         }
         if (dateRange?.to) {
             const to = dateRange.to.getTime();
-            result = result.filter((c) => c.endDate.getTime() <= to);
+            result = result.filter((c) => c.createdAt.getTime() <= to);
         }
 
-        // Filter by review count
-        if (reviewCount !== 'ALL') {
+        if (stages.length > 0) {
+            result = result.filter((c) => c.stage && stages.includes(c.stage));
+        }
+
+        if (cycles.length > 0) {
             result = result.filter((c) => {
-                const count = reviewCounts[c.id] ?? 0;
-                switch (reviewCount) {
-                    case '0':
-                        return count === 0;
-                    case '1-10':
-                        return count >= 1 && count <= 10;
-                    case '11-50':
-                        return count >= 11 && count <= 50;
-                    case '50+':
-                        return count > 50;
-                    default:
-                        return true;
-                }
+                const title =
+                    c.cycleId === null || c.cycleId === undefined
+                        ? 'None'
+                        : (cycleTitles[c.cycleId!] ?? '');
+                return cycles.includes(title);
             });
         }
 
-        return result;
-    }, [cycles, dateRange, reviewCount, reviewCounts]);
-
-    // Client-side sorting for reviewCount
-    const sortedCycles = useMemo(() => {
-        if (sortField !== 'reviewCount') {
-            return filteredCycles;
+        if (teams.length > 0) {
+            result = result.filter(
+                (c) => c.teamId !== null && teams.includes(String(c.teamId)),
+            );
         }
 
-        return [...filteredCycles].sort((a, b) => {
-            const countA = reviewCounts[a.id] ?? 0;
-            const countB = reviewCounts[b.id] ?? 0;
-            return sortDirection === SortDirection.ASC
-                ? countA - countB
-                : countB - countA;
-        });
-    }, [filteredCycles, sortField, sortDirection, reviewCounts]);
+        if (positions.length > 0) {
+            result = result.filter(
+                (c) =>
+                    c.rateePositionId !== null &&
+                    positions.includes(String(c.rateePositionId)),
+            );
+        }
 
-    const totalPages = Math.ceil(sortedCycles.length / ITEMS_PER_PAGE);
-    const paginatedCycles = sortedCycles.slice(
+        return result;
+    }, [
+        reviews,
+        search,
+        dateRange,
+        stages,
+        cycles,
+        cycleTitles,
+        teams,
+        positions,
+    ]);
+
+    // Client-side sorting for question count, answer count, respondent count, reviewer count
+    const sortedReviews = useMemo(() => {
+        if (
+            sortField !== 'questionCount' &&
+            sortField !== 'answerCount' &&
+            sortField !== 'respondentCount' &&
+            sortField !== 'reviewerCount'
+        ) {
+            return filteredReviews;
+        }
+
+        return [...filteredReviews].sort((a, b) => {
+            if (sortField === 'questionCount') {
+                const countA = questionCounts[a.id] ?? 0;
+                const countB = questionCounts[b.id] ?? 0;
+                return sortDirection === SortDirection.ASC
+                    ? countA - countB
+                    : countB - countA;
+            }
+            if (sortField === 'answerCount') {
+                const countA = answerCounts[a.id] ?? 0;
+                const countB = answerCounts[b.id] ?? 0;
+                return sortDirection === SortDirection.ASC
+                    ? countA - countB
+                    : countB - countA;
+            }
+            if (sortField === 'respondentCount') {
+                const countA = respondentCounts[a.id] ?? 0;
+                const countB = respondentCounts[b.id] ?? 0;
+                return sortDirection === SortDirection.ASC
+                    ? countA - countB
+                    : countB - countA;
+            }
+            if (sortField === 'reviewerCount') {
+                const countA = reviewerCounts[a.id] ?? 0;
+                const countB = reviewerCounts[b.id] ?? 0;
+                return sortDirection === SortDirection.ASC
+                    ? countA - countB
+                    : countB - countA;
+            }
+            return 0;
+        });
+    }, [
+        filteredReviews,
+        sortField,
+        sortDirection,
+        questionCounts,
+        answerCounts,
+        respondentCounts,
+        reviewerCounts,
+    ]);
+
+    const totalPages = Math.ceil(sortedReviews.length / ITEMS_PER_PAGE);
+    const paginatedReviews = sortedReviews.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE,
     );
 
     // Summary stats
-    const activeCycles = cycles.filter(
-        (c) => c.stage === CycleStage.ACTIVE,
+    const activeReviews = reviews.filter(
+        (c) =>
+            c.stage === ReviewStage.SELF_ASSESSMENT ||
+            c.stage === ReviewStage.WAITING_TO_START ||
+            c.stage === ReviewStage.IN_PROGRESS ||
+            c.stage === ReviewStage.PREPARING_REPORT ||
+            c.stage === ReviewStage.PROCESSING_BY_HR,
     ).length;
-    const totalCycles = cycles.length;
+    const totalReviews = reviews.length;
 
     return (
         <main className="min-h-screen">
             <div className="mx-auto max-w-8xl">
                 {/* Page Header */}
-                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
-                            360° Feedback Cycles
+                            360° Feedback Reviews
                         </h1>
                         <p className="mt-1 text-muted-foreground">
-                            Manage and monitor feedback cycles across your
-                            organization.{' '}
+                            Manage and monitor reviews across your organization.{' '}
                             <span className="font-medium text-foreground">
-                                {activeCycles}
+                                {activeReviews}
                             </span>{' '}
                             active of{' '}
                             <span className="font-medium text-foreground">
-                                {totalCycles}
+                                {totalReviews}
                             </span>{' '}
-                            total cycles.
+                            total reviews.
                         </p>
                     </div>
-                    <CreateCycleForm
+                    {/* <CreateReviewForm
                         trigger={
                             <Button size="lg" className="shrink-0">
                                 <Plus className="mr-2 h-4 w-4" />
-                                Create New Cycle
+                                Create New Review
                             </Button>
                         }
-                    />
+                    /> */}
                 </div>
 
                 {/* Main Card */}
                 <Card>
                     <CardHeader className="pb-4">
-                        <CardTitle className="text-lg">All Cycles</CardTitle>
+                        <CardTitle className="text-lg">All Reviews</CardTitle>
                         <CardDescription>
-                            Search, filter, and manage feedback 360° cycles.
+                            Search, filter, and manage reviews.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-6">
                         {/* Filters */}
-                        <CyclesFilters
+                        <ReviewsFilters
                             search={search}
                             onSearchChange={(val) => {
                                 setSearch(val);
                                 setCurrentPage(1);
                             }}
-                            stage={stage}
-                            onStageChange={(val) => {
-                                setStage(val);
+                            stages={stages}
+                            onStagesChange={(val) => {
+                                setStages(val);
                                 setCurrentPage(1);
                             }}
                             dateRange={dateRange}
@@ -218,11 +369,25 @@ export function CyclesList() {
                                 setDateRange(range);
                                 setCurrentPage(1);
                             }}
-                            reviewCount={reviewCount}
-                            onReviewCountChange={(val) => {
-                                setReviewCount(val);
+                            cycles={cycles}
+                            onCyclesChange={(val) => {
+                                setCycles(val);
                                 setCurrentPage(1);
                             }}
+                            teams={teams}
+                            onTeamsChange={(val) => {
+                                setTeams(val);
+                                setCurrentPage(1);
+                            }}
+                            positions={positions}
+                            onPositionsChange={(val) => {
+                                setPositions(val);
+                                setCurrentPage(1);
+                            }}
+                            stageOptions={stageOptions}
+                            cycleOptions={cycleOptions}
+                            teamOptions={teamOptions}
+                            positionOptions={positionOptions}
                             onReset={handleReset}
                         />
 
@@ -237,7 +402,7 @@ export function CyclesList() {
                         {isError && (
                             <div className="flex flex-col items-center justify-center py-16 text-center">
                                 <h3 className="text-lg font-semibold text-destructive">
-                                    Failed to load cycles
+                                    Failed to load reviews
                                 </h3>
                                 <p className="mt-1 text-sm text-muted-foreground">
                                     Please try refreshing the page.
@@ -248,21 +413,26 @@ export function CyclesList() {
                         {/* Table */}
                         {!isLoading && !isError && (
                             <>
-                                <CyclesTable
-                                    cycles={paginatedCycles}
-                                    reviewCounts={reviewCounts}
+                                <ReviewsTable
+                                    reviews={paginatedReviews}
+                                    cycleTitles={cycleTitles}
+                                    questionCounts={questionCounts}
+                                    answerCounts={answerCounts}
+                                    respondentCounts={respondentCounts}
+                                    reviewerCounts={reviewerCounts}
                                     sortField={sortField}
                                     sortDirection={sortDirection}
                                     onSort={handleSort}
-                                    onForceFinish={setForceFinishCycle}
-                                    onDelete={setDeleteCycle}
+                                    onForceFinish={setForceFinishReview}
+                                    onDelete={setDeleteReview}
                                 />
 
                                 {/* Pagination */}
-                                <CyclesPagination
+                                <TablePagination
+                                    entityName="reviews"
                                     currentPage={currentPage}
                                     totalPages={totalPages}
-                                    totalItems={filteredCycles.length}
+                                    totalItems={filteredReviews.length}
                                     limit={ITEMS_PER_PAGE}
                                     onPageChange={setCurrentPage}
                                 />
@@ -273,14 +443,14 @@ export function CyclesList() {
             </div>
 
             {/* Feature Dialogs */}
-            <ForceFinishCycleDialog
+            {/* <ForceFinishCycleDialog
                 cycle={forceFinishCycle}
                 onClose={() => setForceFinishCycle(null)}
             />
             <DeleteCycleDialog
                 cycle={deleteCycle}
                 onClose={() => setDeleteCycle(null)}
-            />
+            /> */}
         </main>
     );
 }
