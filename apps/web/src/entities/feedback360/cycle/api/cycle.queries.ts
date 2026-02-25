@@ -1,5 +1,5 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { type Cycle, mapCycleDtoToModel } from '../model/mapper';
+import { type Cycle, mapCycleDtoToModel } from '../model/mappers';
 import { CycleFilterQuery } from '../model/types';
 import {
     fetchCycleById,

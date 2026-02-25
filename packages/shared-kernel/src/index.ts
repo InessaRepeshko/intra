@@ -111,7 +111,10 @@ export {
 } from './feedback360/enums/review-stage.enum';
 export { isAnonymityThresholdMet } from './feedback360/rules/anonymity.rules';
 
-export type { AnswerDto } from './feedback360/dto/answer/answer-dto.interface';
+export type {
+    AnswerDto,
+    AnswerResponseDto,
+} from './feedback360/dto/answer/answer-dto.interface';
 export type { AnswerSearchQuery } from './feedback360/dto/answer/answer-search-query.type';
 export type { CreateAnswerPayload } from './feedback360/dto/answer/create-answer-payload.type';
 export {
@@ -119,7 +122,10 @@ export {
     AnswerSortField,
 } from './feedback360/enums/answer-sort-field.enum';
 
-export type { ClusterScoreDto } from './feedback360/dto/cluster-score/cluster-score-dto.interface';
+export type {
+    ClusterScoreDto,
+    ClusterScoreResponseDto,
+} from './feedback360/dto/cluster-score/cluster-score-dto.interface';
 export type { ClusterScoreSearchQuery } from './feedback360/dto/cluster-score/cluster-score-search-query.type';
 export type { ClusterScoreWithRelationsDto } from './feedback360/dto/cluster-score/cluster-score-with-relations-dto.interface';
 export type { UpsertClusterScorePayload } from './feedback360/dto/cluster-score/upsert-cluster-score-payload.type';
@@ -128,7 +134,10 @@ export {
     ClusterScoreSortField,
 } from './feedback360/enums/cluster-score-sort-field.enum';
 
-export type { ClusterScoreAnalyticsDto } from './feedback360/dto/cluster-score-analytics/cluster-score-analytics-dto.interface';
+export type {
+    ClusterScoreAnalyticsDto,
+    ClusterScoreAnalyticsResponseDto,
+} from './feedback360/dto/cluster-score-analytics/cluster-score-analytics-dto.interface';
 export type { ClusterScoreAnalyticsSearchQuery } from './feedback360/dto/cluster-score-analytics/cluster-score-analytics-search-query.type';
 export type { UpdateClusterScoreAnalyticsPayload } from './feedback360/dto/cluster-score-analytics/update-cluster-score-analytics-payload.type';
 export type { UpsertClusterScoreAnalyticsPayload } from './feedback360/dto/cluster-score-analytics/upsert-cluster-score-analytics-payload.type';
@@ -154,7 +163,10 @@ export {
 
 export type { AddQuestionToReviewPayload } from './feedback360/dto/question/add-question-to-review-payload.type';
 export type { CreateQuestionPayload } from './feedback360/dto/question/create-question-payload.type';
-export type { QuestionDto } from './feedback360/dto/question/question-dto.interface';
+export type {
+    QuestionDto,
+    QuestionResponseDto,
+} from './feedback360/dto/question/question-dto.interface';
 export type { QuestionSearchQuery } from './feedback360/dto/question/question-search-query.type';
 export {
     QUESTION_SORT_FIELDS,
@@ -162,7 +174,10 @@ export {
 } from './feedback360/enums/question-sort-field.enum';
 
 export type { AddRespondentPayload } from './feedback360/dto/respondent/add-respondent-payload.type';
-export type { RespondentDto } from './feedback360/dto/respondent/respondent-dto.interface';
+export type {
+    RespondentDto,
+    RespondentResponseDto,
+} from './feedback360/dto/respondent/respondent-dto.interface';
 export type { RespondentSearchQuery } from './feedback360/dto/respondent/respondent-search-query.type';
 export type { UpdateRespondentPayload } from './feedback360/dto/respondent/update-respondent-playload.type';
 export {
@@ -170,7 +185,10 @@ export {
     RespondentSortField,
 } from './feedback360/enums/respondent-sort-field.enum';
 
-export type { ReviewQuestionRelationDto } from './feedback360/dto/review-qiestion-relation/review-qiestion-relation-dto.interface';
+export type {
+    ReviewQuestionRelationDto,
+    ReviewQuestionRelationResponseDto,
+} from './feedback360/dto/review-qiestion-relation/review-qiestion-relation-dto.interface';
 export type { ReviewQuestionRelationSearchQuery } from './feedback360/dto/review-qiestion-relation/review-qiestion-relation-search-query.type';
 export {
     REVIEW_QUESTION_RELATION_SORT_FIELDS,
@@ -178,7 +196,10 @@ export {
 } from './feedback360/enums/review-qiestion-relation-sort-field.enum';
 
 export type { CreateReviewPayload } from './feedback360/dto/review/create-review-payload.type';
-export type { ReviewDto } from './feedback360/dto/review/review-dto.interface';
+export type {
+    ReviewDto,
+    ReviewResponseDto,
+} from './feedback360/dto/review/review-dto.interface';
 export type { ReviewSearchQuery } from './feedback360/dto/review/review-search-query.type';
 export type { UpdateReviewPayload } from './feedback360/dto/review/update-review-payload.type';
 export {
@@ -187,7 +208,10 @@ export {
 } from './feedback360/enums/review-sort-field.enum';
 
 export type { AddReviewerPayload } from './feedback360/dto/reviewer/add-reviewer-payload.type';
-export type { ReviewerDto } from './feedback360/dto/reviewer/reviewer-dto.interface';
+export type {
+    ReviewerDto,
+    ReviewerResponseDto,
+} from './feedback360/dto/reviewer/reviewer-dto.interface';
 export type { ReviewerSearchQuery } from './feedback360/dto/reviewer/reviewer-search-query.type';
 export {
     REVIEWER_SORT_FIELDS,

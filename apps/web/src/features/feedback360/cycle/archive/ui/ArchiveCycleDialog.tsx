@@ -1,6 +1,6 @@
 'use client';
 
-import type { Cycle } from '@entities/feedback360/cycle/model/mapper';
+import type { Cycle } from '@entities/feedback360/cycle/model/mappers';
 import {
     AlertDialog,
     AlertDialogAction,

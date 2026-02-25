@@ -1,7 +1,7 @@
 import { AnswerType } from '../../../library/enums/answer-type.enum';
 import { RespondentCategory } from '../../enums/respondent-category.enum';
 
-export interface AnswerDto {
+export interface AnswerBaseDto<TDate = Date> {
     id: number;
     reviewId: number;
     questionId: number;
@@ -9,5 +9,9 @@ export interface AnswerDto {
     answerType: AnswerType;
     numericalValue?: number | null;
     textValue?: string | null;
-    createdAt: Date;
+    createdAt: TDate;
 }
+
+export type AnswerDto = AnswerBaseDto<Date>;
+
+export type AnswerResponseDto = AnswerBaseDto<string>;

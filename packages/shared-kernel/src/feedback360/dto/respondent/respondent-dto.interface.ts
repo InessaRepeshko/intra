@@ -1,7 +1,7 @@
 import { RespondentCategory } from '../../enums/respondent-category.enum';
 import { ResponseStatus } from '../../enums/response-status.enum';
 
-export interface RespondentDto {
+export interface RespondentBaseDto<TDate = Date> {
     id: number;
     reviewId: number;
     respondentId: number;
@@ -14,9 +14,13 @@ export interface RespondentDto {
     positionTitle: string;
     teamId?: number | null;
     teamTitle?: string | null;
-    invitedAt?: Date | null;
-    canceledAt?: Date | null;
-    respondedAt?: Date | null;
-    createdAt: Date;
-    updatedAt: Date;
+    invitedAt?: TDate | null;
+    canceledAt?: TDate | null;
+    respondedAt?: TDate | null;
+    createdAt: TDate;
+    updatedAt: TDate;
 }
+
+export type RespondentDto = RespondentBaseDto<Date>;
+
+export type RespondentResponseDto = RespondentBaseDto<string>;

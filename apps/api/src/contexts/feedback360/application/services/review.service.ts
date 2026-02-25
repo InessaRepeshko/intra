@@ -294,21 +294,21 @@ export class ReviewService {
         payload: AddQuestionToReviewPayload,
     ): Promise<ReviewQuestionRelationDomain> {
         await this.getById(payload.reviewId);
-        const question = await this.questionTemplates.getById(
-            payload.questionId,
+        const questionTemplate = await this.questionTemplates.getById(
+            payload.questionTemplateId,
         );
         const competence = await this.competences.getById(
-            question.competenceId,
+            questionTemplate.competenceId,
         );
 
         const relation = ReviewQuestionRelationDomain.create({
             reviewId: payload.reviewId,
-            questionId: question.id!,
-            questionTitle: question.title,
-            answerType: question.answerType,
-            competenceId: question.competenceId,
+            questionId: questionTemplate.id!,
+            questionTitle: questionTemplate.title,
+            answerType: questionTemplate.answerType,
+            competenceId: questionTemplate.competenceId,
             competenceTitle: competence.title,
-            isForSelfassessment: question.isForSelfassessment,
+            isForSelfassessment: questionTemplate.isForSelfassessment,
         });
 
         return this.questionRelations.link(relation);

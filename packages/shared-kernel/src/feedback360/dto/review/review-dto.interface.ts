@@ -1,6 +1,6 @@
 import { ReviewStage } from '../../enums/review-stage.enum';
 
-export interface ReviewDto {
+export interface ReviewBaseDto<TDate = Date> {
     id: number;
     rateeId: number;
     rateeFullName: string;
@@ -18,6 +18,10 @@ export interface ReviewDto {
     cycleId?: number | null;
     stage: ReviewStage;
     reportId?: number | null;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: TDate;
+    updatedAt: TDate;
 }
+
+export type ReviewDto = ReviewBaseDto<Date>;
+
+export type ReviewResponseDto = ReviewBaseDto<string>;

@@ -4651,7 +4651,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AttachQuestionDto"
+                "$ref": "#/components/schemas/AttachQuestionToReviewDto"
               }
             }
           }
@@ -4680,7 +4680,7 @@
             "description": "Conflict"
           }
         },
-        "summary": "Add question from library to Review",
+        "summary": "Add question template from library to Review",
         "tags": [
           "Feedback360 / Reviews"
         ]
@@ -9586,17 +9586,17 @@
           }
         }
       },
-      "AttachQuestionDto": {
+      "AttachQuestionToReviewDto": {
         "type": "object",
         "properties": {
-          "questionId": {
+          "questionTemplateId": {
             "type": "number",
             "example": 10,
-            "description": "ID of the question from the library"
+            "description": "ID of the question template from the library"
           }
         },
         "required": [
-          "questionId"
+          "questionTemplateId"
         ]
       },
       "ReviewQuestionRelationResponse": {

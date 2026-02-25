@@ -37,10 +37,10 @@ import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { ReviewService } from '../../../application/services/review.service';
 import { AnswerQueryDto } from '../dto/answers/answer-query.dto';
 import { CreateAnswerDto } from '../dto/answers/create-answer.dto';
-import { AttachQuestionDto } from '../dto/questions/attach-question.dto';
 import { CreateRespondentDto } from '../dto/respondents/create-respondent.dto';
 import { RespondentQueryDto } from '../dto/respondents/respondent-query.dto';
 import { UpdateRespondentDto } from '../dto/respondents/update-respondent.dto';
+import { AttachQuestionToReviewDto } from '../dto/review-question-relations/attach-question.dto';
 import { ReviewQuestionRelationQueryDto } from '../dto/review-question-relations/review-question-relation-query.dto';
 import { CreateReviewerDto } from '../dto/reviewers/create-reviewer.dto';
 import { ReviewerQueryDto } from '../dto/reviewers/reviewer-query.dto';
@@ -136,9 +136,9 @@ export class ReviewController {
     }
 
     @Post(':id/questions')
-    @ApiOperation({ summary: 'Add question from library to Review' })
+    @ApiOperation({ summary: 'Add question template from library to Review' })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
-    @ApiBody({ type: AttachQuestionDto })
+    @ApiBody({ type: AttachQuestionToReviewDto })
     @ApiResponse({
         status: HttpStatus.CREATED,
         type: ReviewQuestionRelationResponse,
@@ -146,11 +146,11 @@ export class ReviewController {
     @ApiCreateAndUpdateErrorResponses()
     async attachQuestion(
         @Param('id') id: string,
-        @Body() dto: AttachQuestionDto,
+        @Body() dto: AttachQuestionToReviewDto,
     ): Promise<ReviewQuestionRelationResponse> {
         const relation = await this.reviews.attachQuestion({
             reviewId: Number(id),
-            questionId: dto.questionId,
+            questionTemplateId: dto.questionTemplateId,
         });
         return ReviewQuestionRelationHttpMapper.toResponse(relation);
     }

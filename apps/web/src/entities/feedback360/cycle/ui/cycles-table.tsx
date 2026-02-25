@@ -11,7 +11,7 @@ import {
     Users,
 } from 'lucide-react';
 
-import type { Cycle } from '@entities/feedback360/cycle/model/mapper';
+import type { Cycle } from '@entities/feedback360/cycle/model/mappers';
 import { CycleStage } from '@entities/feedback360/cycle/model/types';
 import { Button } from '@shared/components/ui/button';
 import {
