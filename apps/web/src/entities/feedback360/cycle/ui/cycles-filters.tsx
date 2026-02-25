@@ -29,6 +29,8 @@ interface CyclesFiltersProps {
     onStageChange: (value: string) => void;
     dateRange: DateRange | undefined;
     onDateRangeChange: (range: DateRange | undefined) => void;
+    reviewCount: string;
+    onReviewCountChange: (value: string) => void;
     onReset: () => void;
 }
 
@@ -41,6 +43,14 @@ const stageOptions = [
     { value: CycleStage.CANCELED, label: 'Canceled' },
 ];
 
+const reviewCountOptions = [
+    { value: 'ALL', label: 'All Reviews' },
+    { value: '0', label: 'No reviews' },
+    { value: '1-10', label: '1-10 reviews' },
+    { value: '11-50', label: '11-50 reviews' },
+    { value: '50+', label: '50+ reviews' },
+];
+
 export function CyclesFilters({
     search,
     onSearchChange,
@@ -48,11 +58,13 @@ export function CyclesFilters({
     onStageChange,
     dateRange,
     onDateRangeChange,
+    reviewCount,
+    onReviewCountChange,
     onReset,
 }: CyclesFiltersProps) {
     return (
-        <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="relative flex-1 md:max-w-sm">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+            <div className="relative flex-1 lg:max-w-sm">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                     placeholder="Search by title or description..."
@@ -63,11 +75,24 @@ export function CyclesFilters({
             </div>
 
             <Select value={stage} onValueChange={onStageChange}>
-                <SelectTrigger className="w-full md:w-[180px]">
+                <SelectTrigger className="w-full lg:w-[180px]">
                     <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
                     {stageOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+
+            <Select value={reviewCount} onValueChange={onReviewCountChange}>
+                <SelectTrigger className="w-full lg:w-[180px]">
+                    <SelectValue placeholder="Filter by reviews" />
+                </SelectTrigger>
+                <SelectContent>
+                    {reviewCountOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                             {option.label}
                         </SelectItem>
@@ -80,7 +105,7 @@ export function CyclesFilters({
                     <Button
                         variant="outline"
                         className={cn(
-                            'w-full justify-start text-left font-normal md:w-[280px]',
+                            'w-full justify-start text-left font-normal lg:w-[280px]',
                             !dateRange && 'text-muted-foreground',
                         )}
                     >

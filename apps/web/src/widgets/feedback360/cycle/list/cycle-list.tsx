@@ -36,6 +36,7 @@ export function CyclesList() {
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
         undefined,
     );
+    const [reviewCount, setReviewCount] = useState('ALL');
     const [sortField, setSortField] = useState('createdAt');
     const [sortDirection, setSortDirection] = useState<SortDirection>(
         SortDirection.DESC,
@@ -48,14 +49,17 @@ export function CyclesList() {
     );
     const [deleteCycle, setDeleteCycle] = useState<Cycle | null>(null);
 
-    // Build query params
+    // Build query params (exclude client-side only fields like reviewCount)
     const queryParams = useMemo(() => {
         const params: Record<string, unknown> = {};
 
         if (search.trim()) params.search = search.trim();
         if (stage !== 'ALL') params.stage = stage;
-        if (sortField) params.sortBy = sortField;
-        if (sortDirection) params.sortDirection = sortDirection;
+        // Only send sort params for server-side sortable fields
+        if (sortField && sortField !== 'reviewCount') {
+            params.sortBy = sortField;
+            params.sortDirection = sortDirection;
+        }
 
         return params;
     }, [search, stage, sortField, sortDirection]);
@@ -88,12 +92,13 @@ export function CyclesList() {
         setSearch('');
         setStage('ALL');
         setDateRange(undefined);
+        setReviewCount('ALL');
         setSortField('createdAt');
         setSortDirection(SortDirection.DESC);
         setCurrentPage(1);
     };
 
-    // Client-side date range filtering (dates not part of search query)
+    // Client-side filtering for date range and review count
     const filteredCycles = useMemo(() => {
         let result = cycles;
 
@@ -106,11 +111,45 @@ export function CyclesList() {
             result = result.filter((c) => c.endDate.getTime() <= to);
         }
 
-        return result;
-    }, [cycles, dateRange]);
+        // Filter by review count
+        if (reviewCount !== 'ALL') {
+            result = result.filter((c) => {
+                const count = reviewCounts[c.id] ?? 0;
+                switch (reviewCount) {
+                    case '0':
+                        return count === 0;
+                    case '1-10':
+                        return count >= 1 && count <= 10;
+                    case '11-50':
+                        return count >= 11 && count <= 50;
+                    case '50+':
+                        return count > 50;
+                    default:
+                        return true;
+                }
+            });
+        }
 
-    const totalPages = Math.ceil(filteredCycles.length / ITEMS_PER_PAGE);
-    const paginatedCycles = filteredCycles.slice(
+        return result;
+    }, [cycles, dateRange, reviewCount, reviewCounts]);
+
+    // Client-side sorting for reviewCount
+    const sortedCycles = useMemo(() => {
+        if (sortField !== 'reviewCount') {
+            return filteredCycles;
+        }
+
+        return [...filteredCycles].sort((a, b) => {
+            const countA = reviewCounts[a.id] ?? 0;
+            const countB = reviewCounts[b.id] ?? 0;
+            return sortDirection === SortDirection.ASC
+                ? countA - countB
+                : countB - countA;
+        });
+    }, [filteredCycles, sortField, sortDirection, reviewCounts]);
+
+    const totalPages = Math.ceil(sortedCycles.length / ITEMS_PER_PAGE);
+    const paginatedCycles = sortedCycles.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE,
     );
@@ -122,12 +161,12 @@ export function CyclesList() {
     const totalCycles = cycles.length;
 
     return (
-        <main className="min-h-screen bg-muted/30">
-            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <main className="min-h-screen">
+            <div className="mx-auto max-w-8xl">
                 {/* Page Header */}
                 <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-foreground text-balance">
+                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
                             360° Feedback Cycles
                         </h1>
                         <p className="mt-1 text-muted-foreground">
@@ -177,6 +216,11 @@ export function CyclesList() {
                             dateRange={dateRange}
                             onDateRangeChange={(range) => {
                                 setDateRange(range);
+                                setCurrentPage(1);
+                            }}
+                            reviewCount={reviewCount}
+                            onReviewCountChange={(val) => {
+                                setReviewCount(val);
                                 setCurrentPage(1);
                             }}
                             onReset={handleReset}

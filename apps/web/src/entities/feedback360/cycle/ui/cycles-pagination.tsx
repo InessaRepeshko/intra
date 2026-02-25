@@ -10,6 +10,8 @@ import {
     PaginationPrevious,
 } from '@shared/components/ui/pagination';
 
+const ITEMS_PER_PAGE = 10;
+
 interface CyclesPaginationProps {
     currentPage: number;
     totalPages: number;

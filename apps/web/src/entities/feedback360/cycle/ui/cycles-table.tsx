@@ -71,6 +71,58 @@ function SortableHeader({
     );
 }
 
+function CycleActionsMenu({
+    cycle,
+    onForceFinish,
+    onDelete,
+}: {
+    cycle: Cycle;
+    onForceFinish?: (cycle: Cycle) => void;
+    onDelete?: (cycle: Cycle) => void;
+}) {
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground"
+                >
+                    <MoreHorizontal className="h-4 w-4" />
+                    <span className="sr-only">Open actions</span>
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem>
+                    <Eye className="mr-2 h-4 w-4" />
+                    View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Pencil className="mr-2 h-4 w-4" />
+                    Edit
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {cycle.stage === CycleStage.ACTIVE && (
+                    <DropdownMenuItem
+                        className="text-amber-700 focus:bg-amber-50 focus:text-amber-800"
+                        onClick={() => onForceFinish?.(cycle)}
+                    >
+                        <StopCircle className="mr-2 h-4 w-4" />
+                        Force Finish
+                    </DropdownMenuItem>
+                )}
+                <DropdownMenuItem
+                    className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                    onClick={() => onDelete?.(cycle)}
+                >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+}
+
 export function CyclesTable({
     cycles,
     reviewCounts,
@@ -97,129 +149,153 @@ export function CyclesTable({
     }
 
     return (
-        <Table>
-            <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                    <TableHead className="w-[35%]">
-                        <SortableHeader
-                            label="Name"
-                            field="title"
-                            currentField={sortField}
-                            currentDirection={sortDirection}
-                            onSort={onSort}
-                        />
-                    </TableHead>
-                    <TableHead>
-                        <SortableHeader
-                            label="Dates"
-                            field="startDate"
-                            currentField={sortField}
-                            currentDirection={sortDirection}
-                            onSort={onSort}
-                        />
-                    </TableHead>
-                    <TableHead>
-                        <SortableHeader
-                            label="Status"
-                            field="stage"
-                            currentField={sortField}
-                            currentDirection={sortDirection}
-                            onSort={onSort}
-                        />
-                    </TableHead>
-                    <TableHead className="text-center">Reviews</TableHead>
-                    <TableHead className="w-[70px]">
-                        <span className="sr-only">Actions</span>
-                    </TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
+        <>
+            {/* Mobile card layout (hidden on md+) */}
+            <div className="flex flex-col gap-3 lg:hidden">
                 {cycles.map((cycle) => (
-                    <TableRow key={cycle.id}>
-                        <TableCell>
-                            <div className="flex flex-col gap-0.5">
-                                <span className="font-medium text-foreground">
+                    <div
+                        key={cycle.id}
+                        className="rounded-lg border bg-card p-4 shadow-sm"
+                    >
+                        <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0 flex-1">
+                                <p className="truncate font-medium text-foreground">
                                     {cycle.title}
-                                </span>
+                                </p>
                                 {cycle.description && (
-                                    <span className="line-clamp-1 text-sm text-muted-foreground">
+                                    <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
                                         {cycle.description}
-                                    </span>
+                                    </p>
                                 )}
                             </div>
-                        </TableCell>
-                        <TableCell>
-                            <div className="flex flex-col gap-0.5 text-sm">
-                                <span className="text-foreground">
-                                    {format(cycle.startDate, 'MMM dd, yyyy')}
-                                </span>
-                                <span className="text-muted-foreground">
-                                    {format(cycle.endDate, 'MMM dd, yyyy')}
-                                </span>
-                            </div>
-                        </TableCell>
-                        <TableCell>
+                            <CycleActionsMenu
+                                cycle={cycle}
+                                onForceFinish={onForceFinish}
+                                onDelete={onDelete}
+                            />
+                        </div>
+
+                        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                             <StageBadge stage={cycle.stage} />
-                        </TableCell>
-                        <TableCell className="text-center">
-                            <div className="flex items-center justify-center gap-1.5">
-                                <Users className="h-4 w-4 text-muted-foreground" />
+
+                            <span className="text-muted-foreground">
+                                {format(cycle.startDate, 'MMM dd, yyyy')}
+                                {' – '}
+                                {format(cycle.endDate, 'MMM dd, yyyy')}
+                            </span>
+
+                            <span className="flex items-center gap-1 text-muted-foreground">
+                                <Users className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
                                     {reviewCounts[cycle.id] ?? 0}
                                 </span>
-                            </div>
-                        </TableCell>
-                        <TableCell>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-muted-foreground"
-                                    >
-                                        <MoreHorizontal className="h-4 w-4" />
-                                        <span className="sr-only">
-                                            Open actions
-                                        </span>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent
-                                    align="end"
-                                    className="w-48"
-                                >
-                                    <DropdownMenuItem>
-                                        <Eye className="mr-2 h-4 w-4" />
-                                        View Details
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <Pencil className="mr-2 h-4 w-4" />
-                                        Edit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    {cycle.stage === CycleStage.ACTIVE && (
-                                        <DropdownMenuItem
-                                            className="text-amber-700 focus:bg-amber-50 focus:text-amber-800"
-                                            onClick={() =>
-                                                onForceFinish?.(cycle)
-                                            }
-                                        >
-                                            <StopCircle className="mr-2 h-4 w-4" />
-                                            Force Finish
-                                        </DropdownMenuItem>
-                                    )}
-                                    <DropdownMenuItem
-                                        className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                                        onClick={() => onDelete?.(cycle)}
-                                    >
-                                        <Trash2 className="mr-2 h-4 w-4" />
-                                        Delete
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </TableCell>
-                    </TableRow>
+                                {' reviews'}
+                            </span>
+                        </div>
+                    </div>
                 ))}
-            </TableBody>
-        </Table>
+            </div>
+
+            {/* Desktop table layout (visible on md+) */}
+            <div className="hidden overflow-x-auto lg:block">
+                <Table className="w-full table-fixed">
+                    <TableHeader>
+                        <TableRow className="hover:bg-transparent">
+                            <TableHead className="w-full min-w-[200px]">
+                                <SortableHeader
+                                    label="Name"
+                                    field="title"
+                                    currentField={sortField}
+                                    currentDirection={sortDirection}
+                                    onSort={onSort}
+                                />
+                            </TableHead>
+                            <TableHead className="w-[20%] min-w-[100px] whitespace-nowrap">
+                                <SortableHeader
+                                    label="Dates"
+                                    field="startDate"
+                                    currentField={sortField}
+                                    currentDirection={sortDirection}
+                                    onSort={onSort}
+                                />
+                            </TableHead>
+                            <TableHead className="w-[20%] min-w-[100px] whitespace-nowrap">
+                                <SortableHeader
+                                    label="Status"
+                                    field="stage"
+                                    currentField={sortField}
+                                    currentDirection={sortDirection}
+                                    onSort={onSort}
+                                />
+                            </TableHead>
+                            <TableHead className="w-[20%] min-w-[70px] whitespace-nowrap text-center">
+                                <SortableHeader
+                                    label="Reviews"
+                                    field="reviewCount"
+                                    currentField={sortField}
+                                    currentDirection={sortDirection}
+                                    onSort={onSort}
+                                />
+                            </TableHead>
+                            <TableHead className="w-[10%] min-w-[40px] whitespace-nowrap">
+                                <span className="sr-only">Actions</span>
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {cycles.map((cycle) => (
+                            <TableRow key={cycle.id}>
+                                <TableCell className="min-w-[200px]">
+                                    <div className="flex flex-col gap-0.5">
+                                        <span className="font-medium text-foreground">
+                                            {cycle.title}
+                                        </span>
+                                        {cycle.description && (
+                                            <span className="line-clamp-1 whitespace-nowrap text-sm text-muted-foreground">
+                                                {cycle.description}
+                                            </span>
+                                        )}
+                                    </div>
+                                </TableCell>
+                                <TableCell className="whitespace-nowrap">
+                                    <div className="flex flex-col gap-0.5 text-sm">
+                                        <span className="text-foreground">
+                                            {format(
+                                                cycle.startDate,
+                                                'MMM dd, yyyy',
+                                            )}
+                                        </span>
+                                        <span className="text-muted-foreground">
+                                            {format(
+                                                cycle.endDate,
+                                                'MMM dd, yyyy',
+                                            )}
+                                        </span>
+                                    </div>
+                                </TableCell>
+                                <TableCell className="whitespace-nowrap">
+                                    <StageBadge stage={cycle.stage} />
+                                </TableCell>
+                                <TableCell className="whitespace-nowrap text-center">
+                                    <div className="flex items-center justify-center gap-1.5">
+                                        <Users className="h-4 w-4 text-muted-foreground" />
+                                        <span className="font-medium text-foreground">
+                                            {reviewCounts[cycle.id] ?? 0}
+                                        </span>
+                                    </div>
+                                </TableCell>
+                                <TableCell className="whitespace-nowrap">
+                                    <CycleActionsMenu
+                                        cycle={cycle}
+                                        onForceFinish={onForceFinish}
+                                        onDelete={onDelete}
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+        </>
     );
 }

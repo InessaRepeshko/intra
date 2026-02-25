@@ -25,9 +25,7 @@ import { Briefcase, Building2, ClipboardList, Mail } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DashboardPage() {
-    return (
-        <DashboardContent />
-    );
+    return <DashboardContent />;
 }
 
 function DashboardContent() {
@@ -42,8 +40,8 @@ function DashboardContent() {
             return review ? { ...resp, review } : null;
         })
         .filter(Boolean) as Array<
-            (typeof mockRespondents)[0] & { review: (typeof mockReviews)[0] }
-        >;
+        (typeof mockRespondents)[0] & { review: (typeof mockReviews)[0] }
+    >;
 
     const myReportsAsRatee = mockReviews.filter(
         (r) => r.rateeId === user.id && r.stage === 'REPORT_READY',

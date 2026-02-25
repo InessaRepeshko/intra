@@ -14,31 +14,20 @@ import { cn } from '@shared/lib/utils/cn';
 import {
     Award,
     BarChart3,
-    BookOpen,
-    Boxes,
-    Briefcase,
-    BriefcaseBusiness,
     Building2,
     Cat,
     ChevronDown,
-    CirclePile,
-    CircleUserRound,
     FileQuestionMark,
     FileText,
-    Layers,
     Layers2,
     LayoutDashboard,
-    LayoutGrid,
     LibraryBig,
     LogOut,
-    NotepadTextDashed,
     Orbit,
     PanelLeft,
     RefreshCw,
     Target,
-    User,
     UserRound,
-    Users,
     UsersRound,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -314,7 +303,9 @@ export function AppSidebar() {
                                                             href={child.href}
                                                             className={cn(
                                                                 'flex h-8 w-8 items-center justify-center rounded-lg transition-colors mx-auto',
-                                                                isActive(child.href)
+                                                                isActive(
+                                                                    child.href,
+                                                                )
                                                                     ? 'text-white bg-gradient-to-br from-stone-900 to-stone-900/80 shadow-md shadow-primary/20 hover:bg-black hover:text-white'
                                                                     : 'text-black/70 hover:bg-white/10 hover:text-black',
                                                             )}
