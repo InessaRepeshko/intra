@@ -24,6 +24,7 @@ interface MultiSelectProps {
     emptyText?: string;
     className?: string;
     showClear?: boolean;
+    icon?: React.ReactNode;
 }
 
 export function MultiSelect({
@@ -34,6 +35,7 @@ export function MultiSelect({
     emptyText = 'No items found.',
     className,
     showClear = false,
+    icon,
 }: MultiSelectProps) {
     const anchor = useComboboxAnchor();
     const itemValues = options.map((opt) => opt.value);
@@ -55,6 +57,18 @@ export function MultiSelect({
                 ref={anchor}
                 className={cn('w-full bg-background', className)}
             >
+                {icon && (
+                    <div
+                        className={cn(
+                            'flex shrink-0 items-center',
+                            value.length === 0
+                                ? 'text-muted-foreground'
+                                : 'text-foreground',
+                        )}
+                    >
+                        {icon}
+                    </div>
+                )}
                 <ComboboxValue>
                     {(selectedValues: string[]) => (
                         <React.Fragment>
@@ -67,9 +81,9 @@ export function MultiSelect({
                                         key={val}
                                         className={cn(
                                             option?.badgeClassName ||
-                                                'bg-muted text-foreground',
+                                            'bg-muted text-foreground',
                                             option?.badgeClassName &&
-                                                'border font-medium',
+                                            'border font-medium',
                                         )}
                                     >
                                         {option ? option.label : val}
@@ -80,7 +94,11 @@ export function MultiSelect({
                                 placeholder={
                                     value.length === 0 ? placeholder : ''
                                 }
-                                className="min-w-16 flex-1"
+                                className={cn(
+                                    value.length > 0
+                                        ? '!flex-none !w-auto !min-w-[4px] ml-1'
+                                        : '',
+                                )}
                             />
                         </React.Fragment>
                     )}

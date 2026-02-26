@@ -171,7 +171,7 @@ export function ReviewsTable({
                     >
                         <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0 flex-1">
-                                <p className="flex items-center gap-2 font-medium text-foreground flex-wrap ">
+                                <p className="flex items-center gap-x-2 gap-y-1 font-medium text-foreground flex-wrap">
                                     <span className="break-words">
                                         {review.rateeFullName}
                                     </span>
@@ -180,13 +180,13 @@ export function ReviewsTable({
                                     </span>
                                 </p>
                                 {review.rateePositionTitle && (
-                                    <p className="mt-0.5 flex flex-row gap-x-4 text-sm text-muted-foreground truncate flex-wrap">
-                                        <span className="flex items-center gap-1">
-                                            <Award className="h-3.5 w-3.5" />
+                                    <p className="mt-0.5 flex flex-row gap-x-4 gap-y-2 text-sm text-muted-foreground flex-wrap">
+                                        <span className="flex items-center gap-1 break-words">
+                                            <Award className="h-3.5 w-3.5 shrink-0" />
                                             {review.rateePositionTitle}
                                         </span>
-                                        <span className="flex items-center gap-1">
-                                            <Users className="h-3.5 w-3.5" />
+                                        <span className="flex items-center gap-1 break-words">
+                                            <Users className="h-3.5 w-3.5 shrink-0" />
                                             {review.teamTitle}
                                         </span>
                                     </p>
@@ -200,19 +200,19 @@ export function ReviewsTable({
                         </div>
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                            <span className="flex items-center gap-1 text-muted-foreground truncate">
+                            <span className="flex items-center gap-1 text-muted-foreground">
                                 <RefreshCcw className="shrink-0 h-3.5 w-3.5" />
-                                <span className="font-medium text-foreground truncate">
+                                <span className="font-medium text-foreground break-words">
                                     {review.cycleId
                                         ? (cycleTitles[review.cycleId] ??
-                                          'None')
+                                            'None')
                                         : 'None'}
                                 </span>
                             </span>
 
-                            <span className="flex items-center gap-1 text-muted-foreground truncate">
+                            <span className="flex items-center gap-1 text-muted-foreground">
                                 <Calendar className="h-3.5 w-3.5" />
-                                <span className="font-medium text-foreground truncate">
+                                <span className="font-medium text-foreground break-words">
                                     {format(review.createdAt, 'MMM dd, yyyy')}
                                 </span>
                             </span>
@@ -258,7 +258,7 @@ export function ReviewsTable({
                 <Table className="w-full table-fixed">
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">
-                            <TableHead className="w-full min-w-[200px]">
+                            <TableHead className="min-w-[250px] w-[300px]">
                                 <SortableHeader
                                     label="Ratee"
                                     field="title"
@@ -267,7 +267,7 @@ export function ReviewsTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[55%] min-w-[100px] whitespace-nowrap">
+                            <TableHead className="min-w-[200px] w-[250px] whitespace-nowrap">
                                 <SortableHeader
                                     label="Cycle"
                                     field="cycleTitle"
@@ -276,7 +276,7 @@ export function ReviewsTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[35%] min-w-[100px] whitespace-nowrap">
+                            <TableHead className="min-w-[150px] w-[150px] whitespace-nowrap">
                                 <SortableHeader
                                     label="Creation Date"
                                     field="createdAt"
@@ -285,7 +285,7 @@ export function ReviewsTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[25%] min-w-[70px] whitespace-nowrap text-center">
+                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center">
                                 <SortableHeader
                                     label="Questions"
                                     field="questionCount"
@@ -294,7 +294,7 @@ export function ReviewsTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[25%] min-w-[100px] whitespace-nowrap text-center">
+                            <TableHead className="min-w-[100px] w-[150px] whitespace-nowrap text-center">
                                 <SortableHeader
                                     label="Status"
                                     field="stage"
@@ -303,7 +303,7 @@ export function ReviewsTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[30%] min-w-[70px] whitespace-nowrap text-center">
+                            <TableHead className="min-w-[120px] w-[150px] whitespace-nowrap text-center">
                                 <SortableHeader
                                     label="Respondents"
                                     field="respondentCount"
@@ -312,7 +312,7 @@ export function ReviewsTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[25%] min-w-[70px] whitespace-nowrap text-center">
+                            <TableHead className="min-w-[100px] w-[120px] whitespace-nowrap text-center">
                                 <SortableHeader
                                     label="Answers"
                                     field="answerCount"
@@ -321,7 +321,7 @@ export function ReviewsTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[25%] min-w-[70px] whitespace-nowrap text-center">
+                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center">
                                 <SortableHeader
                                     label="Reviewers"
                                     field="reviewerCount"
@@ -330,7 +330,7 @@ export function ReviewsTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[15%] min-w-[70px] whitespace-nowrap text-center">
+                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center">
                                 <span className="">Actions</span>
                             </TableHead>
                         </TableRow>
@@ -338,34 +338,34 @@ export function ReviewsTable({
                     <TableBody>
                         {reviews.map((review) => (
                             <TableRow key={review.id}>
-                                <TableCell className="min-w-[200px]">
-                                    <div className="flex flex-col gap-0.5">
-                                        <span className="font-medium text-foreground">
+                                <TableCell className="min-w-[200px] whitespace-normal">
+                                    <div className="flex flex-col gap-0.5 w-full">
+                                        <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
                                             {review.rateeFullName}
                                         </span>
                                         {review.rateePositionTitle &&
                                             review.teamTitle && (
-                                                <span className="line-clamp-1 whitespace-nowrap text-sm text-muted-foreground flex items-center gap-x-1 gap-y-1">
-                                                    <span>
+                                                <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1">
+                                                    <span className="break-words overflow-wrap-anywhere">
                                                         {
                                                             review.rateePositionTitle
                                                         }
                                                         ,
                                                     </span>
-                                                    <span>
+                                                    <span className="break-words overflow-wrap-anywhere">
                                                         {review.teamTitle}
                                                     </span>
                                                 </span>
                                             )}
                                     </div>
                                 </TableCell>
-                                <TableCell className="whitespace-nowrap">
-                                    <div className="flex items-center justify-start gap-1.5">
-                                        <span className="font-medium text-foreground truncate">
+                                <TableCell className="whitespace-normal">
+                                    <div className="flex items-center justify-start gap-1.5 w-full">
+                                        <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
                                             {review.cycleId
                                                 ? (cycleTitles[
-                                                      review.cycleId
-                                                  ] ?? 'None')
+                                                    review.cycleId
+                                                ] ?? 'None')
                                                 : 'None'}
                                         </span>
                                     </div>
@@ -388,7 +388,7 @@ export function ReviewsTable({
                                         </span>
                                     </div>
                                 </TableCell>
-                                <TableCell className="whitespace-nowrap">
+                                <TableCell className="whitespace-nowrap text-center">
                                     <StageBadge stage={review.stage} />
                                 </TableCell>
                                 <TableCell className="whitespace-nowrap text-center">

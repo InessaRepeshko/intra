@@ -34,7 +34,7 @@ export function DateRangePicker({
                         variant="outline"
                         className={cn(
                             'w-full justify-start text-left font-normal pr-8',
-                            !dateRange && 'text-muted-foreground',
+                            !dateRange ? 'text-muted-foreground' : 'text-foreground',
                         )}
                     >
                         <div className="flex flex-1 items-center overflow-hidden">

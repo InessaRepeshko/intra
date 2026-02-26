@@ -1,6 +1,6 @@
 'use client';
 
-import { RotateCcw, Search } from 'lucide-react';
+import { Flag, RotateCcw, Search } from 'lucide-react';
 import type { DateRange } from 'react-day-picker';
 
 import { CycleStage } from '@entities/feedback360/cycle/model/types';
@@ -9,6 +9,7 @@ import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
 import { DateRangePicker } from '@shared/ui/date-range-picker';
 import { MultiSelect } from '@shared/ui/multi-select';
+import { cn } from '@shared/lib/utils/cn';
 
 interface CyclesFiltersProps {
     search: string;
@@ -38,14 +39,19 @@ export function CyclesFilters({
     onReset,
 }: CyclesFiltersProps) {
     return (
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center flex-wrap">
-            <div className="relative flex-1 lg:max-w-sm">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-start flex-wrap">
+            <div className="relative w-full flex-1 md:min-w-[300px] lg:max-w-sm">
+                <Search
+                    className={cn(
+                        'absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2',
+                        !search ? 'text-muted-foreground' : 'text-foreground',
+                    )}
+                />
                 <Input
                     placeholder="Search by title or description..."
                     value={search}
                     onChange={(e) => onSearchChange(e.target.value)}
-                    className="pl-9"
+                    className="pl-9 truncate text-sm"
                 />
             </div>
 
@@ -59,8 +65,9 @@ export function CyclesFilters({
                 onValueChange={onStagesChange}
                 placeholder="All Stages"
                 emptyText="No stages found"
-                className="w-full lg:w-[150px] min-w-[max-content]"
+                className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
                 showClear
+                icon={<Flag className="h-4 w-4" />}
             />
 
             <DateRangePicker

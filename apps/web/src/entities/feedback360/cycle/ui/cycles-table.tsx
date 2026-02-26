@@ -169,7 +169,7 @@ export function CyclesTable({
                                     </span>
                                 </p>
                                 {cycle.description && (
-                                    <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground truncate">
+                                    <p className="mt-0.5 text-sm text-muted-foreground break-words">
                                         {cycle.description}
                                     </p>
                                 )}
@@ -210,7 +210,7 @@ export function CyclesTable({
                 <Table className="w-full table-fixed">
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">
-                            <TableHead className="w-full min-w-[200px]">
+                            <TableHead className="min-w-[300px] w-[300px]">
                                 <SortableHeader
                                     label="Name"
                                     field="title"
@@ -219,7 +219,7 @@ export function CyclesTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[20%] min-w-[100px] whitespace-nowrap">
+                            <TableHead className="min-w-[70px] w-[120px] whitespace-nowrap">
                                 <SortableHeader
                                     label="Dates"
                                     field="startDate"
@@ -228,7 +228,7 @@ export function CyclesTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[20%] min-w-[100px] whitespace-nowrap text-center">
+                            <TableHead className="min-w-[70px] w-[120px] whitespace-nowrap text-center">
                                 <SortableHeader
                                     label="Status"
                                     field="stage"
@@ -237,7 +237,7 @@ export function CyclesTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[20%] min-w-[70px] whitespace-nowrap text-center">
+                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center">
                                 <SortableHeader
                                     label="Reviews"
                                     field="reviewCount"
@@ -246,7 +246,7 @@ export function CyclesTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="w-[10%] min-w-[40px] whitespace-nowrap text-center">
+                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center">
                                 <span className="">Actions</span>
                             </TableHead>
                         </TableRow>
@@ -254,13 +254,13 @@ export function CyclesTable({
                     <TableBody>
                         {cycles.map((cycle) => (
                             <TableRow key={cycle.id}>
-                                <TableCell className="min-w-[200px]">
-                                    <div className="flex flex-col gap-0.5">
-                                        <span className="font-medium text-foreground">
+                                <TableCell className="min-w-[100px] whitespace-normal">
+                                    <div className="flex flex-col gap-0.5 w-full">
+                                        <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
                                             {cycle.title}
                                         </span>
                                         {cycle.description && (
-                                            <span className="line-clamp-1 whitespace-nowrap text-sm text-muted-foreground">
+                                            <span className="text-sm text-muted-foreground break-words overflow-wrap-anywhere">
                                                 {cycle.description}
                                             </span>
                                         )}

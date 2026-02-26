@@ -176,7 +176,7 @@ export function CyclesList() {
 
                 {/* Main Card */}
                 <Card>
-                    <CardHeader className="pb-4">
+                    <CardHeader>
                         <CardTitle className="text-lg">All Cycles</CardTitle>
                         <CardDescription>
                             Search, filter, and manage cycles.

@@ -28,7 +28,7 @@ import {
 } from '@shared/components/ui/card';
 import { TablePagination } from '@shared/ui/table-pagination';
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 6;
 
 export function ReviewsList() {
     const [search, setSearch] = useState('');
@@ -345,7 +345,7 @@ export function ReviewsList() {
 
                 {/* Main Card */}
                 <Card>
-                    <CardHeader className="pb-4">
+                    <CardHeader>
                         <CardTitle className="text-lg">All Reviews</CardTitle>
                         <CardDescription>
                             Search, filter, and manage reviews.
