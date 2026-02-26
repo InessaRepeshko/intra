@@ -4,15 +4,11 @@ import {
     CycleResponseDto,
     CycleSortField,
     CycleStage,
+    SortDirection,
     UpdateCyclePayload as UpdateCyclePayloadDto,
 } from '@intra/shared-kernel';
 
-export enum SortDirection {
-    ASC = 'asc',
-    DESC = 'desc',
-}
-
-export { CycleSortField, CycleStage };
+export { CycleSortField, CycleStage, SortDirection };
 export type { CycleFilterQuery, CycleResponseDto };
 
 export type CycleQueryDto = CycleFilterQuery & {

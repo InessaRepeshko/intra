@@ -1,4 +1,4 @@
-export interface ReportDto {
+export interface ReportBaseDto<TDate = Date> {
     id: number;
     reviewId: number;
     cycleId?: number | null;
@@ -21,5 +21,9 @@ export interface ReportDto {
     competenceTotPctByOthers?: number | null;
     competenceTotDeltaPctByTeam?: number | null;
     competenceTotDeltaPctByOthers?: number | null;
-    createdAt?: Date;
+    createdAt: TDate;
 }
+
+export type ReportDto = ReportBaseDto<Date>;
+
+export type ReportResponseDto = ReportBaseDto<string>;

@@ -205,7 +205,7 @@ export function ReviewsTable({
                                 <span className="font-medium text-foreground break-words">
                                     {review.cycleId
                                         ? (cycleTitles[review.cycleId] ??
-                                            'None')
+                                          'None')
                                         : 'None'}
                                 </span>
                             </span>
@@ -364,8 +364,8 @@ export function ReviewsTable({
                                         <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
                                             {review.cycleId
                                                 ? (cycleTitles[
-                                                    review.cycleId
-                                                ] ?? 'None')
+                                                      review.cycleId
+                                                  ] ?? 'None')
                                                 : 'None'}
                                         </span>
                                     </div>

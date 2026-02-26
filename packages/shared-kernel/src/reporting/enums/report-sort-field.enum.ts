@@ -1,0 +1,27 @@
+export enum ReportSortField {
+    ID = 'id',
+    REVIEW_ID = 'reviewId',
+    CYCLE_ID = 'cycleId',
+    RESPONDENT_COUNT = 'respondentCount',
+    TURNOUT_PCT_OF_TEAM = 'turnoutPctOfTeam',
+    TURNOUT_PCT_OF_OTHER = 'turnoutPctOfOther',
+    QUESTION_TOT_AVG_BY_SELF = 'questionTotAvgBySelf',
+    QUESTION_TOT_AVG_BY_TEAM = 'questionTotAvgByTeam',
+    QUESTION_TOT_AVG_BY_OTHERS = 'questionTotAvgByOthers',
+    QUESTION_TOT_PCT_BY_SELF = 'questionTotPctBySelf',
+    QUESTION_TOT_PCT_BY_TEAM = 'questionTotPctByTeam',
+    QUESTION_TOT_PCT_BY_OTHERS = 'questionTotPctByOthers',
+    QUESTION_TOT_DELTA_PCT_BY_TEAM = 'questionTotDeltaPctByTeam',
+    QUESTION_TOT_DELTA_PCT_BY_OTHERS = 'questionTotDeltaPctByOthers',
+    COMPETENCE_TOT_AVG_BY_SELF = 'competenceTotAvgBySelf',
+    COMPETENCE_TOT_AVG_BY_TEAM = 'competenceTotAvgByTeam',
+    COMPETENCE_TOT_AVG_BY_OTHERS = 'competenceTotAvgByOthers',
+    COMPETENCE_TOT_PCT_BY_SELF = 'competenceTotPctBySelf',
+    COMPETENCE_TOT_PCT_BY_TEAM = 'competenceTotPctByTeam',
+    COMPETENCE_TOT_PCT_BY_OTHERS = 'competenceTotPctByOthers',
+    COMPETENCE_TOT_DELTA_PCT_BY_TEAM = 'competenceTotDeltaPctByTeam',
+    COMPETENCE_TOT_DELTA_PCT_BY_OTHERS = 'competenceTotDeltaPctByOthers',
+    CREATED_AT = 'createdAt',
+}
+
+export const REPORT_SOFT_FIELDS = Object.values(ReportSortField);

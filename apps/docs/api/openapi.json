@@ -7329,6 +7329,550 @@
         ]
       }
     },
+    "/reporting/reports": {
+      "get": {
+        "operationId": "ReportingController_search",
+        "parameters": [
+          {
+            "name": "reviewId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 review id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cycleId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 cycle identifier",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "respondentCount",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 respondent count",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "turnoutPctOfTeam",
+            "required": false,
+            "in": "query",
+            "description": "Filter by team turnout percentage",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "turnoutPctOfOther",
+            "required": false,
+            "in": "query",
+            "description": "Filter by other peers turnout percentage",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "questionTotAvgBySelf",
+            "required": false,
+            "in": "query",
+            "description": "Filter by question total average by self",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "questionTotAvgByTeam",
+            "required": false,
+            "in": "query",
+            "description": "Filter by question total average by team",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "questionTotAvgByOthers",
+            "required": false,
+            "in": "query",
+            "description": "Filter by question total average by others",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "questionTotPctBySelf",
+            "required": false,
+            "in": "query",
+            "description": "Filter by question total percentage by self",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "questionTotPctByTeam",
+            "required": false,
+            "in": "query",
+            "description": "Filter by question total percentage by team",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "questionTotPctByOthers",
+            "required": false,
+            "in": "query",
+            "description": "Filter by question total percentage by others",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "questionTotDeltaPctByTeam",
+            "required": false,
+            "in": "query",
+            "description": "Filter by question total delta percentage by team",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "questionTotDeltaPctByOthers",
+            "required": false,
+            "in": "query",
+            "description": "Filter by question total delta percentage by others",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "competenceTotAvgBySelf",
+            "required": false,
+            "in": "query",
+            "description": "Filter by competence total average by self",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "competenceTotAvgByTeam",
+            "required": false,
+            "in": "query",
+            "description": "Filter by competence total average by team",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "competenceTotAvgByOthers",
+            "required": false,
+            "in": "query",
+            "description": "Filter by competence total average by others",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "competenceTotPctBySelf",
+            "required": false,
+            "in": "query",
+            "description": "Filter by competence total percentage by self",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "competenceTotPctByTeam",
+            "required": false,
+            "in": "query",
+            "description": "Filter by competence total percentage by team",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "competenceTotPctByOthers",
+            "required": false,
+            "in": "query",
+            "description": "Filter by competence total percentage by others",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "competenceTotDeltaPctByTeam",
+            "required": false,
+            "in": "query",
+            "description": "Filter by competence total delta percentage by team",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "competenceTotDeltaPctByOthers",
+            "required": false,
+            "in": "query",
+            "description": "Filter by competence total delta percentage by others",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "createdAt",
+            "required": false,
+            "in": "query",
+            "description": "Filter by creation date",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-01T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Sort by field",
+            "schema": {
+              "default": "id",
+              "example": "cycleId",
+              "type": "string",
+              "enum": [
+                "id",
+                "reviewId",
+                "cycleId",
+                "respondentCount",
+                "turnoutPctOfTeam",
+                "turnoutPctOfOther",
+                "questionTotAvgBySelf",
+                "questionTotAvgByTeam",
+                "questionTotAvgByOthers",
+                "questionTotPctBySelf",
+                "questionTotPctByTeam",
+                "questionTotPctByOthers",
+                "questionTotDeltaPctByTeam",
+                "questionTotDeltaPctByOthers",
+                "competenceTotAvgBySelf",
+                "competenceTotAvgByTeam",
+                "competenceTotAvgByOthers",
+                "competenceTotPctBySelf",
+                "competenceTotPctByTeam",
+                "competenceTotPctByOthers",
+                "competenceTotDeltaPctByTeam",
+                "competenceTotDeltaPctByOthers",
+                "createdAt"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "description": "Filter by Feedback360 review id",
+            "required": false,
+            "name": "reviewId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by Feedback360 cycle identifier",
+            "required": false,
+            "name": "cycleId",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by Feedback360 respondent count",
+            "required": false,
+            "name": "respondentCount",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by team turnout percentage",
+            "required": false,
+            "name": "turnoutPctOfTeam",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by other peers turnout percentage",
+            "required": false,
+            "name": "turnoutPctOfOther",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by question total average by self",
+            "required": false,
+            "name": "questionTotAvgBySelf",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by question total average by team",
+            "required": false,
+            "name": "questionTotAvgByTeam",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by question total average by others",
+            "required": false,
+            "name": "questionTotAvgByOthers",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by question total percentage by self",
+            "required": false,
+            "name": "questionTotPctBySelf",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by question total percentage by team",
+            "required": false,
+            "name": "questionTotPctByTeam",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by question total percentage by others",
+            "required": false,
+            "name": "questionTotPctByOthers",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by question total delta percentage by team",
+            "required": false,
+            "name": "questionTotDeltaPctByTeam",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by question total delta percentage by others",
+            "required": false,
+            "name": "questionTotDeltaPctByOthers",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by competence total average by self",
+            "required": false,
+            "name": "competenceTotAvgBySelf",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by competence total average by team",
+            "required": false,
+            "name": "competenceTotAvgByTeam",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by competence total average by others",
+            "required": false,
+            "name": "competenceTotAvgByOthers",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by competence total percentage by self",
+            "required": false,
+            "name": "competenceTotPctBySelf",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by competence total percentage by team",
+            "required": false,
+            "name": "competenceTotPctByTeam",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by competence total percentage by others",
+            "required": false,
+            "name": "competenceTotPctByOthers",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by competence total delta percentage by team",
+            "required": false,
+            "name": "competenceTotDeltaPctByTeam",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by competence total delta percentage by others",
+            "required": false,
+            "name": "competenceTotDeltaPctByOthers",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by creation date",
+            "required": false,
+            "name": "createdAt",
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "example": "2025-01-01T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort by field",
+            "required": false,
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "default": "id",
+              "example": "cycleId",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction",
+            "required": false,
+            "name": "sortDirection",
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "desc",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default sort by ascending id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List Feedback360 Reports",
+        "tags": [
+          "Reporting / Reports"
+        ]
+      }
+    },
     "/reporting/reports/{id}": {
       "get": {
         "operationId": "ReportingController_getById",

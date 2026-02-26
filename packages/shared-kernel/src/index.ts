@@ -232,8 +232,16 @@ export type { ReportCommentDto } from './reporting/dto/comment/report-comment-dt
 export type { ReportCompetenceSummaryDto } from './reporting/dto/competence/report-competence-summary-dto.interface';
 export type { ReportQuestionSummaryDto } from './reporting/dto/question/report-question-summary-dto.interface';
 export type { ReportAnalyticsDto } from './reporting/dto/report/report-analytics-dto.interface';
-export type { ReportDto } from './reporting/dto/report/report-dto.interface';
+export type {
+    ReportDto,
+    ReportResponseDto,
+} from './reporting/dto/report/report-dto.interface';
+export type { ReportSearchQuery } from './reporting/dto/report/report-search-query.type';
 export type { ReportTextAnswerDto } from './reporting/dto/report/report-text-answer-dto.interface';
+export {
+    REPORT_SOFT_FIELDS,
+    ReportSortField,
+} from './reporting/enums/report-sort-field.enum';
 
 export type { CompetenceAccumulator } from './reporting/dto/competence/competence-accumulator.type';
 export type { EntitySummaryMetricsDto } from './reporting/dto/entity-summary-metrics-dto.interface';

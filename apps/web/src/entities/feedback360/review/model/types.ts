@@ -6,10 +6,11 @@ import {
     ReviewResponseDto,
     ReviewSortField,
     ReviewStage,
+    SortDirection,
     UpdateReviewPayload,
 } from '@intra/shared-kernel';
 
-export { ResponseStatus, ReviewSortField, ReviewStage };
+export { ResponseStatus, ReviewSortField, ReviewStage, SortDirection };
 export type {
     CreateReviewPayload,
     ReviewDto,
@@ -22,8 +23,3 @@ export type ReviewQueryDto = ReviewFilterQuery & {
     page?: number;
     limit?: number;
 };
-
-export enum SortDirection {
-    ASC = 'asc',
-    DESC = 'desc',
-}

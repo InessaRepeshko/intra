@@ -1,14 +1,21 @@
 'use client';
 
-import { Award, Briefcase, Filter, Flag, RefreshCcw, RotateCcw, Search, Users } from 'lucide-react';
+import {
+    Award,
+    Flag,
+    RefreshCcw,
+    RotateCcw,
+    Search,
+    Users,
+} from 'lucide-react';
 import type { DateRange } from 'react-day-picker';
 
 import { ReviewStage } from '@entities/feedback360/review/model/types';
 import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
+import { cn } from '@shared/lib/utils/cn';
 import { DateRangePicker } from '@shared/ui/date-range-picker';
 import { MultiSelect } from '@shared/ui/multi-select';
-import { cn } from '@shared/lib/utils/cn';
 import { stageConfig } from './stage-badge';
 
 interface ReviewsFiltersProps {

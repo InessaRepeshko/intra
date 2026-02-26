@@ -5,6 +5,7 @@ import {
     EntityType,
     IdentityRole,
     REPORT_ANALYTICS_CONSTRAINTS,
+    ReportSearchQuery,
     RespondentCategory,
     ResponseStatus,
 } from '@intra/shared-kernel';
@@ -92,6 +93,32 @@ export class ReportingService {
         @Inject(CLUSTER_SCORE_REPOSITORY)
         private readonly clusterScores: ClusterScoreRepositoryPort,
     ) {}
+
+    async search(
+        query: ReportSearchQuery,
+        actor?: UserDomain,
+    ): Promise<ReportDomain[]> {
+        await this.checkAccessToAllReports(actor);
+        return await this.reports.search(query);
+    }
+
+    /**
+     * Checks if the actor has access to all reports (HR or Admin only).
+     * @param actor The actor to check access for.
+     */
+    async checkAccessToAllReports(actor?: UserDomain): Promise<void> {
+        if (!actor) return;
+
+        const isAdminOrHr =
+            actor?.roles?.includes(IdentityRole.ADMIN) ||
+            actor?.roles?.includes(IdentityRole.HR);
+
+        if (!isAdminOrHr) {
+            throw new ForbiddenException(
+                'You do not have permission to view this report',
+            );
+        }
+    }
 
     async getById(id: number, actor?: UserDomain): Promise<ReportDomain> {
         const report = await this.reports.findById(id);

@@ -6,19 +6,30 @@ import {
     HttpStatus,
     Param,
     ParseIntPipe,
+    Query,
     SerializeOptions,
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+    ApiOperation,
+    ApiParam,
+    ApiQuery,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { AuthSessionGuard } from 'src/auth/guards/auth-session.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { ApiReadErrorResponses } from 'src/common/documentation/api.error.responses.decorator';
+import {
+    ApiListReadErrorResponses,
+    ApiReadErrorResponses,
+} from 'src/common/documentation/api.error.responses.decorator';
 import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { ReportingService } from '../../../application/services/reporting.service';
 import { TextAnswerService } from '../../../application/services/text-answer.service';
+import { ReportQueryDto } from '../dto/report-query.dto';
 import { ReportHttpMapper } from '../mappers/report.http.mapper';
 import { ReportResponse } from '../models/report.response';
 import { TextAnswerResponse } from '../models/text-answer.response';
@@ -39,6 +50,24 @@ export class ReportingController {
         private readonly reporting: ReportingService,
         private readonly textAnswerService: TextAnswerService,
     ) {}
+
+    @Get()
+    @ApiOperation({ summary: 'List Feedback360 Reports' })
+    @ApiQuery({ type: ReportQueryDto })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: ReportResponse,
+        isArray: true,
+        description: 'Default sort by ascending id',
+    })
+    @ApiListReadErrorResponses()
+    async search(
+        @Query() query: ReportQueryDto,
+        @CurrentUser() actor: UserDomain,
+    ): Promise<ReportResponse[]> {
+        const reports = await this.reporting.search(query, actor);
+        return reports.map(ReportHttpMapper.toResponse);
+    }
 
     @Get(':id')
     @ApiOperation({ summary: 'Get report by id' })

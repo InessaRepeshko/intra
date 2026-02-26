@@ -81,9 +81,9 @@ export function MultiSelect({
                                         key={val}
                                         className={cn(
                                             option?.badgeClassName ||
-                                            'bg-muted text-foreground',
+                                                'bg-muted text-foreground',
                                             option?.badgeClassName &&
-                                            'border font-medium',
+                                                'border font-medium',
                                         )}
                                     >
                                         {option ? option.label : val}

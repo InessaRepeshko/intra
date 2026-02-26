@@ -7,9 +7,9 @@ import { CycleStage } from '@entities/feedback360/cycle/model/types';
 import { stageConfig } from '@entities/feedback360/cycle/ui/stage-badge';
 import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
+import { cn } from '@shared/lib/utils/cn';
 import { DateRangePicker } from '@shared/ui/date-range-picker';
 import { MultiSelect } from '@shared/ui/multi-select';
-import { cn } from '@shared/lib/utils/cn';
 
 interface CyclesFiltersProps {
     search: string;
