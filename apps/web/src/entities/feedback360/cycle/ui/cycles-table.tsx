@@ -22,7 +22,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@shared/components/ui/dropdown-menu';
-import { Spinner } from '@shared/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -33,9 +32,9 @@ import {
 } from '@shared/components/ui/table';
 import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
+import { useEffect } from 'react';
 import { SortDirection } from '../model/types';
 import { StageBadge } from './stage-badge';
-import { useEffect } from 'react';
 
 interface CyclesTableProps {
     cycles: Cycle[];
@@ -110,11 +109,22 @@ export function CyclesTable({
     onDelete,
     resetTrigger,
 }: CyclesTableProps) {
-    const { columnOrder, handleDragStart, handleDragEnter, handleDragEnd, resetOrder } =
-        useDraggableColumns<'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions'>(
-            'cycles-table',
-            ['name', 'dates', 'anonymity', 'stage', 'reviews', 'actions'],
-        );
+    const {
+        columnOrder,
+        handleDragStart,
+        handleDragEnter,
+        handleDragEnd,
+        resetOrder,
+    } = useDraggableColumns<
+        'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions'
+    >('cycles-table', [
+        'name',
+        'dates',
+        'anonymity',
+        'stage',
+        'reviews',
+        'actions',
+    ]);
 
     useEffect(() => {
         if (resetTrigger && resetTrigger > 0) {

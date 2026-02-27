@@ -22,8 +22,8 @@ export const stageConfig: Record<
         className: 'bg-red-100 text-red-800 border-red-200',
     },
     [ReviewStage.SELF_ASSESSMENT]: {
-        label: 'Self assessment',
-        className: 'bg-amber-100 text-amber-800 border-amber-200',
+        label: 'Self-assessment',
+        className: 'bg-teal-100 text-teal-800 border-teal-200',
     },
     [ReviewStage.WAITING_TO_START]: {
         label: 'Waiting to start',
@@ -35,7 +35,7 @@ export const stageConfig: Record<
     },
     [ReviewStage.PREPARING_REPORT]: {
         label: 'Report generated',
-        className: 'bg-orange-100 text-orange-800 border-orange-200',
+        className: 'bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200',
     },
     [ReviewStage.PROCESSING_BY_HR]: {
         label: 'Processing by HR',
@@ -43,7 +43,7 @@ export const stageConfig: Record<
     },
     [ReviewStage.PUBLISHED]: {
         label: 'Published',
-        className: 'bg-olive-100 text-olive-800 border-olive-200',
+        className: 'bg-lime-100 text-lime-800 border-lime-200',
     },
     [ReviewStage.ANALYSIS]: {
         label: 'Analysis',

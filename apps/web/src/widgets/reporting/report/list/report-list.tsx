@@ -30,6 +30,7 @@ import {
     CardTitle,
 } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
+import { compareArrays } from '@shared/lib/utils/compare-arrays';
 import { TablePagination } from '@shared/ui/table-pagination';
 
 const ITEMS_PER_PAGE = 6;
@@ -53,22 +54,17 @@ export function ReportsList() {
     // Feature dialogs state
     const [deleteReport, setDeleteReport] = useState<Report | null>(null);
 
-    // Build query params (exclude client-side only fields)
+    // Build query params (exclude all sort params - sorting is client-side only)
     const queryParams = useMemo(() => {
         const params: Record<string, unknown> = {};
 
         if (search.trim()) params.search = search.trim();
         if (stages.length === 1) params.stage = stages[0];
-        // Only send sort params for server-side sortable fields
-        if (sortField) {
-            params.sortBy = sortField;
-            params.sortDirection = sortDirection;
-        }
         if (cycles.length === 1 && cycles[0] !== 'None')
             params.cycleTitle = cycles[0];
 
         return params;
-    }, [search, stages, sortField, sortDirection, cycles]);
+    }, [search, stages, cycles]);
 
     const {
         data: reports = [],
@@ -282,98 +278,123 @@ export function ReportsList() {
         positions,
     ]);
 
-    // Client-side sorting for
+    // Client-side sorting for all fields
     const sortedReports = useMemo(() => {
-        if (
-            sortField !== 'rateeFullName' &&
-            sortField !== 'rateePositionTitle' &&
-            sortField !== 'rateeTeamTitle' &&
-            sortField !== 'cycleTitle' &&
-            sortField !== 'reviewStage' &&
-            sortField !== 'respondentCategories' &&
-            sortField !== 'answerCounts'
-        ) {
-            return filteredReports;
-        }
-
         return [...filteredReports].sort((a, b) => {
-            if (sortField === 'rateeFullName') {
-                const countA = rateeFullNames[a.reviewId] ?? '';
-                const countB = rateeFullNames[b.reviewId] ?? '';
-                return sortDirection === SortDirection.ASC
-                    ? countA.localeCompare(countB)
-                    : countB.localeCompare(countA);
+            switch (sortField) {
+                case 'title': {
+                    const nameA = rateeFullNames[a.reviewId] ?? '';
+                    const nameB = rateeFullNames[b.reviewId] ?? '';
+                    return sortDirection === SortDirection.ASC
+                        ? nameA.localeCompare(nameB)
+                        : nameB.localeCompare(nameA);
+                }
+                case 'cycleTitle': {
+                    const titleA = a.cycleId
+                        ? (cycleTitles[a.cycleId] ?? '')
+                        : '';
+                    const titleB = b.cycleId
+                        ? (cycleTitles[b.cycleId] ?? '')
+                        : '';
+                    return sortDirection === SortDirection.ASC
+                        ? titleA.localeCompare(titleB)
+                        : titleB.localeCompare(titleA);
+                }
+                case 'createdAt':
+                    return sortDirection === SortDirection.ASC
+                        ? a.createdAt?.getTime() - b.createdAt?.getTime()
+                        : b.createdAt?.getTime() - a.createdAt?.getTime();
+                case 'reviewStage': {
+                    const stageA = REVIEW_STAGE_ENUM_VALUES.indexOf(
+                        reviewStages[a.reviewId],
+                    );
+                    const stageB = REVIEW_STAGE_ENUM_VALUES.indexOf(
+                        reviewStages[b.reviewId],
+                    );
+                    return sortDirection === SortDirection.ASC
+                        ? stageA - stageB
+                        : stageB - stageA;
+                }
+                case 'respondentCount': {
+                    const countA = a.respondentCount ?? 0;
+                    const countB = b.respondentCount ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                case 'respondentCategories': {
+                    const indicesA = respondentCategories[a.reviewId]?.map(
+                        (cat) => RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(cat),
+                    );
+                    const indicesB = respondentCategories[b.reviewId]?.map(
+                        (cat) => RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(cat),
+                    );
+                    const comparison = compareArrays(indicesA, indicesB);
+                    return sortDirection === SortDirection.ASC
+                        ? comparison
+                        : -comparison;
+                }
+                case 'answerCount': {
+                    const countA = answerCounts[a.reviewId] ?? -1;
+                    const countB = answerCounts[b.reviewId] ?? -1;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                case 'turnoutPctOfTeam': {
+                    const valA = a.turnoutPctOfTeam ?? -1;
+                    const valB = b.turnoutPctOfTeam ?? -1;
+                    return sortDirection === SortDirection.ASC
+                        ? valA - valB
+                        : valB - valA;
+                }
+                case 'turnoutPctOfOther': {
+                    const valA = a.turnoutPctOfOther ?? -1;
+                    const valB = b.turnoutPctOfOther ?? -1;
+                    return sortDirection === SortDirection.ASC
+                        ? valA - valB
+                        : valB - valA;
+                }
+                case 'competenceTotPctBySelf': {
+                    const valA =
+                        a.competenceSummaryTotals?.percentageBySelfAssessment ??
+                        -1;
+                    const valB =
+                        b.competenceSummaryTotals?.percentageBySelfAssessment ??
+                        -1;
+                    return sortDirection === SortDirection.ASC
+                        ? valA - valB
+                        : valB - valA;
+                }
+                case 'competenceTotPctByTeam': {
+                    const valA =
+                        a.competenceSummaryTotals?.percentageByTeam ?? -1;
+                    const valB =
+                        b.competenceSummaryTotals?.percentageByTeam ?? -1;
+                    return sortDirection === SortDirection.ASC
+                        ? valA - valB
+                        : valB - valA;
+                }
+                case 'competenceTotPctByOthers': {
+                    const valA =
+                        a.competenceSummaryTotals?.percentageByOther ?? -1;
+                    const valB =
+                        b.competenceSummaryTotals?.percentageByOther ?? -1;
+                    return sortDirection === SortDirection.ASC
+                        ? valA - valB
+                        : valB - valA;
+                }
+                default:
+                    return 0;
             }
-            if (sortField === 'rateePositionTitle') {
-                const countA = rateePositionTitles[a.reviewId] ?? '';
-                const countB = rateePositionTitles[b.reviewId] ?? '';
-                return sortDirection === SortDirection.ASC
-                    ? countA.localeCompare(countB)
-                    : countB.localeCompare(countA);
-            }
-            if (sortField === 'rateeTeamTitle') {
-                const countA = rateeTeamTitles[a.reviewId] ?? '';
-                const countB = rateeTeamTitles[b.reviewId] ?? '';
-                return sortDirection === SortDirection.ASC
-                    ? countA.localeCompare(countB)
-                    : countB.localeCompare(countA);
-            }
-            if (
-                sortField === 'cycleTitle' &&
-                a.cycleId !== undefined &&
-                b.cycleId !== undefined &&
-                a.cycleId !== null &&
-                b.cycleId !== null
-            ) {
-                const countA = cycleTitles[a.cycleId] ?? '';
-                const countB = cycleTitles[b.cycleId] ?? '';
-                return sortDirection === SortDirection.ASC
-                    ? countA.localeCompare(countB)
-                    : countB.localeCompare(countA);
-            }
-            if (sortField === 'reviewStage') {
-                const countA = reviewStages[a.reviewId]
-                    ? REVIEW_STAGE_ENUM_VALUES.indexOf(reviewStages[a.reviewId])
-                    : -1;
-                const countB = reviewStages[b.reviewId]
-                    ? REVIEW_STAGE_ENUM_VALUES.indexOf(reviewStages[b.reviewId])
-                    : -1;
-                return sortDirection === SortDirection.ASC
-                    ? countA - countB
-                    : countB - countA;
-            }
-            if (sortField === 'respondentCategories') {
-                const countA = respondentCategories[a.reviewId]
-                    ? RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(
-                        respondentCategories[a.reviewId][0],
-                    )
-                    : -1;
-                const countB = respondentCategories[b.reviewId]
-                    ? RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(
-                        respondentCategories[b.reviewId][0],
-                    )
-                    : -1;
-                return sortDirection === SortDirection.ASC
-                    ? countA - countB
-                    : countB - countA;
-            }
-            if (sortField === 'answerCounts') {
-                const countA = answerCounts[a.reviewId]
-                    ? answerCounts[a.reviewId]
-                    : -1;
-                const countB = answerCounts[b.reviewId]
-                    ? answerCounts[b.reviewId]
-                    : -1;
-                return sortDirection === SortDirection.ASC
-                    ? countA - countB
-                    : countB - countA;
-            }
-            return 0;
         });
     }, [
         filteredReports,
         sortField,
         sortDirection,
+        rateeFullNames,
+        rateePositionTitles,
+        rateeTeamTitles,
         cycleTitles,
         reviewStages,
         respondentCategories,
@@ -510,7 +531,7 @@ export function ReportsList() {
                                     sortDirection={sortDirection}
                                     onSort={handleSort}
                                     resetTrigger={resetTrigger}
-                                // onDelete={setDeleteReport}
+                                    // onDelete={setDeleteReport}
                                 />
 
                                 {/* Pagination */}

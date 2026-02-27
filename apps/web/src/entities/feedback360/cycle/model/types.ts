@@ -1,5 +1,6 @@
 import {
     CreateCyclePayload as CreateCyclePayloadDto,
+    CYCLE_STAGES as CYCLE_STAGE_ENUM_VALUES,
     CycleFilterQuery,
     CycleResponseDto,
     CycleSortField,
@@ -8,7 +9,7 @@ import {
     UpdateCyclePayload as UpdateCyclePayloadDto,
 } from '@intra/shared-kernel';
 
-export { CycleSortField, CycleStage, SortDirection };
+export { CYCLE_STAGE_ENUM_VALUES, CycleSortField, CycleStage, SortDirection };
 export type { CycleFilterQuery, CycleResponseDto };
 
 export type CycleQueryDto = CycleFilterQuery & {

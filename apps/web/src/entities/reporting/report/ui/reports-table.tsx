@@ -22,7 +22,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@shared/components/ui/dropdown-menu';
-import { Spinner } from '@shared/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -32,10 +31,11 @@ import {
     TableRow,
 } from '@shared/components/ui/table';
 import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
+import { formatNumber } from '@shared/lib/utils/format-number';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
+import { useEffect } from 'react';
 import { Report } from '../model/mappers';
 import { RespondentCategory, ReviewStage, SortDirection } from '../model/types';
-import { useEffect } from 'react';
 
 interface ReportsTableProps {
     reports: Report[];
@@ -89,36 +89,41 @@ export function ReportsTable({
     onSort,
     resetTrigger,
 }: ReportsTableProps) {
-    const { columnOrder, handleDragStart, handleDragEnter, handleDragEnd, resetOrder } =
-        useDraggableColumns<
-            | 'ratee'
-            | 'cycle'
-            | 'date'
-            | 'stage'
-            | 'respondents'
-            | 'categories'
-            | 'answers'
-            | 'turnout_team'
-            | 'turnout_others'
-            | 'self_competence'
-            | 'team_competence'
-            | 'others_competence'
-            | 'actions'
-        >('reports-table', [
-            'ratee',
-            'cycle',
-            'date',
-            'stage',
-            'respondents',
-            'categories',
-            'answers',
-            'turnout_team',
-            'turnout_others',
-            'self_competence',
-            'team_competence',
-            'others_competence',
-            'actions',
-        ]);
+    const {
+        columnOrder,
+        handleDragStart,
+        handleDragEnter,
+        handleDragEnd,
+        resetOrder,
+    } = useDraggableColumns<
+        | 'ratee'
+        | 'cycle'
+        | 'date'
+        | 'stage'
+        | 'respondents'
+        | 'categories'
+        | 'answers'
+        | 'turnout_team'
+        | 'turnout_others'
+        | 'self_competence'
+        | 'team_competence'
+        | 'others_competence'
+        | 'actions'
+    >('reports-table', [
+        'ratee',
+        'cycle',
+        'date',
+        'stage',
+        'respondents',
+        'categories',
+        'answers',
+        'turnout_team',
+        'turnout_others',
+        'self_competence',
+        'team_competence',
+        'others_competence',
+        'actions',
+    ]);
 
     useEffect(() => {
         if (resetTrigger && resetTrigger > 0) {
@@ -166,26 +171,23 @@ export function ReportsTable({
                     </span>
                     {(rateePositionTitles[report.reviewId] ||
                         rateeTeamTitles[report.reviewId]) && (
-                            <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1">
-                                {rateePositionTitles[report.reviewId] && (
-                                    <span className="break-words overflow-wrap-anywhere">
-                                        {rateePositionTitles[report.reviewId] ?? (
-                                            `None`
-                                        )}{' '}
-                                        {rateeTeamTitles[report.reviewId]
-                                            ? `,`
-                                            : ''}
-                                    </span>
-                                )}
-                                {rateeTeamTitles[report.reviewId] && (
-                                    <span className="break-words overflow-wrap-anywhere">
-                                        {rateeTeamTitles[report.reviewId] ?? (
-                                            `None`
-                                        )}
-                                    </span>
-                                )}
-                            </span>
-                        )}
+                        <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1">
+                            {rateePositionTitles[report.reviewId] && (
+                                <span className="break-words overflow-wrap-anywhere">
+                                    {rateePositionTitles[report.reviewId] ??
+                                        `None`}{' '}
+                                    {rateeTeamTitles[report.reviewId]
+                                        ? `,`
+                                        : ''}
+                                </span>
+                            )}
+                            {rateeTeamTitles[report.reviewId] && (
+                                <span className="break-words overflow-wrap-anywhere">
+                                    {rateeTeamTitles[report.reviewId] ?? `None`}
+                                </span>
+                            )}
+                        </span>
+                    )}
                 </div>
             ),
             cellClassName: 'min-w-[200px] whitespace-normal',
@@ -291,16 +293,21 @@ export function ReportsTable({
             ),
             headerClassName:
                 'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
-            cell: (report) =>
-                respondentCategories[report.reviewId] ? (
-                    respondentCategories[report.reviewId].map((category) => (
-                        <CategoryBadge key={category} category={category} />
-                    ))
-                ) : (
-                    `None`
-                ),
-            cellClassName:
-                'whitespace-nowrap text-center gap-x-1 gap-y-1 flex flex-wrap',
+            cell: (report) => (
+                <div className="flex flex-wrap items-center justify-center gap-1">
+                    {respondentCategories[report.reviewId]
+                        ? respondentCategories[report.reviewId].map(
+                              (category) => (
+                                  <CategoryBadge
+                                      key={category}
+                                      category={category}
+                                  />
+                              ),
+                          )
+                        : `None`}
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
         },
         answers: {
             header: (
@@ -344,7 +351,7 @@ export function ReportsTable({
                 <div className="flex items-center justify-start pl-3 gap-1.5">
                     <UserRoundPen className="h-4 w-4 text-sky-700" />
                     <span className="font-medium text-foreground">
-                        {report.turnoutPctOfTeam ?? `—`}
+                        {formatNumber(report.turnoutPctOfTeam)}
                     </span>
                 </div>
             ),
@@ -367,7 +374,7 @@ export function ReportsTable({
                 <div className="flex items-center justify-start pl-3 gap-1.5">
                     <UserRoundPen className="h-4 w-4 text-indigo-700" />
                     <span className="font-medium text-foreground">
-                        {report.turnoutPctOfOther ?? `—`}
+                        {formatNumber(report.turnoutPctOfOther)}
                     </span>
                 </div>
             ),
@@ -390,8 +397,10 @@ export function ReportsTable({
                 <div className="flex items-center justify-start pl-3 gap-1.5">
                     <BookmarkCheck className="h-4 w-4 text-lime-700" />
                     <span className="font-medium text-foreground">
-                        {report.competenceSummaryTotals
-                            ?.percentageBySelfAssessment ?? `—`}
+                        {formatNumber(
+                            report.competenceSummaryTotals
+                                ?.percentageBySelfAssessment,
+                        )}
                     </span>
                 </div>
             ),
@@ -414,7 +423,9 @@ export function ReportsTable({
                 <div className="flex items-center justify-start pl-3 gap-1.5">
                     <BookmarkCheck className="h-4 w-4 text-sky-700" />
                     <span className="font-medium text-foreground">
-                        {report.competenceSummaryTotals?.percentageByTeam ?? `—`}
+                        {formatNumber(
+                            report.competenceSummaryTotals?.percentageByTeam,
+                        )}
                     </span>
                 </div>
             ),
@@ -437,7 +448,9 @@ export function ReportsTable({
                 <div className="flex items-center justify-start pl-3 gap-1.5">
                     <BookmarkCheck className="h-4 w-4 text-indigo-700" />
                     <span className="font-medium text-foreground">
-                        {report.competenceSummaryTotals?.percentageByOther ?? `—`}
+                        {formatNumber(
+                            report.competenceSummaryTotals?.percentageByOther,
+                        )}
                     </span>
                 </div>
             ),
@@ -481,9 +494,8 @@ export function ReportsTable({
                             <div className="min-w-0 flex-1">
                                 <p className="flex items-center gap-x-2 gap-y-1 font-medium text-foreground flex-wrap">
                                     <span className="break-words">
-                                        {rateeFullNames[report.reviewId] ?? (
-                                            `None`
-                                        )}
+                                        {rateeFullNames[report.reviewId] ??
+                                            `None`}
                                     </span>
                                     <span className="whitespace-nowrap">
                                         {reviewStages[report.reviewId] ? (
@@ -491,7 +503,7 @@ export function ReportsTable({
                                                 key={report.reviewId}
                                                 stage={
                                                     reviewStages[
-                                                    report.reviewId
+                                                        report.reviewId
                                                     ]
                                                 }
                                             />
@@ -502,27 +514,27 @@ export function ReportsTable({
                                 </p>
                                 {(rateePositionTitles[report.reviewId] ||
                                     rateeTeamTitles[report.reviewId]) && (
-                                        <p className="mt-0.5 flex flex-row gap-x-4 gap-y-2 text-sm text-muted-foreground flex-wrap">
-                                            {rateePositionTitles[
-                                                report.reviewId
-                                            ] && (
-                                                    <span className="flex items-center gap-1 break-words">
-                                                        <Award className="h-3.5 w-3.5 shrink-0" />
-                                                        {rateePositionTitles[
-                                                            report.reviewId
-                                                        ] ?? `None`}
-                                                    </span>
-                                                )}
-                                            {rateeTeamTitles[report.reviewId] && (
-                                                <span className="flex items-center gap-1 break-words">
-                                                    <Users className="h-3.5 w-3.5 shrink-0" />
-                                                    {rateeTeamTitles[
-                                                        report.reviewId
-                                                    ] ?? `None`}
-                                                </span>
-                                            )}
-                                        </p>
-                                    )}
+                                    <p className="mt-0.5 flex flex-row gap-x-4 gap-y-2 text-sm text-muted-foreground flex-wrap">
+                                        {rateePositionTitles[
+                                            report.reviewId
+                                        ] && (
+                                            <span className="flex items-center gap-1 break-words">
+                                                <Award className="h-3.5 w-3.5 shrink-0" />
+                                                {rateePositionTitles[
+                                                    report.reviewId
+                                                ] ?? `None`}
+                                            </span>
+                                        )}
+                                        {rateeTeamTitles[report.reviewId] && (
+                                            <span className="flex items-center gap-1 break-words">
+                                                <Users className="h-3.5 w-3.5 shrink-0" />
+                                                {rateeTeamTitles[
+                                                    report.reviewId
+                                                ] ?? `None`}
+                                            </span>
+                                        )}
+                                    </p>
+                                )}
                             </div>
                             <ReportActionsMenu report={report} />
                         </div>
@@ -532,7 +544,8 @@ export function ReportsTable({
                                 <RefreshCcw className="shrink-0 h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground break-words">
                                     {report.cycleId
-                                        ? (cycleTitles[report.cycleId] ?? `None`)
+                                        ? (cycleTitles[report.cycleId] ??
+                                          `None`)
                                         : `None`}
                                 </span>
                             </span>
@@ -564,18 +577,16 @@ export function ReportsTable({
                                         {' respondents in '}
                                     </span>
                                     <Flag className="flex h-3.5 w-3.5 shrink-0 gap-x-1" />
-                                    {respondentCategories[report.reviewId] ? (
-                                        respondentCategories[
-                                            report.reviewId
-                                        ].map((category) => (
-                                            <CategoryBadge
-                                                key={category}
-                                                category={category}
-                                            />
-                                        ))
-                                    ) : (
-                                        `None`
-                                    )}
+                                    {respondentCategories[report.reviewId]
+                                        ? respondentCategories[
+                                              report.reviewId
+                                          ].map((category) => (
+                                              <CategoryBadge
+                                                  key={category}
+                                                  category={category}
+                                              />
+                                          ))
+                                        : `None`}
                                     {' categories'}
                                 </span>
                             </span>
@@ -589,7 +600,9 @@ export function ReportsTable({
                                         <span className="flex items-center gap-1 text-muted-foreground">
                                             <UserRoundPen className="h-3.5 w-3.5 shrink-0" />
                                             <span className="font-medium text-foreground">
-                                                {report.turnoutPctOfTeam ?? 0}
+                                                {formatNumber(
+                                                    report.turnoutPctOfTeam,
+                                                )}
                                             </span>
                                             {'% team'}
                                         </span>
@@ -597,7 +610,9 @@ export function ReportsTable({
                                         <span className="flex items-center gap-1 text-muted-foreground">
                                             <UserRoundPen className="h-3.5 w-3.5 shrink-0" />
                                             <span className="font-medium text-foreground">
-                                                {report.turnoutPctOfOther ?? 0}
+                                                {formatNumber(
+                                                    report.turnoutPctOfOther,
+                                                )}
                                             </span>
                                             {'% others'}
                                         </span>
@@ -612,8 +627,10 @@ export function ReportsTable({
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <BookmarkCheck className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
-                                            {report.competenceSummaryTotals
-                                                ?.percentageBySelfAssessment ?? `—`}
+                                            {formatNumber(
+                                                report.competenceSummaryTotals
+                                                    ?.percentageBySelfAssessment,
+                                            )}
                                         </span>
                                         {'% self'}
                                     </span>
@@ -621,8 +638,10 @@ export function ReportsTable({
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <BookmarkCheck className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
-                                            {report.competenceSummaryTotals
-                                                ?.percentageByTeam ?? `—`}
+                                            {formatNumber(
+                                                report.competenceSummaryTotals
+                                                    ?.percentageByTeam,
+                                            )}
                                         </span>
                                         {'% team'}
                                     </span>
@@ -630,8 +649,10 @@ export function ReportsTable({
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <BookmarkCheck className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
-                                            {report.competenceSummaryTotals
-                                                ?.percentageByOther ?? `—`}
+                                            {formatNumber(
+                                                report.competenceSummaryTotals
+                                                    ?.percentageByOther,
+                                            )}
                                         </span>
                                         {'% others'}
                                     </span>

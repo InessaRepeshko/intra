@@ -13,6 +13,7 @@ import {
 } from '@entities/feedback360/review/api/review.queries';
 import type { Review } from '@entities/feedback360/review/model/mappers';
 import {
+    REVIEW_STAGE_ENUM_VALUES,
     ReviewStage,
     SortDirection,
 } from '@entities/feedback360/review/model/types';
@@ -52,22 +53,17 @@ export function ReviewsList() {
     );
     const [deleteReview, setDeleteReview] = useState<Review | null>(null);
 
-    // Build query params (exclude client-side only fields like reviewCount)
+    // Build query params (exclude all sort params - sorting is client-side only)
     const queryParams = useMemo(() => {
         const params: Record<string, unknown> = {};
 
         if (search.trim()) params.search = search.trim();
         if (stages.length === 1) params.stage = stages[0];
-        // Only send sort params for server-side sortable fields
-        if (sortField) {
-            params.sortBy = sortField;
-            params.sortDirection = sortDirection;
-        }
         if (cycles.length === 1 && cycles[0] !== 'None')
             params.cycleTitle = cycles[0];
 
         return params;
-    }, [search, stages, sortField, sortDirection, cycles]);
+    }, [search, stages, cycles]);
 
     const {
         data: reviews = [],
@@ -250,52 +246,77 @@ export function ReviewsList() {
         positions,
     ]);
 
-    // Client-side sorting for question count, answer count, respondent count, reviewer count
+    // Client-side sorting for all fields
     const sortedReviews = useMemo(() => {
-        if (
-            sortField !== 'questionCount' &&
-            sortField !== 'answerCount' &&
-            sortField !== 'respondentCount' &&
-            sortField !== 'reviewerCount'
-        ) {
-            return filteredReviews;
-        }
-
         return [...filteredReviews].sort((a, b) => {
-            if (sortField === 'questionCount') {
-                const countA = questionCounts[a.id] ?? 0;
-                const countB = questionCounts[b.id] ?? 0;
-                return sortDirection === SortDirection.ASC
-                    ? countA - countB
-                    : countB - countA;
+            switch (sortField) {
+                case 'title':
+                    return sortDirection === SortDirection.ASC
+                        ? (a.rateeFullName ?? '').localeCompare(
+                              b.rateeFullName ?? '',
+                          )
+                        : (b.rateeFullName ?? '').localeCompare(
+                              a.rateeFullName ?? '',
+                          );
+                case 'cycleTitle': {
+                    const titleA = a.cycleId
+                        ? (cycleTitles[a.cycleId] ?? '')
+                        : '';
+                    const titleB = b.cycleId
+                        ? (cycleTitles[b.cycleId] ?? '')
+                        : '';
+                    return sortDirection === SortDirection.ASC
+                        ? titleA.localeCompare(titleB)
+                        : titleB.localeCompare(titleA);
+                }
+                case 'createdAt':
+                    return sortDirection === SortDirection.ASC
+                        ? a.createdAt?.getTime() - b.createdAt?.getTime()
+                        : b.createdAt?.getTime() - a.createdAt?.getTime();
+                case 'questionCount': {
+                    const countA = questionCounts[a.id] ?? 0;
+                    const countB = questionCounts[b.id] ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                case 'stage': {
+                    const indexA = REVIEW_STAGE_ENUM_VALUES.indexOf(a.stage);
+                    const indexB = REVIEW_STAGE_ENUM_VALUES.indexOf(b.stage);
+                    return sortDirection === SortDirection.ASC
+                        ? indexA - indexB
+                        : indexB - indexA;
+                }
+                case 'respondentCount': {
+                    const countA = respondentCounts[a.id] ?? 0;
+                    const countB = respondentCounts[b.id] ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                case 'answerCount': {
+                    const countA = answerCounts[a.id] ?? 0;
+                    const countB = answerCounts[b.id] ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                case 'reviewerCount': {
+                    const countA = reviewerCounts[a.id] ?? 0;
+                    const countB = reviewerCounts[b.id] ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                default:
+                    return 0;
             }
-            if (sortField === 'answerCount') {
-                const countA = answerCounts[a.id] ?? 0;
-                const countB = answerCounts[b.id] ?? 0;
-                return sortDirection === SortDirection.ASC
-                    ? countA - countB
-                    : countB - countA;
-            }
-            if (sortField === 'respondentCount') {
-                const countA = respondentCounts[a.id] ?? 0;
-                const countB = respondentCounts[b.id] ?? 0;
-                return sortDirection === SortDirection.ASC
-                    ? countA - countB
-                    : countB - countA;
-            }
-            if (sortField === 'reviewerCount') {
-                const countA = reviewerCounts[a.id] ?? 0;
-                const countB = reviewerCounts[b.id] ?? 0;
-                return sortDirection === SortDirection.ASC
-                    ? countA - countB
-                    : countB - countA;
-            }
-            return 0;
         });
     }, [
         filteredReviews,
         sortField,
         sortDirection,
+        cycleTitles,
         questionCounts,
         answerCounts,
         respondentCounts,
@@ -405,10 +426,10 @@ export function ReviewsList() {
                             isRespondentCountsLoading ||
                             isReviewerCountsLoading ||
                             isCycleTitlesLoading) && (
-                                <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
-                                    <Spinner />
-                                </div>
-                            )}
+                            <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
+                                <Spinner />
+                            </div>
+                        )}
 
                         {/* Error State */}
                         {isError && (

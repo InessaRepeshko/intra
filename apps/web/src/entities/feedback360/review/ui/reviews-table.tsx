@@ -24,7 +24,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@shared/components/ui/dropdown-menu';
-import { Spinner } from '@shared/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -35,9 +34,9 @@ import {
 } from '@shared/components/ui/table';
 import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
+import { useEffect } from 'react';
 import { ReviewStage, SortDirection } from '../model/types';
 import { StageBadge } from './stage-badge';
-import { useEffect } from 'react';
 
 interface ReviewsTableProps {
     reviews: Review[];
@@ -120,28 +119,33 @@ export function ReviewsTable({
     onDelete,
     resetTrigger,
 }: ReviewsTableProps) {
-    const { columnOrder, handleDragStart, handleDragEnter, handleDragEnd, resetOrder } =
-        useDraggableColumns<
-            | 'ratee'
-            | 'cycle'
-            | 'date'
-            | 'questions'
-            | 'stage'
-            | 'respondents'
-            | 'answers'
-            | 'reviewers'
-            | 'actions'
-        >('reviews-table', [
-            'ratee',
-            'cycle',
-            'date',
-            'questions',
-            'stage',
-            'respondents',
-            'answers',
-            'reviewers',
-            'actions',
-        ]);
+    const {
+        columnOrder,
+        handleDragStart,
+        handleDragEnter,
+        handleDragEnd,
+        resetOrder,
+    } = useDraggableColumns<
+        | 'ratee'
+        | 'cycle'
+        | 'date'
+        | 'questions'
+        | 'stage'
+        | 'respondents'
+        | 'answers'
+        | 'reviewers'
+        | 'actions'
+    >('reviews-table', [
+        'ratee',
+        'cycle',
+        'date',
+        'questions',
+        'stage',
+        'respondents',
+        'answers',
+        'reviewers',
+        'actions',
+    ]);
 
     useEffect(() => {
         if (resetTrigger && resetTrigger > 0) {
@@ -434,9 +438,8 @@ export function ReviewsTable({
                                 <RefreshCcw className="shrink-0 h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground break-words">
                                     {review.cycleId
-                                        ? (cycleTitles[review.cycleId] ?? (
-                                            `None`
-                                        ))
+                                        ? (cycleTitles[review.cycleId] ??
+                                          `None`)
                                         : 'None'}
                                 </span>
                             </span>

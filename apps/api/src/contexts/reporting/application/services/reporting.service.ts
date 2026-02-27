@@ -101,7 +101,7 @@ export class ReportingService {
     ) {}
 
     private readonly isProduction = process.env.NODE_ENV === 'production';
-    
+
     async search(
         query: ReportSearchQuery,
         actor?: UserDomain,

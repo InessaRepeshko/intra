@@ -10,6 +10,7 @@ import {
 } from '@entities/feedback360/cycle/api/cycle.queries';
 import type { Cycle } from '@entities/feedback360/cycle/model/mappers';
 import {
+    CYCLE_STAGE_ENUM_VALUES,
     CycleStage,
     SortDirection,
 } from '@entities/feedback360/cycle/model/types';
@@ -50,20 +51,15 @@ export function CyclesList() {
     );
     const [deleteCycle, setDeleteCycle] = useState<Cycle | null>(null);
 
-    // Build query params (exclude client-side only fields)
+    // Build query params (exclude all sort params - sorting is client-side only)
     const queryParams = useMemo(() => {
         const params: Record<string, unknown> = {};
 
         if (search.trim()) params.search = search.trim();
         if (stages.length === 1) params.stage = stages[0];
-        // Only send sort params for server-side sortable fields
-        if (sortField && sortField !== 'reviewCount') {
-            params.sortBy = sortField;
-            params.sortDirection = sortDirection;
-        }
 
         return params;
-    }, [search, stages, sortField, sortDirection]);
+    }, [search, stages]);
 
     const {
         data: cycles = [],
@@ -120,18 +116,42 @@ export function CyclesList() {
         return result;
     }, [cycles, dateRange, stages]);
 
-    // Client-side sorting for reviewCount
+    // Client-side sorting for all fields
     const sortedCycles = useMemo(() => {
-        if (sortField !== 'reviewCount') {
-            return filteredCycles;
-        }
-
         return [...filteredCycles].sort((a, b) => {
-            const countA = reviewCounts[a.id] ?? 0;
-            const countB = reviewCounts[b.id] ?? 0;
-            return sortDirection === SortDirection.ASC
-                ? countA - countB
-                : countB - countA;
+            switch (sortField) {
+                case 'title':
+                    return sortDirection === SortDirection.ASC
+                        ? (a.title ?? '').localeCompare(b.title ?? '')
+                        : (b.title ?? '').localeCompare(a.title ?? '');
+                case 'startDate':
+                    return sortDirection === SortDirection.ASC
+                        ? a.startDate?.getTime() - b.startDate?.getTime()
+                        : b.startDate?.getTime() - a.startDate?.getTime();
+                case 'minRespondentsThreshold': {
+                    const valA = a.minRespondentsThreshold ?? 0;
+                    const valB = b.minRespondentsThreshold ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? valA - valB
+                        : valB - valA;
+                }
+                case 'stage': {
+                    const indexA = CYCLE_STAGE_ENUM_VALUES.indexOf(a.stage);
+                    const indexB = CYCLE_STAGE_ENUM_VALUES.indexOf(b.stage);
+                    return sortDirection === SortDirection.ASC
+                        ? indexA - indexB
+                        : indexB - indexA;
+                }
+                case 'reviewCount': {
+                    const countA = reviewCounts[a.id] ?? 0;
+                    const countB = reviewCounts[b.id] ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                default:
+                    return 0;
+            }
         });
     }, [filteredCycles, sortField, sortDirection, reviewCounts]);
 
