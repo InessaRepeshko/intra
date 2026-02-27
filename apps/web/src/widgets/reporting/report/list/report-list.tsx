@@ -16,6 +16,7 @@ import {
     useRateeTeamTitlesQuery,
     useReportsQuery,
     useRespondentCategoriesQuery,
+    useReviewAnswerCountsQuery,
     useReviewStagesQuery,
 } from '@entities/reporting/report/api/report.queries';
 import type { Report } from '@entities/reporting/report/model/mappers';
@@ -47,6 +48,7 @@ export function ReportsList() {
         SortDirection.DESC,
     );
     const [currentPage, setCurrentPage] = useState(1);
+    const [resetTrigger, setResetTrigger] = useState(0);
 
     // Feature dialogs state
     const [deleteReport, setDeleteReport] = useState<Report | null>(null);
@@ -177,8 +179,9 @@ export function ReportsList() {
         );
     }, [allReportsData]);
 
-    // Fetch respondent categories for all reports
+    // Fetch respondent categories and answer counts for all reports
     const { respondentCategories } = useRespondentCategoriesQuery(allReviewIds);
+    const { answerCounts } = useReviewAnswerCountsQuery(allReviewIds);
 
     const handleSort = (field: string) => {
         if (sortField === field) {
@@ -204,6 +207,7 @@ export function ReportsList() {
         setSortField('createdAt');
         setSortDirection(SortDirection.DESC);
         setCurrentPage(1);
+        setResetTrigger((prev) => prev + 1);
     };
 
     // Client-side filtering for date range and cycle title
@@ -286,7 +290,8 @@ export function ReportsList() {
             sortField !== 'rateeTeamTitle' &&
             sortField !== 'cycleTitle' &&
             sortField !== 'reviewStage' &&
-            sortField !== 'respondentCategories'
+            sortField !== 'respondentCategories' &&
+            sortField !== 'answerCounts'
         ) {
             return filteredReports;
         }
@@ -340,13 +345,24 @@ export function ReportsList() {
             if (sortField === 'respondentCategories') {
                 const countA = respondentCategories[a.reviewId]
                     ? RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(
-                          respondentCategories[a.reviewId][0],
-                      )
+                        respondentCategories[a.reviewId][0],
+                    )
                     : -1;
                 const countB = respondentCategories[b.reviewId]
                     ? RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(
-                          respondentCategories[b.reviewId][0],
-                      )
+                        respondentCategories[b.reviewId][0],
+                    )
+                    : -1;
+                return sortDirection === SortDirection.ASC
+                    ? countA - countB
+                    : countB - countA;
+            }
+            if (sortField === 'answerCounts') {
+                const countA = answerCounts[a.reviewId]
+                    ? answerCounts[a.reviewId]
+                    : -1;
+                const countB = answerCounts[b.reviewId]
+                    ? answerCounts[b.reviewId]
                     : -1;
                 return sortDirection === SortDirection.ASC
                     ? countA - countB
@@ -361,6 +377,7 @@ export function ReportsList() {
         cycleTitles,
         reviewStages,
         respondentCategories,
+        answerCounts,
     ]);
 
     const totalPages = Math.ceil(sortedReports.length / ITEMS_PER_PAGE);
@@ -488,10 +505,12 @@ export function ReportsList() {
                                     cycleTitles={cycleTitles}
                                     reviewStages={reviewStages}
                                     respondentCategories={respondentCategories}
+                                    answerCounts={answerCounts}
                                     sortField={sortField}
                                     sortDirection={sortDirection}
                                     onSort={handleSort}
-                                    // onDelete={setDeleteReport}
+                                    resetTrigger={resetTrigger}
+                                // onDelete={setDeleteReport}
                                 />
 
                                 {/* Pagination */}

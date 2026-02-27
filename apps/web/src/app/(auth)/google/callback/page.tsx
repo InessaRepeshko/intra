@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 
 function AuthCallbackContent() {
-    console.log('Current API URL:', process.env.NEXT_PUBLIC_API_URL);
     const router = useRouter();
     const searchParams = useSearchParams();
     const [error, setError] = useState('');

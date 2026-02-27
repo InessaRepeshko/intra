@@ -31,9 +31,11 @@ import {
     TableHeader,
     TableRow,
 } from '@shared/components/ui/table';
+import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { Report } from '../model/mappers';
 import { RespondentCategory, ReviewStage, SortDirection } from '../model/types';
+import { useEffect } from 'react';
 
 interface ReportsTableProps {
     reports: Report[];
@@ -43,9 +45,11 @@ interface ReportsTableProps {
     cycleTitles: Record<number, string>;
     reviewStages: Record<number, ReviewStage>;
     respondentCategories: Record<number, RespondentCategory[]>;
+    answerCounts: Record<number, number>;
     sortField: string;
     sortDirection: SortDirection;
     onSort: (field: string) => void;
+    resetTrigger?: number;
 }
 
 function ReportActionsMenu({ report }: { report: Report }) {
@@ -79,10 +83,375 @@ export function ReportsTable({
     cycleTitles,
     reviewStages,
     respondentCategories,
+    answerCounts,
     sortField,
     sortDirection,
     onSort,
+    resetTrigger,
 }: ReportsTableProps) {
+    const { columnOrder, handleDragStart, handleDragEnter, handleDragEnd, resetOrder } =
+        useDraggableColumns<
+            | 'ratee'
+            | 'cycle'
+            | 'date'
+            | 'stage'
+            | 'respondents'
+            | 'categories'
+            | 'answers'
+            | 'turnout_team'
+            | 'turnout_others'
+            | 'self_competence'
+            | 'team_competence'
+            | 'others_competence'
+            | 'actions'
+        >('reports-table', [
+            'ratee',
+            'cycle',
+            'date',
+            'stage',
+            'respondents',
+            'categories',
+            'answers',
+            'turnout_team',
+            'turnout_others',
+            'self_competence',
+            'team_competence',
+            'others_competence',
+            'actions',
+        ]);
+
+    useEffect(() => {
+        if (resetTrigger && resetTrigger > 0) {
+            resetOrder();
+        }
+    }, [resetTrigger, resetOrder]);
+
+    const COLUMNS: Record<
+        | 'ratee'
+        | 'cycle'
+        | 'date'
+        | 'stage'
+        | 'respondents'
+        | 'categories'
+        | 'answers'
+        | 'turnout_team'
+        | 'turnout_others'
+        | 'self_competence'
+        | 'team_competence'
+        | 'others_competence'
+        | 'actions',
+        {
+            header: React.ReactNode;
+            headerClassName: string;
+            cell: (report: Report) => React.ReactNode;
+            cellClassName: string;
+        }
+    > = {
+        ratee: {
+            header: (
+                <SortableHeader
+                    label="Ratee"
+                    field="title"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[250px] w-[300px] align-bottom cursor-grab active:cursor-grabbing rounded-full',
+            cell: (report) => (
+                <div className="flex flex-col gap-0.5 w-full">
+                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
+                        {rateeFullNames[report.reviewId]}
+                    </span>
+                    {(rateePositionTitles[report.reviewId] ||
+                        rateeTeamTitles[report.reviewId]) && (
+                            <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1">
+                                {rateePositionTitles[report.reviewId] && (
+                                    <span className="break-words overflow-wrap-anywhere">
+                                        {rateePositionTitles[report.reviewId] ?? (
+                                            `None`
+                                        )}{' '}
+                                        {rateeTeamTitles[report.reviewId]
+                                            ? `,`
+                                            : ''}
+                                    </span>
+                                )}
+                                {rateeTeamTitles[report.reviewId] && (
+                                    <span className="break-words overflow-wrap-anywhere">
+                                        {rateeTeamTitles[report.reviewId] ?? (
+                                            `None`
+                                        )}
+                                    </span>
+                                )}
+                            </span>
+                        )}
+                </div>
+            ),
+            cellClassName: 'min-w-[200px] whitespace-normal',
+        },
+        cycle: {
+            header: (
+                <SortableHeader
+                    label="Cycle"
+                    field="cycleTitle"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[200px] w-[250px] whitespace-nowrap align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => (
+                <div className="flex items-center justify-start gap-1.5 w-full">
+                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
+                        {report.cycleId
+                            ? (cycleTitles[report.cycleId] ?? `None`)
+                            : `None`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-normal',
+        },
+        date: {
+            header: (
+                <SortableHeader
+                    label="Creation Date"
+                    field="createdAt"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[150px] w-[150px] whitespace-nowrap align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => (
+                <div className="flex flex-col items-center justify-start gap-0.5 text-sm">
+                    <span className="text-foreground">
+                        {format(report.createdAt, 'MMM dd, yyyy')}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap',
+        },
+        stage: {
+            header: (
+                <SortableHeader
+                    label="Stage"
+                    field="reviewStage"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) =>
+                reviewStages[report.reviewId] ? (
+                    <StageBadge
+                        key={report.reviewId}
+                        stage={reviewStages[report.reviewId]}
+                    />
+                ) : (
+                    `None`
+                ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        respondents: {
+            header: (
+                <SortableHeader
+                    label="Respondents"
+                    field="respondentCount"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => (
+                <div className="flex items-center justify-center gap-1.5">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium text-foreground">
+                        {report.respondentCount ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        categories: {
+            header: (
+                <SortableHeader
+                    label="Categories"
+                    field="respondentCategories"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) =>
+                respondentCategories[report.reviewId] ? (
+                    respondentCategories[report.reviewId].map((category) => (
+                        <CategoryBadge key={category} category={category} />
+                    ))
+                ) : (
+                    `None`
+                ),
+            cellClassName:
+                'whitespace-nowrap text-center gap-x-1 gap-y-1 flex flex-wrap',
+        },
+        answers: {
+            header: (
+                <SortableHeader
+                    label="Answers"
+                    field="answerCount"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) =>
+                answerCounts[report.reviewId] ? (
+                    <div className="flex items-center justify-center gap-1.5">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium text-foreground">
+                            {answerCounts[report.reviewId]}
+                        </span>
+                    </div>
+                ) : (
+                    `—`
+                ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        turnout_team: {
+            header: (
+                <SortableHeader
+                    label="Turnout % of team"
+                    wrapLabelText={true}
+                    field="turnoutPctOfTeam"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[140px] w-[140px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => (
+                <div className="flex items-center justify-start pl-3 gap-1.5">
+                    <UserRoundPen className="h-4 w-4 text-sky-700" />
+                    <span className="font-medium text-foreground">
+                        {report.turnoutPctOfTeam ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        turnout_others: {
+            header: (
+                <SortableHeader
+                    label="Turnout % of others"
+                    wrapLabelText={true}
+                    field="turnoutPctOfOther"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[140px] w-[140px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => (
+                <div className="flex items-center justify-start pl-3 gap-1.5">
+                    <UserRoundPen className="h-4 w-4 text-indigo-700" />
+                    <span className="font-medium text-foreground">
+                        {report.turnoutPctOfOther ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        self_competence: {
+            header: (
+                <SortableHeader
+                    label="Competence % by self"
+                    wrapLabelText={true}
+                    field="competenceTotPctBySelf"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => (
+                <div className="flex items-center justify-start pl-3 gap-1.5">
+                    <BookmarkCheck className="h-4 w-4 text-lime-700" />
+                    <span className="font-medium text-foreground">
+                        {report.competenceSummaryTotals
+                            ?.percentageBySelfAssessment ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        team_competence: {
+            header: (
+                <SortableHeader
+                    label="Competence % by team"
+                    wrapLabelText={true}
+                    field="competenceTotPctByTeam"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => (
+                <div className="flex items-center justify-start pl-3 gap-1.5">
+                    <BookmarkCheck className="h-4 w-4 text-sky-700" />
+                    <span className="font-medium text-foreground">
+                        {report.competenceSummaryTotals?.percentageByTeam ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        others_competence: {
+            header: (
+                <SortableHeader
+                    label="Competence % by others"
+                    wrapLabelText={true}
+                    field="competenceTotPctByOthers"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => (
+                <div className="flex items-center justify-start pl-3 gap-1.5">
+                    <BookmarkCheck className="h-4 w-4 text-indigo-700" />
+                    <span className="font-medium text-foreground">
+                        {report.competenceSummaryTotals?.percentageByOther ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        actions: {
+            header: <span className="text-muted-foreground">Actions</span>,
+            headerClassName:
+                'min-w-[80px] w-[100px] whitespace-nowrap text-center align-bottom pb-2',
+            cell: (report) => <ReportActionsMenu report={report} />,
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+    };
+
     if (reports.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -113,7 +482,7 @@ export function ReportsTable({
                                 <p className="flex items-center gap-x-2 gap-y-1 font-medium text-foreground flex-wrap">
                                     <span className="break-words">
                                         {rateeFullNames[report.reviewId] ?? (
-                                            <Spinner />
+                                            `None`
                                         )}
                                     </span>
                                     <span className="whitespace-nowrap">
@@ -122,38 +491,38 @@ export function ReportsTable({
                                                 key={report.reviewId}
                                                 stage={
                                                     reviewStages[
-                                                        report.reviewId
+                                                    report.reviewId
                                                     ]
                                                 }
                                             />
                                         ) : (
-                                            <Spinner />
+                                            `None`
                                         )}
                                     </span>
                                 </p>
                                 {(rateePositionTitles[report.reviewId] ||
                                     rateeTeamTitles[report.reviewId]) && (
-                                    <p className="mt-0.5 flex flex-row gap-x-4 gap-y-2 text-sm text-muted-foreground flex-wrap">
-                                        {rateePositionTitles[
-                                            report.reviewId
-                                        ] && (
-                                            <span className="flex items-center gap-1 break-words">
-                                                <Award className="h-3.5 w-3.5 shrink-0" />
-                                                {rateePositionTitles[
-                                                    report.reviewId
-                                                ] ?? <Spinner />}
-                                            </span>
-                                        )}
-                                        {rateeTeamTitles[report.reviewId] && (
-                                            <span className="flex items-center gap-1 break-words">
-                                                <Users className="h-3.5 w-3.5 shrink-0" />
-                                                {rateeTeamTitles[
-                                                    report.reviewId
-                                                ] ?? <Spinner />}
-                                            </span>
-                                        )}
-                                    </p>
-                                )}
+                                        <p className="mt-0.5 flex flex-row gap-x-4 gap-y-2 text-sm text-muted-foreground flex-wrap">
+                                            {rateePositionTitles[
+                                                report.reviewId
+                                            ] && (
+                                                    <span className="flex items-center gap-1 break-words">
+                                                        <Award className="h-3.5 w-3.5 shrink-0" />
+                                                        {rateePositionTitles[
+                                                            report.reviewId
+                                                        ] ?? `None`}
+                                                    </span>
+                                                )}
+                                            {rateeTeamTitles[report.reviewId] && (
+                                                <span className="flex items-center gap-1 break-words">
+                                                    <Users className="h-3.5 w-3.5 shrink-0" />
+                                                    {rateeTeamTitles[
+                                                        report.reviewId
+                                                    ] ?? `None`}
+                                                </span>
+                                            )}
+                                        </p>
+                                    )}
                             </div>
                             <ReportActionsMenu report={report} />
                         </div>
@@ -163,10 +532,8 @@ export function ReportsTable({
                                 <RefreshCcw className="shrink-0 h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground break-words">
                                     {report.cycleId
-                                        ? (cycleTitles[report.cycleId] ?? (
-                                              <Spinner />
-                                          ))
-                                        : 'None'}
+                                        ? (cycleTitles[report.cycleId] ?? `None`)
+                                        : `None`}
                                 </span>
                             </span>
 
@@ -180,8 +547,18 @@ export function ReportsTable({
                             <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
                                 <span className="flex items-center gap-1 text-muted-foreground flex-wrap">
                                     <Users className="h-3.5 w-3.5 shrink-0" />
+                                    {answerCounts[report.reviewId] ? (
+                                        <span className="font-medium text-foreground">
+                                            {answerCounts[report.reviewId]}
+                                        </span>
+                                    ) : (
+                                        `—`
+                                    )}
                                     <span className="font-medium text-foreground">
-                                        {report.respondentCount ?? 0}
+                                        {' of '}
+                                    </span>
+                                    <span className="font-medium text-foreground">
+                                        {report.respondentCount ?? `—`}
                                     </span>
                                     <span className="whitespace-nowrap">
                                         {' respondents in '}
@@ -197,7 +574,7 @@ export function ReportsTable({
                                             />
                                         ))
                                     ) : (
-                                        <Spinner />
+                                        `None`
                                     )}
                                     {' categories'}
                                 </span>
@@ -236,9 +613,7 @@ export function ReportsTable({
                                         <BookmarkCheck className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
                                             {report.competenceSummaryTotals
-                                                ?.percentageBySelfAssessment ?? (
-                                                <Spinner />
-                                            )}
+                                                ?.percentageBySelfAssessment ?? `—`}
                                         </span>
                                         {'% self'}
                                     </span>
@@ -247,9 +622,7 @@ export function ReportsTable({
                                         <BookmarkCheck className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
                                             {report.competenceSummaryTotals
-                                                ?.percentageByTeam ?? (
-                                                <Spinner />
-                                            )}
+                                                ?.percentageByTeam ?? `—`}
                                         </span>
                                         {'% team'}
                                     </span>
@@ -258,9 +631,7 @@ export function ReportsTable({
                                         <BookmarkCheck className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
                                             {report.competenceSummaryTotals
-                                                ?.percentageByOther ?? (
-                                                <Spinner />
-                                            )}
+                                                ?.percentageByOther ?? `—`}
                                         </span>
                                         {'% others'}
                                     </span>
@@ -276,272 +647,38 @@ export function ReportsTable({
                 <Table className="w-full table-fixed">
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">
-                            <TableHead className="min-w-[250px] w-[300px] align-bottom">
-                                <SortableHeader
-                                    label="Ratee"
-                                    field="title"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[200px] w-[250px] whitespace-nowrap align-bottom">
-                                <SortableHeader
-                                    label="Cycle"
-                                    field="cycleTitle"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[150px] w-[150px] whitespace-nowrap align-bottom">
-                                <SortableHeader
-                                    label="Creation Date"
-                                    field="createdAt"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom">
-                                <SortableHeader
-                                    label="Stage"
-                                    field="reviewStage"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom">
-                                <SortableHeader
-                                    label="Respondents"
-                                    field="respondentCount"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom">
-                                <SortableHeader
-                                    label="Categories"
-                                    field="respondentCategories"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[140px] w-[140px] whitespace-nowrap text-center align-bottom">
-                                <SortableHeader
-                                    label="Turnout % of team"
-                                    wrapLabelText={true}
-                                    field="turnoutPctOfTeam"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[140px] w-[140px] whitespace-nowrap text-center align-bottom">
-                                <SortableHeader
-                                    label="Turnout % of others"
-                                    wrapLabelText={true}
-                                    field="turnoutPctOfOther"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom">
-                                <SortableHeader
-                                    label="Competence % by self"
-                                    wrapLabelText={true}
-                                    field="competenceTotPctBySelf"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom">
-                                <SortableHeader
-                                    label="Competence % by team"
-                                    wrapLabelText={true}
-                                    field="competenceTotPctByTeam"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom">
-                                <SortableHeader
-                                    label="Competence % by others"
-                                    wrapLabelText={true}
-                                    field="competenceTotPctByOthers"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center align-bottom pb-2">
-                                <span className="text-muted-foreground">
-                                    Actions
-                                </span>
-                            </TableHead>
+                            {columnOrder.map((id) => {
+                                const col = COLUMNS[id];
+                                return (
+                                    <TableHead
+                                        key={id}
+                                        className={col.headerClassName}
+                                        draggable={id !== 'actions'}
+                                        onDragStart={() => handleDragStart(id)}
+                                        onDragEnter={() => handleDragEnter(id)}
+                                        onDragEnd={handleDragEnd}
+                                        onDragOver={(e) => e.preventDefault()}
+                                    >
+                                        {col.header}
+                                    </TableHead>
+                                );
+                            })}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {reports.map((report) => (
                             <TableRow key={report.id}>
-                                <TableCell className="min-w-[200px] whitespace-normal">
-                                    <div className="flex flex-col gap-0.5 w-full">
-                                        <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                                            {rateeFullNames[report.reviewId]}
-                                        </span>
-                                        {(rateePositionTitles[
-                                            report.reviewId
-                                        ] ||
-                                            rateeTeamTitles[
-                                                report.reviewId
-                                            ]) && (
-                                            <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1">
-                                                {rateePositionTitles[
-                                                    report.reviewId
-                                                ] && (
-                                                    <span className="break-words overflow-wrap-anywhere">
-                                                        {rateePositionTitles[
-                                                            report.reviewId
-                                                        ] ?? <Spinner />}{' '}
-                                                        {rateeTeamTitles[
-                                                            report.reviewId
-                                                        ]
-                                                            ? `,`
-                                                            : ''}
-                                                    </span>
-                                                )}
-                                                {rateeTeamTitles[
-                                                    report.reviewId
-                                                ] && (
-                                                    <span className="break-words overflow-wrap-anywhere">
-                                                        {rateeTeamTitles[
-                                                            report.reviewId
-                                                        ] ?? <Spinner />}
-                                                    </span>
-                                                )}
-                                            </span>
-                                        )}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-normal">
-                                    <div className="flex items-center justify-start gap-1.5 w-full">
-                                        <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                                            {report.cycleId
-                                                ? (cycleTitles[
-                                                      report.cycleId
-                                                  ] ?? <Spinner />)
-                                                : 'None'}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap">
-                                    <div className="flex flex-col items-center justify-start gap-0.5 text-sm">
-                                        <span className="text-foreground">
-                                            {format(
-                                                report.createdAt,
-                                                'MMM dd, yyyy',
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    {reviewStages[report.reviewId] ? (
-                                        <StageBadge
-                                            key={report.reviewId}
-                                            stage={
-                                                reviewStages[report.reviewId]
-                                            }
-                                        />
-                                    ) : (
-                                        <Spinner />
-                                    )}
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <div className="flex items-center justify-center gap-1.5">
-                                        <Users className="h-4 w-4 text-muted-foreground" />
-                                        <span className="font-medium text-foreground">
-                                            {report.respondentCount ?? (
-                                                <Spinner />
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center gap-x-1 gap-y-1 flex flex-wrap">
-                                    {respondentCategories[report.reviewId] ? (
-                                        respondentCategories[
-                                            report.reviewId
-                                        ].map((category) => (
-                                            <CategoryBadge
-                                                key={category}
-                                                category={category}
-                                            />
-                                        ))
-                                    ) : (
-                                        <Spinner />
-                                    )}
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <div className="flex items-center justify-start pl-3 gap-1.5">
-                                        <UserRoundPen className="h-4 w-4 text-sky-700" />
-                                        <span className="font-medium text-foreground">
-                                            {report.turnoutPctOfTeam ?? (
-                                                <Spinner />
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <div className="flex items-center justify-start pl-3 gap-1.5">
-                                        <UserRoundPen className="h-4 w-4 text-teal-700" />
-                                        <span className="font-medium text-foreground">
-                                            {report.turnoutPctOfOther ?? (
-                                                <Spinner />
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <div className="flex items-center justify-start pl-3 gap-1.5">
-                                        <BookmarkCheck className="h-4 w-4 text-lime-700" />
-                                        <span className="font-medium text-foreground">
-                                            {report.competenceSummaryTotals
-                                                ?.percentageBySelfAssessment ?? (
-                                                <Spinner />
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <div className="flex items-center justify-start pl-3 gap-1.5">
-                                        <BookmarkCheck className="h-4 w-4 text-sky-700" />
-                                        <span className="font-medium text-foreground">
-                                            {report.competenceSummaryTotals
-                                                ?.percentageByTeam ?? (
-                                                <Spinner />
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <div className="flex items-center justify-start pl-3 gap-1.5">
-                                        <BookmarkCheck className="h-4 w-4 text-teal-700" />
-                                        <span className="font-medium text-foreground">
-                                            {report.competenceSummaryTotals
-                                                ?.percentageByOther ?? (
-                                                <Spinner />
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <ReportActionsMenu report={report} />
-                                </TableCell>
+                                {columnOrder.map((id) => {
+                                    const col = COLUMNS[id];
+                                    return (
+                                        <TableCell
+                                            key={id}
+                                            className={col.cellClassName}
+                                        >
+                                            {col.cell(report)}
+                                        </TableCell>
+                                    );
+                                })}
                             </TableRow>
                         ))}
                     </TableBody>

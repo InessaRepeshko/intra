@@ -42,6 +42,7 @@ export function CyclesList() {
         SortDirection.DESC,
     );
     const [currentPage, setCurrentPage] = useState(1);
+    const [resetTrigger, setResetTrigger] = useState(0);
 
     // Feature dialogs state
     const [forceFinishCycle, setForceFinishCycle] = useState<Cycle | null>(
@@ -96,6 +97,7 @@ export function CyclesList() {
         setSortField('createdAt');
         setSortDirection(SortDirection.DESC);
         setCurrentPage(1);
+        setResetTrigger((prev) => prev + 1);
     };
 
     // Client-side filtering for date range and review count
@@ -235,6 +237,7 @@ export function CyclesList() {
                                     onSort={handleSort}
                                     onForceFinish={setForceFinishCycle}
                                     onDelete={setDeleteCycle}
+                                    resetTrigger={resetTrigger}
                                 />
 
                                 {/* Pagination */}

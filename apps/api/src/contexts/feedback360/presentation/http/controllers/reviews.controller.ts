@@ -235,7 +235,12 @@ export class ReviewController {
     }
 
     @Get(':id/answers')
-    @Roles(IdentityRole.ADMIN)
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'List answers to Review' })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
     @ApiQuery({ type: AnswerQueryDto })
@@ -249,10 +254,12 @@ export class ReviewController {
     async listAnswers(
         @Param('id') id: string,
         @Query() query: AnswerQueryDto,
+        @CurrentUser() actor: UserDomain,
     ): Promise<AnswerResponse[]> {
         const answers = await this.reviews.listAnswers(
             Number(id),
             query.respondentCategory,
+            actor,
         );
         return answers.map(AnswerHttpMapper.toResponse);
     }

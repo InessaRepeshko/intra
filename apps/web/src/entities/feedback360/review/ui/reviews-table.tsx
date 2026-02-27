@@ -33,9 +33,11 @@ import {
     TableHeader,
     TableRow,
 } from '@shared/components/ui/table';
+import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { ReviewStage, SortDirection } from '../model/types';
 import { StageBadge } from './stage-badge';
+import { useEffect } from 'react';
 
 interface ReviewsTableProps {
     reviews: Review[];
@@ -49,6 +51,7 @@ interface ReviewsTableProps {
     onSort: (field: string) => void;
     onForceFinish?: (review: Review) => void;
     onDelete?: (review: Review) => void;
+    resetTrigger?: number;
 }
 
 function ReviewActionsMenu({
@@ -115,7 +118,255 @@ export function ReviewsTable({
     onSort,
     onForceFinish,
     onDelete,
+    resetTrigger,
 }: ReviewsTableProps) {
+    const { columnOrder, handleDragStart, handleDragEnter, handleDragEnd, resetOrder } =
+        useDraggableColumns<
+            | 'ratee'
+            | 'cycle'
+            | 'date'
+            | 'questions'
+            | 'stage'
+            | 'respondents'
+            | 'answers'
+            | 'reviewers'
+            | 'actions'
+        >('reviews-table', [
+            'ratee',
+            'cycle',
+            'date',
+            'questions',
+            'stage',
+            'respondents',
+            'answers',
+            'reviewers',
+            'actions',
+        ]);
+
+    useEffect(() => {
+        if (resetTrigger && resetTrigger > 0) {
+            resetOrder();
+        }
+    }, [resetTrigger, resetOrder]);
+
+    const COLUMNS: Record<
+        | 'ratee'
+        | 'cycle'
+        | 'date'
+        | 'questions'
+        | 'stage'
+        | 'respondents'
+        | 'answers'
+        | 'reviewers'
+        | 'actions',
+        {
+            header: React.ReactNode;
+            headerClassName: string;
+            cell: (review: Review) => React.ReactNode;
+            cellClassName: string;
+        }
+    > = {
+        ratee: {
+            header: (
+                <SortableHeader
+                    label="Ratee"
+                    field="title"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[250px] w-[300px] cursor-grab active:cursor-grabbing',
+            cell: (review) => (
+                <div className="flex flex-col gap-0.5 w-full">
+                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
+                        {review.rateeFullName}
+                    </span>
+                    {review.rateePositionTitle ||
+                        (review.teamTitle && (
+                            <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1">
+                                {review.rateePositionTitle && (
+                                    <span className="break-words overflow-wrap-anywhere">
+                                        {review.rateePositionTitle}
+                                        {review.teamTitle && ','}
+                                    </span>
+                                )}
+                                {review.teamTitle && (
+                                    <span className="break-words overflow-wrap-anywhere">
+                                        {review.teamTitle}
+                                    </span>
+                                )}
+                            </span>
+                        ))}
+                </div>
+            ),
+            cellClassName: 'min-w-[200px] whitespace-normal',
+        },
+        cycle: {
+            header: (
+                <SortableHeader
+                    label="Cycle"
+                    field="cycleTitle"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[200px] w-[250px] whitespace-nowrap cursor-grab active:cursor-grabbing',
+            cell: (review) => (
+                <div className="flex items-center justify-start gap-1.5 w-full">
+                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
+                        {review.cycleId
+                            ? (cycleTitles[review.cycleId] ?? `None`)
+                            : 'None'}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-normal',
+        },
+        date: {
+            header: (
+                <SortableHeader
+                    label="Creation Date"
+                    field="createdAt"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[150px] w-[150px] whitespace-nowrap cursor-grab active:cursor-grabbing',
+            cell: (review) => (
+                <div className="flex flex-col items-center justify-start gap-0.5 text-sm">
+                    <span className="text-foreground">
+                        {format(review.createdAt, 'MMM dd, yyyy')}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap',
+        },
+        questions: {
+            header: (
+                <SortableHeader
+                    label="Questions"
+                    field="questionCount"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[80px] w-[100px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (review) => (
+                <div className="flex items-center justify-center gap-1.5">
+                    <FileQuestionMark className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium text-foreground">
+                        {questionCounts[review.id] ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        stage: {
+            header: (
+                <SortableHeader
+                    label="Stage"
+                    field="stage"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[100px] w-[150px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (review) => (
+                <StageBadge key={review.stage} stage={review.stage} />
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        respondents: {
+            header: (
+                <SortableHeader
+                    label="Respondents"
+                    field="respondentCount"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[120px] w-[150px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (review) => (
+                <div className="flex items-center justify-center gap-1.5">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium text-foreground">
+                        {respondentCounts[review.id] ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        answers: {
+            header: (
+                <SortableHeader
+                    label="Answers"
+                    field="answerCount"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[100px] w-[120px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (review) => (
+                <div className="flex items-center justify-center gap-1.5">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium text-foreground">
+                        {answerCounts[review.id] ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        reviewers: {
+            header: (
+                <SortableHeader
+                    label="Reviewers"
+                    field="reviewerCount"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[80px] w-[100px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (review) => (
+                <div className="flex items-center justify-center gap-1.5">
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium text-foreground">
+                        {reviewerCounts[review.id] ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        actions: {
+            header: <span className="text-muted-foreground">Actions</span>,
+            headerClassName:
+                'min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1',
+            cell: (review) => (
+                <ReviewActionsMenu
+                    review={review}
+                    onForceFinish={onForceFinish}
+                    onDelete={onDelete}
+                />
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+    };
+
     if (reviews.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -154,7 +405,7 @@ export function ReviewsTable({
                                                 stage={review.stage}
                                             />
                                         ) : (
-                                            <Spinner />
+                                            `None`
                                         )}
                                     </span>
                                 </p>
@@ -184,8 +435,8 @@ export function ReviewsTable({
                                 <span className="font-medium text-foreground break-words">
                                     {review.cycleId
                                         ? (cycleTitles[review.cycleId] ?? (
-                                              <Spinner />
-                                          ))
+                                            `None`
+                                        ))
                                         : 'None'}
                                 </span>
                             </span>
@@ -200,7 +451,7 @@ export function ReviewsTable({
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <FileQuestionMark className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
-                                    {questionCounts[review.id] ?? <Spinner />}
+                                    {questionCounts[review.id] ?? `—`}
                                 </span>
                                 {' questions'}
                             </span>
@@ -208,7 +459,7 @@ export function ReviewsTable({
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Users className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
-                                    {respondentCounts[review.id] ?? <Spinner />}
+                                    {respondentCounts[review.id] ?? `—`}
                                 </span>
                                 {' respondents'}
                             </span>
@@ -216,7 +467,7 @@ export function ReviewsTable({
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <FileText className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
-                                    {answerCounts[review.id] ?? <Spinner />}
+                                    {answerCounts[review.id] ?? `—`}
                                 </span>
                                 {' answers'}
                             </span>
@@ -224,7 +475,7 @@ export function ReviewsTable({
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Users className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
-                                    {reviewerCounts[review.id] ?? <Spinner />}
+                                    {reviewerCounts[review.id] ?? `—`}
                                 </span>
                                 {' reviewers'}
                             </span>
@@ -238,188 +489,38 @@ export function ReviewsTable({
                 <Table className="w-full table-fixed">
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">
-                            <TableHead className="min-w-[250px] w-[300px]">
-                                <SortableHeader
-                                    label="Ratee"
-                                    field="title"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[200px] w-[250px] whitespace-nowrap">
-                                <SortableHeader
-                                    label="Cycle"
-                                    field="cycleTitle"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[150px] w-[150px] whitespace-nowrap">
-                                <SortableHeader
-                                    label="Creation Date"
-                                    field="createdAt"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center">
-                                <SortableHeader
-                                    label="Questions"
-                                    field="questionCount"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[100px] w-[150px] whitespace-nowrap text-center">
-                                <SortableHeader
-                                    label="Stage"
-                                    field="stage"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[120px] w-[150px] whitespace-nowrap text-center">
-                                <SortableHeader
-                                    label="Respondents"
-                                    field="respondentCount"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[100px] w-[120px] whitespace-nowrap text-center">
-                                <SortableHeader
-                                    label="Answers"
-                                    field="answerCount"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center">
-                                <SortableHeader
-                                    label="Reviewers"
-                                    field="reviewerCount"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1">
-                                <span className="text-muted-foreground">
-                                    Actions
-                                </span>
-                            </TableHead>
+                            {columnOrder.map((id) => {
+                                const col = COLUMNS[id];
+                                return (
+                                    <TableHead
+                                        key={id}
+                                        className={col.headerClassName}
+                                        draggable={id !== 'actions'}
+                                        onDragStart={() => handleDragStart(id)}
+                                        onDragEnter={() => handleDragEnter(id)}
+                                        onDragEnd={handleDragEnd}
+                                        onDragOver={(e) => e.preventDefault()}
+                                    >
+                                        {col.header}
+                                    </TableHead>
+                                );
+                            })}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {reviews.map((review) => (
                             <TableRow key={review.id}>
-                                <TableCell className="min-w-[200px] whitespace-normal">
-                                    <div className="flex flex-col gap-0.5 w-full">
-                                        <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                                            {review.rateeFullName}
-                                        </span>
-                                        {review.rateePositionTitle ||
-                                            (review.teamTitle && (
-                                                <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1">
-                                                    {review.rateePositionTitle && (
-                                                        <span className="break-words overflow-wrap-anywhere">
-                                                            {
-                                                                review.rateePositionTitle
-                                                            }
-                                                            {review.teamTitle &&
-                                                                ','}
-                                                        </span>
-                                                    )}
-                                                    {review.teamTitle && (
-                                                        <span className="break-words overflow-wrap-anywhere">
-                                                            {review.teamTitle}
-                                                        </span>
-                                                    )}
-                                                </span>
-                                            ))}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-normal">
-                                    <div className="flex items-center justify-start gap-1.5 w-full">
-                                        <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                                            {review.cycleId
-                                                ? (cycleTitles[
-                                                      review.cycleId
-                                                  ] ?? <Spinner />)
-                                                : 'None'}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap">
-                                    <div className="flex flex-col items-center justify-start gap-0.5 text-sm">
-                                        <span className="text-foreground">
-                                            {format(
-                                                review.createdAt,
-                                                'MMM dd, yyyy',
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <div className="flex items-center justify-center gap-1.5">
-                                        <FileQuestionMark className="h-4 w-4 text-muted-foreground" />
-                                        <span className="font-medium text-foreground">
-                                            {questionCounts[review.id] ?? (
-                                                <Spinner />
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <StageBadge
-                                        key={review.stage}
-                                        stage={review.stage}
-                                    />
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <div className="flex items-center justify-center gap-1.5">
-                                        <Users className="h-4 w-4 text-muted-foreground" />
-                                        <span className="font-medium text-foreground">
-                                            {respondentCounts[review.id] ?? (
-                                                <Spinner />
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <div className="flex items-center justify-center gap-1.5">
-                                        <FileText className="h-4 w-4 text-muted-foreground" />
-                                        <span className="font-medium text-foreground">
-                                            {answerCounts[review.id] ?? (
-                                                <Spinner />
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <div className="flex items-center justify-center gap-1.5">
-                                        <Eye className="h-4 w-4 text-muted-foreground" />
-                                        <span className="font-medium text-foreground">
-                                            {reviewerCounts[review.id] ?? (
-                                                <Spinner />
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <ReviewActionsMenu
-                                        review={review}
-                                        onForceFinish={onForceFinish}
-                                        onDelete={onDelete}
-                                    />
-                                </TableCell>
+                                {columnOrder.map((id) => {
+                                    const col = COLUMNS[id];
+                                    return (
+                                        <TableCell
+                                            key={id}
+                                            className={col.cellClassName}
+                                        >
+                                            {col.cell(review)}
+                                        </TableCell>
+                                    );
+                                })}
                             </TableRow>
                         ))}
                     </TableBody>

@@ -77,7 +77,6 @@ export default async function seedClusters(prisma: PrismaClient) {
                         description: level.description,
                     },
                 });
-                // console.log(`✅ Created cluster: ${competence.code} - ${level.title} (${level.lowerBound}-${level.upperBound})`);
             }
         }
     }

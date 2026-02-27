@@ -15,7 +15,7 @@ export const categoryConfig: Record<
     },
     [RespondentCategory.OTHER]: {
         label: 'Other',
-        className: 'bg-teal-100 text-teal-800 border-teal-200',
+        className: 'bg-indigo-100 text-indigo-800 border-indigo-200',
     },
 };
 

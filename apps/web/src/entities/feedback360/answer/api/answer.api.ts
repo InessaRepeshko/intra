@@ -27,7 +27,20 @@ export async function fetchReviewAnswerCount(
     const { data } = await apiClient.get<AnswerDto[]>(
         `${ANSWERS_BASE(reviewId)}`,
     );
-    return data.length;
+
+    const questionCounts = data.reduce(
+        (acc, item) => {
+            acc[item.questionId] = (acc[item.questionId] || 0) + 1;
+            return acc;
+        },
+        {} as Record<number, number>,
+    );
+
+    const mostFrequentId = Object.values(questionCounts).reduce((a, b) =>
+        questionCounts[a] > questionCounts[b] ? a : b,
+    );
+
+    return Number(mostFrequentId);
 }
 
 export async function createAnswerToReview(

@@ -149,6 +149,40 @@ export class ReviewService {
     }
 
     /**
+     * Checks if the actor has access to the review answers
+     * as an admin, HR, manager, ratee, or reviewer.
+     * @param review The review to check access for.
+     * @param actor The actor to check access for.
+     */
+    private async checkAccessToReviewAnswers(
+        review: ReviewDomain,
+        actor?: UserDomain,
+    ): Promise<void> {
+        if (!actor) return;
+
+        const isAdminOrHr =
+            actor?.roles?.includes(IdentityRole.ADMIN) ||
+            actor?.roles?.includes(IdentityRole.HR);
+
+        if (isAdminOrHr) return;
+
+        const isManagerOfReview = review.managerId === actor.id;
+        const isRateeOfReview = review.rateeId === actor.id;
+
+        if (isManagerOfReview || isRateeOfReview) return;
+
+        const reviewers = await this.reviewers.listByReview(review.id!, {
+            reviewerId: actor.id,
+        });
+
+        if (reviewers.length > 0) return;
+
+        throw new ForbiddenException(
+            'You do not have permission to view this review',
+        );
+    }
+
+    /**
      * Checks if the actor has access to the review
      * as an admin, HR, manager, ratee, respondent, or reviewer.
      * @param review The review to check access for.
@@ -349,8 +383,11 @@ export class ReviewService {
     async listAnswers(
         reviewId: number,
         respondentCategory?: RespondentCategory,
+        actor?: UserDomain,
     ): Promise<AnswerDomain[]> {
-        await this.getById(reviewId);
+        const review = await this.getById(reviewId);
+        await this.checkAccessToReviewAnswers(review, actor);
+
         return this.answers.list({ reviewId: reviewId, respondentCategory });
     }
 

@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import {
     Calendar,
     Eye,
+    HatGlasses,
     MoreHorizontal,
     Pencil,
     StopCircle,
@@ -30,9 +31,11 @@ import {
     TableHeader,
     TableRow,
 } from '@shared/components/ui/table';
+import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { SortDirection } from '../model/types';
 import { StageBadge } from './stage-badge';
+import { useEffect } from 'react';
 
 interface CyclesTableProps {
     cycles: Cycle[];
@@ -42,6 +45,7 @@ interface CyclesTableProps {
     onSort: (field: string) => void;
     onForceFinish?: (cycle: Cycle) => void;
     onDelete?: (cycle: Cycle) => void;
+    resetTrigger?: number;
 }
 
 function CycleActionsMenu({
@@ -104,7 +108,155 @@ export function CyclesTable({
     onSort,
     onForceFinish,
     onDelete,
+    resetTrigger,
 }: CyclesTableProps) {
+    const { columnOrder, handleDragStart, handleDragEnter, handleDragEnd, resetOrder } =
+        useDraggableColumns<'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions'>(
+            'cycles-table',
+            ['name', 'dates', 'anonymity', 'stage', 'reviews', 'actions'],
+        );
+
+    useEffect(() => {
+        if (resetTrigger && resetTrigger > 0) {
+            resetOrder();
+        }
+    }, [resetTrigger, resetOrder]);
+
+    const COLUMNS: Record<
+        'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions',
+        {
+            header: React.ReactNode;
+            headerClassName: string;
+            cell: (cycle: Cycle) => React.ReactNode;
+            cellClassName: string;
+        }
+    > = {
+        name: {
+            header: (
+                <SortableHeader
+                    label="Name"
+                    field="title"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[300px] w-[400px] cursor-grab active:cursor-grabbing',
+            cell: (cycle) => (
+                <div className="flex flex-col gap-0.5 w-full">
+                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
+                        {cycle.title}
+                    </span>
+                    {cycle.description && (
+                        <span className="text-sm text-muted-foreground break-words overflow-wrap-anywhere">
+                            {cycle.description}
+                        </span>
+                    )}
+                </div>
+            ),
+            cellClassName: 'min-w-[100px] whitespace-normal',
+        },
+        dates: {
+            header: (
+                <SortableHeader
+                    label="Dates"
+                    field="startDate"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[80px] w-[100px] whitespace-nowrap cursor-grab active:cursor-grabbing',
+            cell: (cycle) => (
+                <div className="flex flex-col gap-0.5 text-sm">
+                    <span className="text-foreground">
+                        {format(cycle.startDate, 'MMM dd, yyyy')}
+                    </span>
+                    <span className="text-muted-foreground">
+                        {format(cycle.endDate, 'MMM dd, yyyy')}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap',
+        },
+        anonymity: {
+            header: (
+                <SortableHeader
+                    label="Anonymity"
+                    field="minRespondentsThreshold"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[80px] w-[100px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (cycle) => (
+                <div className="flex items-center justify-center gap-1.5">
+                    <HatGlasses className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium text-foreground">
+                        {cycle.minRespondentsThreshold ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        stage: {
+            header: (
+                <SortableHeader
+                    label="Stage"
+                    field="stage"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[70px] w-[120px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (cycle) => (
+                <StageBadge key={cycle.stage} stage={cycle.stage} />
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        reviews: {
+            header: (
+                <SortableHeader
+                    label="Reviews"
+                    field="reviewCount"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[80px] w-[100px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (cycle) => (
+                <div className="flex items-center justify-center gap-1.5">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium text-foreground">
+                        {reviewCounts[cycle.id] ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        actions: {
+            header: <span className="text-muted-foreground">Actions</span>,
+            headerClassName:
+                'min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1',
+            cell: (cycle) => (
+                <CycleActionsMenu
+                    cycle={cycle}
+                    onForceFinish={onForceFinish}
+                    onDelete={onDelete}
+                />
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+    };
+
     if (cycles.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -171,7 +323,7 @@ export function CyclesTable({
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Users className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
-                                    {reviewCounts[cycle.id] ?? <Spinner />}
+                                    {reviewCounts[cycle.id] ?? `—`}
                                 </span>
                                 {' reviews'}
                             </span>
@@ -185,103 +337,38 @@ export function CyclesTable({
                 <Table className="w-full table-fixed">
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">
-                            <TableHead className="min-w-[300px] w-[300px]">
-                                <SortableHeader
-                                    label="Name"
-                                    field="title"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[70px] w-[120px] whitespace-nowrap">
-                                <SortableHeader
-                                    label="Dates"
-                                    field="startDate"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[70px] w-[120px] whitespace-nowrap text-center">
-                                <SortableHeader
-                                    label="Stage"
-                                    field="stage"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center">
-                                <SortableHeader
-                                    label="Reviews"
-                                    field="reviewCount"
-                                    currentField={sortField}
-                                    currentDirection={sortDirection}
-                                    onSort={onSort}
-                                />
-                            </TableHead>
-                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1">
-                                <span className="text-muted-foreground">
-                                    Actions
-                                </span>
-                            </TableHead>
+                            {columnOrder.map((id) => {
+                                const col = COLUMNS[id];
+                                return (
+                                    <TableHead
+                                        key={id}
+                                        className={col.headerClassName}
+                                        draggable={id !== 'actions'}
+                                        onDragStart={() => handleDragStart(id)}
+                                        onDragEnter={() => handleDragEnter(id)}
+                                        onDragEnd={handleDragEnd}
+                                        onDragOver={(e) => e.preventDefault()}
+                                    >
+                                        {col.header}
+                                    </TableHead>
+                                );
+                            })}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {cycles.map((cycle) => (
                             <TableRow key={cycle.id}>
-                                <TableCell className="min-w-[100px] whitespace-normal">
-                                    <div className="flex flex-col gap-0.5 w-full">
-                                        <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                                            {cycle.title}
-                                        </span>
-                                        {cycle.description && (
-                                            <span className="text-sm text-muted-foreground break-words overflow-wrap-anywhere">
-                                                {cycle.description}
-                                            </span>
-                                        )}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap">
-                                    <div className="flex flex-col gap-0.5 text-sm">
-                                        <span className="text-foreground">
-                                            {format(
-                                                cycle.startDate,
-                                                'MMM dd, yyyy',
-                                            )}
-                                        </span>
-                                        <span className="text-muted-foreground">
-                                            {format(
-                                                cycle.endDate,
-                                                'MMM dd, yyyy',
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <StageBadge
-                                        key={cycle.stage}
-                                        stage={cycle.stage}
-                                    />
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <div className="flex items-center justify-center gap-1.5">
-                                        <Users className="h-4 w-4 text-muted-foreground" />
-                                        <span className="font-medium text-foreground">
-                                            {reviewCounts[cycle.id] ?? (
-                                                <Spinner />
-                                            )}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap text-center">
-                                    <CycleActionsMenu
-                                        cycle={cycle}
-                                        onForceFinish={onForceFinish}
-                                        onDelete={onDelete}
-                                    />
-                                </TableCell>
+                                {columnOrder.map((id) => {
+                                    const col = COLUMNS[id];
+                                    return (
+                                        <TableCell
+                                            key={id}
+                                            className={col.cellClassName}
+                                        >
+                                            {col.cell(cycle)}
+                                        </TableCell>
+                                    );
+                                })}
                             </TableRow>
                         ))}
                     </TableBody>

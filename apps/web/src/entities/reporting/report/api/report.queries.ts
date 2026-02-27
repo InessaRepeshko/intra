@@ -1,3 +1,4 @@
+import { fetchReviewAnswerCount } from '@entities/feedback360/answer/api/answer.api';
 import { fetchCycleTitleById } from '@entities/feedback360/cycle/api/cycle.api';
 import { fetchRespondentCategoriesByReviewId } from '@entities/feedback360/respondent/api/respondent.api';
 import {
@@ -39,6 +40,9 @@ export const reportKeys = {
         [...reportKeys.all, 'respondentCategories'] as const,
     respondentCategory: (reviewId: number) =>
         [...reportKeys.respondentCategories(), reviewId] as const,
+    answerCounts: () => [...reportKeys.all, 'answerCounts'] as const,
+    answerCount: (reviewId: number) =>
+        [...reportKeys.answerCounts(), reviewId] as const,
 };
 
 export function useReportsQuery(params?: ReportFilterQuery) {
@@ -234,4 +238,33 @@ export function useRespondentCategoriesQuery(reviewIds: number[]) {
     const isLoading = queries.some((q) => q.isLoading);
 
     return { respondentCategories, isLoading };
+}
+
+export function useReviewAnswerCountQuery(reviewId: number) {
+    return useQuery<number>({
+        queryKey: reportKeys.answerCount(reviewId),
+        queryFn: () => fetchReviewAnswerCount(reviewId),
+        enabled: reviewId > 0,
+    });
+}
+
+export function useReviewAnswerCountsQuery(reviewIds: number[]) {
+    const queries = useQueries({
+        queries: reviewIds.map((reviewId) => ({
+            queryKey: reportKeys.answerCount(reviewId),
+            queryFn: () => fetchReviewAnswerCount(reviewId),
+        })),
+    });
+
+    const answerCounts: Record<number, number> = {};
+    reviewIds.forEach((reviewId, index) => {
+        const result = queries[index];
+        if (result.isSuccess && result.data !== undefined) {
+            answerCounts[reviewId] = result.data;
+        }
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+
+    return { answerCounts, isLoading };
 }

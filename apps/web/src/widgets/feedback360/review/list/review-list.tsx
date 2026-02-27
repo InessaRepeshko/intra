@@ -44,6 +44,7 @@ export function ReviewsList() {
         SortDirection.DESC,
     );
     const [currentPage, setCurrentPage] = useState(1);
+    const [resetTrigger, setResetTrigger] = useState(0);
 
     // Feature dialogs state
     const [forceFinishReview, setForceFinishReview] = useState<Review | null>(
@@ -184,6 +185,7 @@ export function ReviewsList() {
         setSortField('createdAt');
         setSortDirection(SortDirection.DESC);
         setCurrentPage(1);
+        setResetTrigger((prev) => prev + 1);
     };
 
     // Client-side filtering for date range and cycle title
@@ -403,10 +405,10 @@ export function ReviewsList() {
                             isRespondentCountsLoading ||
                             isReviewerCountsLoading ||
                             isCycleTitlesLoading) && (
-                            <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
-                                <Spinner />
-                            </div>
-                        )}
+                                <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
+                                    <Spinner />
+                                </div>
+                            )}
 
                         {/* Error State */}
                         {isError && (
@@ -441,6 +443,7 @@ export function ReviewsList() {
                                         onSort={handleSort}
                                         onForceFinish={setForceFinishReview}
                                         onDelete={setDeleteReview}
+                                        resetTrigger={resetTrigger}
                                     />
 
                                     {/* Pagination */}

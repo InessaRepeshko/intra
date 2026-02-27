@@ -5,7 +5,6 @@ export interface Report extends Omit<ReportResponseDto, 'createdAt'> {
 }
 
 export function mapReportDtoToModel(dto: ReportResponseDto): Report {
-    console.log(dto);
     return {
         ...dto,
         createdAt: new Date(dto.createdAt),
