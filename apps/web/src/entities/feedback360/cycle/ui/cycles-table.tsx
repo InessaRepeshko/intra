@@ -2,7 +2,6 @@
 
 import { format } from 'date-fns';
 import {
-    ArrowUpDown,
     Calendar,
     Eye,
     MoreHorizontal,
@@ -22,6 +21,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@shared/components/ui/dropdown-menu';
+import { Spinner } from '@shared/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -30,6 +30,7 @@ import {
     TableHeader,
     TableRow,
 } from '@shared/components/ui/table';
+import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { SortDirection } from '../model/types';
 import { StageBadge } from './stage-badge';
 
@@ -41,35 +42,6 @@ interface CyclesTableProps {
     onSort: (field: string) => void;
     onForceFinish?: (cycle: Cycle) => void;
     onDelete?: (cycle: Cycle) => void;
-}
-
-function SortableHeader({
-    label,
-    field,
-    currentField,
-    currentDirection,
-    onSort,
-}: {
-    label: string;
-    field: string;
-    currentField: string;
-    currentDirection: string;
-    onSort: (field: string) => void;
-}) {
-    const isActive = currentField === field;
-    return (
-        <Button
-            variant="ghost"
-            size="sm"
-            className="-ml-3 h-8 font-medium text-muted-foreground hover:text-foreground"
-            onClick={() => onSort(field)}
-        >
-            {label}
-            <ArrowUpDown
-                className={`ml-1 h-3.5 w-3.5 ${isActive ? 'text-foreground' : 'text-muted-foreground/50'}`}
-            />
-        </Button>
-    );
 }
 
 function CycleActionsMenu({
@@ -165,7 +137,10 @@ export function CyclesTable({
                                         {cycle.title}
                                     </span>
                                     <span className="whitespace-nowrap">
-                                        <StageBadge stage={cycle.stage} />
+                                        <StageBadge
+                                            key={cycle.stage}
+                                            stage={cycle.stage}
+                                        />
                                     </span>
                                 </p>
                                 {cycle.description && (
@@ -196,7 +171,7 @@ export function CyclesTable({
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Users className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
-                                    {reviewCounts[cycle.id] ?? 0}
+                                    {reviewCounts[cycle.id] ?? <Spinner />}
                                 </span>
                                 {' reviews'}
                             </span>
@@ -230,7 +205,7 @@ export function CyclesTable({
                             </TableHead>
                             <TableHead className="min-w-[70px] w-[120px] whitespace-nowrap text-center">
                                 <SortableHeader
-                                    label="Status"
+                                    label="Stage"
                                     field="stage"
                                     currentField={sortField}
                                     currentDirection={sortDirection}
@@ -246,8 +221,10 @@ export function CyclesTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center">
-                                <span className="">Actions</span>
+                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1">
+                                <span className="text-muted-foreground">
+                                    Actions
+                                </span>
                             </TableHead>
                         </TableRow>
                     </TableHeader>
@@ -283,13 +260,18 @@ export function CyclesTable({
                                     </div>
                                 </TableCell>
                                 <TableCell className="whitespace-nowrap text-center">
-                                    <StageBadge stage={cycle.stage} />
+                                    <StageBadge
+                                        key={cycle.stage}
+                                        stage={cycle.stage}
+                                    />
                                 </TableCell>
                                 <TableCell className="whitespace-nowrap text-center">
                                     <div className="flex items-center justify-center gap-1.5">
                                         <Users className="h-4 w-4 text-muted-foreground" />
                                         <span className="font-medium text-foreground">
-                                            {reviewCounts[cycle.id] ?? 0}
+                                            {reviewCounts[cycle.id] ?? (
+                                                <Spinner />
+                                            )}
                                         </span>
                                     </div>
                                 </TableCell>

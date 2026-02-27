@@ -2,6 +2,7 @@ import type {
     CreateReviewPayload,
     ReviewFilterQuery,
     ReviewResponseDto,
+    ReviewStage,
     UpdateReviewPayload,
 } from '@entities/feedback360/review/model/types';
 import { apiClient } from '@shared/api/api-client';
@@ -56,4 +57,40 @@ export async function forceCompleteReview(
         `${REVIEWS_BASE}/${id}/force-complete`,
     );
     return data;
+}
+
+export async function fetchRateeFullNameByReviewId(
+    reviewId: number,
+): Promise<string> {
+    const response = await apiClient.get<ReviewResponseDto>(
+        `${REVIEWS_BASE}/${reviewId}`,
+    );
+    return response.data?.rateeFullName;
+}
+
+export async function fetchRateePositionTitleByReviewId(
+    reviewId: number,
+): Promise<string> {
+    const response = await apiClient.get<ReviewResponseDto>(
+        `${REVIEWS_BASE}/${reviewId}`,
+    );
+    return response.data?.rateePositionTitle;
+}
+
+export async function fetchRateeTeamTitleByReviewId(
+    reviewId: number,
+): Promise<string | null> {
+    const response = await apiClient.get<ReviewResponseDto>(
+        `${REVIEWS_BASE}/${reviewId}`,
+    );
+    return response.data?.teamTitle ?? null;
+}
+
+export async function fetchReviewStageByReviewId(
+    reviewId: number,
+): Promise<ReviewStage> {
+    const response = await apiClient.get<ReviewResponseDto>(
+        `${REVIEWS_BASE}/${reviewId}`,
+    );
+    return response.data?.stage;
 }

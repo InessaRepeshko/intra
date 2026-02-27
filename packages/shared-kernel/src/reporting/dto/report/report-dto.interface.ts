@@ -1,3 +1,5 @@
+import { ReportEntitySummaryTotalsDto } from '../report-entity-summary-totals-dto.interface';
+
 export interface ReportBaseDto<TDate = Date> {
     id: number;
     reviewId: number;
@@ -5,22 +7,8 @@ export interface ReportBaseDto<TDate = Date> {
     respondentCount: number;
     turnoutPctOfTeam?: number | null;
     turnoutPctOfOther?: number | null;
-    questionTotAvgBySelf?: number | null;
-    questionTotAvgByTeam?: number | null;
-    questionTotAvgByOthers?: number | null;
-    questionTotPctBySelf?: number | null;
-    questionTotPctByTeam?: number | null;
-    questionTotPctByOthers?: number | null;
-    questionTotDeltaPctByTeam?: number | null;
-    questionTotDeltaPctByOthers?: number | null;
-    competenceTotAvgBySelf?: number | null;
-    competenceTotAvgByTeam?: number | null;
-    competenceTotAvgByOthers?: number | null;
-    competenceTotPctBySelf?: number | null;
-    competenceTotPctByTeam?: number | null;
-    competenceTotPctByOthers?: number | null;
-    competenceTotDeltaPctByTeam?: number | null;
-    competenceTotDeltaPctByOthers?: number | null;
+    questionSummaryTotals?: ReportEntitySummaryTotalsDto | null;
+    competenceSummaryTotals?: ReportEntitySummaryTotalsDto | null;
     createdAt: TDate;
 }
 

@@ -2,7 +2,6 @@
 
 import { format } from 'date-fns';
 import {
-    ArrowUpDown,
     Award,
     Calendar,
     Eye,
@@ -25,6 +24,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@shared/components/ui/dropdown-menu';
+import { Spinner } from '@shared/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -33,6 +33,7 @@ import {
     TableHeader,
     TableRow,
 } from '@shared/components/ui/table';
+import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { ReviewStage, SortDirection } from '../model/types';
 import { StageBadge } from './stage-badge';
 
@@ -48,35 +49,6 @@ interface ReviewsTableProps {
     onSort: (field: string) => void;
     onForceFinish?: (review: Review) => void;
     onDelete?: (review: Review) => void;
-}
-
-function SortableHeader({
-    label,
-    field,
-    currentField,
-    currentDirection,
-    onSort,
-}: {
-    label: string;
-    field: string;
-    currentField: string;
-    currentDirection: string;
-    onSort: (field: string) => void;
-}) {
-    const isActive = currentField === field;
-    return (
-        <Button
-            variant="ghost"
-            size="sm"
-            className="-ml-3 h-8 font-medium text-muted-foreground hover:text-foreground"
-            onClick={() => onSort(field)}
-        >
-            {label}
-            <ArrowUpDown
-                className={`ml-1 h-3.5 w-3.5 ${isActive ? 'text-foreground' : 'text-muted-foreground/50'}`}
-            />
-        </Button>
-    );
 }
 
 function ReviewActionsMenu({
@@ -176,7 +148,14 @@ export function ReviewsTable({
                                         {review.rateeFullName}
                                     </span>
                                     <span className="whitespace-nowrap">
-                                        <StageBadge stage={review.stage} />
+                                        {review.stage ? (
+                                            <StageBadge
+                                                key={review.stage}
+                                                stage={review.stage}
+                                            />
+                                        ) : (
+                                            <Spinner />
+                                        )}
                                     </span>
                                 </p>
                                 {review.rateePositionTitle && (
@@ -204,8 +183,9 @@ export function ReviewsTable({
                                 <RefreshCcw className="shrink-0 h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground break-words">
                                     {review.cycleId
-                                        ? (cycleTitles[review.cycleId] ??
-                                          'None')
+                                        ? (cycleTitles[review.cycleId] ?? (
+                                              <Spinner />
+                                          ))
                                         : 'None'}
                                 </span>
                             </span>
@@ -220,7 +200,7 @@ export function ReviewsTable({
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <FileQuestionMark className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
-                                    {questionCounts[review.id] ?? 0}
+                                    {questionCounts[review.id] ?? <Spinner />}
                                 </span>
                                 {' questions'}
                             </span>
@@ -228,7 +208,7 @@ export function ReviewsTable({
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Users className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
-                                    {respondentCounts[review.id] ?? 0}
+                                    {respondentCounts[review.id] ?? <Spinner />}
                                 </span>
                                 {' respondents'}
                             </span>
@@ -236,7 +216,7 @@ export function ReviewsTable({
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <FileText className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
-                                    {answerCounts[review.id] ?? 0}
+                                    {answerCounts[review.id] ?? <Spinner />}
                                 </span>
                                 {' answers'}
                             </span>
@@ -244,7 +224,7 @@ export function ReviewsTable({
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Users className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
-                                    {reviewerCounts[review.id] ?? 0}
+                                    {reviewerCounts[review.id] ?? <Spinner />}
                                 </span>
                                 {' reviewers'}
                             </span>
@@ -296,7 +276,7 @@ export function ReviewsTable({
                             </TableHead>
                             <TableHead className="min-w-[100px] w-[150px] whitespace-nowrap text-center">
                                 <SortableHeader
-                                    label="Status"
+                                    label="Stage"
                                     field="stage"
                                     currentField={sortField}
                                     currentDirection={sortDirection}
@@ -330,8 +310,10 @@ export function ReviewsTable({
                                     onSort={onSort}
                                 />
                             </TableHead>
-                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center">
-                                <span className="">Actions</span>
+                            <TableHead className="min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1">
+                                <span className="text-muted-foreground">
+                                    Actions
+                                </span>
                             </TableHead>
                         </TableRow>
                     </TableHeader>
@@ -343,20 +325,25 @@ export function ReviewsTable({
                                         <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
                                             {review.rateeFullName}
                                         </span>
-                                        {review.rateePositionTitle &&
-                                            review.teamTitle && (
+                                        {review.rateePositionTitle ||
+                                            (review.teamTitle && (
                                                 <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1">
-                                                    <span className="break-words overflow-wrap-anywhere">
-                                                        {
-                                                            review.rateePositionTitle
-                                                        }
-                                                        ,
-                                                    </span>
-                                                    <span className="break-words overflow-wrap-anywhere">
-                                                        {review.teamTitle}
-                                                    </span>
+                                                    {review.rateePositionTitle && (
+                                                        <span className="break-words overflow-wrap-anywhere">
+                                                            {
+                                                                review.rateePositionTitle
+                                                            }
+                                                            {review.teamTitle &&
+                                                                ','}
+                                                        </span>
+                                                    )}
+                                                    {review.teamTitle && (
+                                                        <span className="break-words overflow-wrap-anywhere">
+                                                            {review.teamTitle}
+                                                        </span>
+                                                    )}
                                                 </span>
-                                            )}
+                                            ))}
                                     </div>
                                 </TableCell>
                                 <TableCell className="whitespace-normal">
@@ -365,7 +352,7 @@ export function ReviewsTable({
                                             {review.cycleId
                                                 ? (cycleTitles[
                                                       review.cycleId
-                                                  ] ?? 'None')
+                                                  ] ?? <Spinner />)
                                                 : 'None'}
                                         </span>
                                     </div>
@@ -384,18 +371,25 @@ export function ReviewsTable({
                                     <div className="flex items-center justify-center gap-1.5">
                                         <FileQuestionMark className="h-4 w-4 text-muted-foreground" />
                                         <span className="font-medium text-foreground">
-                                            {questionCounts[review.id] ?? 0}
+                                            {questionCounts[review.id] ?? (
+                                                <Spinner />
+                                            )}
                                         </span>
                                     </div>
                                 </TableCell>
                                 <TableCell className="whitespace-nowrap text-center">
-                                    <StageBadge stage={review.stage} />
+                                    <StageBadge
+                                        key={review.stage}
+                                        stage={review.stage}
+                                    />
                                 </TableCell>
                                 <TableCell className="whitespace-nowrap text-center">
                                     <div className="flex items-center justify-center gap-1.5">
                                         <Users className="h-4 w-4 text-muted-foreground" />
                                         <span className="font-medium text-foreground">
-                                            {respondentCounts[review.id] ?? 0}
+                                            {respondentCounts[review.id] ?? (
+                                                <Spinner />
+                                            )}
                                         </span>
                                     </div>
                                 </TableCell>
@@ -403,7 +397,9 @@ export function ReviewsTable({
                                     <div className="flex items-center justify-center gap-1.5">
                                         <FileText className="h-4 w-4 text-muted-foreground" />
                                         <span className="font-medium text-foreground">
-                                            {answerCounts[review.id] ?? 0}
+                                            {answerCounts[review.id] ?? (
+                                                <Spinner />
+                                            )}
                                         </span>
                                     </div>
                                 </TableCell>
@@ -411,7 +407,9 @@ export function ReviewsTable({
                                     <div className="flex items-center justify-center gap-1.5">
                                         <Eye className="h-4 w-4 text-muted-foreground" />
                                         <span className="font-medium text-foreground">
-                                            {reviewerCounts[review.id] ?? 0}
+                                            {reviewerCounts[review.id] ?? (
+                                                <Spinner />
+                                            )}
                                         </span>
                                     </div>
                                 </TableCell>

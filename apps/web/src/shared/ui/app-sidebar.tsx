@@ -14,6 +14,7 @@ import { cn } from '@shared/lib/utils/cn';
 import {
     Award,
     BarChart3,
+    Bookmark,
     Building2,
     Cat,
     ChevronDown,
@@ -26,7 +27,6 @@ import {
     Orbit,
     PanelLeft,
     RefreshCw,
-    Target,
     UserRound,
     UsersRound,
 } from 'lucide-react';
@@ -93,8 +93,9 @@ const navItems: NavItem[] = [
     },
     {
         title: 'Reports',
-        href: '/reports',
+        href: '/reporting/reports',
         icon: BarChart3,
+        roles: [IdentityRole.HR, IdentityRole.ADMIN],
     },
     {
         title: 'Library',
@@ -110,7 +111,7 @@ const navItems: NavItem[] = [
             {
                 title: 'Competences',
                 href: '/library/competences',
-                icon: Target,
+                icon: Bookmark,
             },
             {
                 title: 'Clusters',

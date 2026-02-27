@@ -56,6 +56,14 @@ export async function changeUserRoles(
     await apiClient.put(`${USERS_BASE}/${userId}/roles`, roles);
 }
 
+export async function fetchFullNameByUserId(userId: number): Promise<string> {
+    const response = await apiClient.get<UserDto>(`${USERS_BASE}/${userId}`);
+    return (
+        response.data?.fullName ??
+        `${response.data?.lastName} ${response.data?.firstName}`
+    );
+}
+
 export async function fetchPositionTitleByPositionId(
     positionId: number,
 ): Promise<string> {

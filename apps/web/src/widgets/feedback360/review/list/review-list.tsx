@@ -1,6 +1,5 @@
 'use client';
 
-import { Loader2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
@@ -26,6 +25,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@shared/components/ui/card';
+import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';
 
 const ITEMS_PER_PAGE = 6;
@@ -123,11 +123,16 @@ export function ReviewsList() {
     const cycleIds = reviews
         .map((r) => r.cycleId)
         .filter((id) => id !== null && id !== undefined);
-    const { questionCounts } = useReviewQuestionCountsQuery(reviewIds);
-    const { answerCounts } = useReviewAnswersCountsQuery(reviewIds);
-    const { respondentCounts } = useReviewRespondentCountsQuery(reviewIds);
-    const { reviewerCounts } = useReviewReviewerCountsQuery(reviewIds);
-    const { cycleTitles } = useCycleTitlesQuery(cycleIds);
+    const { questionCounts, isLoading: isQuestionCountsLoading } =
+        useReviewQuestionCountsQuery(reviewIds);
+    const { answerCounts, isLoading: isAnswerCountsLoading } =
+        useReviewAnswersCountsQuery(reviewIds);
+    const { respondentCounts, isLoading: isRespondentCountsLoading } =
+        useReviewRespondentCountsQuery(reviewIds);
+    const { reviewerCounts, isLoading: isReviewerCountsLoading } =
+        useReviewReviewerCountsQuery(reviewIds);
+    const { cycleTitles, isLoading: isCycleTitlesLoading } =
+        useCycleTitlesQuery(cycleIds);
 
     const cycleOptions = useMemo(() => {
         const titles = new Set(
@@ -392,9 +397,14 @@ export function ReviewsList() {
                         />
 
                         {/* Loading State */}
-                        {isLoading && (
-                            <div className="flex items-center justify-center py-16">
-                                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                        {(isLoading ||
+                            isQuestionCountsLoading ||
+                            isAnswerCountsLoading ||
+                            isRespondentCountsLoading ||
+                            isReviewerCountsLoading ||
+                            isCycleTitlesLoading) && (
+                            <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
+                                <Spinner />
                             </div>
                         )}
 
@@ -411,33 +421,39 @@ export function ReviewsList() {
                         )}
 
                         {/* Table */}
-                        {!isLoading && !isError && (
-                            <>
-                                <ReviewsTable
-                                    reviews={paginatedReviews}
-                                    cycleTitles={cycleTitles}
-                                    questionCounts={questionCounts}
-                                    answerCounts={answerCounts}
-                                    respondentCounts={respondentCounts}
-                                    reviewerCounts={reviewerCounts}
-                                    sortField={sortField}
-                                    sortDirection={sortDirection}
-                                    onSort={handleSort}
-                                    onForceFinish={setForceFinishReview}
-                                    onDelete={setDeleteReview}
-                                />
+                        {!isLoading &&
+                            !isError &&
+                            !isQuestionCountsLoading &&
+                            !isAnswerCountsLoading &&
+                            !isRespondentCountsLoading &&
+                            !isReviewerCountsLoading &&
+                            !isCycleTitlesLoading && (
+                                <>
+                                    <ReviewsTable
+                                        reviews={paginatedReviews}
+                                        cycleTitles={cycleTitles}
+                                        questionCounts={questionCounts}
+                                        answerCounts={answerCounts}
+                                        respondentCounts={respondentCounts}
+                                        reviewerCounts={reviewerCounts}
+                                        sortField={sortField}
+                                        sortDirection={sortDirection}
+                                        onSort={handleSort}
+                                        onForceFinish={setForceFinishReview}
+                                        onDelete={setDeleteReview}
+                                    />
 
-                                {/* Pagination */}
-                                <TablePagination
-                                    entityName="reviews"
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    totalItems={filteredReviews.length}
-                                    limit={ITEMS_PER_PAGE}
-                                    onPageChange={setCurrentPage}
-                                />
-                            </>
-                        )}
+                                    {/* Pagination */}
+                                    <TablePagination
+                                        entityName="reviews"
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        totalItems={filteredReviews.length}
+                                        limit={ITEMS_PER_PAGE}
+                                        onPageChange={setCurrentPage}
+                                    />
+                                </>
+                            )}
                     </CardContent>
                 </Card>
             </div>

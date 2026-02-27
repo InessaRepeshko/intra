@@ -104,20 +104,6 @@ export function ReviewsFilters({
             />
 
             <MultiSelect
-                options={teamOptions.map((opt) => ({
-                    label: opt.title,
-                    value: String(opt.id),
-                }))}
-                value={teams}
-                onValueChange={onTeamsChange}
-                placeholder="All Teams"
-                emptyText="No teams found"
-                className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
-                showClear
-                icon={<Users className="h-4 w-4" />}
-            />
-
-            <MultiSelect
                 options={positionOptions.map((opt) => ({
                     label: opt.title,
                     value: String(opt.id),
@@ -129,6 +115,20 @@ export function ReviewsFilters({
                 className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
                 showClear
                 icon={<Award className="h-4 w-4" />}
+            />
+
+            <MultiSelect
+                options={teamOptions.map((opt) => ({
+                    label: opt.title,
+                    value: String(opt.id),
+                }))}
+                value={teams}
+                onValueChange={onTeamsChange}
+                placeholder="All Teams"
+                emptyText="No teams found"
+                className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
+                showClear
+                icon={<Users className="h-4 w-4" />}
             />
 
             <DateRangePicker

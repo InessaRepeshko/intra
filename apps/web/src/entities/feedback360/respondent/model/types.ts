@@ -1,5 +1,7 @@
 import {
     AddRespondentPayload,
+    RESPONDENT_CATEGORIES as RESPONDENT_CATEGORIES_ENUM_VALUES,
+    RespondentCategory,
     RespondentDto,
     RespondentSearchQuery as RespondentFilterQuery,
     RespondentResponseDto,
@@ -7,7 +9,11 @@ import {
     UpdateRespondentPayload,
 } from '@intra/shared-kernel';
 
-export { ResponseStatus };
+export {
+    RESPONDENT_CATEGORIES_ENUM_VALUES,
+    RespondentCategory,
+    ResponseStatus,
+};
 
 export type {
     RespondentDto,

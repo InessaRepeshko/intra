@@ -34,7 +34,7 @@ export const stageConfig: Record<
         className: 'bg-amber-100 text-amber-800 border-amber-200',
     },
     [ReviewStage.PREPARING_REPORT]: {
-        label: 'Generating report',
+        label: 'Report generated',
         className: 'bg-orange-100 text-orange-800 border-orange-200',
     },
     [ReviewStage.PROCESSING_BY_HR]: {

@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader2, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
@@ -26,6 +26,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@shared/components/ui/card';
+import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';
 
 const ITEMS_PER_PAGE = 10;
@@ -71,7 +72,8 @@ export function CyclesList() {
 
     // Fetch review counts for all cycles
     const cycleIds = cycles.map((c) => c.id);
-    const { reviewCounts } = useReviewCountsQuery(cycleIds);
+    const { reviewCounts, isLoading: isReviewCountsLoading } =
+        useReviewCountsQuery(cycleIds);
 
     const handleSort = (field: string) => {
         if (sortField === field) {
@@ -204,9 +206,9 @@ export function CyclesList() {
                         />
 
                         {/* Loading State */}
-                        {isLoading && (
-                            <div className="flex items-center justify-center py-16">
-                                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                        {(isLoading || isReviewCountsLoading) && (
+                            <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
+                                <Spinner />
                             </div>
                         )}
 
@@ -223,7 +225,7 @@ export function CyclesList() {
                         )}
 
                         {/* Table */}
-                        {!isLoading && !isError && (
+                        {!isLoading && !isError && !isReviewCountsLoading && (
                             <>
                                 <CyclesTable
                                     cycles={paginatedCycles}

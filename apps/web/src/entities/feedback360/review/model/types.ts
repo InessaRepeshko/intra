@@ -1,6 +1,7 @@
 import {
     CreateReviewPayload,
     ResponseStatus,
+    REVIEW_STAGES as REVIEW_STAGE_ENUM_VALUES,
     ReviewDto,
     ReviewSearchQuery as ReviewFilterQuery,
     ReviewResponseDto,
@@ -10,7 +11,13 @@ import {
     UpdateReviewPayload,
 } from '@intra/shared-kernel';
 
-export { ResponseStatus, ReviewSortField, ReviewStage, SortDirection };
+export {
+    ResponseStatus,
+    REVIEW_STAGE_ENUM_VALUES,
+    ReviewSortField,
+    ReviewStage,
+    SortDirection,
+};
 export type {
     CreateReviewPayload,
     ReviewDto,
