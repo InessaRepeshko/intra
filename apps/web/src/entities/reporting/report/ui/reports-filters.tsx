@@ -10,8 +10,8 @@ import {
 } from 'lucide-react';
 import type { DateRange } from 'react-day-picker';
 
-import { ReviewStage } from '@entities/feedback360/review/model/types';
 import { stageConfig } from '@entities/feedback360/review/ui/stage-badge';
+import { ReviewStage } from '@entities/reporting/report/model/types';
 import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
 import { cn } from '@shared/lib/utils/cn';
@@ -31,7 +31,7 @@ interface ReportsFiltersProps {
     onTeamsChange: (value: string[]) => void;
     positions: string[];
     onPositionsChange: (value: string[]) => void;
-    stageOptions: { id: string | number; title: string }[];
+    stageOptions: ReviewStage[];
     cycleOptions: string[];
     teamOptions: { id: string | number; title: string }[];
     positionOptions: { id: string | number; title: string }[];
@@ -75,13 +75,10 @@ export function ReportsFilters({
             </div>
 
             <MultiSelect
-                options={stageOptions.map((opt) => ({
-                    label:
-                        stageConfig[opt.title as ReviewStage]?.label ||
-                        String(opt),
+                options={stageOptions?.map((opt) => ({
+                    label: stageConfig[opt]?.label || String(opt),
                     value: String(opt),
-                    badgeClassName:
-                        stageConfig[opt.title as ReviewStage]?.className,
+                    badgeClassName: stageConfig[opt]?.className,
                 }))}
                 value={stages}
                 onValueChange={onStagesChange}

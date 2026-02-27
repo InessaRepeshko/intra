@@ -286,7 +286,7 @@ export function ReviewsTable({
             headerClassName:
                 'min-w-[100px] w-[150px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
             cell: (review) => (
-                <StageBadge key={review.stage} stage={review.stage} />
+                <StageBadge key={review.id} stage={review.stage} />
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
@@ -405,7 +405,7 @@ export function ReviewsTable({
                                     <span className="whitespace-nowrap">
                                         {review.stage ? (
                                             <StageBadge
-                                                key={review.stage}
+                                                key={review.id}
                                                 stage={review.stage}
                                             />
                                         ) : (

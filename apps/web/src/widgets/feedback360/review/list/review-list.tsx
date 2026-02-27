@@ -154,7 +154,15 @@ export function ReviewsList() {
         const stages = new Set(
             allReviewsData.map((r) => r.stage).filter(Boolean),
         );
-        return Array.from(stages);
+
+        const sortedStages = Array.from(stages).sort((a, b) => {
+            return (
+                REVIEW_STAGE_ENUM_VALUES.indexOf(a) -
+                REVIEW_STAGE_ENUM_VALUES.indexOf(b)
+            ); // ascending order
+        });
+
+        return sortedStages;
     }, [allReviewsData]);
 
     const handleSort = (field: string) => {

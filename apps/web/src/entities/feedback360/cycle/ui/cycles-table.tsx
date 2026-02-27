@@ -225,9 +225,7 @@ export function CyclesTable({
             ),
             headerClassName:
                 'min-w-[70px] w-[120px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
-            cell: (cycle) => (
-                <StageBadge key={cycle.stage} stage={cycle.stage} />
-            ),
+            cell: (cycle) => <StageBadge key={cycle.id} stage={cycle.stage} />,
             cellClassName: 'whitespace-nowrap text-center',
         },
         reviews: {
@@ -300,7 +298,7 @@ export function CyclesTable({
                                     </span>
                                     <span className="whitespace-nowrap">
                                         <StageBadge
-                                            key={cycle.stage}
+                                            key={cycle.id}
                                             stage={cycle.stage}
                                         />
                                     </span>

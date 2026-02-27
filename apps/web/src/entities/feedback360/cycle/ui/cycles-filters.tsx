@@ -22,11 +22,11 @@ interface CyclesFiltersProps {
 }
 
 const stageOptions = [
+    { value: CycleStage.CANCELED, label: 'Canceled' },
     { value: CycleStage.NEW, label: 'New' },
     { value: CycleStage.ACTIVE, label: 'Active' },
     { value: CycleStage.FINISHED, label: 'Finished' },
     { value: CycleStage.ARCHIVED, label: 'Archived' },
-    { value: CycleStage.CANCELED, label: 'Canceled' },
 ];
 
 export function CyclesFilters({

@@ -82,49 +82,36 @@ export function ReportsList() {
 
     // Filter unique teams and positions
     const teamOptions = useMemo(() => {
-        const uniqueTeams = new Map<number, { id: number; title: string }>();
+        const uniqueTeams = new Set<string>();
 
-        allReportsData.forEach((report) => {
-            if (
-                report.reviewId &&
-                rateeTeamTitles[report.reviewId] &&
-                rateeTeamTitles[report.reviewId]?.trim() !== ''
-            ) {
-                uniqueTeams.set(report.reviewId, {
-                    id: report.reviewId,
-                    title: rateeTeamTitles[report.reviewId] ?? '',
-                });
+        allReportsData.forEach((r) => {
+            const title = r.reviewId ? rateeTeamTitles[r.reviewId] : undefined;
+            if (title && title.trim() !== '') {
+                uniqueTeams.add(title);
             }
         });
 
-        return Array.from(uniqueTeams.values()).sort((a, b) =>
-            a.title.localeCompare(b.title),
-        );
-    }, [allReportsData]);
+        return Array.from(uniqueTeams)
+            .sort((a, b) => a.localeCompare(b))
+            .map((title) => ({ id: title, title }));
+    }, [allReportsData, rateeTeamTitles]);
 
     const positionOptions = useMemo(() => {
-        const uniquePositions = new Map<
-            number,
-            { id: number; title: string }
-        >();
+        const uniquePositions = new Set<string>();
 
-        allReportsData.forEach((report) => {
-            if (
-                report.reviewId &&
-                rateePositionTitles[report.reviewId] &&
-                rateePositionTitles[report.reviewId]?.trim() !== ''
-            ) {
-                uniquePositions.set(report.reviewId, {
-                    id: report.reviewId,
-                    title: rateePositionTitles[report.reviewId] ?? '',
-                });
+        allReportsData.forEach((r) => {
+            const title = r.reviewId
+                ? rateePositionTitles[r.reviewId]
+                : undefined;
+            if (title && title.trim() !== '') {
+                uniquePositions.add(title);
             }
         });
 
-        return Array.from(uniquePositions.values()).sort((a, b) =>
-            a.title.localeCompare(b.title),
-        );
-    }, [allReportsData]);
+        return Array.from(uniquePositions)
+            .sort((a, b) => a.localeCompare(b))
+            .map((title) => ({ id: title, title }));
+    }, [allReportsData, rateePositionTitles]);
 
     // Fetch cycle titles for all reports
     const allCycleIds = reports
@@ -156,24 +143,22 @@ export function ReportsList() {
         useReviewStagesQuery(allReviewIds);
 
     const stageOptions = useMemo(() => {
-        const uniqueStages = new Map<
-            number,
-            { id: number; title: ReviewStage }
-        >();
+        const uniqueStages = new Set(
+            allReportsData
+                .map((r) => r.reviewId && reviewStages[r.reviewId])
+                .filter((s) => s !== 0)
+                .filter(Boolean),
+        );
 
-        allReportsData.forEach((report) => {
-            if (report.reviewId && reviewStages[report.reviewId]) {
-                uniqueStages.set(report.reviewId, {
-                    id: report.reviewId,
-                    title: reviewStages[report.reviewId],
-                });
-            }
+        const sortedStages = Array.from(uniqueStages)?.sort((a, b) => {
+            return (
+                REVIEW_STAGE_ENUM_VALUES.indexOf(a) -
+                REVIEW_STAGE_ENUM_VALUES.indexOf(b)
+            ); // ascending order
         });
 
-        return Array.from(uniqueStages.values()).sort((a, b) =>
-            a.title.localeCompare(b.title),
-        );
-    }, [allReportsData]);
+        return sortedStages;
+    }, [allReportsData, reviewStages]);
 
     // Fetch respondent categories and answer counts for all reports
     const { respondentCategories } = useRespondentCategoriesQuery(allReviewIds);
