@@ -95,7 +95,14 @@ export class QuestionTemplateRepository implements QuestionTemplateRepositoryPor
             ...(status ? { status } : {}),
             ...(answerType ? { answerType } : {}),
             ...(isForSelfassessment !== undefined
-                ? { isForSelfassessment }
+                ? isForSelfassessment === true
+                    ? { isForSelfassessment: true }
+                    : {
+                          OR: [
+                              { isForSelfassessment: false },
+                              { isForSelfassessment: null },
+                          ],
+                      }
                 : {}),
             ...(positionIds
                 ? {

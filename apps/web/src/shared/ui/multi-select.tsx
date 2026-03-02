@@ -17,7 +17,12 @@ import { cn } from '@/shared/lib/utils/cn';
 import * as React from 'react';
 
 interface MultiSelectProps {
-    options: { label: string; value: string; badgeClassName?: string }[];
+    options: {
+        label: string;
+        value: string;
+        badgeClassName?: string;
+        icon?: React.ReactNode;
+    }[];
     value: string[];
     onValueChange: (value: string[]) => void;
     placeholder?: string;
@@ -84,8 +89,14 @@ export function MultiSelect({
                                                 'bg-muted text-foreground',
                                             option?.badgeClassName &&
                                                 'border font-medium',
+                                            option?.icon && 'pl-1.5',
                                         )}
                                     >
+                                        {option?.icon && (
+                                            <span className="mr-1 [&_svg]:h-3.5 [&_svg]:w-3.5">
+                                                {option.icon}
+                                            </span>
+                                        )}
                                         {option ? option.label : val}
                                     </ComboboxChip>
                                 );
@@ -134,10 +145,22 @@ export function MultiSelect({
                                             option.badgeClassName,
                                         )}
                                     >
+                                        {option?.icon && (
+                                            <span className="mr-1 [&_svg]:h-3.5 [&_svg]:w-3.5">
+                                                {option.icon}
+                                            </span>
+                                        )}
                                         {option.label}
                                     </span>
                                 ) : (
-                                    <span>{option ? option.label : item}</span>
+                                    <span className="flex items-center">
+                                        {option?.icon && (
+                                            <span className="mr-2 [&_svg]:h-4 [&_svg]:w-4 text-muted-foreground">
+                                                {option.icon}
+                                            </span>
+                                        )}
+                                        {option ? option.label : item}
+                                    </span>
                                 )}
                             </ComboboxItem>
                         );

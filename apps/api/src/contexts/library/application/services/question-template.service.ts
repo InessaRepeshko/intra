@@ -126,7 +126,7 @@ export class QuestionTemplateService {
     async attachPosition(
         questionId: number,
         positionId: number,
-    ): Promise<QuestionTemplateDomain> {
+    ): Promise<number[]> {
         await this.getById(questionId);
         await this.positions.getById(positionId);
 
@@ -134,7 +134,7 @@ export class QuestionTemplateService {
             questionId,
             positionId,
         );
-        return this.getById(questionId);
+        return this.listPositions(questionId);
     }
 
     async detachPosition(

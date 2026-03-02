@@ -4,7 +4,7 @@ import { type User, mapUserDtoToModel } from '../model/mapper';
 import {
     fetchCurrentUser,
     fetchManagerNameByManagerId,
-    fetchPositionTitleByPositionId,
+    fetchPositionTitleById,
     fetchTeamTitleByTeamId,
     fetchUserById,
     fetchUsers,
@@ -31,9 +31,7 @@ export const userKeys = {
 async function enrichUserWithPositionTitle(user: User): Promise<User> {
     if (!user.positionId) return user;
     try {
-        const positionTitle = await fetchPositionTitleByPositionId(
-            user.positionId,
-        );
+        const positionTitle = await fetchPositionTitleById(user.positionId);
         return { ...user, positionTitle };
     } catch {
         return user;

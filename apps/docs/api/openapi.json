@@ -2846,8 +2846,8 @@
               "example": "ACTIVE",
               "type": "string",
               "enum": [
-                "ARCHIVE",
-                "ACTIVE"
+                "ACTIVE",
+                "ARCHIVE"
               ]
             }
           },
@@ -3174,7 +3174,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/QuestionTemplateResponse"
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
                 }
               }
             }
@@ -3192,7 +3195,7 @@
             "description": "Conflict"
           }
         },
-        "summary": "Attach question template to position",
+        "summary": "Link position to question template",
         "tags": [
           "Library / Question Templates"
         ]
@@ -3271,7 +3274,7 @@
             "description": "Not found"
           }
         },
-        "summary": "Detach question template from position",
+        "summary": "Unlink position from question template",
         "tags": [
           "Library / Question Templates"
         ]
@@ -3327,7 +3330,7 @@
             "description": "Conflict"
           }
         },
-        "summary": "Attach question template to competence",
+        "summary": "Link competence to question template",
         "tags": [
           "Library / Question Templates"
         ]
@@ -3406,7 +3409,7 @@
             "description": "Not found"
           }
         },
-        "summary": "Detach question template from competence",
+        "summary": "Unlink competence from question template ",
         "tags": [
           "Library / Question Templates"
         ]
@@ -3525,10 +3528,10 @@
               "example": "ACTIVE",
               "type": "string",
               "enum": [
-                "CANCELED",
                 "NEW",
                 "ACTIVE",
                 "FINISHED",
+                "CANCELED",
                 "ARCHIVED"
               ]
             }
@@ -9273,8 +9276,8 @@
           "status": {
             "type": "string",
             "enum": [
-              "ARCHIVE",
-              "ACTIVE"
+              "ACTIVE",
+              "ARCHIVE"
             ],
             "example": "ACTIVE",
             "default": "ACTIVE"
@@ -9334,8 +9337,8 @@
           "status": {
             "type": "string",
             "enum": [
-              "ARCHIVE",
-              "ACTIVE"
+              "ACTIVE",
+              "ARCHIVE"
             ],
             "example": "ACTIVE",
             "description": "Question template status"
@@ -9409,8 +9412,8 @@
           "status": {
             "type": "string",
             "enum": [
-              "ARCHIVE",
-              "ACTIVE"
+              "ACTIVE",
+              "ARCHIVE"
             ],
             "example": "ACTIVE",
             "default": "ACTIVE"
@@ -9485,10 +9488,10 @@
           "stage": {
             "type": "string",
             "enum": [
-              "CANCELED",
               "NEW",
               "ACTIVE",
               "FINISHED",
+              "CANCELED",
               "ARCHIVED"
             ],
             "example": "NEW",
@@ -9577,10 +9580,10 @@
           "stage": {
             "type": "string",
             "enum": [
-              "CANCELED",
               "NEW",
               "ACTIVE",
               "FINISHED",
+              "CANCELED",
               "ARCHIVED"
             ],
             "example": "NEW",
@@ -9681,10 +9684,10 @@
           "stage": {
             "type": "string",
             "enum": [
-              "CANCELED",
               "NEW",
               "ACTIVE",
               "FINISHED",
+              "CANCELED",
               "ARCHIVED"
             ],
             "example": "NEW",

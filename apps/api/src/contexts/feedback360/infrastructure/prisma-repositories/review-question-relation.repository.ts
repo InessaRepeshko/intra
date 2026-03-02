@@ -108,7 +108,14 @@ export class ReviewQuestionRelationRepository implements ReviewQuestionRelationR
                   }
                 : {}),
             ...(isForSelfassessment !== undefined
-                ? { isForSelfassessment }
+                ? isForSelfassessment === true
+                    ? { isForSelfassessment: true }
+                    : {
+                          OR: [
+                              { isForSelfassessment: false },
+                              { isForSelfassessment: null },
+                          ],
+                      }
                 : {}),
         };
     }

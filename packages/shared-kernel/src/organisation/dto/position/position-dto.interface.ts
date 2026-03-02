@@ -1,7 +1,11 @@
-export interface PositionDto {
+export interface PositionBaseDto<TDate = Date> {
     id: number;
     title: string;
     description: string | null;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: TDate;
+    updatedAt: TDate;
 }
+
+export type PositionDto = PositionBaseDto<Date>;
+
+export type PositionResponseDto = PositionBaseDto<string>;

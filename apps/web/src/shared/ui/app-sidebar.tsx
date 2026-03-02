@@ -105,7 +105,7 @@ const navItems: NavItem[] = [
         children: [
             {
                 title: 'Question Templates',
-                href: '/library/questions',
+                href: '/library/question-templates',
                 icon: FileQuestionMark,
             },
             {

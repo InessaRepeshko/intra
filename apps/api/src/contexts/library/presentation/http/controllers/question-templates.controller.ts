@@ -120,25 +120,21 @@ export class QuestionTemplatesController {
     }
 
     @Post(':id/positions')
-    @ApiOperation({ summary: 'Attach question template to position' })
+    @ApiOperation({ summary: 'Link position to question template' })
     @ApiParam({ name: 'id', type: 'number', required: true })
     @ApiBody({ type: AttachPositionQuestionTemplateDto })
-    @ApiResponse({ status: HttpStatus.CREATED, type: QuestionTemplateResponse })
+    @ApiResponse({ status: HttpStatus.CREATED, type: Number, isArray: true })
     @ApiCreateAndUpdateErrorResponses()
     async attachPosition(
         @Param('id') id: string,
         @Body() dto: AttachPositionQuestionTemplateDto,
-    ): Promise<QuestionTemplateResponse> {
-        const updated = await this.service.attachPosition(
-            Number(id),
-            dto.positionId,
-        );
-        return QuestionTemplateHttpMapper.toResponse(updated);
+    ): Promise<number[]> {
+        return this.service.attachPosition(Number(id), dto.positionId);
     }
 
     @Delete(':id/positions/:positionId')
     @HttpCode(HttpStatus.NO_CONTENT)
-    @ApiOperation({ summary: 'Detach question template from position' })
+    @ApiOperation({ summary: 'Unlink position from question template' })
     @ApiParam({ name: 'id', type: 'number', required: true })
     @ApiParam({ name: 'positionId', type: 'number', required: true })
     @ApiResponse({ status: HttpStatus.NO_CONTENT })
@@ -162,7 +158,7 @@ export class QuestionTemplatesController {
     }
 
     @Post(':id/competences')
-    @ApiOperation({ summary: 'Attach question template to competence' })
+    @ApiOperation({ summary: 'Link competence to question template' })
     @ApiParam({ name: 'id', type: 'number', required: true })
     @ApiBody({ type: AttachCompetenceQuestionTemplateDto })
     @ApiResponse({ status: HttpStatus.CREATED, type: Number, isArray: true })
@@ -176,7 +172,7 @@ export class QuestionTemplatesController {
 
     @Delete(':id/competences/:competenceId')
     @HttpCode(HttpStatus.NO_CONTENT)
-    @ApiOperation({ summary: 'Detach question template from competence' })
+    @ApiOperation({ summary: 'Unlink competence from question template ' })
     @ApiParam({ name: 'id', type: 'number', required: true })
     @ApiParam({ name: 'competenceId', type: 'number', required: true })
     @ApiResponse({ status: HttpStatus.NO_CONTENT })

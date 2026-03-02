@@ -1,8 +1,8 @@
 export enum CycleStage {
-    CANCELED = 'CANCELED',
     NEW = 'NEW',
     ACTIVE = 'ACTIVE',
     FINISHED = 'FINISHED',
+    CANCELED = 'CANCELED',
     ARCHIVED = 'ARCHIVED',
 }
 

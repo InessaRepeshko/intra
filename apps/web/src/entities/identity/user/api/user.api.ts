@@ -64,7 +64,7 @@ export async function fetchFullNameByUserId(userId: number): Promise<string> {
     );
 }
 
-export async function fetchPositionTitleByPositionId(
+export async function fetchPositionTitleById(
     positionId: number,
 ): Promise<string> {
     const response = await apiClient.get<PositionDto>(

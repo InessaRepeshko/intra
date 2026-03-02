@@ -1,4 +1,4 @@
-export const compareArrays = (arrA: number[], arrB: number[]): number => {
+export const compareNumberArrays = (arrA: number[], arrB: number[]): number => {
     const maxLength = Math.max(arrA.length, arrB.length);
 
     for (let i = 0; i < maxLength; i++) {
@@ -7,6 +7,21 @@ export const compareArrays = (arrA: number[], arrB: number[]): number => {
 
         if (valA !== valB) {
             return valA - valB;
+        }
+    }
+
+    return 0;
+};
+
+export const compareStringArrays = (arrA: string[], arrB: string[]): number => {
+    const maxLength = Math.max(arrA.length, arrB.length);
+
+    for (let i = 0; i < maxLength; i++) {
+        const valA = arrA[i] ?? '';
+        const valB = arrB[i] ?? '';
+
+        if (valA !== valB) {
+            return valA.localeCompare(valB);
         }
     }
 

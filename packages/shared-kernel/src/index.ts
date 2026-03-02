@@ -6,7 +6,10 @@ export { POSITION_CONSTRAINTS } from './organisation/constraints/position.constr
 export { TEAM_CONSTRAINTS } from './organisation/constraints/team.constraints';
 
 export type { CreatePositionPayload } from './organisation/dto/position/create-position-payload.type';
-export type { PositionDto } from './organisation/dto/position/position-dto.interface';
+export type {
+    PositionDto,
+    PositionResponseDto,
+} from './organisation/dto/position/position-dto.interface';
 export type { PositionSearchQuery } from './organisation/dto/position/position-search-query.type';
 export type { UpdatePositionPayload } from './organisation/dto/position/update-position-payload.type';
 export {
@@ -14,11 +17,17 @@ export {
     PositionSortField,
 } from './organisation/enums/position-sort-field.enum';
 
-export type { TeamMemberDto } from './organisation/dto/team-member/team-member-dto.interface';
+export type {
+    TeamMemberDto,
+    TeamMemberResponseDto,
+} from './organisation/dto/team-member/team-member-dto.interface';
 
 export type { AddTeamMemberPayload } from './organisation/dto/team/add-member-payload.type';
 export type { CreateTeamPayload } from './organisation/dto/team/create-team-payload.type';
-export type { TeamDto } from './organisation/dto/team/team-dto.interface';
+export type {
+    TeamDto,
+    TeamResponseDto,
+} from './organisation/dto/team/team-dto.interface';
 export type { TeamSearchQuery } from './organisation/dto/team/team-search-query.type';
 export type { UpdateTeamPayload } from './organisation/dto/team/update-team-payload.type';
 export {
@@ -59,7 +68,10 @@ export {
     QuestionTemplateStatus,
 } from './library/enums/question-template-status.enum';
 
-export type { ClusterDto } from './library/dto/cluster/cluster-dto.interface';
+export type {
+    ClusterDto,
+    ClusterResponseDto,
+} from './library/dto/cluster/cluster-dto.interface';
 export type { ClusterSearchQuery } from './library/dto/cluster/cluster-search-query.type';
 export type { CreateClusterPayload } from './library/dto/cluster/create-cluster-payload.type';
 export type { UpdateClusterPayload } from './library/dto/cluster/update-cluster-payload.type';
@@ -68,7 +80,10 @@ export {
     ClusterSortField,
 } from './library/enums/cluster-sort-field.enum';
 
-export type { CompetenceDto } from './library/dto/competence/competence-dto.interface';
+export type {
+    CompetenceDto,
+    CompetenceResponseDto,
+} from './library/dto/competence/competence-dto.interface';
 export type { CompetenceSearchQuery } from './library/dto/competence/competence-search-query.type';
 export type { CreateCompetencePayload } from './library/dto/competence/create-competence-payload.type';
 export type { UpdateCompetencePayload } from './library/dto/competence/update-competence-payload.type';
@@ -78,7 +93,10 @@ export {
 } from './library/enums/competence-sort-field.enum';
 
 export type { CreateQuestionTemplatePayload } from './library/dto/question-template/create-question-template-payload.type';
-export type { QuestionTemplateDto } from './library/dto/question-template/question-template-dto.interface';
+export type {
+    QuestionTemplateDto,
+    QuestionTemplateResponseDto,
+} from './library/dto/question-template/question-template-dto.interface';
 export type { QuestionTemplateSearchQuery } from './library/dto/question-template/question-template-search-query.type';
 export type { UpdateQuestionTemplatePayload } from './library/dto/question-template/update-question-template-payload.type';
 export {

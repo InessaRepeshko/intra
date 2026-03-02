@@ -67,7 +67,14 @@ export class QuestionRepository implements QuestionRepositoryPort {
                 : {}),
             ...(competenceId ? { competenceId } : {}),
             ...(isForSelfassessment !== undefined
-                ? { isForSelfassessment }
+                ? isForSelfassessment === true
+                    ? { isForSelfassessment: true }
+                    : {
+                          OR: [
+                              { isForSelfassessment: false },
+                              { isForSelfassessment: null },
+                          ],
+                      }
                 : {}),
         };
     }

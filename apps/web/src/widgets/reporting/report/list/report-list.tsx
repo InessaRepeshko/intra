@@ -30,7 +30,7 @@ import {
     CardTitle,
 } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
-import { compareArrays } from '@shared/lib/utils/compare-arrays';
+import { compareNumberArrays } from '@shared/lib/utils/compare-arrays';
 import { TablePagination } from '@shared/ui/table-pagination';
 
 const ITEMS_PER_PAGE = 6;
@@ -314,7 +314,7 @@ export function ReportsList() {
                     const indicesB = respondentCategories[b.reviewId]?.map(
                         (cat) => RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(cat),
                     );
-                    const comparison = compareArrays(indicesA, indicesB);
+                    const comparison = compareNumberArrays(indicesA, indicesB);
                     return sortDirection === SortDirection.ASC
                         ? comparison
                         : -comparison;
