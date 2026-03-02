@@ -1,0 +1,120 @@
+'use client';
+
+import { Bookmark, RotateCcw, Search } from 'lucide-react';
+import type { DateRange } from 'react-day-picker';
+
+import { Button } from '@shared/components/ui/button';
+import { Input } from '@shared/components/ui/input';
+import { cn } from '@shared/lib/utils/cn';
+import { DateRangePicker } from '@shared/ui/date-range-picker';
+import { MultiSelect } from '@shared/ui/multi-select';
+
+interface ClusterFiltersProps {
+    search: string;
+    onSearchChange: (value: string) => void;
+    lowerBounds: string[];
+    onLowerBoundsChange: (value: string[]) => void;
+    upperBounds: string[];
+    onUpperBoundsChange: (value: string[]) => void;
+    competences: string[];
+    onCompetencesChange: (titles: string[]) => void;
+    dateRange: DateRange | undefined;
+    onDateRangeChange: (range: DateRange | undefined) => void;
+    competenceOptions: string[];
+    lowerBoundOptions: string[];
+    upperBoundOptions: string[];
+    onReset: () => void;
+}
+
+export function ClusterFilters({
+    search,
+    onSearchChange,
+    lowerBounds,
+    onLowerBoundsChange,
+    upperBounds,
+    onUpperBoundsChange,
+    competences,
+    onCompetencesChange,
+    dateRange,
+    onDateRangeChange,
+    competenceOptions,
+    lowerBoundOptions,
+    upperBoundOptions,
+    onReset,
+}: ClusterFiltersProps) {
+    return (
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-start flex-wrap">
+            <div className="relative w-full flex-1 md:min-w-[300px] lg:max-w-sm">
+                <Search
+                    className={cn(
+                        'absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2',
+                        !search ? 'text-muted-foreground' : 'text-foreground',
+                    )}
+                />
+                <Input
+                    placeholder="Search by title or description..."
+                    value={search}
+                    onChange={(e) => onSearchChange(e.target.value)}
+                    className="pl-9 truncate text-sm"
+                />
+            </div>
+
+            <MultiSelect
+                options={competenceOptions.map((opt) => ({
+                    label: opt,
+                    value: opt,
+                }))}
+                value={competences}
+                onValueChange={onCompetencesChange}
+                placeholder="All Competences"
+                emptyText="No competences found"
+                className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
+                showClear
+                icon={<Bookmark className="h-4 w-4" />}
+            />
+
+            <MultiSelect
+                options={lowerBoundOptions.map((opt) => ({
+                    label: opt,
+                    value: opt,
+                }))}
+                value={lowerBounds}
+                onValueChange={onLowerBoundsChange}
+                placeholder="All Lower Bounds"
+                emptyText="No lower bounds found"
+                className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
+                showClear
+                icon={<Bookmark className="h-4 w-4" />}
+            />
+
+            <MultiSelect
+                options={upperBoundOptions.map((opt) => ({
+                    label: opt,
+                    value: opt,
+                }))}
+                value={upperBounds}
+                onValueChange={onUpperBoundsChange}
+                placeholder="All Upper Bounds"
+                emptyText="No upper bounds found"
+                className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
+                showClear
+                icon={<Bookmark className="h-4 w-4" />}
+            />
+
+            <DateRangePicker
+                dateRange={dateRange}
+                onDateRangeChange={onDateRangeChange}
+            />
+
+            <Button
+                variant="ghost"
+                size="sm"
+                onClick={onReset}
+                className="text-muted-foreground hover:text-foreground"
+            >
+                <RotateCcw className="mr-1 h-4 w-4" />
+                Reset
+            </Button>
+        </div>
+    );
+}

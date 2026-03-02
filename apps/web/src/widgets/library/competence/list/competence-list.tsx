@@ -47,7 +47,7 @@ export function CompetenceList() {
         null,
     );
 
-    // Build query params (exclude all sort params and forSelfassessment - they are client-side only)
+    // Build query params (client-side only)
     const queryParams = useMemo(() => {
         const params: Record<string, unknown> = {};
 
