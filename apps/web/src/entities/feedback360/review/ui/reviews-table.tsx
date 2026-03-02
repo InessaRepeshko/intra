@@ -446,11 +446,13 @@ export function ReviewsTable({
 
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Calendar className="h-3.5 w-3.5" />
-                                <span className="font-medium text-foreground break-words">
+                                <span className="font-medium text-muted-foreground break-words">
                                     {format(review.createdAt, 'MMM dd, yyyy')}
                                 </span>
                             </span>
+                        </div>
 
+                        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <FileQuestionMark className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">

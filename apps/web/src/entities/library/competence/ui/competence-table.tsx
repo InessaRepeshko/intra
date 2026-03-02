@@ -3,18 +3,17 @@
 import { format } from 'date-fns';
 import {
     Award,
-    Bookmark,
     Calendar,
     Eye,
+    FileQuestionMark,
     MoreHorizontal,
     Pencil,
-    StopCircle,
     Trash2,
     Users,
 } from 'lucide-react';
 
 import { cn } from '@/shared/lib/utils/cn';
-import { QuestionTemplate } from '@entities/library/question-template/model/mappers';
+import { Competence } from '@entities/library/competence/model/mappers';
 import { Button } from '@shared/components/ui/button';
 import {
     DropdownMenu,
@@ -35,36 +34,26 @@ import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import {
-    ForSelfassessmentType,
-    QuestionTemplateStatus,
-    SortDirection,
-} from '../model/types';
-import { AnswerTypeBadge } from './answer-type-badge';
-import { ForSelfAssessmentBadge } from './is-for-self-assessment-badge';
-import { StatusBadge } from './status-badge';
+import { SortDirection } from '../model/types';
 
-interface QuestionTemplatesTableProps {
-    questionTemplates: QuestionTemplate[];
+interface CompetenceTableProps {
+    competences: Competence[];
     positionCounts: Record<number, number>;
-    competenceTitles: Record<number, string>;
+    questionTemplateCounts: Record<number, number>;
     positionTitles: Record<number, { id: number; title: string }[]>;
     sortField: string;
     sortDirection: SortDirection;
     onSort: (field: string) => void;
-    onArchive?: (questionTemplate: QuestionTemplate) => void;
-    onDelete?: (questionTemplate: QuestionTemplate) => void;
+    onDelete?: (competence: Competence) => void;
     resetTrigger?: number;
 }
 
-function QuestionTemplateActionsMenu({
-    questionTemplate,
-    onArchive,
+function CompetenceActionsMenu({
+    competence,
     onDelete,
 }: {
-    questionTemplate: QuestionTemplate;
-    onArchive?: (questionTemplate: QuestionTemplate) => void;
-    onDelete?: (questionTemplate: QuestionTemplate) => void;
+    competence: Competence;
+    onDelete?: (competence: Competence) => void;
 }) {
     return (
         <DropdownMenu>
@@ -88,18 +77,9 @@ function QuestionTemplateActionsMenu({
                     Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                {questionTemplate.status === QuestionTemplateStatus.ACTIVE && (
-                    <DropdownMenuItem
-                        className="text-amber-700 focus:bg-amber-50 focus:text-amber-800"
-                        onClick={() => onArchive?.(questionTemplate)}
-                    >
-                        <StopCircle className="mr-2 h-4 w-4" />
-                        Archive
-                    </DropdownMenuItem>
-                )}
                 <DropdownMenuItem
                     className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                    onClick={() => onDelete?.(questionTemplate)}
+                    onClick={() => onDelete?.(competence)}
                 >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete
@@ -109,18 +89,17 @@ function QuestionTemplateActionsMenu({
     );
 }
 
-export function QuestionTemplatesTable({
-    questionTemplates,
+export function CompetenceTable({
+    competences,
     positionCounts,
-    competenceTitles,
+    questionTemplateCounts,
     positionTitles,
     sortField,
     sortDirection,
     onSort,
-    onArchive,
     onDelete,
     resetTrigger,
-}: QuestionTemplatesTableProps) {
+}: CompetenceTableProps) {
     const {
         columnOrder,
         handleDragStart,
@@ -128,22 +107,12 @@ export function QuestionTemplatesTable({
         handleDragEnd,
         resetOrder,
     } = useDraggableColumns<
-        | 'title'
-        | 'isForSelfassessment'
-        | 'answerType'
-        | 'competence'
-        | 'positions'
-        | 'date'
-        | 'status'
-        | 'actions'
-    >('reviews-table', [
+        'title' | 'positions' | 'questionTemplates' | 'date' | 'actions'
+    >('competence-table', [
         'title',
-        'isForSelfassessment',
-        'answerType',
-        'competence',
         'positions',
+        'questionTemplates',
         'date',
-        'status',
         'actions',
     ]);
 
@@ -210,25 +179,18 @@ export function QuestionTemplatesTable({
     };
 
     const COLUMNS: Record<
-        | 'title'
-        | 'isForSelfassessment'
-        | 'answerType'
-        | 'competence'
-        | 'positions'
-        | 'date'
-        | 'status'
-        | 'actions',
+        'title' | 'positions' | 'questionTemplates' | 'date' | 'actions',
         {
             header: React.ReactNode;
             headerClassName: string;
-            cell: (questionTemplate: QuestionTemplate) => React.ReactNode;
+            cell: (competence: Competence) => React.ReactNode;
             cellClassName: string;
         }
     > = {
         title: {
             header: (
                 <SortableHeader
-                    label="Question Template"
+                    label="Competence"
                     field="title"
                     currentField={sortField}
                     currentDirection={sortDirection}
@@ -236,85 +198,20 @@ export function QuestionTemplatesTable({
                 />
             ),
             headerClassName:
-                'min-w-[250px] w-[300px] whitespace-nowrap cursor-grab active:cursor-grabbing',
-            cell: (questionTemplate) => (
-                <div className="flex items-center justify-start gap-1.5 w-full">
+                'min-w-[250px] w-[300px] align-bottom cursor-grab active:cursor-grabbing rounded-full',
+            cell: (competence) => (
+                <div className="flex flex-col gap-0.5 w-full">
                     <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                        {questionTemplate.title}
+                        {competence.title + `, ` + competence.code}
                     </span>
+                    {competence.description && (
+                        <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1 break-words overflow-wrap-anywhere">
+                            {competence.description}
+                        </span>
+                    )}
                 </div>
             ),
-            cellClassName: 'whitespace-normal',
-        },
-        isForSelfassessment: {
-            header: (
-                <SortableHeader
-                    label="For Self-assessment"
-                    field="isForSelfassessment"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[180px] w-[180px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
-            cell: (questionTemplate) => (
-                <ForSelfAssessmentBadge
-                    key={questionTemplate.id}
-                    forSelfassessment={
-                        String(
-                            questionTemplate.isForSelfassessment,
-                        ).toUpperCase() as ForSelfassessmentType
-                    }
-                />
-            ),
-            cellClassName: 'whitespace-nowrap text-center',
-        },
-        answerType: {
-            header: (
-                <SortableHeader
-                    label="Answer Type"
-                    field="answerType"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[150px] w-[150px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
-            cell: (questionTemplate) => (
-                <AnswerTypeBadge
-                    key={questionTemplate.id}
-                    answerType={questionTemplate.answerType}
-                />
-            ),
-            cellClassName: 'whitespace-nowrap text-center',
-        },
-        competence: {
-            header: (
-                <SortableHeader
-                    label="Competence"
-                    field="competence"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[200px] w-[200px] whitespace-nowrap cursor-grab active:cursor-grabbing',
-            cell: (questionTemplate) => (
-                <div className="flex items-center justify-center gap-1.5 w-full">
-                    <Bookmark className="h-3.5 w-3.5 shrink-0" />
-                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                        {questionTemplate.competenceId
-                            ? (competenceTitles[
-                                  questionTemplate.competenceId
-                              ] ?? `None`)
-                            : 'None'}
-                    </span>
-                </div>
-            ),
-            cellClassName: 'whitespace-normal',
+            cellClassName: 'min-w-[200px] whitespace-normal',
         },
         positions: {
             header: (
@@ -335,6 +232,31 @@ export function QuestionTemplatesTable({
             ),
             cellClassName: 'text-center',
         },
+        questionTemplates: {
+            header: (
+                <SortableHeader
+                    label="Question Templates"
+                    field="questionTemplates"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (competence) =>
+                questionTemplateCounts[competence.id] ? (
+                    <div className="flex items-center justify-center gap-1.5">
+                        <FileQuestionMark className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium text-foreground">
+                            {questionTemplateCounts[competence.id]}
+                        </span>
+                    </div>
+                ) : (
+                    `—`
+                ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
         date: {
             header: (
                 <SortableHeader
@@ -346,7 +268,7 @@ export function QuestionTemplatesTable({
                 />
             ),
             headerClassName:
-                'min-w-[150px] w-[150px] whitespace-nowrap cursor-grab active:cursor-grabbing',
+                'min-w-[150px] w-[150px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
             cell: (review) => (
                 <div className="flex flex-col items-center justify-start gap-0.5 text-sm">
                     <span className="text-foreground">
@@ -354,36 +276,15 @@ export function QuestionTemplatesTable({
                     </span>
                 </div>
             ),
-            cellClassName: 'whitespace-nowrap',
-        },
-        status: {
-            header: (
-                <SortableHeader
-                    label="Status"
-                    field="status"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[100px] w-[100px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
-            cell: (questionTemplate) => (
-                <StatusBadge
-                    key={questionTemplate.id}
-                    status={questionTemplate.status}
-                />
-            ),
             cellClassName: 'whitespace-nowrap text-center',
         },
         actions: {
             header: <span className="text-muted-foreground">Actions</span>,
             headerClassName:
                 'min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1',
-            cell: (questionTemplate) => (
-                <QuestionTemplateActionsMenu
-                    questionTemplate={questionTemplate}
-                    onArchive={onArchive}
+            cell: (competence) => (
+                <CompetenceActionsMenu
+                    competence={competence}
                     onDelete={onDelete}
                 />
             ),
@@ -391,18 +292,17 @@ export function QuestionTemplatesTable({
         },
     };
 
-    if (questionTemplates.length === 0) {
+    if (competences.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="rounded-full bg-muted p-4">
                     <Users className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
-                    No question templates found
+                    No competences found
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                    Try adjusting your filters or create a new question
-                    template.
+                    Try adjusting your filters or create a new competence.
                 </p>
             </div>
         );
@@ -412,84 +312,59 @@ export function QuestionTemplatesTable({
         <>
             {/* Mobile card layout (hidden on md+) */}
             <div className="flex flex-col gap-3 lg:hidden">
-                {questionTemplates.map((questionTemplate) => (
+                {competences.map((competence) => (
                     <div
-                        key={questionTemplate.id}
+                        key={competence.id}
                         className="rounded-lg border bg-card p-4 shadow-sm"
                     >
                         <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0 flex-1">
                                 <p className="flex items-center gap-x-2 gap-y-1 font-medium text-foreground flex-wrap">
                                     <span className="break-words">
-                                        {questionTemplate.title}
-                                    </span>
-                                    <span className="whitespace-nowrap">
-                                        {questionTemplate.status ? (
-                                            <StatusBadge
-                                                key={questionTemplate.id}
-                                                status={questionTemplate.status}
-                                            />
-                                        ) : (
-                                            `None`
-                                        )}
+                                        {competence.title +
+                                            `, ` +
+                                            competence.code}
                                     </span>
                                 </p>
+                                {competence.description && (
+                                    <p className="mt-0.5 flex flex-row gap-x-4 gap-y-2 text-sm text-muted-foreground flex-wrap">
+                                        {competence.description && (
+                                            <span className="flex items-center gap-1 break-words">
+                                                {competence.description}
+                                            </span>
+                                        )}
+                                    </p>
+                                )}
                             </div>
-                            <QuestionTemplateActionsMenu
-                                questionTemplate={questionTemplate}
-                                onArchive={onArchive}
+                            <CompetenceActionsMenu
+                                competence={competence}
                                 onDelete={onDelete}
                             />
                         </div>
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                            <span className="flex items-center">
-                                <ForSelfAssessmentBadge
-                                    key={questionTemplate.id}
-                                    forSelfassessment={
-                                        String(
-                                            questionTemplate.isForSelfassessment,
-                                        ).toUpperCase() as ForSelfassessmentType
-                                    }
-                                />
-                                <span className="font-medium text-muted-foreground break-words">
-                                    {questionTemplate.isForSelfassessment
-                                        ? 'For self-assessment'
-                                        : 'Not for self-assessment'}
-                                </span>
-                            </span>
-
-                            <span className="flex items-center">
-                                <AnswerTypeBadge
-                                    key={questionTemplate.id}
-                                    answerType={questionTemplate.answerType}
-                                />
-                            </span>
-
                             <span className="flex items-center gap-1 text-muted-foreground">
-                                <Bookmark className="shrink-0 h-3.5 w-3.5" />
-                                <span className="font-medium text-foreground break-words">
-                                    {questionTemplate.competenceId
-                                        ? (competenceTitles[
-                                              questionTemplate.competenceId
-                                          ] ?? `None`)
-                                        : 'None'}
-                                </span>
-                            </span>
-
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                                <Award className="h-3.5 w-3.5" />
+                                <Award className="h-3.5 w-3.5 shrink-0" />
                                 <span className="font-medium text-foreground">
-                                    {positionCounts[questionTemplate.id] ?? `—`}
+                                    {positionCounts[competence.id] ?? `—`}
                                 </span>
                                 {' positions'}
+                            </span>
+
+                            <span className="flex items-center gap-1 text-muted-foreground">
+                                <FileQuestionMark className="h-3.5 w-3.5 shrink-0" />
+                                <span className="font-medium text-foreground">
+                                    {questionTemplateCounts[competence.id] ??
+                                        `—`}
+                                </span>
+                                {' question templates'}
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Calendar className="h-3.5 w-3.5" />
                                 <span className="font-medium text-muted-foreground break-words">
                                     {format(
-                                        questionTemplate.createdAt,
+                                        competence.createdAt,
                                         'MMM dd, yyyy',
                                     )}
                                 </span>
@@ -523,8 +398,8 @@ export function QuestionTemplatesTable({
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {questionTemplates.map((questionTemplate) => (
-                            <TableRow key={questionTemplate.id}>
+                        {competences.map((competence) => (
+                            <TableRow key={competence.id}>
                                 {columnOrder.map((id) => {
                                     const col = COLUMNS[id];
                                     return (
@@ -532,7 +407,7 @@ export function QuestionTemplatesTable({
                                             key={id}
                                             className={col.cellClassName}
                                         >
-                                            {col.cell(questionTemplate)}
+                                            {col.cell(competence)}
                                         </TableCell>
                                     );
                                 })}

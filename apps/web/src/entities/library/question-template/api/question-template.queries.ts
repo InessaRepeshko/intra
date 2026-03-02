@@ -125,7 +125,6 @@ export function useQuestionTemplateAllPositionTitlesQuery(
         })),
     });
 
-    // Convert array to Record for easier lookup by questionTemplateId
     const positionTitles: Record<number, { id: number; title: string }[]> = {};
 
     questionTemplatesWithPositionIds.forEach((questionTemplate, index) => {

@@ -12,7 +12,6 @@ export interface QuestionTemplate extends Omit<
 export function mapQuestionTemplateDtoToModel(
     dto: QuestionTemplateResponseDto,
 ): QuestionTemplate {
-    // Normalize isForSelfassessment to boolean (API may return string "true"/"false")
     const isForSelfassessment =
         typeof dto.isForSelfassessment === 'string'
             ? dto.isForSelfassessment === 'true'

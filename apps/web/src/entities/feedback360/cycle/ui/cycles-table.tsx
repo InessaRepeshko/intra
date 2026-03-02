@@ -144,7 +144,7 @@ export function CyclesTable({
         name: {
             header: (
                 <SortableHeader
-                    label="Name"
+                    label="Cycle"
                     field="title"
                     currentField={sortField}
                     currentDirection={sortDirection}
