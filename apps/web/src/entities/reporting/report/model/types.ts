@@ -1,7 +1,4 @@
 import {
-    CommentSentiment,
-    EntityType,
-    ReportAnalyticsDto,
     ReportDto,
     ReportSearchQuery as ReportFilterQuery,
     ReportResponseDto,
@@ -21,8 +18,6 @@ import {
 } from '@entities/feedback360/review/model/types';
 
 export {
-    CommentSentiment,
-    EntityType,
     ReportSortField,
     RESPONDENT_CATEGORIES_ENUM_VALUES,
     RespondentCategory,
@@ -31,14 +26,8 @@ export {
     SortDirection,
 };
 export type {
-    ReportAnalyticsDto,
     ReportDto,
     ReportFilterQuery,
     ReportResponseDto,
     ReportTextAnswerDto,
-};
-
-export type ReportQueryDto = ReportFilterQuery & {
-    page?: number;
-    limit?: number;
 };

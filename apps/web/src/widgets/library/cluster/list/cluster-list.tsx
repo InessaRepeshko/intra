@@ -42,11 +42,7 @@ export function ClusterList() {
     const [deleteCluster, setDeleteCluster] = useState<Cluster | null>(null);
 
     // Always fetch all clusters - filtering is done client-side
-    const {
-        data: allClusters = [],
-        isLoading,
-        isError,
-    } = useClustersQuery({});
+    const { data: allClusters = [], isLoading, isError } = useClustersQuery({});
 
     // Use allClusters for both display and filter options
     const clusters = allClusters;

@@ -423,14 +423,6 @@ export function ReportsList() {
                             total reports.
                         </p>
                     </div>
-                    {/* <CreateReportForm
-                        trigger={
-                            <Button size="lg" className="shrink-0">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Create New Report
-                            </Button>
-                        }
-                    /> */}
                 </div>
 
                 {/* Main Card */}

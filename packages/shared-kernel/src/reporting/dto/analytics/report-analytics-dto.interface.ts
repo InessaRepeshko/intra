@@ -1,6 +1,6 @@
 import { EntityType } from '../../enums/entity-type.enum';
 
-export interface ReportAnalyticsDto {
+export interface ReportAnalyticsBaseDto<TDate = Date> {
     id: number;
     reportId: number;
     entityType: EntityType;
@@ -16,5 +16,9 @@ export interface ReportAnalyticsDto {
     percentageByOther?: number | null;
     deltaPercentageByTeam?: number | null;
     deltaPercentageByOther?: number | null;
-    createdAt: Date;
+    createdAt: TDate;
 }
+
+export type ReportAnalyticsDto = ReportAnalyticsBaseDto<Date>;
+
+export type ReportAnalyticsResponseDto = ReportAnalyticsBaseDto<string>;

@@ -13,11 +13,12 @@ import { ScrollArea } from '@shared/components/ui/scroll-area';
 import { cn } from '@shared/lib/utils/cn';
 import {
     Award,
-    BarChart3,
     Bookmark,
     Building2,
     Cat,
+    ChartColumnBig,
     ChevronDown,
+    FileChartLine,
     FileQuestionMark,
     FileText,
     Layers2,
@@ -92,10 +93,22 @@ const navItems: NavItem[] = [
         ],
     },
     {
-        title: 'Reports',
-        href: '/reporting/reports',
-        icon: BarChart3,
+        title: 'Reporting',
+        href: '/reporting',
+        icon: FileChartLine,
         roles: [IdentityRole.HR, IdentityRole.ADMIN],
+        children: [
+            {
+                title: 'Reports',
+                href: '/reporting/reports',
+                icon: FileText,
+            },
+            {
+                title: 'Analytics',
+                href: '/reporting/analytics',
+                icon: ChartColumnBig,
+            },
+        ],
     },
     {
         title: 'Library',

@@ -23,7 +23,11 @@ function parseDecimalValue(value: unknown): number | null {
     }
     if (typeof value === 'object' && value !== null) {
         const obj = value as { s?: number; e?: number; d?: number[] };
-        if (Array.isArray(obj.d) && typeof obj.s === 'number' && typeof obj.e === 'number') {
+        if (
+            Array.isArray(obj.d) &&
+            typeof obj.s === 'number' &&
+            typeof obj.e === 'number'
+        ) {
             // Calculate: sign * (digits as number) * 10^exponent
             const digits = obj.d;
             let num = 0;
