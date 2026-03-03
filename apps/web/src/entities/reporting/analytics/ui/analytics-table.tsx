@@ -11,7 +11,6 @@ import {
     Triangle,
     UserRoundPen,
     Users,
-    // XLineTop,
 } from 'lucide-react';
 
 import { EntityTypeBadge } from '@entities/reporting/analytics/ui/entity-type-badge';
@@ -455,7 +454,10 @@ export function AnalyticsTable({
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Calendar className="h-3.5 w-3.5 shrink-0" />
                                 <span className="font-medium text-muted-foreground break-words">
-                                    {format(analytics.createdAt, 'MMM dd, yyyy')}
+                                    {format(
+                                        analytics.createdAt,
+                                        'MMM dd, yyyy',
+                                    )}
                                 </span>
                             </span>
 
@@ -469,28 +471,36 @@ export function AnalyticsTable({
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <Star className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
-                                            {formatNumber(analytics.averageBySelfAssessment)}
+                                            {formatNumber(
+                                                analytics.averageBySelfAssessment,
+                                            )}
                                         </span>
                                         {'self'}
                                     </span>
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <Star className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
-                                            {formatNumber(analytics.averageByTeam)}
+                                            {formatNumber(
+                                                analytics.averageByTeam,
+                                            )}
                                         </span>
                                         {'team'}
                                     </span>
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <Star className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
-                                            {formatNumber(analytics.averageByOther)}
+                                            {formatNumber(
+                                                analytics.averageByOther,
+                                            )}
                                         </span>
                                         {'others'}
                                     </span>
                                 </span>
                             )}
 
-                            {(analytics.percentageBySelfAssessment || analytics.percentageByTeam || analytics.percentageByOther) && (
+                            {(analytics.percentageBySelfAssessment ||
+                                analytics.percentageByTeam ||
+                                analytics.percentageByOther) && (
                                 <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         Percentage by
@@ -498,7 +508,9 @@ export function AnalyticsTable({
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <CirclePercent className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
-                                            {formatNumber(analytics.percentageBySelfAssessment)}
+                                            {formatNumber(
+                                                analytics.percentageBySelfAssessment,
+                                            )}
                                         </span>
                                         {'% self'}
                                     </span>
@@ -506,7 +518,9 @@ export function AnalyticsTable({
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <BookmarkCheck className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
-                                            {formatNumber(analytics.percentageByTeam)}
+                                            {formatNumber(
+                                                analytics.percentageByTeam,
+                                            )}
                                         </span>
                                         {'% team'}
                                     </span>
@@ -514,14 +528,17 @@ export function AnalyticsTable({
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <BookmarkCheck className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
-                                            {formatNumber(analytics.percentageByOther)}
+                                            {formatNumber(
+                                                analytics.percentageByOther,
+                                            )}
                                         </span>
                                         {'% others'}
                                     </span>
                                 </span>
                             )}
 
-                            {(analytics.deltaPercentageByTeam || analytics.deltaPercentageByOther) && (
+                            {(analytics.deltaPercentageByTeam ||
+                                analytics.deltaPercentageByOther) && (
                                 <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         Delta percentage by
@@ -530,7 +547,9 @@ export function AnalyticsTable({
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <Triangle className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
-                                            {formatNumber(analytics.deltaPercentageByTeam)}
+                                            {formatNumber(
+                                                analytics.deltaPercentageByTeam,
+                                            )}
                                         </span>
                                         {'% team'}
                                     </span>
@@ -538,7 +557,9 @@ export function AnalyticsTable({
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <Triangle className="h-3.5 w-3.5 shrink-0" />
                                         <span className="font-medium text-foreground">
-                                            {formatNumber(analytics.deltaPercentageByOther)}
+                                            {formatNumber(
+                                                analytics.deltaPercentageByOther,
+                                            )}
                                         </span>
                                         {'% others'}
                                     </span>

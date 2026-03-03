@@ -3,15 +3,12 @@
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
+import { useReportAnalyticsQuery } from '@entities/reporting/analytics/api/analytics.queries';
 import {
     ENTITY_TYPE_ENUM_VALUES,
     EntityType,
     SortDirection,
 } from '@entities/reporting/analytics/model/types';
-import {
-    useReportAnalyticsQuery,
-} from '@entities/reporting/analytics/api/analytics.queries';
-import type { ReportAnalytics } from '@entities/reporting/analytics/model/mappers';
 import { AnalyticsFilters } from '@entities/reporting/analytics/ui/analytics-filters';
 import { AnalyticsTable } from '@entities/reporting/analytics/ui/analytics-table';
 import {
@@ -22,7 +19,6 @@ import {
     CardTitle,
 } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
-import { compareNumberArrays } from '@shared/lib/utils/compare-arrays';
 import { TablePagination } from '@shared/ui/table-pagination';
 
 const ITEMS_PER_PAGE = 6;
@@ -78,8 +74,7 @@ export function AnalyticsList() {
             }
         });
 
-        return Array.from(uniqueEntityTypes)
-            .sort((a, b) => a.localeCompare(b));
+        return Array.from(uniqueEntityTypes).sort((a, b) => a.localeCompare(b));
     }, [allAnalyticsData]);
 
     const questionsOptions = useMemo(() => {
@@ -146,10 +141,10 @@ export function AnalyticsList() {
             const lowerSearch = search.toLowerCase();
             result = result.filter(
                 (a) =>
-                    a.questionTitle &&
-                    a.questionTitle.toLowerCase().includes(lowerSearch) ||
-                    a.competenceTitle &&
-                    a.competenceTitle.toLowerCase().includes(lowerSearch)
+                    (a.questionTitle &&
+                        a.questionTitle.toLowerCase().includes(lowerSearch)) ||
+                    (a.competenceTitle &&
+                        a.competenceTitle.toLowerCase().includes(lowerSearch)),
             );
         }
 
@@ -163,10 +158,7 @@ export function AnalyticsList() {
         }
 
         if (entityTypes.length > 0) {
-            result = result.filter(
-                (a) =>
-                    entityTypes.includes(a.entityType),
-            );
+            result = result.filter((a) => entityTypes.includes(a.entityType));
         }
 
         if (questions.length > 0) {
@@ -182,7 +174,8 @@ export function AnalyticsList() {
         if (competences.length > 0) {
             result = result.filter((a) => {
                 const title =
-                    a.competenceTitle === null || a.competenceTitle === undefined
+                    a.competenceTitle === null ||
+                    a.competenceTitle === undefined
                         ? 'None'
                         : (a.competenceTitle ?? '');
                 return competences.includes(title);
@@ -190,30 +183,25 @@ export function AnalyticsList() {
         }
 
         return result;
-    }, [
-        analytics,
-        search,
-        dateRange,
-        entityTypes,
-        questions,
-        competences,
-    ]);
+    }, [analytics, search, dateRange, entityTypes, questions, competences]);
 
     // Client-side sorting for all fields
     const sortedAnalytics = useMemo(() => {
         return [...filteredAnalytics].sort((a, b) => {
             switch (sortField) {
                 case 'title': {
-                    const nameA = a.entityType === EntityType.QUESTION 
-                        ? (a.questionTitle ?? '') 
-                        : a.entityType === EntityType.COMPETENCE 
-                            ? (a.competenceTitle ?? '') 
-                            : '';
-                    const nameB = b.entityType === EntityType.QUESTION 
-                        ? (b.questionTitle ?? '') 
-                        : b.entityType === EntityType.COMPETENCE 
-                            ? (b.competenceTitle ?? '') 
-                            : '';
+                    const nameA =
+                        a.entityType === EntityType.QUESTION
+                            ? (a.questionTitle ?? '')
+                            : a.entityType === EntityType.COMPETENCE
+                              ? (a.competenceTitle ?? '')
+                              : '';
+                    const nameB =
+                        b.entityType === EntityType.QUESTION
+                            ? (b.questionTitle ?? '')
+                            : b.entityType === EntityType.COMPETENCE
+                              ? (b.competenceTitle ?? '')
+                              : '';
                     return sortDirection === SortDirection.ASC
                         ? nameA.localeCompare(nameB)
                         : nameB.localeCompare(nameA);
@@ -244,77 +232,57 @@ export function AnalyticsList() {
                         : typeB - typeA;
                 }
                 case 'averageBySelfAssessment': {
-                    const valA =
-                        a.averageBySelfAssessment ??
-                        -1;
-                    const valB =
-                        b.averageBySelfAssessment ??
-                        -1;
+                    const valA = a.averageBySelfAssessment ?? -1;
+                    const valB = b.averageBySelfAssessment ?? -1;
                     return sortDirection === SortDirection.ASC
                         ? valA - valB
                         : valB - valA;
                 }
                 case 'averageByTeam': {
-                    const valA =
-                        a.averageByTeam ?? -1;
-                    const valB =
-                        b.averageByTeam ?? -1;
+                    const valA = a.averageByTeam ?? -1;
+                    const valB = b.averageByTeam ?? -1;
                     return sortDirection === SortDirection.ASC
                         ? valA - valB
                         : valB - valA;
                 }
                 case 'averageByOther': {
-                    const valA =
-                        a.averageByOther ?? -1;
-                    const valB =
-                        b.averageByOther ?? -1;
+                    const valA = a.averageByOther ?? -1;
+                    const valB = b.averageByOther ?? -1;
                     return sortDirection === SortDirection.ASC
                         ? valA - valB
                         : valB - valA;
                 }
                 case 'percentageBySelfAssessment': {
-                    const valA =
-                        a.percentageBySelfAssessment ??
-                        -1;
-                    const valB =
-                        b.percentageBySelfAssessment ??
-                        -1;
+                    const valA = a.percentageBySelfAssessment ?? -1;
+                    const valB = b.percentageBySelfAssessment ?? -1;
                     return sortDirection === SortDirection.ASC
                         ? valA - valB
                         : valB - valA;
                 }
                 case 'percentageByTeam': {
-                    const valA =
-                        a.percentageByTeam ?? -1;
-                    const valB =
-                        b.percentageByTeam ?? -1;
+                    const valA = a.percentageByTeam ?? -1;
+                    const valB = b.percentageByTeam ?? -1;
                     return sortDirection === SortDirection.ASC
                         ? valA - valB
                         : valB - valA;
                 }
                 case 'percentageByOther': {
-                    const valA =
-                        a.percentageByOther ?? -1;
-                    const valB =
-                        b.percentageByOther ?? -1;
+                    const valA = a.percentageByOther ?? -1;
+                    const valB = b.percentageByOther ?? -1;
                     return sortDirection === SortDirection.ASC
                         ? valA - valB
                         : valB - valA;
                 }
                 case 'deltaPercentageByTeam': {
-                    const valA =
-                        a.deltaPercentageByTeam ?? -1;
-                    const valB =
-                        b.deltaPercentageByTeam ?? -1;
+                    const valA = a.deltaPercentageByTeam ?? -1;
+                    const valB = b.deltaPercentageByTeam ?? -1;
                     return sortDirection === SortDirection.ASC
                         ? valA - valB
                         : valB - valA;
                 }
                 case 'deltaPercentageByOther': {
-                    const valA =
-                        a.deltaPercentageByOther ?? -1;
-                    const valB =
-                        b.deltaPercentageByOther ?? -1;
+                    const valA = a.deltaPercentageByOther ?? -1;
+                    const valB = b.deltaPercentageByOther ?? -1;
                     return sortDirection === SortDirection.ASC
                         ? valA - valB
                         : valB - valA;
@@ -323,11 +291,7 @@ export function AnalyticsList() {
                     return 0;
             }
         });
-    }, [
-        filteredAnalytics,
-        sortField,
-        sortDirection,
-    ]);
+    }, [filteredAnalytics, sortField, sortDirection]);
 
     const totalPages = Math.ceil(sortedAnalytics.length / ITEMS_PER_PAGE);
     const paginatedAnalytics = sortedAnalytics.slice(
@@ -360,7 +324,9 @@ export function AnalyticsList() {
                 {/* Main Card */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-lg">All Report Analytics</CardTitle>
+                        <CardTitle className="text-lg">
+                            All Report Analytics
+                        </CardTitle>
                         <CardDescription>
                             Search, filter, and monitor report analytics.
                         </CardDescription>
@@ -427,7 +393,7 @@ export function AnalyticsList() {
                                     sortDirection={sortDirection}
                                     onSort={handleSort}
                                     resetTrigger={resetTrigger}
-                                // onDelete={setDeleteReport}
+                                    // onDelete={setDeleteReport}
                                 />
 
                                 {/* Pagination */}

@@ -1,6 +1,6 @@
 import {
-    EntityType,
     ENTITY_TYPES as ENTITY_TYPE_ENUM_VALUES,
+    EntityType,
     ReportAnalyticsDto,
     ReportAnalyticsSearchQuery as ReportAnalyticsFilterQuery,
     ReportAnalyticsResponseDto,
@@ -8,7 +8,7 @@ import {
     SortDirection,
 } from '@intra/shared-kernel';
 
-export { EntityType, SortDirection, ENTITY_TYPE_ENUM_VALUES };
+export { ENTITY_TYPE_ENUM_VALUES, EntityType, SortDirection };
 
 export type {
     ReportAnalyticsDto,

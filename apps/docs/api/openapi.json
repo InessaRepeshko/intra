@@ -7914,7 +7914,7 @@
         ]
       }
     },
-    "/reporting/reports/review/{reviewId}": {
+    "/reporting/reports/reviews/{reviewId}": {
       "get": {
         "operationId": "ReportingController_getByReviewId",
         "parameters": [
@@ -7993,12 +7993,12 @@
         ]
       }
     },
-    "/reporting/analytics/report/{reportId}": {
+    "/reporting/reports/{id}/analytics": {
       "get": {
-        "operationId": "ReportAnalyticsController_getByReportId",
+        "operationId": "ReportingController_listReportAnalytics",
         "parameters": [
           {
-            "name": "reportId",
+            "name": "id",
             "required": true,
             "in": "path",
             "description": "Report identifier",
@@ -8028,18 +8028,18 @@
             "description": "Not found"
           }
         },
-        "summary": "Get analytics by report id",
+        "summary": "List report analytics by report id",
         "tags": [
-          "Reporting / Analytics"
+          "Reporting / Reports"
         ]
       }
     },
-    "/reporting/analytics/{id}": {
+    "/reporting/reports/analytics/{analyticsId}": {
       "get": {
-        "operationId": "ReportAnalyticsController_getById",
+        "operationId": "ReportingController_getReportAnalyticsById",
         "parameters": [
           {
-            "name": "id",
+            "name": "analyticsId",
             "required": true,
             "in": "path",
             "description": "Analytics identifier",
@@ -8066,18 +8066,18 @@
             "description": "Not found"
           }
         },
-        "summary": "Get analytics by id",
+        "summary": "Get report analytics by id",
         "tags": [
-          "Reporting / Analytics"
+          "Reporting / Reports"
         ]
       }
     },
-    "/reporting/comments/report/{reportId}": {
+    "/reporting/reports/{id}/comments": {
       "get": {
-        "operationId": "ReportCommentController_getByReportId",
+        "operationId": "ReportingController_listReportComments",
         "parameters": [
           {
-            "name": "reportId",
+            "name": "id",
             "required": true,
             "in": "path",
             "description": "Report identifier",
@@ -8107,18 +8107,58 @@
             "description": "Not found"
           }
         },
-        "summary": "Get comments by report id",
+        "summary": "Get report comments by report id",
         "tags": [
-          "Reporting / Comments"
+          "Reporting / Reports"
         ]
-      }
-    },
-    "/reporting/comments/{id}": {
-      "get": {
-        "operationId": "ReportCommentController_getById",
+      },
+      "post": {
+        "operationId": "ReportingController_create",
         "parameters": [
           {
             "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Report identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReportCommentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportCommentResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create report comment by report id",
+        "tags": [
+          "Reporting / Reports"
+        ]
+      }
+    },
+    "/reporting/reports/comments/{commentId}": {
+      "get": {
+        "operationId": "ReportingController_getReportCommentById",
+        "parameters": [
+          {
+            "name": "commentId",
             "required": true,
             "in": "path",
             "description": "Comment identifier",
@@ -8145,41 +8185,9 @@
             "description": "Not found"
           }
         },
-        "summary": "Get comment by id",
+        "summary": "Get report comment by id",
         "tags": [
-          "Reporting / Comments"
-        ]
-      }
-    },
-    "/reporting/comments": {
-      "post": {
-        "operationId": "ReportCommentController_create",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateReportCommentDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ReportCommentResponse"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Create report comment",
-        "tags": [
-          "Reporting / Comments"
+          "Reporting / Reports"
         ]
       }
     }

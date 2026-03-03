@@ -1,17 +1,20 @@
 import { IdentityRole } from '@intra/shared-kernel';
 import {
+    Body,
     ClassSerializerInterceptor,
     Controller,
     Get,
     HttpStatus,
     Param,
     ParseIntPipe,
+    Post,
     Query,
     SerializeOptions,
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
+    ApiCreatedResponse,
     ApiOperation,
     ApiParam,
     ApiQuery,
@@ -27,10 +30,18 @@ import {
     ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
 import { UserDomain } from 'src/contexts/identity/domain/user.domain';
+import { ReportAnalyticsService } from '../../../application/services/report-analytics.service';
+import { ReportCommentService } from '../../../application/services/report-comment.service';
 import { ReportingService } from '../../../application/services/reporting.service';
 import { TextAnswerService } from '../../../application/services/text-answer.service';
+import { ReportCommentDomain } from '../../../domain/report-comment.domain';
+import { CreateReportCommentDto } from '../dto/create-report-comment.dto';
 import { ReportQueryDto } from '../dto/report-query.dto';
+import { ReportAnalyticsHttpMapper } from '../mappers/report-analytics.http.mapper';
+import { ReportCommentHttpMapper } from '../mappers/report-comment.http.mapper';
 import { ReportHttpMapper } from '../mappers/report.http.mapper';
+import { ReportAnalyticsResponse } from '../models/report-analytics.response';
+import { ReportCommentResponse } from '../models/report-comment.response';
 import { ReportResponse } from '../models/report.response';
 import { TextAnswerResponse } from '../models/text-answer.response';
 
@@ -49,6 +60,8 @@ export class ReportingController {
     constructor(
         private readonly reporting: ReportingService,
         private readonly textAnswerService: TextAnswerService,
+        private readonly analyticsService: ReportAnalyticsService,
+        private readonly commentService: ReportCommentService,
     ) {}
 
     @Get()
@@ -86,7 +99,7 @@ export class ReportingController {
         return ReportHttpMapper.toResponse(report);
     }
 
-    @Get('review/:reviewId')
+    @Get('reviews/:reviewId')
     @ApiOperation({ summary: 'Get report by review id' })
     @ApiParam({
         name: 'reviewId',
@@ -125,5 +138,110 @@ export class ReportingController {
             actor,
         );
         return answers.map(ReportHttpMapper.toTextAnswerResponse);
+    }
+
+    @Get(':id/analytics')
+    @ApiOperation({ summary: 'List report analytics by report id' })
+    @ApiParam({
+        name: 'id',
+        description: 'Report identifier',
+        type: 'number',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: ReportAnalyticsResponse,
+        isArray: true,
+    })
+    @ApiReadErrorResponses()
+    async listReportAnalytics(
+        @Param('id', ParseIntPipe) id: number,
+        @CurrentUser() actor: UserDomain,
+    ): Promise<ReportAnalyticsResponse[]> {
+        const analytics = await this.analyticsService.getByReportId(id, actor);
+        return analytics.map((a) => ReportAnalyticsHttpMapper.toResponse(a));
+    }
+
+    @Get('analytics/:analyticsId')
+    @ApiOperation({ summary: 'Get report analytics by id' })
+    @ApiParam({
+        name: 'analyticsId',
+        description: 'Analytics identifier',
+        type: 'number',
+    })
+    @ApiResponse({ status: HttpStatus.OK, type: ReportAnalyticsResponse })
+    @ApiReadErrorResponses()
+    async getReportAnalyticsById(
+        @Param('analyticsId', ParseIntPipe) analyticsId: number,
+        @CurrentUser() actor: UserDomain,
+    ): Promise<ReportAnalyticsResponse> {
+        const analytics = await this.analyticsService.getById(
+            analyticsId,
+            actor,
+        );
+        return ReportAnalyticsHttpMapper.toResponse(analytics);
+    }
+
+    @Get(':id/comments')
+    @ApiOperation({ summary: 'Get report comments by report id' })
+    @ApiParam({
+        name: 'id',
+        description: 'Report identifier',
+        type: 'number',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: ReportCommentResponse,
+        isArray: true,
+    })
+    @ApiReadErrorResponses()
+    async listReportComments(
+        @Param('id', ParseIntPipe) id: number,
+        @CurrentUser() actor: UserDomain,
+    ): Promise<ReportCommentResponse[]> {
+        const comments = await this.commentService.getByReportId(id, actor);
+        return comments.map(ReportCommentHttpMapper.toResponse);
+    }
+
+    @Get('comments/:commentId')
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR)
+    @ApiOperation({ summary: 'Get report comment by id' })
+    @ApiParam({
+        name: 'commentId',
+        description: 'Comment identifier',
+        type: 'number',
+    })
+    @ApiResponse({ status: HttpStatus.OK, type: ReportCommentResponse })
+    @ApiReadErrorResponses()
+    async getReportCommentById(
+        @Param('commentId', ParseIntPipe) commentId: number,
+    ): Promise<ReportCommentResponse> {
+        const comment = await this.commentService.getById(commentId);
+        return ReportCommentHttpMapper.toResponse(comment);
+    }
+
+    @Post(':id/comments')
+    @ApiOperation({ summary: 'Create report comment by report id' })
+    @ApiParam({
+        name: 'id',
+        description: 'Report identifier',
+        type: 'number',
+    })
+    @ApiCreatedResponse({ type: ReportCommentResponse })
+    async create(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() payload: CreateReportCommentDto,
+    ): Promise<ReportCommentResponse> {
+        const comment = ReportCommentDomain.create({
+            reportId: id ?? payload.reportId,
+            questionId: payload.questionId,
+            questionTitle: payload.questionTitle,
+            comment: payload.comment,
+            respondentCategories: payload.respondentCategories,
+            commentSentiment: payload.commentSentiment ?? null,
+            numberOfMentions: payload.numberOfMentions,
+        });
+
+        const created = await this.commentService.create(comment);
+        return ReportCommentHttpMapper.toResponse(created);
     }
 }
