@@ -4,11 +4,18 @@ import {
     IdentityStatus,
     UpdateUserPayload,
     UserDto,
+    UserResponseDto,
     UserSearchQuery,
 } from '@intra/shared-kernel';
 
 export { IdentityRole, IdentityStatus };
-export type { CreateUserPayload, UpdateUserPayload, UserDto, UserSearchQuery };
+export type {
+    CreateUserPayload,
+    UpdateUserPayload,
+    UserDto,
+    UserResponseDto,
+    UserSearchQuery,
+};
 
 export interface AuthUser {
     id: number;

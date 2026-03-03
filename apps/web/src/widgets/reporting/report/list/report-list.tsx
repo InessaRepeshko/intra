@@ -54,25 +54,11 @@ export function ReportsList() {
     // Feature dialogs state
     const [deleteReport, setDeleteReport] = useState<Report | null>(null);
 
-    // Build query params (exclude all sort params - sorting is client-side only)
-    const queryParams = useMemo(() => {
-        const params: Record<string, unknown> = {};
-
-        if (search.trim()) params.search = search.trim();
-        if (stages.length === 1) params.stage = stages[0];
-        if (cycles.length === 1 && cycles[0] !== 'None')
-            params.cycleTitle = cycles[0];
-
-        return params;
-    }, [search, stages, cycles]);
-
     const {
-        data: reports = [],
+        data: allReportsData = [],
         isLoading,
         isError,
-    } = useReportsQuery(queryParams);
-
-    const { data: allReportsData = [] } = useReportsQuery({});
+    } = useReportsQuery({});
     const allReviewIds = allReportsData.map((r) => r.reviewId);
 
     // Fetch ratee full names, team and position titles for all reports
@@ -114,7 +100,7 @@ export function ReportsList() {
     }, [allReportsData, rateePositionTitles]);
 
     // Fetch cycle titles for all reports
-    const allCycleIds = reports
+    const allCycleIds = allReportsData
         .map((r) => r.cycleId)
         .filter((id) => id !== null && id !== undefined);
     const { cycleTitles } = useCycleTitlesQuery(allCycleIds);
@@ -193,7 +179,7 @@ export function ReportsList() {
 
     // Client-side filtering for date range and cycle title
     const filteredReports = useMemo(() => {
-        let result = reports;
+        let result = allReportsData;
 
         if (search.trim()) {
             const lowerSearch = search.toLowerCase();
@@ -253,7 +239,7 @@ export function ReportsList() {
 
         return result;
     }, [
-        reports,
+        allReportsData,
         search,
         dateRange,
         stages,
@@ -393,14 +379,14 @@ export function ReportsList() {
     );
 
     // Summary stats
-    const activeReports = reports.filter(
+    const activeReports = allReportsData.filter(
         (r) =>
             reviewStages[r.reviewId] === ReviewStage.PREPARING_REPORT ||
             reviewStages[r.reviewId] === ReviewStage.PROCESSING_BY_HR ||
             reviewStages[r.reviewId] === ReviewStage.PUBLISHED ||
             reviewStages[r.reviewId] === ReviewStage.ANALYSIS,
     ).length;
-    const totalReports = reports.length;
+    const totalReports = allReportsData.length;
 
     return (
         <main className="min-h-screen">

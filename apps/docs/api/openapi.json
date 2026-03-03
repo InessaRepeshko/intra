@@ -6818,7 +6818,7 @@
         ]
       }
     },
-    "/feedback360/cluster-scores/cycle/{cycleId}": {
+    "/feedback360/cluster-scores/cycles/{cycleId}": {
       "get": {
         "operationId": "ClusterScoresController_getByCycleId",
         "parameters": [
@@ -7294,7 +7294,7 @@
         ]
       }
     },
-    "/feedback360/cluster-score-analytics/cycle/{cycleId}": {
+    "/feedback360/cluster-score-analytics/cycles/{cycleId}": {
       "get": {
         "operationId": "ClusterScoreAnalyticsController_getByCycleId",
         "parameters": [

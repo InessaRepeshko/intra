@@ -4,7 +4,8 @@ import {
     ArrowDownToLine,
     ArrowUpToLine,
     Bookmark,
-    RotateCcw,
+    Box,
+    RefreshCcw,
     Search,
 } from 'lucide-react';
 import type { DateRange } from 'react-day-picker';
@@ -14,40 +15,54 @@ import { Input } from '@shared/components/ui/input';
 import { cn } from '@shared/lib/utils/cn';
 import { DateRangePicker } from '@shared/ui/date-range-picker';
 import { MultiSelect } from '@shared/ui/multi-select';
+import { RotateCcw } from 'lucide-react';
+import { getHashColor } from './cluster-badge';
 
-interface ClusterFiltersProps {
+interface ClusterScoreAnalyticsFiltersProps {
     search: string;
     onSearchChange: (value: string) => void;
-    lowerBounds: string[];
-    onLowerBoundsChange: (value: string[]) => void;
-    upperBounds: string[];
-    onUpperBoundsChange: (value: string[]) => void;
-    competences: string[];
-    onCompetencesChange: (titles: string[]) => void;
     dateRange: DateRange | undefined;
     onDateRangeChange: (range: DateRange | undefined) => void;
+    clusterScores: string[];
+    onClusterScoresChange: (value: string[]) => void;
+    clusterScoreOptions: string[];
+    competences: string[];
+    onCompetencesChange: (value: string[]) => void;
     competenceOptions: string[];
+    cycles: string[];
+    onCyclesChange: (value: string[]) => void;
+    cycleOptions: string[];
+    lowerBounds: string[];
+    onLowerBoundsChange: (value: string[]) => void;
     lowerBoundOptions: string[];
+    upperBounds: string[];
+    onUpperBoundsChange: (value: string[]) => void;
     upperBoundOptions: string[];
     onReset: () => void;
 }
 
-export function ClusterFilters({
+export function ClusterScoreAnalyticsFilters({
     search,
     onSearchChange,
-    lowerBounds,
-    onLowerBoundsChange,
-    upperBounds,
-    onUpperBoundsChange,
-    competences,
-    onCompetencesChange,
     dateRange,
     onDateRangeChange,
+    clusterScores,
+    onClusterScoresChange,
+    clusterScoreOptions,
+    competences,
+    onCompetencesChange,
     competenceOptions,
+    cycles,
+    onCyclesChange,
+    cycleOptions,
+    lowerBounds,
+    onLowerBoundsChange,
     lowerBoundOptions,
+    upperBounds,
+    onUpperBoundsChange,
     upperBoundOptions,
     onReset,
-}: ClusterFiltersProps) {
+}: ClusterScoreAnalyticsFiltersProps) {
     return (
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-start flex-wrap">
             <div className="relative w-full flex-1 md:min-w-[300px] lg:max-w-sm">
@@ -58,7 +73,7 @@ export function ClusterFilters({
                     )}
                 />
                 <Input
-                    placeholder="Search by title or description..."
+                    placeholder="Search by competence code, title or description..."
                     value={search}
                     onChange={(e) => onSearchChange(e.target.value)}
                     className="pl-9 truncate text-sm"
@@ -77,6 +92,21 @@ export function ClusterFilters({
                 className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
                 showClear
                 icon={<Bookmark className="h-4 w-4" />}
+            />
+
+            <MultiSelect
+                options={clusterScoreOptions.map((opt) => ({
+                    label: opt,
+                    value: opt,
+                    badgeClassName: getHashColor(opt),
+                }))}
+                value={clusterScores}
+                onValueChange={onClusterScoresChange}
+                placeholder="All Clusters"
+                emptyText="No clusters found"
+                className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
+                showClear
+                icon={<Box className="h-4 w-4" />}
             />
 
             <MultiSelect
@@ -105,6 +135,20 @@ export function ClusterFilters({
                 className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
                 showClear
                 icon={<ArrowUpToLine className="h-4 w-4" />}
+            />
+
+            <MultiSelect
+                options={cycleOptions.map((opt) => ({
+                    label: opt,
+                    value: opt,
+                }))}
+                value={cycles}
+                onValueChange={onCyclesChange}
+                placeholder="All Cycles"
+                emptyText="No cycles found"
+                className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
+                showClear
+                icon={<RefreshCcw className="h-4 w-4" />}
             />
 
             <DateRangePicker

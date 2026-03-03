@@ -51,7 +51,10 @@ export type { RoleDto } from './identity/dto/role/role-dto.interface';
 
 export type { CreateUserPayload } from './identity/dto/user/create-user-payload.type';
 export type { UpdateUserPayload } from './identity/dto/user/update-user-payload.type';
-export type { UserDto } from './identity/dto/user/user-dto.interface';
+export type {
+    UserDto,
+    UserResponseDto,
+} from './identity/dto/user/user-dto.interface';
 export type { UserSearchQuery } from './identity/dto/user/user-search-query.type';
 export {
     USER_SORT_FIELDS,
@@ -145,7 +148,10 @@ export type {
     ClusterScoreResponseDto,
 } from './feedback360/dto/cluster-score/cluster-score-dto.interface';
 export type { ClusterScoreSearchQuery } from './feedback360/dto/cluster-score/cluster-score-search-query.type';
-export type { ClusterScoreWithRelationsDto } from './feedback360/dto/cluster-score/cluster-score-with-relations-dto.interface';
+export type {
+    ClusterScoreWithRelationsDto,
+    ClusterScoreWithRelationsResponseDto,
+} from './feedback360/dto/cluster-score/cluster-score-with-relations-dto.interface';
 export type { UpsertClusterScorePayload } from './feedback360/dto/cluster-score/upsert-cluster-score-payload.type';
 export {
     CLUSTER_SCORE_SORT_FIELDS,

@@ -103,7 +103,7 @@ export class ClusterScoresController {
         await this.reviews.removeClusterScore(Number(id));
     }
 
-    @Get('cycle/:cycleId')
+    @Get('cycles/:cycleId')
     @Roles(IdentityRole.ADMIN, IdentityRole.HR, IdentityRole.MANAGER)
     @ApiOperation({ summary: 'Get cluster scores by cycle id' })
     @ApiParam({ name: 'cycleId', description: 'Cycle id', type: 'number' })

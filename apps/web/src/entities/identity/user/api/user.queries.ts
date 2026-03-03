@@ -1,6 +1,6 @@
 import { UserSearchQuery } from '@entities/identity/user/model/types';
 import { useQuery } from '@tanstack/react-query';
-import { type User, mapUserDtoToModel } from '../model/mapper';
+import { type User, mapUserDtoToModel } from '../model/mappers';
 import {
     fetchCurrentUser,
     fetchManagerNameByManagerId,

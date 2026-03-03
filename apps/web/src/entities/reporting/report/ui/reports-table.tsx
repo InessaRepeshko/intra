@@ -175,7 +175,7 @@ export function ReportsTable({
                             {rateePositionTitles[report.reviewId] && (
                                 <span className="break-words overflow-wrap-anywhere">
                                     {rateePositionTitles[report.reviewId] ??
-                                        `None`}{' '}
+                                        `None`}
                                     {rateeTeamTitles[report.reviewId]
                                         ? `,`
                                         : ''}
