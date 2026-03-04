@@ -16,7 +16,8 @@ import { cn } from '@/shared/lib/utils/cn';
 import { AvatarGroupList } from '@/shared/ui/avatar-group-list';
 import { AvatarGroupWithCount } from '@/shared/ui/avatar-group-with-count';
 import { User } from '@entities/identity/user/model/mappers';
-import { Position } from '@entities/organisation/position/model/mappers';
+import { TeamMember } from '@entities/organisation/team-member/model/mappers';
+import { Team } from '@entities/organisation/team/model/mappers';
 import { Button } from '@shared/components/ui/button';
 import {
     DropdownMenu,
@@ -35,27 +36,28 @@ import {
 } from '@shared/components/ui/table';
 import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
+import { UserBadgeWithPosition } from '@shared/ui/user-badge-with-position';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { SortDirection } from '../model/types';
 
-interface PositionTableProps {
-    positions: Position[];
-    competenceTitles: Record<number, { id: number; title: string }[]>;
-    users: { positionId: number; users: User[] }[];
+interface TeamTableProps {
+    teams: Team[];
+    users: { teamId: number; users: TeamMember[] }[];
+    positions: Record<number, { id: number; title: string }[]>;
     sortField: string;
     sortDirection: SortDirection;
     onSort: (field: string) => void;
-    onDelete?: (position: Position) => void;
+    onDelete?: (team: Team) => void;
     resetTrigger?: number;
 }
 
-function PositionActionsMenu({
-    position,
+function TeamActionsMenu({
+    team,
     onDelete,
 }: {
-    position: Position;
-    onDelete?: (position: Position) => void;
+    team: Team;
+    onDelete?: (team: Team) => void;
 }) {
     return (
         <DropdownMenu>
@@ -81,7 +83,7 @@ function PositionActionsMenu({
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                    onClick={() => onDelete?.(position)}
+                    onClick={() => onDelete?.(team)}
                 >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete
@@ -91,16 +93,16 @@ function PositionActionsMenu({
     );
 }
 
-export function PositionTable({
-    positions,
-    competenceTitles,
+export function TeamTable({
+    teams,
     users,
+    positions,
     sortField,
     sortDirection,
     onSort,
     onDelete,
     resetTrigger,
-}: PositionTableProps) {
+}: TeamTableProps) {
     const {
         columnOrder,
         handleDragStart,
@@ -108,8 +110,8 @@ export function PositionTable({
         handleDragEnd,
         resetOrder,
     } = useDraggableColumns<
-        'title' | 'competences' | 'users' | 'date' | 'actions'
-    >('position-table', ['title', 'competences', 'users', 'date', 'actions']);
+        'title' | 'positions' | 'head' | 'users' | 'date' | 'actions'
+    >('team-table', ['title', 'positions', 'head', 'users', 'date', 'actions']);
 
     useEffect(() => {
         if (resetTrigger && resetTrigger > 0) {
@@ -117,18 +119,18 @@ export function PositionTable({
         }
     }, [resetTrigger, resetOrder]);
 
-    const ExpandableCompetences = ({
-        competences,
+    const ExpandablePositions = ({
+        positions,
     }: {
-        competences: { id: number; title: string }[];
+        positions: { id: number; title: string }[];
     }) => {
         const [isExpanded, setIsExpanded] = useState(false);
 
-        if (!competences?.length)
-            return <span className="text-muted-foreground"> None </span>;
+        if (!positions?.length)
+            return <span className="text-muted-foreground">None</span>;
 
-        const firstCompetence = competences[0].title;
-        const extraCount = competences.length - 1;
+        const firstPosition = positions[0].title;
+        const extraCount = positions.length - 1;
 
         return (
             <div
@@ -143,22 +145,24 @@ export function PositionTable({
             >
                 <Award className="h-3.5 w-3.5 shrink-0" />
                 {isExpanded ? (
-                    <div className="flex flex-col items-start justify-start text-start flex-wrap gap-1 items-center justify-center animate-in fade-in slide-in-from-top-1">
-                        {competences.map((c, index) => (
-                            <span
-                                key={c.id}
-                                className="text-sm font-medium text-foreground"
-                            >
-                                {c.title}
-                                {index < competences.length - 1 ? ',' : ''}
-                            </span>
-                        ))}
+                    <div className="flex flex-col flex-wrap gap-1 items-center justify-center animate-in fade-in slide-in-from-top-1">
+                        <div className="flex flex-col items-start justify-start text-start">
+                            {positions.map((p, index) => (
+                                <span
+                                    key={p.id}
+                                    className="text-sm font-medium text-foreground"
+                                >
+                                    {p.title}
+                                    {index < positions.length - 1 ? ',' : ''}
+                                </span>
+                            ))}
+                        </div>
                         <ChevronUp className="h-3 w-3 text-muted-foreground ml-1" />
                     </div>
                 ) : (
                     <div className="flex items-center justify-center text-center gap-1 overflow-hidden">
                         <span className="text-sm font-medium truncate text-foreground">
-                            {firstCompetence}
+                            {firstPosition}
                         </span>
                         {extraCount > 0 && (
                             <span className="text-[10px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-full shrink-0">
@@ -211,18 +215,18 @@ export function PositionTable({
     };
 
     const COLUMNS: Record<
-        'title' | 'competences' | 'users' | 'date' | 'actions',
+        'title' | 'positions' | 'head' | 'users' | 'date' | 'actions',
         {
             header: React.ReactNode;
             headerClassName: string;
-            cell: (position: Position) => React.ReactNode;
+            cell: (team: Team) => React.ReactNode;
             cellClassName: string;
         }
     > = {
         title: {
             header: (
                 <SortableHeader
-                    label="Position"
+                    label="Team"
                     field="title"
                     currentField={sortField}
                     currentDirection={sortDirection}
@@ -231,25 +235,25 @@ export function PositionTable({
             ),
             headerClassName:
                 'min-w-[200px] w-[300px] align-bottom cursor-grab active:cursor-grabbing rounded-full',
-            cell: (position) => (
+            cell: (team) => (
                 <div className="flex flex-col gap-0.5 w-full">
                     <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                        {position.title}
+                        {team.title}
                     </span>
-                    {position.description && (
+                    {team.description && (
                         <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1 break-words overflow-wrap-anywhere">
-                            {position.description}
+                            {team.description}
                         </span>
                     )}
                 </div>
             ),
             cellClassName: 'whitespace-normal',
         },
-        competences: {
+        positions: {
             header: (
                 <SortableHeader
-                    label="Competences"
-                    field="competenceTitles"
+                    label="Positions"
+                    field="positions"
                     currentField={sortField}
                     currentDirection={sortDirection}
                     onSort={onSort}
@@ -257,12 +261,47 @@ export function PositionTable({
             ),
             headerClassName:
                 'min-w-[200px] w-[250px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
-            cell: (position) => (
-                <ExpandableCompetences
-                    competences={competenceTitles[position.id] || []}
-                />
+            cell: (team) => (
+                <ExpandablePositions positions={positions[team.id] || []} />
             ),
             cellClassName: 'text-center',
+        },
+        head: {
+            header: (
+                <SortableHeader
+                    label="Head"
+                    field="head"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[200px] w-[300px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (team) => {
+                const teamUsers =
+                    users.find((u) => u.teamId === team.id)?.users || [];
+                const headUser = teamUsers
+                    .map((u) => u.user)
+                    .find((u) => u.id === team.headId);
+                return (
+                    <UserBadgeWithPosition
+                        user={{
+                            id: headUser?.id || 0,
+                            fullName: headUser?.fullName || '',
+                            positionTitle:
+                                positions[team.id]?.find(
+                                    (p) => p.id === headUser?.positionId,
+                                )?.title || 'kjsdbcvkjvcb',
+                            avatarUrl: headUser?.avatarUrl || '',
+                            firstName: headUser?.firstName || '',
+                            lastName: headUser?.lastName || '',
+                        }}
+                    />
+                );
+            },
+            cellClassName:
+                'whitespace-nowrap text-start justify-start items-start',
         },
         users: {
             header: (
@@ -276,11 +315,12 @@ export function PositionTable({
             ),
             headerClassName:
                 'min-w-[200px] w-[300px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
-            cell: (position) => {
-                const positionUsers =
-                    users.find((u) => u.positionId === position.id)?.users ||
-                    [];
-                return <ExpandableUsers users={positionUsers} />;
+            cell: (team) => {
+                const teamUsers =
+                    users
+                        .find((u) => u.teamId === team.id)
+                        ?.users?.map((user) => user?.user) || [];
+                return <ExpandableUsers users={teamUsers} />;
             },
             cellClassName:
                 'whitespace-nowrap text-start justify-start items-start',
@@ -297,10 +337,10 @@ export function PositionTable({
             ),
             headerClassName:
                 'min-w-[150px] w-[150px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
-            cell: (position) => (
+            cell: (team) => (
                 <div className="flex flex-col items-center justify-start gap-0.5 text-sm">
                     <span className="text-foreground">
-                        {format(position.createdAt, 'MMM dd, yyyy')}
+                        {format(team.createdAt, 'MMM dd, yyyy')}
                     </span>
                 </div>
             ),
@@ -310,24 +350,22 @@ export function PositionTable({
             header: <span className="text-muted-foreground"> Actions </span>,
             headerClassName:
                 'min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1',
-            cell: (position) => (
-                <PositionActionsMenu position={position} onDelete={onDelete} />
-            ),
+            cell: (team) => <TeamActionsMenu team={team} onDelete={onDelete} />,
             cellClassName: 'whitespace-nowrap text-center',
         },
     };
 
-    if (positions.length === 0) {
+    if (teams.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="rounded-full bg-muted p-4">
                     <Users className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
-                    No positions found
+                    No teams found
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                    Try adjusting your filters or create a new position.
+                    Try adjusting your filters or create a new team.
                 </p>
             </div>
         );
@@ -337,43 +375,40 @@ export function PositionTable({
         <>
             {/* Mobile card layout (hidden on md+) */}
             <div className="flex flex-col gap-3 lg:hidden">
-                {positions.map((position) => (
+                {teams.map((team) => (
                     <div
-                        key={position.id}
+                        key={team.id}
                         className="rounded-lg border bg-card p-4 shadow-sm"
                     >
                         <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0 flex-1">
                                 <p className="flex items-center gap-x-2 gap-y-1 font-medium text-foreground flex-wrap">
                                     <span className="break-words">
-                                        {position.title}
+                                        {team.title}
                                     </span>
                                 </p>
-                                {position.description && (
+                                {team.description && (
                                     <p className="mt-0.5 flex flex-row gap-x-4 gap-y-2 text-sm text-muted-foreground flex-wrap">
-                                        {position.description && (
+                                        {team.description && (
                                             <span className="flex items-center gap-1 break-words">
-                                                {position.description}
+                                                {team.description}
                                             </span>
                                         )}
                                     </p>
                                 )}
                             </div>
-                            <PositionActionsMenu
-                                position={position}
-                                onDelete={onDelete}
-                            />
+                            <TeamActionsMenu team={team} onDelete={onDelete} />
                         </div>
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Award className="h-3.5 w-3.5 shrink-0" />
                                 <span className="font-medium text-foreground">
-                                    {competenceTitles[position.id]
-                                        ? competenceTitles[position.id].length
+                                    {positions[team.id]
+                                        ? positions[team.id].length
                                         : `—`}
                                 </span>
-                                {' competences'}
+                                {' positions'}
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">
@@ -381,20 +416,20 @@ export function PositionTable({
                                 <span className="font-medium text-foreground">
                                     {(() => {
                                         const u = users.find(
-                                            (u) => u.positionId === position.id,
+                                            (u) => u.teamId === team.id,
                                         )?.users;
                                         return u && u.length > 0
                                             ? u.length
                                             : `—`;
                                     })()}
                                 </span>
-                                {' users'}
+                                {' members'}
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Calendar className="h-3.5 w-3.5" />
                                 <span className="font-medium text-muted-foreground break-words">
-                                    {format(position.createdAt, 'MMM dd, yyyy')}
+                                    {format(team.createdAt, 'MMM dd, yyyy')}
                                 </span>
                             </span>
                         </div>
@@ -426,8 +461,8 @@ export function PositionTable({
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {positions.map((position) => (
-                            <TableRow key={position.id}>
+                        {teams.map((team) => (
+                            <TableRow key={team.id}>
                                 {columnOrder.map((id) => {
                                     const col = COLUMNS[id];
                                     return (
@@ -435,7 +470,7 @@ export function PositionTable({
                                             key={id}
                                             className={col.cellClassName}
                                         >
-                                            {col.cell(position)}
+                                            {col.cell(team)}
                                         </TableCell>
                                     );
                                 })}

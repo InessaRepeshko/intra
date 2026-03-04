@@ -1,3 +1,8 @@
+import {
+    UserDto,
+    UserResponseDto,
+} from 'src/identity/dto/user/user-dto.interface';
+
 export interface TeamMemberBaseDto<TDate = Date> {
     id: number;
     teamId: number;
@@ -6,6 +11,6 @@ export interface TeamMemberBaseDto<TDate = Date> {
     createdAt: TDate;
 }
 
-export type TeamMemberDto = TeamMemberBaseDto<Date>;
+export type TeamMemberDto = TeamMemberBaseDto<Date> & UserDto;
 
-export type TeamMemberResponseDto = TeamMemberBaseDto<string>;
+export type TeamMemberResponseDto = TeamMemberBaseDto<string> & UserResponseDto;

@@ -16,8 +16,3 @@ export type {
     PositionResponseDto,
     UpdatePositionPayload,
 };
-
-export type PositionQueryDto = PositionFilterQuery & {
-    page?: number;
-    limit?: number;
-};

@@ -118,7 +118,7 @@ export function QuestionTemplateList() {
             }
         });
 
-        const competenceOptions = Array.from(uniqueCompetencies)
+        let competenceOptions = Array.from(uniqueCompetencies)
             .sort((a, b) => a.localeCompare(b))
             .map((title) => ({ id: title, title }));
 
@@ -129,7 +129,9 @@ export function QuestionTemplateList() {
             const filteredCompetenceOptions = competenceOptions.filter(
                 (c) => c.title !== 'None',
             );
-            return [noneOption, ...filteredCompetenceOptions];
+            competenceOptions = noneOption
+                ? [noneOption, ...filteredCompetenceOptions]
+                : competenceOptions;
         }
         return competenceOptions;
     }, [allQuestionTemplatesData, competenceTitles]);

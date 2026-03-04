@@ -6,14 +6,13 @@ import type { DateRange } from 'react-day-picker';
 import { User } from '@entities/identity/user/model/mappers';
 import { SortDirection } from '@entities/library/competence/model/types';
 import {
-    usePositionAllCompetenceIdsQuery,
-    usePositionAllCompetenceTitlesQuery,
-    usePositionAllUsersQuery,
-    usePositionsQuery,
-} from '@entities/organisation/position/api/position.queries';
-import type { Position } from '@entities/organisation/position/model/mappers';
-import { PositionFilters } from '@entities/organisation/position/ui/position-filters';
-import { PositionTable } from '@entities/organisation/position/ui/position-table';
+    useTeamAllPositionTitlesQuery,
+    useTeamAllUsersQuery,
+    useTeamsQuery,
+} from '@entities/organisation/team/api/team.queries';
+import { Team } from '@entities/organisation/team/model/mappers';
+import { TeamFilters } from '@entities/organisation/team/ui/team-filters';
+import { TeamTable } from '@entities/organisation/team/ui/team-table';
 import {
     Card,
     CardContent,
@@ -27,12 +26,12 @@ import { TablePagination } from '@shared/ui/table-pagination';
 
 const ITEMS_PER_PAGE = 6;
 
-export function PositionList() {
+export function TeamList() {
     const [search, setSearch] = useState('');
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
         undefined,
     );
-    const [competences, setCompetences] = useState<string[]>([]);
+    const [positions, setPositions] = useState<string[]>([]);
     const [users, setUsers] = useState<User[]>([]);
     const [sortField, setSortField] = useState('createdAt');
     const [sortDirection, setSortDirection] = useState<SortDirection>(
@@ -42,87 +41,77 @@ export function PositionList() {
     const [resetTrigger, setResetTrigger] = useState(0);
 
     // Feature dialogs state
-    const [deletePosition, setDeletePosition] = useState<Position | null>(null);
+    const [deleteTeam, setDeleteTeam] = useState<Team | null>(null);
 
     // Build query params (client-side only)
     const queryParams = useMemo(() => {
         const params: Record<string, unknown> = {};
 
         if (search.trim()) params.search = search.trim();
-        if (competences.length === 1) params.competenceId = competences[0];
+        if (positions.length === 1) params.positionId = positions[0];
 
         return params;
-    }, [search, competences]);
+    }, [search, positions]);
 
-    const {
-        data: allPositionsData = [],
-        isLoading,
-        isError,
-    } = usePositionsQuery({});
-    const allPositionIds = allPositionsData.map((p) => p.id);
+    const { data: allTeamsData = [], isLoading, isError } = useTeamsQuery();
+    const allTeamIds = allTeamsData.map((p) => p.id);
 
-    const { competenceIds, isLoading: isAllCompetenceIdsLoading } =
-        usePositionAllCompetenceIdsQuery(allPositionIds);
-    const allCompetenceIds = allPositionIds.map((p) => {
+    // Fetch position titles and users for all positions
+    const { users: allUsers, isLoading: isAllUsersLoading } =
+        useTeamAllUsersQuery(allTeamIds);
+
+    const allPositionIds = allUsers.map((members) => {
         return {
-            positionId: p,
-            competenceIds: competenceIds[p] || [],
+            teamId: members.teamId,
+            positionIds: members.users?.map((u) => u.user?.positionId) || [],
         };
     });
 
-    // Fetch competence titles and users for all positions
     const {
-        competenceTitles: competenceTitles,
-        isLoading: isCompetenceTitlesLoading,
-    } = usePositionAllCompetenceTitlesQuery(allCompetenceIds);
+        positionTitles: allPositionTitles,
+        isLoading: isPositionTitlesLoading,
+    } = useTeamAllPositionTitlesQuery(allPositionIds);
 
-    const { users: allUsers, isLoading: isUsersLoading } =
-        usePositionAllUsersQuery(allPositionIds);
+    // Filter unique positions
+    const positionOptions = useMemo(() => {
+        const uniquePositions = new Set<string>();
 
-    // Filter unique competences
-    const competenceOptions = useMemo(() => {
-        const uniqueCompetences = new Set<string>();
-
-        allCompetenceIds.forEach((p) => {
+        allPositionIds.forEach((p) => {
             if (
-                p.competenceIds === null ||
-                p.competenceIds === undefined ||
-                p.competenceIds.length === 0
+                p.positionIds === null ||
+                p.positionIds === undefined ||
+                p.positionIds.length === 0
             ) {
-                uniqueCompetences.add('None');
+                uniquePositions.add('None');
             }
-            p.competenceIds?.forEach((competenceId) => {
-                const competences = competenceTitles[p.positionId] || [];
-                const competence = competences.find(
-                    (p) => p.id === competenceId,
-                );
-                const title = competence?.title;
+            p.positionIds?.forEach((positionId) => {
+                const positions = allPositionTitles[p.teamId] || [];
+                const position = positions.find((p) => p.id === positionId);
+                const title = position?.title;
                 if (title === null || title === undefined) {
-                    uniqueCompetences.add('None');
+                    uniquePositions.add('None');
                 }
                 if (title && title.trim() !== '') {
-                    uniqueCompetences.add(title);
+                    uniquePositions.add(title);
                 }
             });
         });
 
-        let competenceOptions = Array.from(uniqueCompetences)
+        let positionOptions = Array.from(uniquePositions)
             .sort((a, b) => a.localeCompare(b))
             .map((title) => ({ id: title, title }));
 
-        if (competenceOptions.some((c) => c.title === 'None')) {
-            const noneOption = competenceOptions.find(
-                (c) => c.title === 'None',
-            )!;
-            const filteredCompetenceOptions = competenceOptions.filter(
+        if (positionOptions.some((c) => c.title === 'None')) {
+            const noneOption = positionOptions.find((c) => c.title === 'None')!;
+            const filteredPositionOptions = positionOptions.filter(
                 (c) => c.title !== 'None',
             );
-            competenceOptions = noneOption
-                ? [noneOption, ...filteredCompetenceOptions]
-                : competenceOptions;
+            positionOptions = noneOption
+                ? [noneOption, ...filteredPositionOptions]
+                : positionOptions;
         }
-        return competenceOptions;
-    }, [allPositionIds, competenceTitles, allUsers]);
+        return positionOptions;
+    }, [allPositionIds, allPositionTitles, allUsers]);
 
     const handleSort = (field: string) => {
         if (sortField === field) {
@@ -141,7 +130,7 @@ export function PositionList() {
     const handleReset = () => {
         setSearch('');
         setDateRange(undefined);
-        setCompetences([]);
+        setPositions([]);
         setUsers([]);
         setSortField('createdAt');
         setSortDirection(SortDirection.DESC);
@@ -149,9 +138,9 @@ export function PositionList() {
         setResetTrigger((prev) => prev + 1);
     };
 
-    // Client-side filtering for date range, title, competence titles
-    const filteredPositions = useMemo(() => {
-        let result = allPositionsData;
+    // Client-side filtering for date range, title, position titles
+    const filteredTeams = useMemo(() => {
+        let result = allTeamsData;
 
         if (search.trim()) {
             const lowerSearch = search.toLowerCase();
@@ -172,45 +161,45 @@ export function PositionList() {
             result = result.filter((r) => r.createdAt.getTime() <= to);
         }
 
-        if (competences.length > 0) {
-            const hasNoneFilter = competences.includes('None');
-            const regularCompetences = competences.filter((c) => c !== 'None');
+        if (positions.length > 0) {
+            const hasNoneFilter = positions.includes('None');
+            const regularPositions = positions.filter((p) => p !== 'None');
 
             result = result.filter((r) => {
-                const positionCompetences = competenceTitles[r.id] || [];
-                const hasNoCompetences =
-                    !positionCompetences || positionCompetences.length === 0;
+                const teamPositions = allPositionTitles[r.id] || [];
+                const hasNoPositions =
+                    !teamPositions || teamPositions.length === 0;
 
-                const matchesNone = hasNoneFilter && hasNoCompetences;
+                const matchesNone = hasNoneFilter && hasNoPositions;
 
-                const matchesRegularCompetences =
-                    regularCompetences.length > 0 &&
-                    positionCompetences.some((competence) =>
-                        regularCompetences.includes(competence.title),
+                const matchesRegularPositions =
+                    regularPositions.length > 0 &&
+                    teamPositions.some((position) =>
+                        regularPositions.includes(position.title),
                     );
 
-                if (hasNoneFilter && regularCompetences.length === 0) {
+                if (hasNoneFilter && regularPositions.length === 0) {
                     return matchesNone;
-                } else if (!hasNoneFilter && regularCompetences.length > 0) {
-                    return matchesRegularCompetences;
+                } else if (!hasNoneFilter && regularPositions.length > 0) {
+                    return matchesRegularPositions;
                 } else {
-                    return matchesNone || matchesRegularCompetences;
+                    return matchesNone || matchesRegularPositions;
                 }
             });
         }
         return result;
     }, [
-        competences,
+        positions,
         search,
         dateRange,
-        competenceTitles,
-        competences,
-        allPositionsData,
+        allPositionTitles,
+        positions,
+        allTeamsData,
     ]);
 
     // Client-side sorting for all fields
-    const sortedPositions = useMemo(() => {
-        return [...filteredPositions].sort((a, b) => {
+    const sortedTeams = useMemo(() => {
+        return [...filteredTeams].sort((a, b) => {
             switch (sortField) {
                 case 'title': {
                     const nameA = a.title ?? '';
@@ -223,16 +212,16 @@ export function PositionList() {
                     return sortDirection === SortDirection.ASC
                         ? a.createdAt?.getTime() - b.createdAt?.getTime()
                         : b.createdAt?.getTime() - a.createdAt?.getTime();
-                case 'competenceTitles': {
-                    const competencesA = competenceTitles[a.id]
-                        ?.map((competence) => competence.title)
+                case 'positions': {
+                    const positionsA = allPositionTitles[a.id]
+                        ?.map((position) => position.title)
                         .sort();
-                    const competencesB = competenceTitles[b.id]
-                        ?.map((competence) => competence.title)
+                    const positionsB = allPositionTitles[b.id]
+                        ?.map((position) => position.title)
                         .sort();
                     const comparison = compareStringArrays(
-                        competencesA,
-                        competencesB,
+                        positionsA,
+                        positionsB,
                     );
                     return sortDirection === SortDirection.ASC
                         ? comparison
@@ -241,11 +230,11 @@ export function PositionList() {
                 case 'users': {
                     const usersA =
                         allUsers
-                            ?.find?.((u) => u.positionId === a.id)
+                            ?.find?.((u) => u.teamId === a.id)
                             ?.users?.map((u) => u.fullName) || [];
                     const usersB =
                         allUsers
-                            ?.find?.((u) => u.positionId === b.id)
+                            ?.find?.((u) => u.teamId === b.id)
                             ?.users?.map((u) => u.fullName) || [];
                     const comparison = compareStringArrays(usersA, usersB);
                     return sortDirection === SortDirection.ASC
@@ -257,23 +246,23 @@ export function PositionList() {
             }
         });
     }, [
-        filteredPositions,
+        filteredTeams,
         sortField,
         sortDirection,
-        competenceTitles,
+        allPositionTitles,
         users,
-        competences,
+        positions,
         allUsers,
     ]);
 
-    const totalPages = Math.ceil(sortedPositions.length / ITEMS_PER_PAGE);
-    const paginatedPositions = sortedPositions.slice(
+    const totalPages = Math.ceil(sortedTeams.length / ITEMS_PER_PAGE);
+    const paginatedTeams = sortedTeams.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE,
     );
 
     // Summary stats
-    const totalPositions = allPositionsData.length;
+    const totalTeams = allTeamsData.length;
 
     return (
         <main className="min-h-screen">
@@ -282,14 +271,14 @@ export function PositionList() {
                 <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
-                            Organisational Positions
+                            Organisational Teams
                         </h1>
                         <p className="mt-1 text-muted-foreground">
-                            Manage positions across your organization.{' '}
+                            Manage teams across your organization.{' '}
                             <span className="font-medium text-foreground">
-                                {totalPositions}
+                                {totalTeams}
                             </span>{' '}
-                            total positions.
+                            total teams.
                         </p>
                     </div>
                     {/* <CreateCompetenceForm
@@ -305,14 +294,14 @@ export function PositionList() {
                 {/* Main Card */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-lg">All Positions</CardTitle>
+                        <CardTitle className="text-lg">All Teams</CardTitle>
                         <CardDescription>
-                            Search, filter, and manage positions.
+                            Search, filter, and manage teams.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-6">
                         {/* Filters */}
-                        <PositionFilters
+                        <TeamFilters
                             search={search}
                             onSearchChange={(val) => {
                                 setSearch(val);
@@ -323,20 +312,19 @@ export function PositionList() {
                                 setDateRange(range);
                                 setCurrentPage(1);
                             }}
-                            competences={competences}
-                            onCompetencesChange={(val) => {
-                                setCompetences(val);
+                            positions={positions}
+                            onPositionsChange={(val) => {
+                                setPositions(val);
                                 setCurrentPage(1);
                             }}
-                            competenceOptions={competenceOptions}
+                            positionOptions={positionOptions}
                             onReset={handleReset}
                         />
 
                         {/* Loading State */}
                         {(isLoading ||
-                            isAllCompetenceIdsLoading ||
-                            isUsersLoading ||
-                            isCompetenceTitlesLoading) && (
+                            isAllUsersLoading ||
+                            isPositionTitlesLoading) && (
                             <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
                                 <Spinner />
                             </div>
@@ -346,7 +334,7 @@ export function PositionList() {
                         {isError && (
                             <div className="flex flex-col items-center justify-center py-16 text-center">
                                 <h3 className="text-lg font-semibold text-destructive">
-                                    Failed to load positions
+                                    Failed to load teams
                                 </h3>
                                 <p className="mt-1 text-sm text-muted-foreground">
                                     Please try refreshing the page.
@@ -357,13 +345,12 @@ export function PositionList() {
                         {/* Table */}
                         {!isLoading &&
                             !isError &&
-                            !isAllCompetenceIdsLoading &&
-                            !isUsersLoading &&
-                            !isCompetenceTitlesLoading && (
+                            !isAllUsersLoading &&
+                            !isPositionTitlesLoading && (
                                 <>
-                                    <PositionTable
-                                        positions={paginatedPositions}
-                                        competenceTitles={competenceTitles}
+                                    <TeamTable
+                                        teams={paginatedTeams}
+                                        positions={allPositionTitles}
                                         users={allUsers}
                                         sortField={sortField}
                                         sortDirection={sortDirection}
@@ -374,10 +361,10 @@ export function PositionList() {
 
                                     {/* Pagination */}
                                     <TablePagination
-                                        entityName="positions"
+                                        entityName="teams"
                                         currentPage={currentPage}
                                         totalPages={totalPages}
-                                        totalItems={filteredPositions.length}
+                                        totalItems={filteredTeams.length}
                                         limit={ITEMS_PER_PAGE}
                                         onPageChange={setCurrentPage}
                                     />
@@ -388,11 +375,7 @@ export function PositionList() {
             </div>
 
             {/* Feature Dialogs */}
-            {/* <ForceFinishCycleDialog
-                cycle={forceFinishCycle}
-                onClose={() => setForceFinishCycle(null)}
-            />
-            <DeleteCycleDialog
+            {/* <DeleteCycleDialog
                 cycle={deleteCycle}
                 onClose={() => setDeleteCycle(null)}
             /> */}

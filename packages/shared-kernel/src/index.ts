@@ -22,7 +22,7 @@ export type {
     TeamMemberResponseDto,
 } from './organisation/dto/team-member/team-member-dto.interface';
 
-export type { AddTeamMemberPayload } from './organisation/dto/team/add-member-payload.type';
+export type { AddTeamMemberPayload } from './organisation/dto/team-member/add-member-payload.type';
 export type { CreateTeamPayload } from './organisation/dto/team/create-team-payload.type';
 export type {
     TeamDto,

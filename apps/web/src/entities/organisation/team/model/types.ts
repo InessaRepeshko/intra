@@ -1,3 +1,18 @@
-import { TeamDto } from '@intra/shared-kernel';
+import {
+    CreateTeamPayload,
+    SortDirection,
+    TeamDto,
+    TeamSearchQuery as TeamFilterQuery,
+    TeamResponseDto,
+    UpdateTeamPayload,
+} from '@intra/shared-kernel';
 
-export type { TeamDto };
+export { SortDirection };
+
+export type {
+    CreateTeamPayload,
+    TeamDto,
+    TeamFilterQuery,
+    TeamResponseDto,
+    UpdateTeamPayload,
+};

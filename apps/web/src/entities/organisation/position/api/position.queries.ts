@@ -153,12 +153,6 @@ export function usePositionAllUsersQuery(positionIds: number[]) {
                 ) ?? [],
         });
     });
-    users.map((positionUsers) => ({
-        ...positionUsers,
-        users: [...positionUsers.users].sort((a, b) =>
-            (a.fullName ?? '').localeCompare(b.fullName ?? ''),
-        ),
-    }));
 
     const isLoading = queries.some((q) => q.isLoading);
 

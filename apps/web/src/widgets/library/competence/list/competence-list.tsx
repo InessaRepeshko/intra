@@ -123,7 +123,7 @@ export function CompetenceList() {
             });
         });
 
-        const positionOptions = Array.from(uniquePositions)
+        let positionOptions = Array.from(uniquePositions)
             .sort((a, b) => a.localeCompare(b))
             .map((title) => ({ id: title, title }));
 
@@ -132,7 +132,9 @@ export function CompetenceList() {
             const filteredPositionOptions = positionOptions.filter(
                 (p) => p.title !== 'None',
             );
-            return [noneOption, ...filteredPositionOptions];
+            positionOptions = noneOption
+                ? [noneOption, ...filteredPositionOptions]
+                : positionOptions;
         }
         return positionOptions;
     }, [allPositionIds, positionTitles]);
