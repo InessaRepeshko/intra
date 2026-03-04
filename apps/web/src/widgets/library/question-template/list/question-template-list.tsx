@@ -118,9 +118,20 @@ export function QuestionTemplateList() {
             }
         });
 
-        return Array.from(uniqueCompetencies)
+        const competenceOptions = Array.from(uniqueCompetencies)
             .sort((a, b) => a.localeCompare(b))
             .map((title) => ({ id: title, title }));
+
+        if (competenceOptions.some((c) => c.title === 'None')) {
+            const noneOption = competenceOptions.find(
+                (c) => c.title === 'None',
+            );
+            const filteredCompetenceOptions = competenceOptions.filter(
+                (c) => c.title !== 'None',
+            );
+            return [noneOption, ...filteredCompetenceOptions];
+        }
+        return competenceOptions;
     }, [allQuestionTemplatesData, competenceTitles]);
 
     const positionOptions = useMemo(() => {
@@ -260,14 +271,32 @@ export function QuestionTemplateList() {
         }
 
         if (positions.length > 0) {
-            result = result.filter(
-                (r) =>
-                    questionTemplatesPositionTitles[r.id] &&
-                    questionTemplatesPositionTitles[r.id] !== null &&
-                    questionTemplatesPositionTitles[r.id].some((position) =>
-                        positions.includes(position.title),
-                    ),
-            );
+            const hasNoneFilter = positions.includes('None');
+            const regularPositions = positions.filter((c) => c !== 'None');
+
+            result = result.filter((r) => {
+                const questionTemplatePositionTitles =
+                    questionTemplatesPositionTitles[r.id] || [];
+                const hasNoPositions =
+                    !questionTemplatePositionTitles ||
+                    questionTemplatePositionTitles.length === 0;
+
+                const matchesNone = hasNoneFilter && hasNoPositions;
+
+                const matchesRegularPositions =
+                    regularPositions.length > 0 &&
+                    questionTemplatePositionTitles.some((position) =>
+                        regularPositions.includes(position.title),
+                    );
+
+                if (hasNoneFilter && regularPositions.length === 0) {
+                    return matchesNone;
+                } else if (!hasNoneFilter && regularPositions.length > 0) {
+                    return matchesRegularPositions;
+                } else {
+                    return matchesNone || matchesRegularPositions;
+                }
+            });
         }
 
         if (statuses.length > 0) {

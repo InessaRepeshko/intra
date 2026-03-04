@@ -187,22 +187,21 @@ export function ReviewsTable({
                     <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
                         {review.rateeFullName}
                     </span>
-                    {review.rateePositionTitle ||
-                        (review.teamTitle && (
-                            <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1">
-                                {review.rateePositionTitle && (
-                                    <span className="break-words overflow-wrap-anywhere">
-                                        {review.rateePositionTitle}
-                                        {review.teamTitle && ','}
-                                    </span>
-                                )}
-                                {review.teamTitle && (
-                                    <span className="break-words overflow-wrap-anywhere">
-                                        {review.teamTitle}
-                                    </span>
-                                )}
-                            </span>
-                        ))}
+                    {(review.rateePositionTitle || review.teamTitle) && (
+                        <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1">
+                            {review.rateePositionTitle && (
+                                <span className="break-words overflow-wrap-anywhere">
+                                    {review.rateePositionTitle}
+                                    {review.teamTitle && ','}
+                                </span>
+                            )}
+                            {review.teamTitle && (
+                                <span className="break-words overflow-wrap-anywhere">
+                                    {review.teamTitle}
+                                </span>
+                            )}
+                        </span>
+                    )}
                 </div>
             ),
             cellClassName: 'min-w-[200px] whitespace-normal',

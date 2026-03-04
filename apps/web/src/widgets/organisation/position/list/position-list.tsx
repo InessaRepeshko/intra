@@ -3,18 +3,17 @@
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
-import {
-    useCompetenceAllPositionIdsQuery,
-    useCompetenceAllPositionTitlesQuery,
-    useCompetenceAllQuestionTemplateCountsQuery,
-    useCompetenceAllQuestionTemplateIdsQuery,
-    useCompetencePositionCountsQuery,
-    useCompetencesQuery,
-} from '@entities/library/competence/api/competence.queries';
-import type { Competence } from '@entities/library/competence/model/mappers';
+import { User } from '@entities/identity/user/model/mappers';
 import { SortDirection } from '@entities/library/competence/model/types';
-import { CompetenceFilters } from '@entities/library/competence/ui/competence-filters';
-import { CompetenceTable } from '@entities/library/competence/ui/competence-table';
+import {
+    usePositionAllCompetenceIdsQuery,
+    usePositionAllCompetenceTitlesQuery,
+    usePositionAllUsersQuery,
+    usePositionsQuery,
+} from '@entities/organisation/position/api/position.queries';
+import type { Position } from '@entities/organisation/position/model/mappers';
+import { PositionFilters } from '@entities/organisation/position/ui/position-filters';
+import { PositionTable } from '@entities/organisation/position/ui/position-table';
 import {
     Card,
     CardContent,
@@ -28,13 +27,13 @@ import { TablePagination } from '@shared/ui/table-pagination';
 
 const ITEMS_PER_PAGE = 6;
 
-export function CompetenceList() {
+export function PositionList() {
     const [search, setSearch] = useState('');
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
         undefined,
     );
-    const [positions, setPositions] = useState<string[]>([]);
-    const [questionTemplates, setQuestionTemplates] = useState<string[]>([]);
+    const [competences, setCompetences] = useState<string[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [sortField, setSortField] = useState('createdAt');
     const [sortDirection, setSortDirection] = useState<SortDirection>(
         SortDirection.DESC,
@@ -43,99 +42,91 @@ export function CompetenceList() {
     const [resetTrigger, setResetTrigger] = useState(0);
 
     // Feature dialogs state
-    const [deleteCompetence, setDeleteCompetence] = useState<Competence | null>(
-        null,
-    );
+    const [deletePosition, setDeletePosition] = useState<Position | null>(null);
 
     // Build query params (client-side only)
     const queryParams = useMemo(() => {
         const params: Record<string, unknown> = {};
 
         if (search.trim()) params.search = search.trim();
-        if (positions.length === 1) params.positionId = positions[0];
+        if (competences.length === 1) params.competenceId = competences[0];
 
         return params;
-    }, [search, positions]);
+    }, [search, competences]);
+
+    // const {
+    //     data: positions = [],
+    //     isLoading,
+    //     isError,
+    // } = usePositionsQuery(queryParams);
 
     const {
-        data: competences = [],
+        data: allPositionsData = [],
         isLoading,
         isError,
-    } = useCompetencesQuery(queryParams);
+    } = usePositionsQuery({});
+    const allPositionIds = allPositionsData.map((p) => p.id);
 
-    const { data: allCompetencesData = [], isLoading: isCompetencesLoading } =
-        useCompetencesQuery({});
-    const allCompetenceIds = allCompetencesData.map((c) => c.id);
-
-    const { positionIds, isLoading: isAllPositionIdsLoading } =
-        useCompetenceAllPositionIdsQuery(allCompetenceIds);
-    const allPositionIds = allCompetenceIds.map((c) => {
+    const { competenceIds, isLoading: isAllCompetenceIdsLoading } =
+        usePositionAllCompetenceIdsQuery(allPositionIds);
+    const allCompetenceIds = allPositionIds.map((p) => {
         return {
-            competenceId: c,
-            positionIds: positionIds[c] || [],
+            positionId: p,
+            competenceIds: competenceIds[p] || [],
         };
     });
 
-    const { questionTemplateIds, isLoading: isAllQuestionTemplateIdsLoading } =
-        useCompetenceAllQuestionTemplateIdsQuery(allCompetenceIds);
-    const allQuestionTemplateIds = allCompetenceIds.map((c) => {
-        return {
-            competenceId: c,
-            questionTemplateIds: questionTemplateIds[c] || [],
-        };
-    });
-
+    // Fetch competence titles and users for all positions
     const {
-        questionTemplateCounts,
-        isLoading: isAllQuestionTemplateCountsLoading,
-    } = useCompetenceAllQuestionTemplateCountsQuery(allCompetenceIds);
+        competenceTitles: competenceTitles,
+        isLoading: isCompetenceTitlesLoading,
+    } = usePositionAllCompetenceTitlesQuery(allCompetenceIds);
 
-    // Fetch position and question template counts and titles for all positions
-    const {
-        positionTitles: positionTitles,
-        isLoading: isPositionTitlesLoading,
-    } = useCompetenceAllPositionTitlesQuery(allPositionIds);
-    const { positionCounts, isLoading: isPositionCountsLoading } =
-        useCompetencePositionCountsQuery(allCompetenceIds);
+    const { users: allUsers, isLoading: isUsersLoading } =
+        usePositionAllUsersQuery(allPositionIds);
 
-    // Filter unique positions
-    const positionOptions = useMemo(() => {
-        const uniquePositions = new Set<string>();
+    // Filter unique competences
+    const competenceOptions = useMemo(() => {
+        const uniqueCompetences = new Set<string>();
 
-        allPositionIds.forEach((competence) => {
+        allCompetenceIds.forEach((p) => {
             if (
-                competence.positionIds === null ||
-                competence.positionIds === undefined ||
-                competence.positionIds.length === 0
+                p.competenceIds === null ||
+                p.competenceIds === undefined ||
+                p.competenceIds.length === 0
             ) {
-                uniquePositions.add('None');
+                uniqueCompetences.add('None');
             }
-            competence.positionIds?.forEach((positionId) => {
-                const positions = positionTitles[competence.competenceId] || [];
-                const position = positions.find((p) => p.id === positionId);
-                const title = position?.title;
+            p.competenceIds?.forEach((competenceId) => {
+                const competences = competenceTitles[p.positionId] || [];
+                const competence = competences.find(
+                    (p) => p.id === competenceId,
+                );
+                const title = competence?.title;
                 if (title === null || title === undefined) {
-                    uniquePositions.add('None');
+                    uniqueCompetences.add('None');
                 }
                 if (title && title.trim() !== '') {
-                    uniquePositions.add(title);
+                    uniqueCompetences.add(title);
                 }
             });
         });
 
-        const positionOptions = Array.from(uniquePositions)
+        const competenceOptions = Array.from(uniqueCompetences)
             .sort((a, b) => a.localeCompare(b))
             .map((title) => ({ id: title, title }));
 
-        if (positionOptions.some((p) => p.title === 'None')) {
-            const noneOption = positionOptions.find((p) => p.title === 'None');
-            const filteredPositionOptions = positionOptions.filter(
-                (p) => p.title !== 'None',
+        if (competenceOptions.some((c) => c.title === 'None')) {
+            const noneOption = competenceOptions.find(
+                (c) => c.title === 'None',
+            )!;
+            const filteredCompetenceOptions = competenceOptions.filter(
+                (c) => c.title !== 'None',
             );
-            return [noneOption, ...filteredPositionOptions];
+            return [noneOption, ...filteredCompetenceOptions];
         }
-        return positionOptions;
-    }, [allPositionIds, positionTitles]);
+        return competenceOptions;
+    }, [allPositionIds, competenceTitles, allUsers]);
 
     const handleSort = (field: string) => {
         if (sortField === field) {
@@ -154,17 +145,17 @@ export function CompetenceList() {
     const handleReset = () => {
         setSearch('');
         setDateRange(undefined);
-        setPositions([]);
-        setQuestionTemplates([]);
+        setCompetences([]);
+        setUsers([]);
         setSortField('createdAt');
         setSortDirection(SortDirection.DESC);
         setCurrentPage(1);
         setResetTrigger((prev) => prev + 1);
     };
 
-    // Client-side filtering for date range, title, competence and position titles
-    const filteredCompetences = useMemo(() => {
-        let result = competences;
+    // Client-side filtering for date range, title, competence titles
+    const filteredPositions = useMemo(() => {
+        let result = allPositionsData;
 
         if (search.trim()) {
             const lowerSearch = search.toLowerCase();
@@ -172,8 +163,7 @@ export function CompetenceList() {
                 (r) =>
                     (r.title && r.title.toLowerCase().includes(lowerSearch)) ||
                     (r.description &&
-                        r.description.toLowerCase().includes(lowerSearch)) ||
-                    (r.code && r.code.toLowerCase().includes(lowerSearch)),
+                        r.description.toLowerCase().includes(lowerSearch)),
             );
         }
 
@@ -186,29 +176,35 @@ export function CompetenceList() {
             result = result.filter((r) => r.createdAt.getTime() <= to);
         }
 
-        if (positions.length > 0) {
-            const hasNoneFilter = positions.includes('None');
-            const regularPositions = positions.filter((c) => c !== 'None');
+        if (competences.length > 0) {
+            const hasNoneFilter = competences.includes('None');
+            const regularCompetences = competences.filter((c) => c !== 'None');
 
             result = result.filter((r) => {
-                const positionCompetences = positionTitles[r.id] || [];
+                const positionCompetences = competenceTitles[r.id] || [];
                 const hasNoCompetences =
                     !positionCompetences || positionCompetences.length === 0;
 
+                // Check if position matches "None" filter
                 const matchesNone = hasNoneFilter && hasNoCompetences;
 
-                const matchesRegularPositions =
-                    regularPositions.length > 0 &&
-                    positionCompetences.some((position) =>
-                        regularPositions.includes(position.title),
+                // Check if position matches any regular competence filter
+                const matchesRegularCompetences =
+                    regularCompetences.length > 0 &&
+                    positionCompetences.some((competence) =>
+                        regularCompetences.includes(competence.title),
                     );
 
-                if (hasNoneFilter && regularPositions.length === 0) {
+                // Position matches if any filter condition is satisfied
+                if (hasNoneFilter && regularCompetences.length === 0) {
+                    // Only "None" selected - show positions with no competences
                     return matchesNone;
-                } else if (!hasNoneFilter && regularPositions.length > 0) {
-                    return matchesRegularPositions;
+                } else if (!hasNoneFilter && regularCompetences.length > 0) {
+                    // Only regular competences selected - show matching positions
+                    return matchesRegularCompetences;
                 } else {
-                    return matchesNone || matchesRegularPositions;
+                    // Both "None" and regular competences selected
+                    return matchesNone || matchesRegularCompetences;
                 }
             });
         }
@@ -217,16 +213,14 @@ export function CompetenceList() {
         competences,
         search,
         dateRange,
-        positionTitles,
-        positions,
-        allPositionIds,
-        allQuestionTemplateIds,
-        questionTemplateCounts,
+        competenceTitles,
+        competences,
+        allPositionsData,
     ]);
 
     // Client-side sorting for all fields
-    const sortedCompetences = useMemo(() => {
-        return [...filteredCompetences].sort((a, b) => {
+    const sortedPositions = useMemo(() => {
+        return [...filteredPositions].sort((a, b) => {
             switch (sortField) {
                 case 'title': {
                     const nameA = a.title ?? '';
@@ -239,50 +233,57 @@ export function CompetenceList() {
                     return sortDirection === SortDirection.ASC
                         ? a.createdAt?.getTime() - b.createdAt?.getTime()
                         : b.createdAt?.getTime() - a.createdAt?.getTime();
-                case 'positions': {
-                    const positionsA = positionTitles[a.id]
-                        ?.map((position) => position.title)
+                case 'competenceTitles': {
+                    const competencesA = competenceTitles[a.id]
+                        ?.map((competence) => competence.title)
                         .sort();
-                    const positionsB = positionTitles[b.id]
-                        ?.map((position) => position.title)
+                    const competencesB = competenceTitles[b.id]
+                        ?.map((competence) => competence.title)
                         .sort();
                     const comparison = compareStringArrays(
-                        positionsA,
-                        positionsB,
+                        competencesA,
+                        competencesB,
                     );
                     return sortDirection === SortDirection.ASC
                         ? comparison
                         : -comparison;
                 }
-                case 'questionTemplates': {
-                    const countA = questionTemplateCounts[a.id] ?? 0;
-                    const countB = questionTemplateCounts[b.id] ?? 0;
+                case 'users': {
+                    const usersA =
+                        allUsers
+                            ?.find?.((u) => u.positionId === a.id)
+                            ?.users?.map((u) => u.fullName) || [];
+                    const usersB =
+                        allUsers
+                            ?.find?.((u) => u.positionId === b.id)
+                            ?.users?.map((u) => u.fullName) || [];
+                    const comparison = compareStringArrays(usersA, usersB);
                     return sortDirection === SortDirection.ASC
-                        ? countA - countB
-                        : countB - countA;
+                        ? comparison
+                        : -comparison;
                 }
                 default:
                     return 0;
             }
         });
     }, [
-        filteredCompetences,
+        filteredPositions,
         sortField,
         sortDirection,
-        positionTitles,
-        positionCounts,
-        questionTemplateCounts,
-        positions,
+        competenceTitles,
+        users,
+        competences,
+        allUsers,
     ]);
 
-    const totalPages = Math.ceil(sortedCompetences.length / ITEMS_PER_PAGE);
-    const paginatedCompetences = sortedCompetences.slice(
+    const totalPages = Math.ceil(sortedPositions.length / ITEMS_PER_PAGE);
+    const paginatedPositions = sortedPositions.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE,
     );
 
     // Summary stats
-    const totalCompetences = competences.length;
+    const totalPositions = allPositionsData.length;
 
     return (
         <main className="min-h-screen">
@@ -291,14 +292,14 @@ export function CompetenceList() {
                 <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
-                            Library of Competences
+                            Organisational Positions
                         </h1>
                         <p className="mt-1 text-muted-foreground">
-                            Manage competences across your organization.{' '}
+                            Manage positions across your organization.{' '}
                             <span className="font-medium text-foreground">
-                                {totalCompetences}
+                                {totalPositions}
                             </span>{' '}
-                            total competences.
+                            total positions.
                         </p>
                     </div>
                     {/* <CreateCompetenceForm
@@ -314,16 +315,14 @@ export function CompetenceList() {
                 {/* Main Card */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-lg">
-                            All Competences
-                        </CardTitle>
+                        <CardTitle className="text-lg">All Positions</CardTitle>
                         <CardDescription>
-                            Search, filter, and manage competences.
+                            Search, filter, and manage positions.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-6">
                         {/* Filters */}
-                        <CompetenceFilters
+                        <PositionFilters
                             search={search}
                             onSearchChange={(val) => {
                                 setSearch(val);
@@ -334,21 +333,20 @@ export function CompetenceList() {
                                 setDateRange(range);
                                 setCurrentPage(1);
                             }}
-                            positions={positions}
-                            onPositionsChange={(val) => {
-                                setPositions(val);
+                            competences={competences}
+                            onCompetencesChange={(val) => {
+                                setCompetences(val);
                                 setCurrentPage(1);
                             }}
-                            positionOptions={positionOptions}
+                            competenceOptions={competenceOptions}
                             onReset={handleReset}
                         />
 
                         {/* Loading State */}
                         {(isLoading ||
-                            isCompetencesLoading ||
-                            isAllPositionIdsLoading ||
-                            isAllQuestionTemplateCountsLoading ||
-                            isAllQuestionTemplateIdsLoading) && (
+                            isAllCompetenceIdsLoading ||
+                            isUsersLoading ||
+                            isCompetenceTitlesLoading) && (
                             <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
                                 <Spinner />
                             </div>
@@ -358,7 +356,7 @@ export function CompetenceList() {
                         {isError && (
                             <div className="flex flex-col items-center justify-center py-16 text-center">
                                 <h3 className="text-lg font-semibold text-destructive">
-                                    Failed to load competences
+                                    Failed to load positions
                                 </h3>
                                 <p className="mt-1 text-sm text-muted-foreground">
                                     Please try refreshing the page.
@@ -369,16 +367,14 @@ export function CompetenceList() {
                         {/* Table */}
                         {!isLoading &&
                             !isError &&
-                            !isPositionCountsLoading &&
-                            !isPositionTitlesLoading && (
+                            !isAllCompetenceIdsLoading &&
+                            !isUsersLoading &&
+                            !isCompetenceTitlesLoading && (
                                 <>
-                                    <CompetenceTable
-                                        competences={paginatedCompetences}
-                                        positionCounts={positionCounts}
-                                        questionTemplateCounts={
-                                            questionTemplateCounts
-                                        }
-                                        positionTitles={positionTitles}
+                                    <PositionTable
+                                        positions={paginatedPositions}
+                                        competenceTitles={competenceTitles}
+                                        users={allUsers}
                                         sortField={sortField}
                                         sortDirection={sortDirection}
                                         onSort={handleSort}
@@ -388,10 +384,10 @@ export function CompetenceList() {
 
                                     {/* Pagination */}
                                     <TablePagination
-                                        entityName="competences"
+                                        entityName="positions"
                                         currentPage={currentPage}
                                         totalPages={totalPages}
-                                        totalItems={filteredCompetences.length}
+                                        totalItems={filteredPositions.length}
                                         limit={ITEMS_PER_PAGE}
                                         onPageChange={setCurrentPage}
                                     />

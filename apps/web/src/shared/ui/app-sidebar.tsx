@@ -18,7 +18,7 @@ import {
     Building2,
     Cat,
     ChevronDown,
-    FileChartLine,
+    FileChartColumn,
     FileQuestionMark,
     FileText,
     Layers2,
@@ -95,7 +95,7 @@ const navItems: NavItem[] = [
     {
         title: 'Reporting',
         href: '/reporting',
-        icon: FileChartLine,
+        icon: FileChartColumn,
         roles: [IdentityRole.HR, IdentityRole.ADMIN],
         children: [
             {

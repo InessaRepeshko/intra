@@ -80,3 +80,12 @@ export async function fetchPositionTitlesByIds(
     );
     return positions;
 }
+
+export async function fetchPositionCompetenceIds(
+    positionId: number,
+): Promise<number[]> {
+    const { data } = await apiClient.get<number[]>(
+        `${POSITIONS_BASE}/${positionId}/competences`,
+    );
+    return data;
+}

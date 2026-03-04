@@ -62,8 +62,8 @@ export function TablePagination({
     if (totalItems === 0) return null;
 
     return (
-        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="text-sm text-muted-foreground w-full text-center sm:text-left">
+        <div className="flex flex-col items-center justify-between gap-4 lg:flex-row">
+            <p className="text-sm text-muted-foreground w-full text-center lg:text-left">
                 Showing{' '}
                 <span className="font-medium text-foreground">{from}</span> to{' '}
                 <span className="font-medium text-foreground">{to}</span> of{' '}

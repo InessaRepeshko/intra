@@ -1,3 +1,4 @@
+import { mapUserDtoToModel, User } from '@entities/identity/user/model/mappers';
 import type {
     CreateUserPayload,
     IdentityRole,
@@ -8,6 +9,7 @@ import type {
 import { PositionDto } from '@entities/organisation/position/model/types';
 import { TeamDto } from '@entities/organisation/team/model/types';
 import { apiClient } from '@shared/api/api-client';
+import { compareStringArrays } from '@shared/lib/utils/compare-arrays';
 
 const USERS_BASE = 'identity/users';
 const POSITIONS_BASE = 'organization/positions';
@@ -86,4 +88,28 @@ export async function fetchManagerNameByManagerId(
         response.data?.fullName ??
         `${response.data?.lastName} ${response.data?.firstName}`
     );
+}
+
+export async function fetchUsersByPositionIds(
+    positionIds: number[],
+): Promise<{ positionId: number; users: User[] }[]> {
+    const uniqueIds = Array.from(new Set(positionIds));
+
+    const results = await Promise.all(
+        uniqueIds.map(async (positionId) => {
+            const { data } = await apiClient.get<UserDto[]>(`${USERS_BASE}`, {
+                params: { positionId },
+            });
+            return { positionId, users: data.map(mapUserDtoToModel) };
+        }),
+    );
+
+    results.sort((a, b) => {
+        const namesA = a.users.map((user) => user?.fullName ?? '').sort();
+        const namesB = b.users.map((user) => user?.fullName ?? '').sort();
+        const comparison = compareStringArrays(namesA, namesB);
+        return comparison;
+    });
+
+    return results;
 }

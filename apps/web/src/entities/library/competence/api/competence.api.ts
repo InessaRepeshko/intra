@@ -62,3 +62,21 @@ export async function fetchCompetenceTitleById(
     );
     return response.data?.title;
 }
+
+export async function fetchCompetenceTitlesByIds(
+    competenceIds: number[],
+): Promise<{ id: number; title: string }[]> {
+    const uniqueIds = Array.from(new Set(competenceIds));
+
+    const data = await Promise.all(
+        uniqueIds.map(async (competenceId) => {
+            const title = await fetchCompetenceTitleById(competenceId);
+            return { id: competenceId, title };
+        }),
+    );
+
+    const competences: { id: number; title: string }[] = data.sort((a, b) =>
+        a.title.localeCompare(b.title),
+    );
+    return competences;
+}

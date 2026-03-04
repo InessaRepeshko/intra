@@ -6,6 +6,7 @@ import {
     BookmarkCheck,
     Calendar,
     Eye,
+    FileText,
     Flag,
     MoreHorizontal,
     RefreshCcw,
@@ -324,7 +325,7 @@ export function ReportsTable({
             cell: (report) =>
                 answerCounts[report.reviewId] ? (
                     <div className="flex items-center justify-center gap-1.5">
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <FileText className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium text-foreground">
                             {answerCounts[report.reviewId]}
                         </span>

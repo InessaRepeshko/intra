@@ -184,4 +184,18 @@ export class PositionsController {
         const superiors = await this.hierarchy.listSuperiors(Number(id));
         return superiors.map(PositionHttpMapper.toResponse);
     }
+
+    @Get(':id/competences')
+    @ApiOperation({ summary: 'List competences linked to position' })
+    @ApiParam({
+        name: 'id',
+        type: 'number',
+        required: true,
+        description: 'Position id',
+    })
+    @ApiResponse({ status: HttpStatus.OK, type: Number, isArray: true })
+    @ApiListReadErrorResponses()
+    async listCompetences(@Param('id') id: string): Promise<number[]> {
+        return this.positions.listCompetences(Number(id));
+    }
 }

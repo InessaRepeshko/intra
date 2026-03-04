@@ -1747,6 +1747,44 @@
         ]
       }
     },
+    "/organisation/positions/{id}/competences": {
+      "get": {
+        "operationId": "PositionsController_listCompetences",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Position id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "List competences linked to position",
+        "tags": [
+          "Organisation / Positions"
+        ]
+      }
+    },
     "/library/competences": {
       "post": {
         "operationId": "CompetencesController_create",
