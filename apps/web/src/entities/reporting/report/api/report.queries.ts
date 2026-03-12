@@ -5,13 +5,32 @@ import {
     fetchRateeFullNameByReviewId,
     fetchRateePositionTitleByReviewId,
     fetchRateeTeamTitleByReviewId,
+    fetchReviewById,
     fetchReviewStageByReviewId,
 } from '@entities/feedback360/review/api/review.api';
+import {
+    type Review,
+    mapReviewDtoToModel,
+} from '@entities/feedback360/review/model/mappers';
+import { fetchUserById } from '@entities/identity/user/api/user.api';
+import {
+    type User,
+    mapUserDtoToModel,
+} from '@entities/identity/user/model/mappers';
 import { ReviewStage } from '@entities/reporting/report/model/types';
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { type Report, mapReportDtoToModel } from '../model/mappers';
+import {
+    type Report,
+    type ReportAnalytics,
+    mapReportAnalyticsDtoToModel,
+    mapReportDtoToModel,
+} from '../model/mappers';
 import { ReportFilterQuery, RespondentCategory } from '../model/types';
-import { fetchReportById, fetchReports } from './report.api';
+import {
+    fetchReportAnalyticsByReportId,
+    fetchReportById,
+    fetchReports,
+} from './report.api';
 
 export const reportKeys = {
     all: ['reports'] as const,
@@ -43,6 +62,14 @@ export const reportKeys = {
     answerCounts: () => [...reportKeys.all, 'answerCounts'] as const,
     answerCount: (reviewId: number) =>
         [...reportKeys.answerCounts(), reviewId] as const,
+    allReportAnalytics: () =>
+        [...reportKeys.all, 'allReportAnalytics'] as const,
+    reportAnalytics: (reportId: number) =>
+        [...reportKeys.allReportAnalytics(), reportId] as const,
+    reviews: () => [...reportKeys.all, 'reviews'] as const,
+    review: (reviewId: number) => [...reportKeys.reviews(), reviewId] as const,
+    ratees: () => [...reportKeys.all, 'ratees'] as const,
+    ratee: (rateeId: number) => [...reportKeys.ratees(), rateeId] as const,
 };
 
 export function useReportsQuery(params?: ReportFilterQuery) {
@@ -267,4 +294,84 @@ export function useReviewAnswerCountsQuery(reviewIds: number[]) {
     const isLoading = queries.some((q) => q.isLoading);
 
     return { answerCounts, isLoading };
+}
+
+export function useReportAnalyticsQuery(reportId: number) {
+    return useQuery<ReportAnalytics[]>({
+        queryKey: reportKeys.reportAnalytics(reportId),
+        queryFn: async () => {
+            const dtos = await fetchReportAnalyticsByReportId(reportId);
+            return dtos.map(mapReportAnalyticsDtoToModel);
+        },
+        enabled: reportId > 0,
+    });
+}
+
+export function useAllReportAnalyticsQuery(reportIds: number[]) {
+    const queries = useQueries({
+        queries: reportIds.map((reportId, index) => ({
+            queryKey: reportKeys.reportAnalytics(reportId),
+            queryFn: () => fetchReportAnalyticsByReportId(reportIds[index]),
+        })),
+    });
+
+    const reportAnalytics: Record<number, ReportAnalytics[]> = {};
+    reportIds.forEach((reportId, index) => {
+        const result = queries[index];
+        if (result.isSuccess && result.data !== undefined) {
+            reportAnalytics[reportId] = result.data.map(
+                mapReportAnalyticsDtoToModel,
+            );
+        }
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+
+    return { reportAnalytics, isLoading };
+}
+
+export function useReportReviewsQuery(reviewIds: number[]) {
+    return useQueries<Review[]>({
+        queries: reviewIds.map((reviewId) => ({
+            queryKey: reportKeys.review(reviewId),
+            queryFn: async () => {
+                const dto = await fetchReviewById(reviewId);
+                return mapReviewDtoToModel(dto);
+            },
+        })),
+    });
+}
+
+export function useReportReviewQuery(reviewId: number) {
+    return useQuery<Review>({
+        queryKey: reportKeys.review(reviewId),
+        queryFn: async () => {
+            const dto = await fetchReviewById(reviewId);
+            return mapReviewDtoToModel(dto);
+        },
+        enabled: !!reviewId && reviewId > 0,
+    });
+}
+
+export function useReportRateesQuery(rateeIds: number[]) {
+    return useQueries<User[]>({
+        queries: rateeIds.map((rateeId) => ({
+            queryKey: reportKeys.ratee(rateeId),
+            queryFn: async () => {
+                const dto = await fetchUserById(rateeId);
+                return mapUserDtoToModel(dto);
+            },
+        })),
+    });
+}
+
+export function useReportRateeQuery(rateeId: number) {
+    return useQuery<User>({
+        queryKey: reportKeys.ratee(rateeId),
+        queryFn: async () => {
+            const dto = await fetchUserById(rateeId);
+            return mapUserDtoToModel(dto);
+        },
+        enabled: !!rateeId && rateeId > 0,
+    });
 }

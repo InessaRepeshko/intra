@@ -5,24 +5,17 @@ import {
     Award,
     BookmarkCheck,
     Calendar,
-    Eye,
     FileText,
     Flag,
-    MoreHorizontal,
     RefreshCcw,
     UserRoundPen,
     Users,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { CategoryBadge } from '@entities/feedback360/respondent/ui/category-badge';
 import { StageBadge } from '@entities/feedback360/review/ui/stage-badge';
 import { Button } from '@shared/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@shared/components/ui/dropdown-menu';
 import {
     Table,
     TableBody,
@@ -31,6 +24,12 @@ import {
     TableHeader,
     TableRow,
 } from '@shared/components/ui/table';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@shared/components/ui/tooltip';
 import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { formatNumber } from '@shared/lib/utils/format-number';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
@@ -54,25 +53,28 @@ interface ReportsTableProps {
 }
 
 function ReportActionsMenu({ report }: { report: Report }) {
+    const router = useRouter();
+
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground"
-                >
-                    <MoreHorizontal className="h-4 w-4" />
-                    <span className="sr-only">Open actions</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Report
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground text-center"
+                        onClick={() =>
+                            router.push(`/reporting/reports/${report.id}`)
+                        }
+                    >
+                        <FileText className="mr-2 h-4 w-4" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top" sideOffset={6}>
+                    <p>View Report</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
     );
 }
 
@@ -350,7 +352,7 @@ export function ReportsTable({
                 'min-w-[140px] w-[140px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => (
                 <div className="flex items-center justify-start pl-3 gap-1.5">
-                    <UserRoundPen className="h-4 w-4 text-sky-700" />
+                    <UserRoundPen className="h-4 w-4 text-blue-700" />
                     <span className="font-medium text-foreground">
                         {formatNumber(report.turnoutPctOfTeam)}
                     </span>
@@ -373,7 +375,7 @@ export function ReportsTable({
                 'min-w-[140px] w-[140px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => (
                 <div className="flex items-center justify-start pl-3 gap-1.5">
-                    <UserRoundPen className="h-4 w-4 text-indigo-700" />
+                    <UserRoundPen className="h-4 w-4 text-violet-700" />
                     <span className="font-medium text-foreground">
                         {formatNumber(report.turnoutPctOfOther)}
                     </span>
@@ -396,7 +398,7 @@ export function ReportsTable({
                 'min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => (
                 <div className="flex items-center justify-start pl-3 gap-1.5">
-                    <BookmarkCheck className="h-4 w-4 text-lime-700" />
+                    <BookmarkCheck className="h-4 w-4 text-amber-700" />
                     <span className="font-medium text-foreground">
                         {formatNumber(
                             report.competenceSummaryTotals
@@ -422,7 +424,7 @@ export function ReportsTable({
                 'min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => (
                 <div className="flex items-center justify-start pl-3 gap-1.5">
-                    <BookmarkCheck className="h-4 w-4 text-sky-700" />
+                    <BookmarkCheck className="h-4 w-4 text-blue-700" />
                     <span className="font-medium text-foreground">
                         {formatNumber(
                             report.competenceSummaryTotals?.percentageByTeam,
@@ -447,7 +449,7 @@ export function ReportsTable({
                 'min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => (
                 <div className="flex items-center justify-start pl-3 gap-1.5">
-                    <BookmarkCheck className="h-4 w-4 text-indigo-700" />
+                    <BookmarkCheck className="h-4 w-4 text-violet-700" />
                     <span className="font-medium text-foreground">
                         {formatNumber(
                             report.competenceSummaryTotals?.percentageByOther,
@@ -458,7 +460,7 @@ export function ReportsTable({
             cellClassName: 'whitespace-nowrap text-center',
         },
         actions: {
-            header: <span className="text-muted-foreground">Actions</span>,
+            header: <span className="text-muted-foreground">Report</span>,
             headerClassName:
                 'min-w-[80px] w-[100px] whitespace-nowrap text-center align-bottom pb-2',
             cell: (report) => <ReportActionsMenu report={report} />,

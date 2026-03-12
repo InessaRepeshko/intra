@@ -34,6 +34,7 @@ import {
 } from '@shared/components/ui/table';
 import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { ReviewStage, SortDirection } from '../model/types';
 import { StageBadge } from './stage-badge';
@@ -62,6 +63,8 @@ function ReviewActionsMenu({
     onForceFinish?: (review: Review) => void;
     onDelete?: (review: Review) => void;
 }) {
+    const router = useRouter();
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -75,6 +78,22 @@ function ReviewActionsMenu({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
+                {review.reportId && (
+                    <DropdownMenuItem>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                                router.push(
+                                    `/reporting/reports/${review.reportId}`,
+                                )
+                            }
+                        >
+                            <FileText className="mr-2 h-4 w-4" />
+                            View Report
+                        </Button>
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem>
                     <Eye className="mr-2 h-4 w-4" />
                     View Details

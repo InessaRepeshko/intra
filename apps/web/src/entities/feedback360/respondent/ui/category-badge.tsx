@@ -7,15 +7,15 @@ export const categoryConfig: Record<
 > = {
     [RespondentCategory.SELF_ASSESSMENT]: {
         label: 'Self-assessment',
-        className: 'bg-lime-100 text-lime-800 border-lime-200',
+        className: 'bg-amber-100 text-amber-800 border-amber-200',
     },
     [RespondentCategory.TEAM]: {
         label: 'Team',
-        className: 'bg-sky-100 text-sky-800 border-sky-200',
+        className: 'bg-blue-100 text-blue-800 border-blue-200',
     },
     [RespondentCategory.OTHER]: {
         label: 'Other',
-        className: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+        className: 'bg-violet-100 text-violet-800 border-violet-200',
     },
 };
 

@@ -12,8 +12,8 @@ import { apiClient } from '@shared/api/api-client';
 import { compareStringArrays } from '@shared/lib/utils/compare-arrays';
 
 const USERS_BASE = 'identity/users';
-const POSITIONS_BASE = 'organization/positions';
-const TEAMS_BASE = 'organization/teams';
+const POSITIONS_BASE = 'organisation/positions';
+const TEAMS_BASE = 'organisation/teams';
 const AUTH_BASE = 'auth';
 
 export async function fetchCurrentUser(): Promise<UserDto> {

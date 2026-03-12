@@ -1,5 +1,6 @@
 import { apiClient } from '@/shared/api/api-client';
 import type {
+    ReportAnalyticsResponseDto,
     ReportFilterQuery,
     ReportResponseDto,
     ReportTextAnswerDto,
@@ -37,6 +38,24 @@ export async function fetchReportTextAnswersByReviewId(
 ): Promise<ReportTextAnswerDto[]> {
     const { data } = await apiClient.get<ReportTextAnswerDto[]>(
         `${REPORTS_BASE}/review/${reviewId}/text-answers`,
+    );
+    return data;
+}
+
+export async function fetchReportAnalyticsByReportId(
+    reportId: number,
+): Promise<ReportAnalyticsResponseDto[]> {
+    const { data } = await apiClient.get<ReportAnalyticsResponseDto[]>(
+        `${REPORTS_BASE}/${reportId}/analytics`,
+    );
+    return data;
+}
+
+export async function fetchReportAnalyticsByAnalyticsId(
+    analyticsId: number,
+): Promise<ReportAnalyticsResponseDto[]> {
+    const { data } = await apiClient.get<ReportAnalyticsResponseDto[]>(
+        `${REPORTS_BASE}/analytics/${analyticsId}`,
     );
     return data;
 }

@@ -13,9 +13,9 @@ export interface User extends Omit<
     fullName: string;
     createdAt: Date;
     updatedAt: Date;
-    positionTitle?: string;
-    teamTitle?: string;
-    managerName?: string;
+    positionTitle?: string | null;
+    teamTitle?: string | null;
+    managerName?: string | null;
 }
 
 /**

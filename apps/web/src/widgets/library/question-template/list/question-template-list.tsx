@@ -65,7 +65,7 @@ export function QuestionTemplateList() {
         if (statuses.length === 1) params.status = statuses[0];
         if (answerTypes.length === 1) params.answerType = answerTypes[0];
         // Note: isForSelfassessment filtering is done client-side only
-        if (competencies.length === 1) params.competencyId = competencies[0];
+        if (competencies.length === 1) params.competenceId = competencies[0];
         if (positions.length === 1) params.positionId = positions[0];
 
         return params;
