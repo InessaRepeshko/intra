@@ -77,7 +77,13 @@ export function CompetenciesBarChart({
 }) {
     const data: CompetenceChartBarData[] = [];
 
+    let hasTeamData = false;
+    let hasOthersData = false;
+
     reportAnalytics?.forEach((a) => {
+        if (a.deltaPercentageByTeam != null) hasTeamData = true;
+        if (a.deltaPercentageByOther != null) hasOthersData = true;
+
         return data.push({
             id: a.competenceId ?? 0,
             competence: a.competenceTitle ?? 'Competence',
@@ -86,7 +92,12 @@ export function CompetenciesBarChart({
         });
     });
 
-    const values = data.flatMap((d) => [d.team, d.others]);
+    const values = data.flatMap((d) => {
+        const v: number[] = [];
+        if (hasTeamData) v.push(d.team);
+        if (hasOthersData) v.push(d.others);
+        return v;
+    });
     const minVal = Math.floor(Math.min(...values) / 10) * 10 - 10;
     const maxVal = Math.ceil(Math.max(...values) / 10) * 10 + 10;
     const customTicks: number[] = [];
@@ -95,151 +106,163 @@ export function CompetenciesBarChart({
     }
 
     return (
-        <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
-            <CardHeader className="items-center">
-                <CardTitle>Perception Variance Analysis</CardTitle>
-                <CardDescription>
-                    The chart illustrates the percentage deviation between the
-                    participant's self-assessment and the aggregated ratings
-                    from team members and others. Upward bars reveal "Hidden
-                    Strengths," while downward bars pinpoint "Blind Spots".
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <ChartContainer
-                    config={chartConfig}
-                    className="mx-auto max-h-[500px]"
-                >
-                    <BarChart
-                        accessibilityLayer
-                        data={data}
-                        barCategoryGap={'30%'}
-                        barSize={70}
-                        margin={{ bottom: 10 }}
+        data &&
+        data.length > 0 &&
+        hasTeamData &&
+        hasOthersData && (
+            <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
+                <CardHeader className="items-center">
+                    <CardTitle>Perception Variance Analysis</CardTitle>
+                    <CardDescription>
+                        The chart illustrates the percentage deviation between
+                        the participant's self-assessment and the aggregated
+                        ratings from team members and others. Upward bars reveal
+                        "Hidden Strengths," while downward bars pinpoint "Blind
+                        Spots".
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ChartContainer
+                        config={chartConfig}
+                        className="mx-auto max-h-[500px]"
                     >
-                        <CartesianGrid vertical={false} />
-                        <XAxis
-                            dataKey="competence"
-                            type="category"
-                            tickLine={false}
-                            tickMargin={10}
-                            axisLine={false}
-                            tick={({ x, y, payload }) => (
-                                <text
-                                    x={x}
-                                    y={y + 15}
-                                    textAnchor="middle"
-                                    className="text-[13px] font-medium"
-                                    style={{ fill: 'hsl(var(--foreground))' }}
-                                >
-                                    {payload.value}
-                                </text>
-                            )}
-                        />
-                        <YAxis
-                            type="number"
-                            axisLine={false}
-                            tickLine={false}
-                            tickFormatter={() => ''}
-                            width={0}
-                            domain={[minVal, maxVal]}
-                            ticks={customTicks}
-                        />
+                        <BarChart
+                            accessibilityLayer
+                            data={data}
+                            barCategoryGap={'30%'}
+                            barSize={70}
+                            margin={{ bottom: 10 }}
+                        >
+                            <CartesianGrid vertical={false} />
+                            <XAxis
+                                dataKey="competence"
+                                type="category"
+                                tickLine={false}
+                                tickMargin={10}
+                                axisLine={false}
+                                tick={({ x, y, payload }) => (
+                                    <text
+                                        x={x}
+                                        y={y + 15}
+                                        textAnchor="middle"
+                                        className="text-[13px] font-medium"
+                                        style={{
+                                            fill: 'hsl(var(--foreground))',
+                                        }}
+                                    >
+                                        {payload.value}
+                                    </text>
+                                )}
+                            />
+                            <YAxis
+                                type="number"
+                                axisLine={false}
+                                tickLine={false}
+                                tickFormatter={() => ''}
+                                width={0}
+                                domain={[minVal, maxVal]}
+                                ticks={customTicks}
+                            />
 
-                        <ChartTooltip
-                            cursor={false}
-                            content={
-                                <ChartTooltipContent
-                                    indicator="line"
-                                    labelKey="competence"
-                                    formatter={(value, name) => (
-                                        <div className="flex min-w-[150px] items-center text-xs text-muted-foreground">
-                                            <div
-                                                className="h-2.5 w-1 shrink-0 rounded-[2px] bg-(--color-bg) mr-1"
-                                                style={
-                                                    {
-                                                        '--color-bg': `var(--color-${name})`,
-                                                    } as React.CSSProperties
-                                                }
-                                            />
-                                            {chartConfig[
-                                                name as keyof typeof chartConfig
-                                            ]?.label || name}
-                                            <div className="ml-auto flex items-baseline gap-0.5 font-mono font-medium text-foreground tabular-nums">
-                                                {Number(value) > 0
-                                                    ? `+${formatNumber(Number(value))}%`
-                                                    : `${formatNumber(Number(value))}%`}
+                            <ChartTooltip
+                                cursor={false}
+                                content={
+                                    <ChartTooltipContent
+                                        indicator="line"
+                                        labelKey="competence"
+                                        formatter={(value, name) => (
+                                            <div className="flex min-w-[150px] items-center text-xs text-muted-foreground">
+                                                <div
+                                                    className="h-2.5 w-1 shrink-0 rounded-[2px] bg-(--color-bg) mr-1"
+                                                    style={
+                                                        {
+                                                            '--color-bg': `var(--color-${name})`,
+                                                        } as React.CSSProperties
+                                                    }
+                                                />
+                                                {chartConfig[
+                                                    name as keyof typeof chartConfig
+                                                ]?.label || name}
+                                                <div className="ml-auto flex items-baseline gap-0.5 font-mono font-medium text-foreground tabular-nums">
+                                                    {Number(value) > 0
+                                                        ? `+${formatNumber(Number(value))}%`
+                                                        : `${formatNumber(Number(value))}%`}
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
-                                />
-                            }
-                        />
-                        <ChartLegend
-                            className="mt-5 text-sm text-muted-foreground"
-                            content={<ChartLegendContent />}
-                        />
-                        <Bar
-                            dataKey="team"
-                            fill="var(--color-team)"
-                            radius={10}
-                        >
-                            {/* <LabelList position="inside" dataKey="competence" fillOpacity={1} fontSize={13} className="fill-white" offset={8} /> */}
-                            <LabelList
-                                position="top"
-                                fillOpacity={1}
-                                fontSize={13}
-                                offset={8}
-                                formatter={(value: number) =>
-                                    value > 0
-                                        ? `+${formatNumber(value)}%`
-                                        : `${formatNumber(value)}%`
+                                        )}
+                                    />
                                 }
                             />
-                            {data.map((item) => (
-                                <Cell
-                                    key={item.competence}
-                                    fill={
-                                        item.team > 0
-                                            ? 'var(--color-team)'
-                                            : 'var(--color-team)'
-                                    }
-                                    fillOpacity={0.6}
-                                />
-                            ))}
-                        </Bar>
-                        <Bar
-                            dataKey="others"
-                            fill="var(--color-others)"
-                            radius={10}
-                        >
-                            {/* <LabelList position="inside" dataKey="competence" fillOpacity={1} fontSize={13} className="fill-white" offset={8} /> */}
-                            <LabelList
-                                position="top"
-                                fillOpacity={1}
-                                fontSize={13}
-                                offset={8}
-                                formatter={(value: number) =>
-                                    value > 0
-                                        ? `+${formatNumber(value)}%`
-                                        : `${formatNumber(value)}%`
-                                }
+                            <ChartLegend
+                                className="mt-5 text-sm text-muted-foreground"
+                                content={<ChartLegendContent />}
                             />
-                            {data.map((item) => (
-                                <Cell
-                                    key={item.competence}
-                                    fill={
-                                        item.others > 0
-                                            ? 'var(--color-others)'
-                                            : 'var(--color-others)'
-                                    }
-                                    fillOpacity={0.6}
-                                />
-                            ))}
-                        </Bar>
-                    </BarChart>
-                </ChartContainer>
-            </CardContent>
-        </Card>
+                            {hasTeamData && (
+                                <Bar
+                                    dataKey="team"
+                                    fill="var(--color-team)"
+                                    radius={10}
+                                >
+                                    {/* <LabelList position="inside" dataKey="competence" fillOpacity={1} fontSize={13} className="fill-white" offset={8} /> */}
+                                    <LabelList
+                                        position="top"
+                                        fillOpacity={1}
+                                        fontSize={13}
+                                        offset={8}
+                                        formatter={(value: number) =>
+                                            value > 0
+                                                ? `+${formatNumber(value)}%`
+                                                : `${formatNumber(value)}%`
+                                        }
+                                    />
+                                    {data.map((item) => (
+                                        <Cell
+                                            key={item.competence}
+                                            fill={
+                                                item.team > 0
+                                                    ? 'var(--color-team)'
+                                                    : 'var(--color-team)'
+                                            }
+                                            fillOpacity={0.6}
+                                        />
+                                    ))}
+                                </Bar>
+                            )}
+                            {hasOthersData && (
+                                <Bar
+                                    dataKey="others"
+                                    fill="var(--color-others)"
+                                    radius={10}
+                                >
+                                    {/* <LabelList position="inside" dataKey="competence" fillOpacity={1} fontSize={13} className="fill-white" offset={8} /> */}
+                                    <LabelList
+                                        position="top"
+                                        fillOpacity={1}
+                                        fontSize={13}
+                                        offset={8}
+                                        formatter={(value: number) =>
+                                            value > 0
+                                                ? `+${formatNumber(value)}%`
+                                                : `${formatNumber(value)}%`
+                                        }
+                                    />
+                                    {data.map((item) => (
+                                        <Cell
+                                            key={item.competence}
+                                            fill={
+                                                item.others > 0
+                                                    ? 'var(--color-others)'
+                                                    : 'var(--color-others)'
+                                            }
+                                            fillOpacity={0.6}
+                                        />
+                                    ))}
+                                </Bar>
+                            )}
+                        </BarChart>
+                    </ChartContainer>
+                </CardContent>
+            </Card>
+        )
     );
 }

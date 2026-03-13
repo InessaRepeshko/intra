@@ -46,6 +46,14 @@ import {
 } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
+const getValidAverage = (values: (number | null | undefined)[]) => {
+    const validValues = values.filter(
+        (val): val is number => typeof val === 'number',
+    );
+    if (validValues.length === 0) return 0;
+    return calculateAverageNumberForArray(validValues);
+};
+
 export function ReportPage({ reportId }: { reportId: number }) {
     const {
         data: reportData,
@@ -144,13 +152,17 @@ export function ReportPage({ reportId }: { reportId: number }) {
                 id: q.questionId,
                 title: q.questionTitle,
                 num: index + 1,
-                averageRating: calculateAverageNumberForArray([
-                    q.averageByTeam ?? 0,
-                    q.averageByOther ?? 0,
+                averageScore: getValidAverage([
+                    q.averageByTeam,
+                    q.averageByOther,
                 ]),
-                averageDelta: calculateAverageNumberForArray([
-                    q.deltaPercentageByTeam ?? 0,
-                    q.deltaPercentageByOther ?? 0,
+                averageRating: getValidAverage([
+                    q.percentageByTeam,
+                    q.percentageByOther,
+                ]),
+                averageDelta: getValidAverage([
+                    q.deltaPercentageByTeam,
+                    q.deltaPercentageByOther,
                 ]),
             };
         });
@@ -205,17 +217,17 @@ export function ReportPage({ reportId }: { reportId: number }) {
                 num: index + 1,
                 id: c.competenceId,
                 title: c.competenceTitle,
-                averageRating: calculateAverageNumberForArray([
-                    c.averageByTeam ?? 0,
-                    c.averageByOther ?? 0,
+                averageScore: getValidAverage([
+                    c.averageByTeam,
+                    c.averageByOther,
                 ]),
-                averageDelta: calculateAverageNumberForArray([
-                    c.deltaPercentageByTeam ?? 0,
-                    c.deltaPercentageByOther ?? 0,
+                averageRating: getValidAverage([
+                    c.percentageByTeam,
+                    c.percentageByOther,
                 ]),
-                averagePercentage: calculateAverageNumberForArray([
-                    c.percentageByTeam ?? 0,
-                    c.percentageByOther ?? 0,
+                averageDelta: getValidAverage([
+                    c.deltaPercentageByTeam,
+                    c.deltaPercentageByOther,
                 ]),
             };
         });
@@ -265,152 +277,164 @@ export function ReportPage({ reportId }: { reportId: number }) {
                 <div className="flex flex-wrap gap-2 sm:gap-1 md:gap-2 items-center text-sm">
                     {[
                         {
+                            id: 'highest',
                             label: 'Highest Rating',
-                            value: formatNumber(
-                                statistics.highestRating?.averageRating,
-                            ),
+                            value: `${formatNumber(statistics.highestRating?.averageRating)}%`,
                             num: statistics.highestRating?.num,
                             title: statistics.highestRating?.title,
                             icon: TrendingUp,
+                            show: true,
                         },
                         {
+                            id: 'lowest',
                             label: 'Lowest Rating',
-                            value: formatNumber(
-                                statistics.lowestRating?.averageRating,
-                            ),
+                            value: `${formatNumber(statistics.lowestRating?.averageRating)}%`,
                             num: statistics.lowestRating?.num,
                             title: statistics.lowestRating?.title,
                             icon: TrendingDown,
+                            show: true,
                         },
                         {
-                            label: 'Potential Blind Spot',
+                            id: 'hidden_strength',
+                            label: 'Hidden Strength',
                             value: `+${formatNumber(statistics.highestDelta?.averageDelta)}%`,
                             num: statistics.highestDelta?.num,
                             title: statistics.highestDelta?.title,
-                            icon: Search,
+                            icon: Lightbulb,
+                            show:
+                                (statistics.highestDelta?.averageDelta ?? 0) >
+                                0,
                         },
                         {
-                            label: 'Hidden Strength',
+                            id: 'blind_spot',
+                            label: 'Potential Blind Spot',
                             value: `${formatNumber(statistics.lowestDelta?.averageDelta)}%`,
                             num: statistics.lowestDelta?.num,
                             title: statistics.lowestDelta?.title,
-                            icon: Lightbulb,
+                            icon: Search,
+                            show:
+                                (statistics.lowestDelta?.averageDelta ?? 0) < 0,
                         },
-                    ].map((item, idx) => {
-                        const Icon = item.icon;
-                        return (
-                            <Tooltip key={idx}>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        className={`flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 h-auto py-1.5 px-3 rounded-full border-border/60 text-left w-full sm:w-auto transition-colors hover:bg-muted`}
-                                    >
-                                        <Icon
-                                            className={`h-3.5 w-3.5 shrink-0 mt-0.5 sm:mt-0 text-muted-foreground`}
-                                        />
-                                        <span className="whitespace-normal leading-tight text-center">
-                                            {item.num ? (
-                                                <span className="text-foreground font-medium mr-1">
-                                                    #{item.num}
-                                                </span>
-                                            ) : null}
-                                            {item.label}
-                                        </span>
-                                        <span
-                                            className={`font-bold tracking-tight whitespace-normal leading-tight truncate text-foreground`}
+                    ]
+                        .filter((item) => item.show)
+                        .map((item) => {
+                            const Icon = item.icon;
+                            return (
+                                <Tooltip key={item.id}>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            className={`flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 h-auto py-1.5 px-3 rounded-full border-border/60 text-left w-full sm:w-auto transition-colors hover:bg-muted`}
                                         >
-                                            {item.value}
-                                        </span>
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent
-                                    side="top"
-                                    sideOffset={6}
-                                    className="max-w-[340px] p-4 bg-popover shadow-sm border border-border/60 rounded-xl break-words overflow-anywhere"
-                                >
-                                    <div className="flex flex-col flex-wrap gap-2.5 text-sm leading-snug text-muted-foreground">
-                                        {idx === 0 && (
-                                            <p>
-                                                The {entityName}{' '}
-                                                <b className="text-foreground">
-                                                    #{item.num}
-                                                </b>{' '}
-                                                regarding{' '}
-                                                <b className="text-foreground font-medium italic">
-                                                    "{item.title}"
-                                                </b>{' '}
-                                                emerged as the most highly-rated
-                                                area in this assessment with an
-                                                average rating of{' '}
-                                                <b className="text-foreground">
-                                                    {item.value}
-                                                </b>
-                                                , representing the strongest
-                                                consensus of excellence.
-                                            </p>
-                                        )}
-                                        {idx === 1 && (
-                                            <p>
-                                                The {entityName}{' '}
-                                                <b className="text-foreground">
-                                                    #{item.num}
-                                                </b>{' '}
-                                                regarding{' '}
-                                                <b className="text-foreground font-medium italic">
-                                                    "{item.title}"
-                                                </b>{' '}
-                                                with an average rating of{' '}
-                                                <b className="text-foreground">
-                                                    {item.value}
-                                                </b>{' '}
-                                                reflects the most significant
-                                                opportunity for targeted
-                                                professional development.
-                                            </p>
-                                        )}
-                                        {idx === 2 && (
-                                            <p>
-                                                The maximum variance of{' '}
-                                                <b className="text-foreground">
-                                                    {item.value}
-                                                </b>{' '}
-                                                in {entityName}{' '}
-                                                <b className="text-foreground">
-                                                    #{item.num}
-                                                </b>{' '}
-                                                <b className="text-foreground font-medium italic">
-                                                    "{item.title}"
-                                                </b>{' '}
-                                                indicates a critical
-                                                misalignment where
-                                                self-perception exceeds external
-                                                evaluation.
-                                            </p>
-                                        )}
-                                        {idx === 3 && (
-                                            <p>
-                                                The notable negative variance of{' '}
-                                                <b className="text-foreground">
-                                                    {item.value}
-                                                </b>{' '}
-                                                in {entityName}{' '}
-                                                <b className="text-foreground">
-                                                    #{item.num}
-                                                </b>{' '}
-                                                <b className="text-foreground font-medium italic">
-                                                    "{item.title}"
-                                                </b>{' '}
-                                                identifies an undervalued asset
-                                                where the actual impact
-                                                significantly surpasses
-                                                self-assessment.
-                                            </p>
-                                        )}
-                                    </div>
-                                </TooltipContent>
-                            </Tooltip>
-                        );
-                    })}
+                                            <Icon
+                                                className={`h-3.5 w-3.5 shrink-0 mt-0.5 sm:mt-0 text-muted-foreground`}
+                                            />
+                                            <span className="whitespace-normal leading-tight text-center">
+                                                {item.num ? (
+                                                    <span className="text-foreground font-medium mr-1">
+                                                        #{item.num}
+                                                    </span>
+                                                ) : null}
+                                                {item.label}
+                                            </span>
+                                            <span
+                                                className={`font-bold tracking-tight whitespace-normal leading-tight truncate text-foreground`}
+                                            >
+                                                {item.value}
+                                            </span>
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                        side="top"
+                                        sideOffset={6}
+                                        className="max-w-[340px] p-4 bg-popover shadow-sm border border-border/60 rounded-xl break-words overflow-anywhere"
+                                    >
+                                        <div className="flex flex-col flex-wrap gap-2.5 text-sm leading-snug text-muted-foreground">
+                                            {item.id === 'highest' && (
+                                                <p>
+                                                    The {entityName}{' '}
+                                                    <b className="text-foreground">
+                                                        #{item.num}
+                                                    </b>{' '}
+                                                    regarding{' '}
+                                                    <b className="text-foreground font-medium italic">
+                                                        "{item.title}"
+                                                    </b>{' '}
+                                                    emerged as the most
+                                                    highly-rated area in this
+                                                    assessment with an average
+                                                    rating of{' '}
+                                                    <b className="text-foreground">
+                                                        {item.value}
+                                                    </b>
+                                                    , representing the strongest
+                                                    consensus of excellence.
+                                                </p>
+                                            )}
+                                            {item.id === 'lowest' && (
+                                                <p>
+                                                    The {entityName}{' '}
+                                                    <b className="text-foreground">
+                                                        #{item.num}
+                                                    </b>{' '}
+                                                    regarding{' '}
+                                                    <b className="text-foreground font-medium italic">
+                                                        "{item.title}"
+                                                    </b>{' '}
+                                                    with an average rating of{' '}
+                                                    <b className="text-foreground">
+                                                        {item.value}
+                                                    </b>{' '}
+                                                    reflects the most
+                                                    significant opportunity for
+                                                    targeted professional
+                                                    development.
+                                                </p>
+                                            )}
+                                            {item.id === 'blind_spot' && (
+                                                <p>
+                                                    The maximum variance of{' '}
+                                                    <b className="text-foreground">
+                                                        {item.value}
+                                                    </b>{' '}
+                                                    in {entityName}{' '}
+                                                    <b className="text-foreground">
+                                                        #{item.num}
+                                                    </b>{' '}
+                                                    <b className="text-foreground font-medium italic">
+                                                        "{item.title}"
+                                                    </b>{' '}
+                                                    indicates a critical
+                                                    misalignment where
+                                                    self-perception exceeds
+                                                    external evaluation.
+                                                </p>
+                                            )}
+                                            {item.id === 'hidden_strength' && (
+                                                <p>
+                                                    The notable negative
+                                                    variance of{' '}
+                                                    <b className="text-foreground">
+                                                        {item.value}
+                                                    </b>{' '}
+                                                    in {entityName}{' '}
+                                                    <b className="text-foreground">
+                                                        #{item.num}
+                                                    </b>{' '}
+                                                    <b className="text-foreground font-medium italic">
+                                                        "{item.title}"
+                                                    </b>{' '}
+                                                    identifies an undervalued
+                                                    asset where the actual
+                                                    impact significantly
+                                                    surpasses self-assessment.
+                                                </p>
+                                            )}
+                                        </div>
+                                    </TooltipContent>
+                                </Tooltip>
+                            );
+                        })}
                 </div>
             </TooltipProvider>
         );
@@ -420,7 +444,7 @@ export function ReportPage({ reportId }: { reportId: number }) {
         <main className="min-h-screen">
             <div className="mx-auto max-w-8xl flex flex-col gap-8">
                 {/* Ratee Info, Review Info & Stats */}
-                <div className="flex flex-row flex-wrap gap-8 w-full justify-start">
+                <div className="flex flex-row flex-wrap gap-8 w-full justify-between">
                     {ratee && !isRateeLoading && !isRateeError && (
                         <RateeHorisontalCard ratee={ratee} />
                     )}
@@ -444,7 +468,13 @@ export function ReportPage({ reportId }: { reportId: number }) {
 
                 {competenceStatistics &&
                     !isReportAnalyticsLoading &&
-                    !isReportAnalyticsError && (
+                    !isReportAnalyticsError &&
+                    Boolean(
+                        competenceStatistics.highestRating?.averageRating ||
+                        competenceStatistics.lowestRating?.averageRating ||
+                        competenceStatistics.highestDelta?.averageDelta ||
+                        competenceStatistics.lowestDelta?.averageDelta,
+                    ) && (
                         <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
                             <CardHeader className="items-center pb-0">
                                 <CardTitle>Competence Insights</CardTitle>
@@ -466,11 +496,19 @@ export function ReportPage({ reportId }: { reportId: number }) {
                                     }
                                     competenceRating={
                                         competenceStatistics.highestRating
-                                            ?.averagePercentage
+                                            ?.averageRating !== undefined &&
+                                        competenceStatistics.highestRating
+                                            .averageRating !== null
+                                            ? formatNumber(
+                                                  competenceStatistics
+                                                      .highestRating
+                                                      .averageRating,
+                                              )
+                                            : undefined
                                     }
                                     insightTitle="Top Competence"
                                     icon={Trophy}
-                                    textColor="text-lime-500"
+                                    textColor="text-lime-300"
                                 />
                                 <CompetenceInsightCard
                                     competenceTitle={
@@ -478,24 +516,68 @@ export function ReportPage({ reportId }: { reportId: number }) {
                                     }
                                     competenceRating={
                                         competenceStatistics.lowestRating
-                                            ?.averagePercentage
+                                            ?.averageRating !== undefined &&
+                                        competenceStatistics.lowestRating
+                                            .averageRating !== null
+                                            ? formatNumber(
+                                                  competenceStatistics
+                                                      .lowestRating
+                                                      .averageRating,
+                                              )
+                                            : undefined
                                     }
                                     insightTitle="Growth Area"
                                     icon={Compass}
-                                    textColor="text-yellow-500"
+                                    textColor="text-yellow-300"
                                 />
-                                <CompetenceInsightCard
-                                    competenceTitle={
-                                        competenceStatistics.highestDelta?.title
-                                    }
-                                    competenceRating={
-                                        competenceStatistics.highestDelta
-                                            ?.averageDelta
-                                    }
-                                    insightTitle="Maximum Perception Gap"
-                                    icon={Lightbulb}
-                                    textColor="text-indigo-500"
-                                />
+                                {(competenceStatistics.highestDelta
+                                    ?.averageDelta ?? 0) > 0 && (
+                                    <CompetenceInsightCard
+                                        competenceTitle={
+                                            competenceStatistics.highestDelta
+                                                ?.title
+                                        }
+                                        competenceRating={
+                                            competenceStatistics.highestDelta
+                                                ?.averageDelta !== undefined &&
+                                            competenceStatistics.highestDelta
+                                                .averageDelta !== null
+                                                ? competenceStatistics
+                                                      .highestDelta
+                                                      .averageDelta < 0
+                                                    ? `${formatNumber(competenceStatistics.highestDelta.averageDelta)}`
+                                                    : `+${formatNumber(competenceStatistics.highestDelta.averageDelta)}`
+                                                : undefined
+                                        }
+                                        insightTitle="Hidden Strength"
+                                        icon={Lightbulb}
+                                        textColor="text-blue-300"
+                                    />
+                                )}
+                                {(competenceStatistics.lowestDelta
+                                    ?.averageDelta ?? 0) < 0 && (
+                                    <CompetenceInsightCard
+                                        competenceTitle={
+                                            competenceStatistics.lowestDelta
+                                                ?.title
+                                        }
+                                        competenceRating={
+                                            competenceStatistics.lowestDelta
+                                                ?.averageDelta !== undefined &&
+                                            competenceStatistics.lowestDelta
+                                                .averageDelta !== null
+                                                ? competenceStatistics
+                                                      .lowestDelta
+                                                      .averageDelta < 0
+                                                    ? `${formatNumber(competenceStatistics.lowestDelta.averageDelta)}`
+                                                    : `+${formatNumber(competenceStatistics.lowestDelta.averageDelta)}`
+                                                : undefined
+                                        }
+                                        insightTitle="Potential Blind Spot"
+                                        icon={Search}
+                                        textColor="text-violet-300"
+                                    />
+                                )}
                             </CardContent>
                         </Card>
                     )}

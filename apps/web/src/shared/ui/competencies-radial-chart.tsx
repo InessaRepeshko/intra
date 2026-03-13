@@ -47,29 +47,51 @@ export function CompetenciesRadialChart({
 }: {
     reportAnalytics: ReportAnalytics[];
 }) {
-    const data: CompetenceRadialChartData[] = [
-        {
+    const hasSelfData = reportAnalytics.some(
+        (a) => a.percentageBySelfAssessment != null,
+    );
+    const hasTeamData = reportAnalytics.some((a) => a.percentageByTeam != null);
+    const hasOthersData = reportAnalytics.some(
+        (a) => a.percentageByOther != null,
+    );
+
+    const data: CompetenceRadialChartData[] = [];
+
+    if (hasSelfData) {
+        data.push({
             category: 'self',
             rating: calculateAverageNumberForArray(
-                reportAnalytics.map((a) => a.percentageBySelfAssessment ?? 0),
+                reportAnalytics
+                    .map((a) => a.percentageBySelfAssessment)
+                    .filter((val): val is number => typeof val === 'number'),
             ),
             fill: 'var(--color-self)',
-        },
-        {
+        });
+    }
+
+    if (hasTeamData) {
+        data.push({
             category: 'team',
             rating: calculateAverageNumberForArray(
-                reportAnalytics.map((a) => a.percentageByTeam ?? 0),
+                reportAnalytics
+                    .map((a) => a.percentageByTeam)
+                    .filter((val): val is number => typeof val === 'number'),
             ),
             fill: 'var(--color-team)',
-        },
-        {
+        });
+    }
+
+    if (hasOthersData) {
+        data.push({
             category: 'others',
             rating: calculateAverageNumberForArray(
-                reportAnalytics.map((a) => a.percentageByOther ?? 0),
+                reportAnalytics
+                    .map((a) => a.percentageByOther)
+                    .filter((val): val is number => typeof val === 'number'),
             ),
             fill: 'var(--color-others)',
-        },
-    ];
+        });
+    }
 
     return (
         <Card className="flex-1 min-w-[95px] w-full overflow-hidden">

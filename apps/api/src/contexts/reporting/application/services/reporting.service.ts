@@ -566,11 +566,11 @@ export class ReportingService {
             answers.filter((answer) => answer.respondentCategory === category),
         );
 
-        if (assignedRespondents.length === 0 && actualAnswers.greaterThan(0)) {
+        if (assignedRespondents.length === 0) {
             return null;
         }
 
-        if (assignedRespondents.length === 0 || actualAnswers.equals(0)) {
+        if (actualAnswers.equals(0)) {
             return new Decimal(0);
         }
 

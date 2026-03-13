@@ -57,27 +57,45 @@ export function CompetenciesRadialChartsGroup({
 }) {
     const data: CompetenceRadialChartsData[] = [];
 
+    const hasSelfData = reportAnalytics.some(
+        (a) => a.percentageBySelfAssessment != null,
+    );
+    const hasTeamData = reportAnalytics.some((a) => a.percentageByTeam != null);
+    const hasOthersData = reportAnalytics.some(
+        (a) => a.percentageByOther != null,
+    );
+
     reportAnalytics?.forEach((a) => {
+        const ratings: CompetenceRadialChartData[] = [];
+
+        if (hasSelfData) {
+            ratings.push({
+                category: 'self',
+                rating: a.percentageBySelfAssessment ?? 0,
+                fill: 'var(--color-self)',
+            });
+        }
+
+        if (hasTeamData) {
+            ratings.push({
+                category: 'team',
+                rating: a.percentageByTeam ?? 0,
+                fill: 'var(--color-team)',
+            });
+        }
+
+        if (hasOthersData) {
+            ratings.push({
+                category: 'others',
+                rating: a.percentageByOther ?? 0,
+                fill: 'var(--color-others)',
+            });
+        }
+
         return data.push({
             id: a.competenceId ?? 0,
             competence: a.competenceTitle ?? '',
-            ratings: [
-                {
-                    category: 'self',
-                    rating: a.percentageBySelfAssessment ?? 0,
-                    fill: 'var(--color-self)',
-                },
-                {
-                    category: 'team',
-                    rating: a.percentageByTeam ?? 0,
-                    fill: 'var(--color-team)',
-                },
-                {
-                    category: 'others',
-                    rating: a.percentageByTeam ?? 0,
-                    fill: 'var(--color-others)',
-                },
-            ],
+            ratings,
         });
     });
 

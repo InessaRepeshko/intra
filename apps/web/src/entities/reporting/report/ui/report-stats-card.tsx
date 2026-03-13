@@ -23,93 +23,103 @@ export function ReportStatsCard({ report }: { report: Report }) {
                     </span>
                 </h3>
             )}
-            <div className="flex flex-wrap gap-4 w-full min-w-0 justify-between items-start m-auto sm:gap-2">
+            <div className="flex flex-wrap gap-4 w-full min-w-0 justify-between items-start sm:gap-2">
                 <div className="flex flex-col gap-2 justify-start min-w-[180px] flex-1">
-                    {report.questionSummaryTotals
-                        ?.percentageBySelfAssessment && (
-                        <div className="flex flex-wrap items-center justify-start gap-x-1 text-sm text-muted-foreground w-full">
-                            <BookmarkCheck className="h-3.5 w-3.5 shrink-0 text-amber-700" />
-                            <span className="flex items-center gap-1 text-amber-700">
-                                <span className="font-medium">
-                                    {formatNumber(
-                                        report.competenceSummaryTotals
-                                            ?.percentageBySelfAssessment,
-                                    )}
+                    {report.competenceSummaryTotals
+                        ?.percentageBySelfAssessment !== undefined &&
+                        report.competenceSummaryTotals
+                            ?.percentageBySelfAssessment !== null && (
+                            <div className="flex flex-wrap items-center justify-start gap-x-1 text-sm text-muted-foreground w-full">
+                                <BookmarkCheck className="h-3.5 w-3.5 shrink-0 text-amber-700" />
+                                <span className="flex items-center gap-1 text-amber-700">
+                                    <span className="font-medium">
+                                        {formatNumber(
+                                            report.competenceSummaryTotals
+                                                ?.percentageBySelfAssessment,
+                                        )}
+                                    </span>
+                                    <Percent className="h-3.5 w-3.5 shrink-0" />
                                 </span>
-                                <Percent className="h-3.5 w-3.5 shrink-0" />
-                            </span>
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                                self rating
-                            </span>
-                        </div>
-                    )}
+                                <span className="flex items-center gap-1 text-muted-foreground">
+                                    self rating
+                                </span>
+                            </div>
+                        )}
 
-                    {report.questionSummaryTotals?.percentageByTeam && (
-                        <div className="flex flex-wrap items-center justify-start gap-x-1 text-sm text-muted-foreground w-full">
-                            <BookmarkCheck className="h-3.5 w-3.5 shrink-0 text-blue-700" />
-                            <span className="flex items-center gap-1 text-blue-700">
-                                <span className="font-medium">
-                                    {formatNumber(
-                                        report.competenceSummaryTotals
-                                            ?.percentageByTeam,
-                                    )}
+                    {report.competenceSummaryTotals?.percentageByTeam !==
+                        undefined &&
+                        report.competenceSummaryTotals?.percentageByTeam !==
+                            null && (
+                            <div className="flex flex-wrap items-center justify-start gap-x-1 text-sm text-muted-foreground w-full">
+                                <BookmarkCheck className="h-3.5 w-3.5 shrink-0 text-blue-700" />
+                                <span className="flex items-center gap-1 text-blue-700">
+                                    <span className="font-medium">
+                                        {formatNumber(
+                                            report.competenceSummaryTotals
+                                                ?.percentageByTeam,
+                                        )}
+                                    </span>
+                                    <Percent className="h-3.5 w-3.5 shrink-0" />
                                 </span>
-                                <Percent className="h-3.5 w-3.5 shrink-0" />
-                            </span>
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                                team rating
-                            </span>
-                        </div>
-                    )}
+                                <span className="flex items-center gap-1 text-muted-foreground">
+                                    team rating
+                                </span>
+                            </div>
+                        )}
 
-                    {report.questionSummaryTotals?.percentageByOther && (
-                        <div className="flex flex-wrap items-center justify-start gap-x-1 text-sm text-muted-foreground w-full">
-                            <BookmarkCheck className="h-3.5 w-3.5 shrink-0 text-violet-700" />
-                            <span className="flex items-center gap-1 text-violet-700">
-                                <span className="font-medium">
-                                    {formatNumber(
-                                        report.competenceSummaryTotals
-                                            ?.percentageByOther,
-                                    )}
+                    {report.competenceSummaryTotals?.percentageByOther !==
+                        undefined &&
+                        report.competenceSummaryTotals?.percentageByOther !==
+                            null && (
+                            <div className="flex flex-wrap items-center justify-start gap-x-1 text-sm text-muted-foreground w-full">
+                                <BookmarkCheck className="h-3.5 w-3.5 shrink-0 text-violet-700" />
+                                <span className="flex items-center gap-1 text-violet-700">
+                                    <span className="font-medium">
+                                        {formatNumber(
+                                            report.competenceSummaryTotals
+                                                ?.percentageByOther,
+                                        )}
+                                    </span>
+                                    <Percent className="h-3.5 w-3.5 shrink-0" />
                                 </span>
-                                <Percent className="h-3.5 w-3.5 shrink-0" />
-                            </span>
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                                others rating
-                            </span>
-                        </div>
-                    )}
+                                <span className="flex items-center gap-1 text-muted-foreground">
+                                    others rating
+                                </span>
+                            </div>
+                        )}
                 </div>
                 <div className="flex flex-col gap-2 justify-start min-w-[180px] flex-1">
-                    {report.turnoutPctOfTeam && (
-                        <div className="flex flex-wrap items-center justify-start gap-x-1 text-sm text-muted-foreground w-full">
-                            <UserRoundPen className="h-3.5 w-3.5 shrink-0" />
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                                <span className="font-medium text-foreground">
-                                    {formatNumber(report.turnoutPctOfTeam)}
+                    {report.turnoutPctOfTeam !== undefined &&
+                        report.turnoutPctOfTeam !== null && (
+                            <div className="flex flex-wrap items-center justify-start gap-x-1 text-sm text-muted-foreground w-full">
+                                <UserRoundPen className="h-3.5 w-3.5 shrink-0" />
+                                <span className="flex items-center gap-1 text-muted-foreground">
+                                    <span className="font-medium text-foreground">
+                                        {formatNumber(report.turnoutPctOfTeam)}
+                                    </span>
+                                    <Percent className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 </span>
-                                <Percent className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                            </span>
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                                turnout of team
-                            </span>
-                        </div>
-                    )}
+                                <span className="flex items-center gap-1 text-muted-foreground">
+                                    turnout of team
+                                </span>
+                            </div>
+                        )}
 
-                    {report.turnoutPctOfOther && (
-                        <div className="flex flex-wrap items-center justify-start gap-x-1 text-sm text-muted-foreground w-full">
-                            <UserRoundPen className="h-3.5 w-3.5 shrink-0" />
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                                <span className="font-medium text-foreground">
-                                    {formatNumber(report.turnoutPctOfOther)}
+                    {report.turnoutPctOfOther !== undefined &&
+                        report.turnoutPctOfOther !== null && (
+                            <div className="flex flex-wrap items-center justify-start gap-x-1 text-sm text-muted-foreground w-full">
+                                <UserRoundPen className="h-3.5 w-3.5 shrink-0" />
+                                <span className="flex items-center gap-1 text-muted-foreground">
+                                    <span className="font-medium text-foreground">
+                                        {formatNumber(report.turnoutPctOfOther)}
+                                    </span>
+                                    <Percent className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 </span>
-                                <Percent className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                            </span>
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                                turnout of others
-                            </span>
-                        </div>
-                    )}
+                                <span className="flex items-center gap-1 text-muted-foreground">
+                                    turnout of others
+                                </span>
+                            </div>
+                        )}
                 </div>
             </div>
         </Card>

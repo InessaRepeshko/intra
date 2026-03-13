@@ -54,7 +54,15 @@ export function CompetenciesRadarChart({
 }) {
     const data: CompetenceRadarCharData[] = [];
 
+    let hasSelfData = false;
+    let hasTeamData = false;
+    let hasOthersData = false;
+
     reportAnalytics?.forEach((a) => {
+        if (a.percentageBySelfAssessment != null) hasSelfData = true;
+        if (a.percentageByTeam != null) hasTeamData = true;
+        if (a.percentageByOther != null) hasOthersData = true;
+
         return data.push({
             competence: a.competenceTitle ?? 'Competence',
             self: a.percentageBySelfAssessment ?? 0,
@@ -140,30 +148,36 @@ export function CompetenciesRadarChart({
                             }}
                         />
                         <PolarGrid />
-                        <Radar
-                            dataKey="self"
-                            fill="var(--color-self)"
-                            fillOpacity={0.1}
-                            dot={{ r: 4, fillOpacity: 1 }}
-                            stroke="var(--color-self)"
-                            strokeWidth={2}
-                        />
-                        <Radar
-                            dataKey="team"
-                            fill="var(--color-team)"
-                            fillOpacity={0.1}
-                            dot={{ r: 4, fillOpacity: 1 }}
-                            stroke="var(--color-team)"
-                            strokeWidth={2}
-                        />
-                        <Radar
-                            dataKey="others"
-                            fill="var(--color-others)"
-                            fillOpacity={0.1}
-                            dot={{ r: 4, fillOpacity: 1 }}
-                            stroke="var(--color-others)"
-                            strokeWidth={2}
-                        />
+                        {hasSelfData && (
+                            <Radar
+                                dataKey="self"
+                                fill="var(--color-self)"
+                                fillOpacity={0.1}
+                                dot={{ r: 4, fillOpacity: 1 }}
+                                stroke="var(--color-self)"
+                                strokeWidth={2}
+                            />
+                        )}
+                        {hasTeamData && (
+                            <Radar
+                                dataKey="team"
+                                fill="var(--color-team)"
+                                fillOpacity={0.1}
+                                dot={{ r: 4, fillOpacity: 1 }}
+                                stroke="var(--color-team)"
+                                strokeWidth={2}
+                            />
+                        )}
+                        {hasOthersData && (
+                            <Radar
+                                dataKey="others"
+                                fill="var(--color-others)"
+                                fillOpacity={0.1}
+                                dot={{ r: 4, fillOpacity: 1 }}
+                                stroke="var(--color-others)"
+                                strokeWidth={2}
+                            />
+                        )}
                         <ChartLegend
                             className="mt-8 text-sm text-muted-foreground"
                             content={<ChartLegendContent />}

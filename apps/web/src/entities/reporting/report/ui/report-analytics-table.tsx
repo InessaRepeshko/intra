@@ -30,6 +30,15 @@ export function ReportAnalyticsTable({
             return nameA.localeCompare(nameB);
         })
         .map((a, index) => ({ ...a, num: index + 1 }));
+
+    const getValidAverage = (arr: (number | null | undefined)[]) => {
+        const validValues = arr.filter(
+            (val): val is number => typeof val === 'number',
+        );
+        if (validValues.length === 0) return null;
+        return calculateAverageNumberForArray(validValues);
+    };
+
     sortedAnalytics.push({
         num: -1,
         id: -1,
@@ -39,29 +48,29 @@ export function ReportAnalyticsTable({
         questionId: -1,
         questionTitle: 'Average by questions',
         competenceTitle: 'Average by competencies',
-        averageBySelfAssessment: calculateAverageNumberForArray(
-            sortedAnalytics.map((a) => a.averageBySelfAssessment ?? 0),
+        averageBySelfAssessment: getValidAverage(
+            sortedAnalytics.map((a) => a.averageBySelfAssessment),
         ),
-        averageByTeam: calculateAverageNumberForArray(
-            sortedAnalytics.map((a) => a.averageByTeam ?? 0),
+        averageByTeam: getValidAverage(
+            sortedAnalytics.map((a) => a.averageByTeam),
         ),
-        averageByOther: calculateAverageNumberForArray(
-            sortedAnalytics.map((a) => a.averageByOther ?? 0),
+        averageByOther: getValidAverage(
+            sortedAnalytics.map((a) => a.averageByOther),
         ),
-        percentageBySelfAssessment: calculateAverageNumberForArray(
-            sortedAnalytics.map((a) => a.percentageBySelfAssessment ?? 0),
+        percentageBySelfAssessment: getValidAverage(
+            sortedAnalytics.map((a) => a.percentageBySelfAssessment),
         ),
-        percentageByTeam: calculateAverageNumberForArray(
-            sortedAnalytics.map((a) => a.percentageByTeam ?? 0),
+        percentageByTeam: getValidAverage(
+            sortedAnalytics.map((a) => a.percentageByTeam),
         ),
-        percentageByOther: calculateAverageNumberForArray(
-            sortedAnalytics.map((a) => a.percentageByOther ?? 0),
+        percentageByOther: getValidAverage(
+            sortedAnalytics.map((a) => a.percentageByOther),
         ),
-        deltaPercentageByTeam: calculateAverageNumberForArray(
-            sortedAnalytics.map((a) => a.deltaPercentageByTeam ?? 0),
+        deltaPercentageByTeam: getValidAverage(
+            sortedAnalytics.map((a) => a.deltaPercentageByTeam),
         ),
-        deltaPercentageByOther: calculateAverageNumberForArray(
-            sortedAnalytics.map((a) => a.deltaPercentageByOther ?? 0),
+        deltaPercentageByOther: getValidAverage(
+            sortedAnalytics.map((a) => a.deltaPercentageByOther),
         ),
         createdAt: sortedAnalytics[0].createdAt,
     });
