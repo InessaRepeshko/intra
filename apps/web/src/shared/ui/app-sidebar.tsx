@@ -157,7 +157,7 @@ const navItems: NavItem[] = [
     },
     {
         title: 'Users',
-        href: '/users',
+        href: '/identity/users',
         icon: UserRound,
         roles: [IdentityRole.HR, IdentityRole.ADMIN],
     },

@@ -1,14 +1,14 @@
 import { UserSearchQuery } from '@entities/identity/user/model/types';
-import { useQuery } from '@tanstack/react-query';
-import { type User, mapUserDtoToModel } from '../model/mappers';
+import { useQuery, useQueries } from '@tanstack/react-query';
+import { type User, mapUserResponseDtoToModel } from '../model/mappers';
 import {
     fetchCurrentUser,
     fetchManagerNameByManagerId,
-    fetchPositionTitleById,
-    fetchTeamTitleByTeamId,
     fetchUserById,
     fetchUsers,
 } from './user.api';
+import { fetchPositionTitleById } from '@entities/organisation/position/api/position.api';
+import { fetchTeamTitleById } from '@entities/organisation/team/api/team.api';
 
 export const userKeys = {
     all: ['users'] as const,
@@ -41,7 +41,7 @@ async function enrichUserWithPositionTitle(user: User): Promise<User> {
 async function enrichUserWithTeamTitle(user: User): Promise<User> {
     if (!user.teamId) return user;
     try {
-        const teamTitle = await fetchTeamTitleByTeamId(user.teamId);
+        const teamTitle = await fetchTeamTitleById(user.teamId);
         return { ...user, teamTitle };
     } catch {
         return user;
@@ -70,7 +70,7 @@ export function useUsersQuery(params?: UserSearchQuery) {
         queryKey: userKeys.list(params),
         queryFn: async () => {
             const dtos = await fetchUsers(params);
-            return dtos.map(mapUserDtoToModel);
+            return dtos.map(mapUserResponseDtoToModel);
         },
     });
 }
@@ -80,7 +80,7 @@ export function useUserQuery(id: number) {
         queryKey: userKeys.detail(id),
         queryFn: async () => {
             const dto = await fetchUserById(id);
-            const user = mapUserDtoToModel(dto);
+            const user = mapUserResponseDtoToModel(dto);
             return enrichUserWithOrgData(user);
         },
     });
@@ -91,8 +91,102 @@ export function useMeQuery() {
         queryKey: userKeys.me(),
         queryFn: async () => {
             const dto = await fetchCurrentUser();
-            const user = mapUserDtoToModel(dto);
+            const user = mapUserResponseDtoToModel(dto);
             return enrichUserWithOrgData(user);
         },
     });
+}
+
+
+export function useUserPositionTitleQuery(userId: number, positionId: number) {
+    return useQuery<string>({
+        queryKey: userKeys.positionTitle(positionId),
+        queryFn: () => fetchPositionTitleById(positionId),
+        enabled: userId > 0 && positionId > 0,
+    });
+}
+
+export function useUserPositionTitlesQuery(
+    positionIds: number[],
+) {
+    const queries = useQueries({
+        queries: positionIds.map((positionId, index) => ({
+            queryKey: userKeys.positionTitle(positionId),
+            queryFn: () => fetchPositionTitleById(positionIds[index]),
+        })),
+    });
+
+    const positionTitles: Record<number, string> = {};
+    positionIds.forEach((positionId, index) => {
+        const result = queries[index];
+        if (result.isSuccess && result.data !== undefined) {
+            positionTitles[positionId] = result.data;
+        }
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+
+    return { positionTitles, isLoading };
+}
+
+export function useUserTeamTitleQuery(userId: number, teamId: number) {
+    return useQuery<string>({
+        queryKey: userKeys.teamTitle(teamId),
+        queryFn: () => fetchTeamTitleById(teamId),
+        enabled: userId > 0 && teamId > 0,
+    });
+}
+
+export function useUserTeamTitlesQuery(
+    teamIds: number[],
+) {
+    const queries = useQueries({
+        queries: teamIds.map((teamId, index) => ({
+            queryKey: userKeys.teamTitle(teamId),
+            queryFn: () => fetchTeamTitleById(teamIds[index]),
+        })),
+    });
+
+    const teamTitles: Record<number, string> = {};
+    teamIds.forEach((teamId, index) => {
+        const result = queries[index];
+        if (result.isSuccess && result.data !== undefined) {
+            teamTitles[teamId] = result.data;
+        }
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+
+    return { teamTitles, isLoading };
+}
+
+export function useUserManagerFullNameQuery(userId: number, managerId: number) {
+    return useQuery<string>({
+        queryKey: userKeys.managerName(managerId),
+        queryFn: () => fetchManagerNameByManagerId(managerId),
+        enabled: userId > 0 && managerId > 0,
+    });
+}
+
+export function useUserManagerFullNamesQuery(
+    managerIds: number[],
+) {
+    const queries = useQueries({
+        queries: managerIds.map((managerId, index) => ({
+            queryKey: userKeys.managerName(managerId),
+            queryFn: () => fetchManagerNameByManagerId(managerIds[index]),
+        })),
+    });
+
+    const managerNames: Record<number, string> = {};
+    managerIds.forEach((managerId, index) => {
+        const result = queries[index];
+        if (result.isSuccess && result.data !== undefined) {
+            managerNames[managerId] = result.data;
+        }
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+
+    return { managerNames, isLoading };
 }

@@ -6,9 +6,18 @@ import {
     UserDto,
     UserResponseDto,
     UserSearchQuery,
+    SortDirection,
+    IDENTITY_STATUSES,
+    IDENTITY_ROLES,
 } from '@intra/shared-kernel';
 
-export { IdentityRole, IdentityStatus };
+export {
+    IdentityRole,
+    IdentityStatus,
+    SortDirection,
+    IDENTITY_STATUSES as IDENTITY_STATUSES_ENUM_VALUES,
+    IDENTITY_ROLES as IDENTITY_ROLES_ENUM_VALUES,
+};
 export type {
     CreateUserPayload,
     UpdateUserPayload,

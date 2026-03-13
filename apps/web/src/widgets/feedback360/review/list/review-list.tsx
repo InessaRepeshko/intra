@@ -3,12 +3,12 @@
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
-import { useCycleTitlesQuery } from '@entities/feedback360/cycle/api/cycle.queries';
 import {
     useReviewAnswersCountsQuery,
     useReviewQuestionCountsQuery,
     useReviewRespondentCountsQuery,
     useReviewReviewerCountsQuery,
+    useReviewCycleTitlesQuery,
     useReviewsQuery,
 } from '@entities/feedback360/review/api/review.queries';
 import type { Review } from '@entities/feedback360/review/model/mappers';
@@ -129,7 +129,7 @@ export function ReviewsList() {
     const { reviewerCounts, isLoading: isReviewerCountsLoading } =
         useReviewReviewerCountsQuery(reviewIds);
     const { cycleTitles, isLoading: isCycleTitlesLoading } =
-        useCycleTitlesQuery(cycleIds);
+        useReviewCycleTitlesQuery(reviewIds, cycleIds);
 
     const cycleOptions = useMemo(() => {
         const titles = new Set(

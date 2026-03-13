@@ -36,9 +36,9 @@ export class IdentityUserService {
             fullName:
                 payload.fullName ??
                 this.buildFullName(
+                    payload.lastName,
                     payload.firstName,
                     payload.secondName,
-                    payload.lastName,
                 ),
             email: payload.email,
             avatarUrl: payload.avatarUrl,
@@ -81,9 +81,9 @@ export class IdentityUserService {
 
         const fullName = shouldUpdateFullName
             ? this.buildFullName(
+                  patch.lastName ?? current.lastName,
                   patch.firstName ?? current.firstName,
                   patch.secondName ?? current.secondName,
-                  patch.lastName ?? current.lastName,
               )
             : undefined;
 
@@ -139,9 +139,9 @@ export class IdentityUserService {
             secondName: payload.secondName,
             lastName: payload.lastName,
             fullName: this.buildFullName(
+                payload.lastName,
                 payload.firstName,
                 payload.secondName,
-                payload.lastName,
             ),
             email: payload.email,
             avatarUrl: payload.avatarUrl,
@@ -156,11 +156,11 @@ export class IdentityUserService {
     }
 
     private buildFullName(
+        lastName: string,
         firstName: string,
         secondName: string | undefined,
-        lastName: string,
     ): string {
-        const parts = [firstName, secondName ?? undefined, lastName].filter(
+        const parts = [lastName, firstName, secondName ?? undefined].filter(
             Boolean,
         );
         return parts.join(' ');
