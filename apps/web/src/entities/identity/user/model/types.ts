@@ -1,22 +1,22 @@
 import {
     CreateUserPayload,
+    IDENTITY_ROLES,
+    IDENTITY_STATUSES,
     IdentityRole,
     IdentityStatus,
+    SortDirection,
     UpdateUserPayload,
     UserDto,
     UserResponseDto,
     UserSearchQuery,
-    SortDirection,
-    IDENTITY_STATUSES,
-    IDENTITY_ROLES,
 } from '@intra/shared-kernel';
 
 export {
+    IDENTITY_ROLES as IDENTITY_ROLES_ENUM_VALUES,
+    IDENTITY_STATUSES as IDENTITY_STATUSES_ENUM_VALUES,
     IdentityRole,
     IdentityStatus,
     SortDirection,
-    IDENTITY_STATUSES as IDENTITY_STATUSES_ENUM_VALUES,
-    IDENTITY_ROLES as IDENTITY_ROLES_ENUM_VALUES,
 };
 export type {
     CreateUserPayload,

@@ -21,8 +21,8 @@ export function AvatarGroupList({ users }: { users: User[] }) {
                             alt={user.fullName}
                         />
                         <AvatarFallback className="bg-white/20 text-black text-xs font-medium">
-                            {user.firstName?.charAt(0) +
-                                user.lastName?.charAt(0)}
+                            {user.lastName?.charAt(0) +
+                                user.firstName?.charAt(0)}
                         </AvatarFallback>
                     </Avatar>
                     <span className="text-sm font-medium whitespace-pre-wrap text-foreground">

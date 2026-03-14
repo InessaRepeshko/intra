@@ -1,5 +1,7 @@
 import { UserSearchQuery } from '@entities/identity/user/model/types';
-import { useQuery, useQueries } from '@tanstack/react-query';
+import { fetchPositionTitleById } from '@entities/organisation/position/api/position.api';
+import { fetchTeamTitleById } from '@entities/organisation/team/api/team.api';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { type User, mapUserResponseDtoToModel } from '../model/mappers';
 import {
     fetchCurrentUser,
@@ -7,8 +9,6 @@ import {
     fetchUserById,
     fetchUsers,
 } from './user.api';
-import { fetchPositionTitleById } from '@entities/organisation/position/api/position.api';
-import { fetchTeamTitleById } from '@entities/organisation/team/api/team.api';
 
 export const userKeys = {
     all: ['users'] as const,
@@ -97,7 +97,6 @@ export function useMeQuery() {
     });
 }
 
-
 export function useUserPositionTitleQuery(userId: number, positionId: number) {
     return useQuery<string>({
         queryKey: userKeys.positionTitle(positionId),
@@ -106,9 +105,7 @@ export function useUserPositionTitleQuery(userId: number, positionId: number) {
     });
 }
 
-export function useUserPositionTitlesQuery(
-    positionIds: number[],
-) {
+export function useUserPositionTitlesQuery(positionIds: number[]) {
     const queries = useQueries({
         queries: positionIds.map((positionId, index) => ({
             queryKey: userKeys.positionTitle(positionId),
@@ -137,9 +134,7 @@ export function useUserTeamTitleQuery(userId: number, teamId: number) {
     });
 }
 
-export function useUserTeamTitlesQuery(
-    teamIds: number[],
-) {
+export function useUserTeamTitlesQuery(teamIds: number[]) {
     const queries = useQueries({
         queries: teamIds.map((teamId, index) => ({
             queryKey: userKeys.teamTitle(teamId),
@@ -168,9 +163,7 @@ export function useUserManagerFullNameQuery(userId: number, managerId: number) {
     });
 }
 
-export function useUserManagerFullNamesQuery(
-    managerIds: number[],
-) {
+export function useUserManagerFullNamesQuery(managerIds: number[]) {
     const queries = useQueries({
         queries: managerIds.map((managerId, index) => ({
             queryKey: userKeys.managerName(managerId),

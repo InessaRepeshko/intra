@@ -283,7 +283,7 @@ export const USER_SEED_DATA: UserSeed[] = [
 
 function buildFullName(user: UserSeed): string {
     const middle = user.secondName ? ` ${user.secondName}` : '';
-    return `${user.firstName}${middle} ${user.lastName}`;
+    return `${user.lastName} ${user.firstName}${middle}`;
 }
 
 export default async function seedUsers(

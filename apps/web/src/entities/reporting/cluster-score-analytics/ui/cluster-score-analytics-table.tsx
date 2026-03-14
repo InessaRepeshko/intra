@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import {
     ArrowUpFromLine,
     ArrowUpToLine,
+    Boxes,
     Calendar,
     Eye,
     MoreHorizontal,
@@ -187,13 +188,19 @@ export function ClusterScoreAnalyticsTable({
                         {(competenceTitles[
                             clusterScoreTitles[clusterScoreAnalytics.clusterId]
                                 ?.competenceId
-                        ]?.title ?? 'None') +
+                        ]?.title ?? (
+                            <span className="text-muted-foreground">None</span>
+                        )) +
                             `, ` +
                             (competenceTitles[
                                 clusterScoreTitles[
                                     clusterScoreAnalytics.clusterId
                                 ]?.competenceId
-                            ]?.code ?? 'None')}
+                            ]?.code ?? (
+                                <span className="text-muted-foreground">
+                                    None
+                                </span>
+                            ))}
                     </span>
                     {competenceTitles[
                         clusterScoreTitles[clusterScoreAnalytics.clusterId]
@@ -204,7 +211,11 @@ export function ClusterScoreAnalyticsTable({
                                 clusterScoreTitles[
                                     clusterScoreAnalytics.clusterId
                                 ]?.competenceId
-                            ]?.description ?? 'None'}
+                            ]?.description ?? (
+                                <span className="text-muted-foreground">
+                                    None
+                                </span>
+                            )}
                         </span>
                     )}
                 </div>
@@ -379,9 +390,12 @@ export function ClusterScoreAnalyticsTable({
             headerClassName:
                 'min-w-[200px] w-[250px] whitespace-nowrap cursor-grab active:cursor-grabbing',
             cell: (clusterScoreAnalytics) => (
-                <div className="flex flex-col gap-0.5 w-full">
+                <div className="flex flex-row items-center gap-1.5 w-full">
+                    <RefreshCcw className="shrink-0 h-3.5 w-3.5 text-muted-foreground" />
                     <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                        {cycleTitles[clusterScoreAnalytics.cycleId] ?? 'None'}
+                        {cycleTitles[clusterScoreAnalytics.cycleId] ?? (
+                            <span className="text-muted-foreground">None</span>
+                        )}
                     </span>
                 </div>
             ),
@@ -429,7 +443,7 @@ export function ClusterScoreAnalyticsTable({
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="rounded-full bg-muted p-4">
-                    <Users className="h-8 w-8 text-muted-foreground" />
+                    <Boxes className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
                     No cluster score analytics found
@@ -458,14 +472,22 @@ export function ClusterScoreAnalyticsTable({
                                             clusterScoreTitles[
                                                 clusterScoreAnalytics.clusterId
                                             ]?.competenceId
-                                        ]?.title ?? 'None') +
+                                        ]?.title ?? (
+                                            <span className="text-muted-foreground">
+                                                None
+                                            </span>
+                                        )) +
                                             ', ' +
                                             (competenceTitles[
                                                 clusterScoreTitles[
                                                     clusterScoreAnalytics
                                                         .clusterId
                                                 ]?.competenceId
-                                            ]?.code ?? 'None')}
+                                            ]?.code ?? (
+                                                <span className="text-muted-foreground">
+                                                    None
+                                                </span>
+                                            ))}
                                     </span>
                                     <span className="whitespace-nowrap">
                                         {clusterScoreTitles[
@@ -481,7 +503,9 @@ export function ClusterScoreAnalyticsTable({
                                                 }
                                             />
                                         ) : (
-                                            `None`
+                                            <span className="text-muted-foreground">
+                                                None
+                                            </span>
                                         )}
                                     </span>
                                 </p>
@@ -539,7 +563,11 @@ export function ClusterScoreAnalyticsTable({
                                     {clusterScoreAnalytics.employeesCount ??
                                         `—`}
                                 </span>
-                                {' ratees'}
+                                <span className="text-muted-foreground">
+                                    {clusterScoreAnalytics.employeesCount === 1
+                                        ? ' ratee'
+                                        : ' ratees'}
+                                </span>
                             </span>
                         </div>
 
@@ -570,7 +598,11 @@ export function ClusterScoreAnalyticsTable({
                                 <span className="font-medium text-foreground break-words">
                                     {cycleTitles[
                                         clusterScoreAnalytics.cycleId
-                                    ] ?? 'None'}
+                                    ] ?? (
+                                        <span className="text-muted-foreground">
+                                            None
+                                        </span>
+                                    )}
                                 </span>
                             </span>
 

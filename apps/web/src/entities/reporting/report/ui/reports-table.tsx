@@ -101,7 +101,6 @@ export function ReportsTable({
     } = useDraggableColumns<
         | 'ratee'
         | 'cycle'
-        | 'date'
         | 'stage'
         | 'respondents'
         | 'categories'
@@ -111,11 +110,11 @@ export function ReportsTable({
         | 'self_competence'
         | 'team_competence'
         | 'others_competence'
+        | 'date'
         | 'actions'
     >('reports-table', [
         'ratee',
         'cycle',
-        'date',
         'stage',
         'respondents',
         'categories',
@@ -125,6 +124,7 @@ export function ReportsTable({
         'self_competence',
         'team_competence',
         'others_competence',
+        'date',
         'actions',
     ]);
 
@@ -137,7 +137,6 @@ export function ReportsTable({
     const COLUMNS: Record<
         | 'ratee'
         | 'cycle'
-        | 'date'
         | 'stage'
         | 'respondents'
         | 'categories'
@@ -147,6 +146,7 @@ export function ReportsTable({
         | 'self_competence'
         | 'team_competence'
         | 'others_competence'
+        | 'date'
         | 'actions',
         {
             header: React.ReactNode;
@@ -177,8 +177,11 @@ export function ReportsTable({
                         <span className="text-sm text-muted-foreground flex items-center flex-wrap gap-x-1 gap-y-1">
                             {rateePositionTitles[report.reviewId] && (
                                 <span className="break-words overflow-wrap-anywhere">
-                                    {rateePositionTitles[report.reviewId] ??
-                                        `None`}
+                                    {rateePositionTitles[report.reviewId] ?? (
+                                        <span className="text-muted-foreground">
+                                            None
+                                        </span>
+                                    )}
                                     {rateeTeamTitles[report.reviewId]
                                         ? `,`
                                         : ''}
@@ -186,7 +189,11 @@ export function ReportsTable({
                             )}
                             {rateeTeamTitles[report.reviewId] && (
                                 <span className="break-words overflow-wrap-anywhere">
-                                    {rateeTeamTitles[report.reviewId] ?? `None`}
+                                    {rateeTeamTitles[report.reviewId] ?? (
+                                        <span className="text-muted-foreground">
+                                            None
+                                        </span>
+                                    )}
                                 </span>
                             )}
                         </span>
@@ -209,35 +216,21 @@ export function ReportsTable({
                 'min-w-[200px] w-[250px] whitespace-nowrap align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => (
                 <div className="flex items-center justify-start gap-1.5 w-full">
+                    <RefreshCcw className="shrink-0 h-4 w-4 text-muted-foreground" />
                     <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                        {report.cycleId
-                            ? (cycleTitles[report.cycleId] ?? `None`)
-                            : `None`}
+                        {report.cycleId ? (
+                            (cycleTitles[report.cycleId] ?? (
+                                <span className="text-muted-foreground">
+                                    None
+                                </span>
+                            ))
+                        ) : (
+                            <span className="text-muted-foreground">None</span>
+                        )}
                     </span>
                 </div>
             ),
             cellClassName: 'whitespace-normal',
-        },
-        date: {
-            header: (
-                <SortableHeader
-                    label="Creation Date"
-                    field="createdAt"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[150px] w-[150px] whitespace-nowrap align-bottom cursor-grab active:cursor-grabbing',
-            cell: (report) => (
-                <div className="flex flex-col items-center justify-start gap-0.5 text-sm">
-                    <span className="text-foreground">
-                        {format(report.createdAt, 'MMM dd, yyyy')}
-                    </span>
-                </div>
-            ),
-            cellClassName: 'whitespace-nowrap',
         },
         stage: {
             header: (
@@ -258,7 +251,7 @@ export function ReportsTable({
                         stage={reviewStages[report.reviewId]}
                     />
                 ) : (
-                    `None`
+                    <span className="text-muted-foreground">None</span>
                 ),
             cellClassName: 'whitespace-nowrap text-center',
         },
@@ -298,16 +291,18 @@ export function ReportsTable({
                 'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => (
                 <div className="flex flex-wrap items-center justify-center gap-1">
-                    {respondentCategories[report.reviewId]
-                        ? respondentCategories[report.reviewId].map(
-                              (category) => (
-                                  <CategoryBadge
-                                      key={category}
-                                      category={category}
-                                  />
-                              ),
-                          )
-                        : `None`}
+                    {respondentCategories[report.reviewId] ? (
+                        respondentCategories[report.reviewId].map(
+                            (category) => (
+                                <CategoryBadge
+                                    key={category}
+                                    category={category}
+                                />
+                            ),
+                        )
+                    ) : (
+                        <span className="text-muted-foreground">None</span>
+                    )}
                 </div>
             ),
             cellClassName: 'whitespace-nowrap text-center',
@@ -459,6 +454,27 @@ export function ReportsTable({
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
+        date: {
+            header: (
+                <SortableHeader
+                    label="Creation Date"
+                    field="createdAt"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[150px] w-[150px] whitespace-nowrap align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => (
+                <div className="flex flex-col items-center justify-start gap-0.5 text-sm">
+                    <span className="text-foreground">
+                        {format(report.createdAt, 'MMM dd, yyyy')}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap',
+        },
         actions: {
             header: <span className="text-muted-foreground">Report</span>,
             headerClassName:
@@ -472,7 +488,7 @@ export function ReportsTable({
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="rounded-full bg-muted p-4">
-                    <Users className="h-8 w-8 text-muted-foreground" />
+                    <FileText className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
                     No reports found
@@ -497,8 +513,11 @@ export function ReportsTable({
                             <div className="min-w-0 flex-1">
                                 <p className="flex items-center gap-x-2 gap-y-1 font-medium text-foreground flex-wrap">
                                     <span className="break-words">
-                                        {rateeFullNames[report.reviewId] ??
-                                            `None`}
+                                        {rateeFullNames[report.reviewId] ?? (
+                                            <span className="text-muted-foreground">
+                                                None
+                                            </span>
+                                        )}
                                     </span>
                                     <span className="whitespace-nowrap">
                                         {reviewStages[report.reviewId] ? (
@@ -511,7 +530,9 @@ export function ReportsTable({
                                                 }
                                             />
                                         ) : (
-                                            `None`
+                                            <span className="text-muted-foreground">
+                                                None
+                                            </span>
                                         )}
                                     </span>
                                 </p>
@@ -525,7 +546,11 @@ export function ReportsTable({
                                                 <Award className="h-3.5 w-3.5 shrink-0" />
                                                 {rateePositionTitles[
                                                     report.reviewId
-                                                ] ?? `None`}
+                                                ] ?? (
+                                                    <span className="text-muted-foreground">
+                                                        None
+                                                    </span>
+                                                )}
                                             </span>
                                         )}
                                         {rateeTeamTitles[report.reviewId] && (
@@ -533,7 +558,11 @@ export function ReportsTable({
                                                 <Users className="h-3.5 w-3.5 shrink-0" />
                                                 {rateeTeamTitles[
                                                     report.reviewId
-                                                ] ?? `None`}
+                                                ] ?? (
+                                                    <span className="text-muted-foreground">
+                                                        None
+                                                    </span>
+                                                )}
                                             </span>
                                         )}
                                     </p>
@@ -546,10 +575,17 @@ export function ReportsTable({
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <RefreshCcw className="shrink-0 h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground break-words">
-                                    {report.cycleId
-                                        ? (cycleTitles[report.cycleId] ??
-                                          `None`)
-                                        : `None`}
+                                    {report.cycleId ? (
+                                        (cycleTitles[report.cycleId] ?? (
+                                            <span className="text-muted-foreground">
+                                                None
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="text-muted-foreground">
+                                            None
+                                        </span>
+                                    )}
                                 </span>
                             </span>
 
@@ -570,7 +606,7 @@ export function ReportsTable({
                                     ) : (
                                         `—`
                                     )}
-                                    <span className="font-medium text-foreground">
+                                    <span className="font-medium text-muted-foreground">
                                         {' of '}
                                     </span>
                                     <span className="font-medium text-foreground">
@@ -580,16 +616,20 @@ export function ReportsTable({
                                         {' respondents in '}
                                     </span>
                                     <Flag className="flex h-3.5 w-3.5 shrink-0 gap-x-1" />
-                                    {respondentCategories[report.reviewId]
-                                        ? respondentCategories[
-                                              report.reviewId
-                                          ].map((category) => (
-                                              <CategoryBadge
-                                                  key={category}
-                                                  category={category}
-                                              />
-                                          ))
-                                        : `None`}
+                                    {respondentCategories[report.reviewId] ? (
+                                        respondentCategories[
+                                            report.reviewId
+                                        ].map((category) => (
+                                            <CategoryBadge
+                                                key={category}
+                                                category={category}
+                                            />
+                                        ))
+                                    ) : (
+                                        <span className="text-muted-foreground">
+                                            None
+                                        </span>
+                                    )}
                                     {' categories'}
                                 </span>
                             </span>

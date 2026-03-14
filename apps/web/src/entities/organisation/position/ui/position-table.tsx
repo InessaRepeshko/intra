@@ -9,7 +9,6 @@ import {
     Pencil,
     Trash2,
     UserRound,
-    Users,
 } from 'lucide-react';
 
 import { cn } from '@/shared/lib/utils/cn';
@@ -125,7 +124,12 @@ export function PositionTable({
         const [isExpanded, setIsExpanded] = useState(false);
 
         if (!competences?.length)
-            return <span className="text-muted-foreground"> None </span>;
+            return (
+                <span className="flex items-center justify-start gap-1 p-1">
+                    <Award className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                    <span className="text-muted-foreground">None</span>
+                </span>
+            );
 
         const firstCompetence = competences[0].title;
         const extraCount = competences.length - 1;
@@ -141,7 +145,7 @@ export function PositionTable({
                     isExpanded ? 'bg-muted/30' : 'max-w-[400px]',
                 )}
             >
-                <Award className="h-3.5 w-3.5 shrink-0" />
+                <Award className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                 {isExpanded ? (
                     <div className="flex flex-col items-start justify-start text-start flex-wrap gap-1 items-center justify-center animate-in fade-in slide-in-from-top-1">
                         {competences.map((c, index) => (
@@ -177,8 +181,8 @@ export function PositionTable({
 
         if (!users?.length)
             return (
-                <div className="text-muted-foreground flex items-center justify-center">
-                    —
+                <div className="text-muted-foreground flex items-center justify-start">
+                    <span className="text-sm text-muted-foreground">None</span>
                 </div>
             );
 
@@ -189,19 +193,19 @@ export function PositionTable({
                     setIsExpanded(!isExpanded);
                 }}
                 className={cn(
-                    'group flex flex-wrap items-center justify-center gap-1 cursor-pointer transition-all duration-200 p-1 rounded-md hover:bg-muted/50',
+                    'group flex flex-wrap items-center justify-start gap-1 cursor-pointer transition-all duration-200 p-1 rounded-md hover:bg-muted/50',
                     isExpanded ? 'bg-muted/30' : 'max-w-[400px]',
                 )}
             >
                 {isExpanded ? (
-                    <div className="flex flex-wrap gap-1 items-center justify-center text-center animate-in fade-in slide-in-from-top-1">
-                        <div className="flex items-start justify-start text-start">
+                    <div className="flex flex-row items-center justify-center gap-1">
+                        <div className="flex flex-col flex-wrap gap-1 items-start justify-start animate-in fade-in slide-in-from-top-1">
                             <AvatarGroupList users={users} />
                         </div>
-                        <ChevronUp className="h-3 w-3 text-muted-foreground ml-1" />
+                        <ChevronUp className="h-3 w-3 text-muted-foreground" />
                     </div>
                 ) : (
-                    <div className="flex items-center justify-center gap-1 overflow-hidden">
+                    <div className="flex items-center justify-center text-center gap-1">
                         <AvatarGroupWithCount users={users} />
                         <ChevronDown className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
@@ -256,7 +260,7 @@ export function PositionTable({
                 />
             ),
             headerClassName:
-                'min-w-[200px] w-[250px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+                'min-w-[200px] w-[250px] whitespace-nowrap text-start align-bottom cursor-grab active:cursor-grabbing',
             cell: (position) => (
                 <ExpandableCompetences
                     competences={competenceTitles[position.id] || []}
@@ -275,7 +279,7 @@ export function PositionTable({
                 />
             ),
             headerClassName:
-                'min-w-[200px] w-[300px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+                'min-w-[200px] w-[300px] whitespace-nowrap text-start align-bottom cursor-grab active:cursor-grabbing',
             cell: (position) => {
                 const positionUsers =
                     users.find((u) => u.positionId === position.id)?.users ||
@@ -321,7 +325,7 @@ export function PositionTable({
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="rounded-full bg-muted p-4">
-                    <Users className="h-8 w-8 text-muted-foreground" />
+                    <Award className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
                     No positions found
@@ -367,17 +371,22 @@ export function PositionTable({
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                             <span className="flex items-center gap-1 text-muted-foreground">
-                                <Award className="h-3.5 w-3.5 shrink-0" />
+                                <Award className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <span className="font-medium text-foreground">
                                     {competenceTitles[position.id]
                                         ? competenceTitles[position.id].length
                                         : `—`}
                                 </span>
-                                {' competences'}
+                                {(() => {
+                                    const c = competenceTitles[position.id];
+                                    return c && c.length === 1
+                                        ? ' competence'
+                                        : ' competences';
+                                })()}
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">
-                                <UserRound className="h-3.5 w-3.5 shrink-0" />
+                                <UserRound className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <span className="font-medium text-foreground">
                                     {(() => {
                                         const u = users.find(
@@ -388,11 +397,18 @@ export function PositionTable({
                                             : `—`;
                                     })()}
                                 </span>
-                                {' users'}
+                                {(() => {
+                                    const u = users.find(
+                                        (u) => u.positionId === position.id,
+                                    )?.users;
+                                    return u && u.length === 1
+                                        ? ' user'
+                                        : ' users';
+                                })()}
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">
-                                <Calendar className="h-3.5 w-3.5" />
+                                <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                                 <span className="font-medium text-muted-foreground break-words">
                                     {format(position.createdAt, 'MMM dd, yyyy')}
                                 </span>

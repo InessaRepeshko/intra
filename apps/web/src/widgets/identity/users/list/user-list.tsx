@@ -4,17 +4,18 @@ import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
 import {
+    useUserManagerFullNamesQuery,
+    useUserPositionTitlesQuery,
     useUsersQuery,
     useUserTeamTitlesQuery,
-    useUserPositionTitlesQuery,
-    useUserManagerFullNamesQuery,
 } from '@entities/identity/user/api/user.queries';
 import type { User } from '@entities/identity/user/model/mappers';
 import {
-    SortDirection,
     IDENTITY_ROLES_ENUM_VALUES,
     IDENTITY_STATUSES_ENUM_VALUES,
     IdentityRole,
+    IdentityStatus,
+    SortDirection,
 } from '@entities/identity/user/model/types';
 import { UsersFilters } from '@entities/identity/user/ui/users-filters';
 import { UsersTable } from '@entities/identity/user/ui/users-table';
@@ -26,9 +27,8 @@ import {
     CardTitle,
 } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
-import { TablePagination } from '@shared/ui/table-pagination';
 import { compareNumberArrays } from '@shared/lib/utils/compare-arrays';
-import { IdentityStatus } from '@entities/identity/user/model/types';
+import { TablePagination } from '@shared/ui/table-pagination';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -50,9 +50,7 @@ export function UsersList() {
     const [resetTrigger, setResetTrigger] = useState(0);
 
     // Feature dialogs state
-    const [deactivateUser, setDeactivateUser] = useState<User | null>(
-        null,
-    );
+    const [deactivateUser, setDeactivateUser] = useState<User | null>(null);
     const [deleteUser, setDeleteUser] = useState<User | null>(null);
 
     // Build query params (exclude all sort params - sorting is client-side only)
@@ -70,11 +68,7 @@ export function UsersList() {
         return params;
     }, [search, roles, statuses, positions, teams]);
 
-    const {
-        data: users = [],
-        isLoading,
-        isError,
-    } = useUsersQuery(queryParams);
+    const { data: users = [], isLoading, isError } = useUsersQuery(queryParams);
 
     const { data: allUsersData = [] } = useUsersQuery({});
     const positionIds = users
@@ -213,10 +207,9 @@ export function UsersList() {
             const lowerSearch = search.toLowerCase();
             result = result.filter(
                 (u) =>
-                    u.fullName &&
-                    u.fullName.toLowerCase().includes(lowerSearch) ||
-                    u.email &&
-                    u.email.toLowerCase().includes(lowerSearch)
+                    (u.fullName &&
+                        u.fullName.toLowerCase().includes(lowerSearch)) ||
+                    (u.email && u.email.toLowerCase().includes(lowerSearch)),
             );
         }
 
@@ -230,7 +223,9 @@ export function UsersList() {
         }
 
         if (roles.length > 0) {
-            result = result.filter((u) => u.roles.some((r) => roles.includes(r)));
+            result = result.filter((u) =>
+                u.roles.some((r) => roles.includes(r)),
+            );
         }
 
         if (statuses.length > 0) {
@@ -242,7 +237,7 @@ export function UsersList() {
                 const title =
                     u.teamId === null || u.teamId === undefined
                         ? 'None'
-                        : teamTitles[u.teamId] ?? '';
+                        : (teamTitles[u.teamId] ?? '');
                 return teams.includes(title);
             });
         }
@@ -252,21 +247,13 @@ export function UsersList() {
                 const title =
                     u.positionId === null || u.positionId === undefined
                         ? 'None'
-                        : positionTitles[u.positionId] ?? '';
+                        : (positionTitles[u.positionId] ?? '');
                 return positions.includes(title);
             });
         }
 
         return result;
-    }, [
-        users,
-        search,
-        dateRange,
-        roles,
-        statuses,
-        teams,
-        positions,
-    ]);
+    }, [users, search, dateRange, roles, statuses, teams, positions]);
 
     // Client-side sorting for all fields
     const sortedUsers = useMemo(() => {
@@ -274,38 +261,34 @@ export function UsersList() {
             switch (sortField) {
                 case 'fullname':
                     return sortDirection === SortDirection.ASC
-                        ? (a.fullName ?? '').localeCompare(
-                            b.fullName ?? '',
-                        )
-                        : (b.fullName ?? '').localeCompare(
-                            a.fullName ?? '',
-                        );
+                        ? (a.fullName ?? '').localeCompare(b.fullName ?? '')
+                        : (b.fullName ?? '').localeCompare(a.fullName ?? '');
                 case 'email': {
                     return sortDirection === SortDirection.ASC
-                        ? (a.email ?? '').localeCompare(
-                            b.email ?? '',
-                        )
-                        : (b.email ?? '').localeCompare(
-                            a.email ?? '',
-                        );
+                        ? (a.email ?? '').localeCompare(b.email ?? '')
+                        : (b.email ?? '').localeCompare(a.email ?? '');
                 }
                 case 'createdAt':
                     return sortDirection === SortDirection.ASC
                         ? a.createdAt?.getTime() - b.createdAt?.getTime()
                         : b.createdAt?.getTime() - a.createdAt?.getTime();
                 case 'status': {
-                    const indexA = IDENTITY_STATUSES_ENUM_VALUES.indexOf(a.status);
-                    const indexB = IDENTITY_STATUSES_ENUM_VALUES.indexOf(b.status);
+                    const indexA = IDENTITY_STATUSES_ENUM_VALUES.indexOf(
+                        a.status,
+                    );
+                    const indexB = IDENTITY_STATUSES_ENUM_VALUES.indexOf(
+                        b.status,
+                    );
                     return sortDirection === SortDirection.ASC
                         ? indexA - indexB
                         : indexB - indexA;
                 }
                 case 'role': {
-                    const indicesA = a.roles?.map(
-                        (role) => IDENTITY_ROLES_ENUM_VALUES.indexOf(role),
+                    const indicesA = a.roles?.map((role) =>
+                        IDENTITY_ROLES_ENUM_VALUES.indexOf(role),
                     );
-                    const indicesB = b.roles?.map(
-                        (role) => IDENTITY_ROLES_ENUM_VALUES.indexOf(role),
+                    const indicesB = b.roles?.map((role) =>
+                        IDENTITY_ROLES_ENUM_VALUES.indexOf(role),
                     );
                     const comparison = compareNumberArrays(indicesA, indicesB);
                     return sortDirection === SortDirection.ASC
@@ -324,12 +307,8 @@ export function UsersList() {
                         : titleB.localeCompare(titleA);
                 }
                 case 'team': {
-                    const titleA = a.teamId
-                        ? (teamTitles[a.teamId] ?? '')
-                        : '';
-                    const titleB = b.teamId
-                        ? (teamTitles[b.teamId] ?? '')
-                        : '';
+                    const titleA = a.teamId ? (teamTitles[a.teamId] ?? '') : '';
+                    const titleB = b.teamId ? (teamTitles[b.teamId] ?? '') : '';
                     return sortDirection === SortDirection.ASC
                         ? titleA.localeCompare(titleB)
                         : titleB.localeCompare(titleA);
@@ -366,7 +345,7 @@ export function UsersList() {
 
     // Summary stats
     const activeUsers = users.filter(
-        (u) => u.status === IdentityStatus.ACTIVE
+        (u) => u.status === IdentityStatus.ACTIVE,
     ).length;
     const totalUsers = users.length;
 
@@ -454,10 +433,10 @@ export function UsersList() {
                             isPositionTitlesLoading ||
                             isTeamTitlesLoading ||
                             isManagerNamesLoading) && (
-                                <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
-                                    <Spinner />
-                                </div>
-                            )}
+                            <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
+                                <Spinner />
+                            </div>
+                        )}
 
                         {/* Error State */}
                         {isError && (

@@ -5,10 +5,10 @@ import type { DateRange } from 'react-day-picker';
 
 import {
     useReviewAnswersCountsQuery,
+    useReviewCycleTitlesQuery,
     useReviewQuestionCountsQuery,
     useReviewRespondentCountsQuery,
     useReviewReviewerCountsQuery,
-    useReviewCycleTitlesQuery,
     useReviewsQuery,
 } from '@entities/feedback360/review/api/review.queries';
 import type { Review } from '@entities/feedback360/review/model/mappers';

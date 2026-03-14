@@ -3,13 +3,13 @@
 import { format } from 'date-fns';
 import {
     Award,
+    Bookmark,
     Calendar,
     Eye,
     FileQuestionMark,
     MoreHorizontal,
     Pencil,
     Trash2,
-    Users,
 } from 'lucide-react';
 
 import { cn } from '@/shared/lib/utils/cn';
@@ -142,27 +142,29 @@ export function CompetenceTable({
                     setIsExpanded(!isExpanded);
                 }}
                 className={cn(
-                    'group flex flex-wrap items-center justify-center gap-1 cursor-pointer transition-all duration-200 p-1 rounded-md hover:bg-muted/50',
+                    'group flex flex-wrap items-center justify-start gap-1 cursor-pointer transition-all duration-200 p-1 rounded-md hover:bg-muted/50',
                     isExpanded ? 'bg-muted/30' : 'max-w-[220px]',
                 )}
             >
                 {isExpanded ? (
-                    <div className="flex flex-wrap gap-1 items-center justify-center animate-in fade-in slide-in-from-top-1">
-                        <Award className="h-3.5 w-3.5 shrink-0" />
-                        {positions.map((p, index) => (
-                            <span
-                                key={p.id}
-                                className="text-sm font-medium text-foreground"
-                            >
-                                {p.title}
-                                {index < positions.length - 1 ? ',' : ''}
-                            </span>
-                        ))}
-                        <ChevronUp className="h-3 w-3 text-muted-foreground ml-1" />
+                    <div className="flex flex-row items-center justify-center gap-1">
+                        <Award className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        <div className="flex flex-col flex-wrap gap-1 items-start justify-start animate-in fade-in slide-in-from-top-1">
+                            {positions.map((p, index) => (
+                                <span
+                                    key={p.id}
+                                    className="text-sm font-medium text-foreground"
+                                >
+                                    {p.title}
+                                    {index < positions.length - 1 ? ',' : ''}
+                                </span>
+                            ))}
+                        </div>
+                        <ChevronUp className="h-3 w-3 text-muted-foreground shrink-0" />
                     </div>
                 ) : (
-                    <div className="flex items-center justify-center text-center gap-1 overflow-hidden">
-                        <Award className="h-3.5 w-3.5 shrink-0" />
+                    <div className="flex items-center justify-center text-center gap-1">
+                        <Award className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                         <span className="text-sm font-medium truncate text-foreground">
                             {firstPosition}
                         </span>
@@ -224,7 +226,7 @@ export function CompetenceTable({
                 />
             ),
             headerClassName:
-                'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+                'min-w-[150px] w-[150px] whitespace-nowrap text-start align-bottom cursor-grab active:cursor-grabbing',
             cell: (questionTemplate) => (
                 <ExpandablePositions
                     positions={positionTitles[questionTemplate.id] || []}
@@ -296,7 +298,7 @@ export function CompetenceTable({
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="rounded-full bg-muted p-4">
-                    <Users className="h-8 w-8 text-muted-foreground" />
+                    <Bookmark className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
                     No competences found
@@ -348,7 +350,9 @@ export function CompetenceTable({
                                 <span className="font-medium text-foreground">
                                     {positionCounts[competence.id] ?? `—`}
                                 </span>
-                                {' positions'}
+                                {positionCounts[competence.id] === 1
+                                    ? ' position'
+                                    : ' positions'}
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">
@@ -357,7 +361,9 @@ export function CompetenceTable({
                                     {questionTemplateCounts[competence.id] ??
                                         `—`}
                                 </span>
-                                {' question templates'}
+                                {questionTemplateCounts[competence.id] === 1
+                                    ? ' question template'
+                                    : ' question templates'}
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">

@@ -153,13 +153,13 @@ const navItems: NavItem[] = [
                 href: '/organisation/positions',
                 icon: Award,
             },
+            {
+                title: 'Users',
+                href: '/identity/users',
+                icon: UserRound,
+                roles: [IdentityRole.HR, IdentityRole.ADMIN],
+            },
         ],
-    },
-    {
-        title: 'Users',
-        href: '/identity/users',
-        icon: UserRound,
-        roles: [IdentityRole.HR, IdentityRole.ADMIN],
     },
     {
         title: 'Profile',

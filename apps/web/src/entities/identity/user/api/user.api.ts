@@ -1,4 +1,7 @@
-import { mapUserResponseDtoToModel, type User } from '@entities/identity/user/model/mappers';
+import {
+    mapUserResponseDtoToModel,
+    type User,
+} from '@entities/identity/user/model/mappers';
 import type {
     CreateUserPayload,
     IdentityRole,
@@ -18,16 +21,24 @@ export async function fetchCurrentUser(): Promise<UserResponseDto> {
 }
 
 export async function fetchUserById(id: number): Promise<UserResponseDto> {
-    const response = await apiClient.get<UserResponseDto>(`${USERS_BASE}/${id}`);
+    const response = await apiClient.get<UserResponseDto>(
+        `${USERS_BASE}/${id}`,
+    );
     return response.data;
 }
 
-export async function fetchUsers(params?: UserSearchQuery): Promise<UserResponseDto[]> {
-    const { data } = await apiClient.get<UserResponseDto[]>(USERS_BASE, { params });
+export async function fetchUsers(
+    params?: UserSearchQuery,
+): Promise<UserResponseDto[]> {
+    const { data } = await apiClient.get<UserResponseDto[]>(USERS_BASE, {
+        params,
+    });
     return data;
 }
 
-export async function createUser(payload: CreateUserPayload): Promise<UserResponseDto> {
+export async function createUser(
+    payload: CreateUserPayload,
+): Promise<UserResponseDto> {
     const { data } = await apiClient.post<UserResponseDto>(USERS_BASE, payload);
     return data;
 }
@@ -55,7 +66,9 @@ export async function changeUserRoles(
 }
 
 export async function fetchFullNameByUserId(userId: number): Promise<string> {
-    const response = await apiClient.get<UserResponseDto>(`${USERS_BASE}/${userId}`);
+    const response = await apiClient.get<UserResponseDto>(
+        `${USERS_BASE}/${userId}`,
+    );
     return (
         response.data?.fullName ??
         `${response.data?.lastName} ${response.data?.firstName}`
@@ -65,7 +78,9 @@ export async function fetchFullNameByUserId(userId: number): Promise<string> {
 export async function fetchManagerNameByManagerId(
     managerId: number,
 ): Promise<string> {
-    const response = await apiClient.get<UserResponseDto>(`${USERS_BASE}/${managerId}`);
+    const response = await apiClient.get<UserResponseDto>(
+        `${USERS_BASE}/${managerId}`,
+    );
     return (
         response.data?.fullName ??
         `${response.data?.lastName} ${response.data?.firstName}`
@@ -79,9 +94,12 @@ export async function fetchUsersByPositionIds(
 
     const results = await Promise.all(
         uniqueIds.map(async (positionId) => {
-            const { data } = await apiClient.get<UserResponseDto[]>(`${USERS_BASE}`, {
-                params: { positionId },
-            });
+            const { data } = await apiClient.get<UserResponseDto[]>(
+                `${USERS_BASE}`,
+                {
+                    params: { positionId },
+                },
+            );
             return { positionId, users: data.map(mapUserResponseDtoToModel) };
         }),
     );

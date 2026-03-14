@@ -15,7 +15,7 @@ import {
 import { fetchUserById } from '@entities/identity/user/api/user.api';
 import {
     type User,
-    mapUserDtoToModel,
+    mapUserResponseDtoToModel,
 } from '@entities/identity/user/model/mappers';
 import { ReviewStage } from '@entities/reporting/report/model/types';
 import { useQueries, useQuery } from '@tanstack/react-query';
@@ -359,7 +359,7 @@ export function useReportRateesQuery(rateeIds: number[]) {
             queryKey: reportKeys.ratee(rateeId),
             queryFn: async () => {
                 const dto = await fetchUserById(rateeId);
-                return mapUserDtoToModel(dto);
+                return mapUserResponseDtoToModel(dto);
             },
         })),
     });
@@ -370,7 +370,7 @@ export function useReportRateeQuery(rateeId: number) {
         queryKey: reportKeys.ratee(rateeId),
         queryFn: async () => {
             const dto = await fetchUserById(rateeId);
-            return mapUserDtoToModel(dto);
+            return mapUserResponseDtoToModel(dto);
         },
         enabled: !!rateeId && rateeId > 0,
     });

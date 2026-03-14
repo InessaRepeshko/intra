@@ -3,7 +3,6 @@
 import {
     Award,
     Flag,
-    RefreshCcw,
     RotateCcw,
     Search,
     UserRoundKey,
@@ -11,14 +10,17 @@ import {
 } from 'lucide-react';
 import type { DateRange } from 'react-day-picker';
 
-import { IdentityRole, IdentityStatus } from '@entities/identity/user/model/types';
+import {
+    IdentityRole,
+    IdentityStatus,
+} from '@entities/identity/user/model/types';
 import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
 import { cn } from '@shared/lib/utils/cn';
 import { DateRangePicker } from '@shared/ui/date-range-picker';
 import { MultiSelect } from '@shared/ui/multi-select';
-import { statusConfig } from './status-badge';
 import { roleConfig } from './role-badge';
+import { statusConfig } from './status-badge';
 
 interface UsersFiltersProps {
     search: string;

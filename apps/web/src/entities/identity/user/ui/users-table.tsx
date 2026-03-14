@@ -6,20 +6,21 @@ import {
     Calendar,
     Crown,
     Eye,
-    FileQuestionMark,
-    FileText,
     Mail,
     MoreHorizontal,
     OctagonMinus,
     Pencil,
-    RefreshCcw,
-    StopCircle,
     Trash2,
-    Users,
+    UserRound,
     UsersRound,
 } from 'lucide-react';
 
 import { User } from '@entities/identity/user/model/mappers';
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from '@shared/components/ui/avatar';
 import { Button } from '@shared/components/ui/button';
 import {
     DropdownMenu,
@@ -40,9 +41,9 @@ import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { IdentityStatus, IdentityRole, SortDirection } from '../model/types';
-import { StatusBadge } from './status-badge';
+import { IdentityStatus, SortDirection } from '../model/types';
 import { RoleBadge } from './role-badge';
+import { StatusBadge } from './status-badge';
 
 interface UsersTableProps {
     users: User[];
@@ -131,23 +132,23 @@ export function UsersTable({
         resetOrder,
     } = useDraggableColumns<
         | 'fullname'
+        | 'role'
         | 'email'
         | 'position'
         | 'team'
         | 'manager'
-        | 'role'
-        | 'status'
         | 'date'
+        | 'status'
         | 'actions'
     >('users-table', [
         'fullname',
+        'role',
         'email',
         'position',
         'team',
         'manager',
-        'role',
-        'status',
         'date',
+        'status',
         'actions',
     ]);
 
@@ -159,13 +160,13 @@ export function UsersTable({
 
     const COLUMNS: Record<
         | 'fullname'
+        | 'role'
         | 'email'
         | 'position'
         | 'team'
         | 'manager'
-        | 'role'
-        | 'status'
         | 'date'
+        | 'status'
         | 'actions',
         {
             header: React.ReactNode;
@@ -185,15 +186,52 @@ export function UsersTable({
                 />
             ),
             headerClassName:
-                'min-w-[250px] w-[300px] cursor-grab active:cursor-grabbing',
+                'min-w-[300px] w-[350px] cursor-grab active:cursor-grabbing',
             cell: (user) => (
-                <div className="flex flex-col gap-0.5 w-full">
+                <div className="flex flex-row items-center gap-1.5 w-full">
+                    <Avatar className="border-2 border-black/10 bg-neutral-100 rounded-full">
+                        <AvatarImage
+                            className="object-cover bg-white/20 text-black text-xs font-medium"
+                            src={user.avatarUrl?.toString()}
+                            alt={user.fullName}
+                        />
+                        <AvatarFallback className="bg-white/20 text-black text-xs font-medium">
+                            {user.lastName?.charAt(0) +
+                                user.firstName?.charAt(0)}
+                        </AvatarFallback>
+                    </Avatar>
                     <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                        {user.fullName ?? `${user.lastName ?? ''} ${user.firstName ?? ''}${user.secondName ? ` ${user.secondName}` : ''}`}
+                        {user.fullName ??
+                            `${user.lastName ?? ''} ${user.firstName ?? ''}${user.secondName ? ` ${user.secondName}` : ''}`}
                     </span>
                 </div>
             ),
             cellClassName: 'min-w-[200px] whitespace-normal',
+        },
+        role: {
+            header: (
+                <SortableHeader
+                    label="Role"
+                    field="role"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (user) => (
+                <div className="flex flex-wrap items-center justify-center gap-1">
+                    {user.roles && user.roles.length > 0 ? (
+                        user.roles.map((role) => (
+                            <RoleBadge key={role} role={role} />
+                        ))
+                    ) : (
+                        <span className="text-muted-foreground">None</span>
+                    )}
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
         },
         email: {
             header: (
@@ -233,9 +271,15 @@ export function UsersTable({
                 <div className="flex items-center justify-start gap-1.5 w-full">
                     <Award className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                        {user.positionId
-                            ? (positionTitles[user.positionId] ?? `None`)
-                            : 'None'}
+                        {user.positionId ? (
+                            (positionTitles[user.positionId] ?? (
+                                <span className="text-muted-foreground">
+                                    None
+                                </span>
+                            ))
+                        ) : (
+                            <span className="text-muted-foreground">None</span>
+                        )}
                     </span>
                 </div>
             ),
@@ -257,9 +301,15 @@ export function UsersTable({
                 <div className="flex items-center justify-start gap-1.5 w-full">
                     <UsersRound className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                        {user.teamId
-                            ? (teamTitles[user.teamId] ?? `None`)
-                            : 'None'}
+                        {user.teamId ? (
+                            (teamTitles[user.teamId] ?? (
+                                <span className="text-muted-foreground">
+                                    None
+                                </span>
+                            ))
+                        ) : (
+                            <span className="text-muted-foreground">None</span>
+                        )}
                     </span>
                 </div>
             ),
@@ -281,53 +331,17 @@ export function UsersTable({
                 <div className="flex items-center justify-start gap-1.5 w-full">
                     <Crown className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                        {user.managerId
-                            ? (managerNames[user.managerId] ?? `None`)
-                            : 'None'}
+                        {user.managerId ? (
+                            (managerNames[user.managerId] ?? (
+                                <span className="text-muted-foreground">
+                                    None
+                                </span>
+                            ))
+                        ) : (
+                            <span className="text-muted-foreground">None</span>
+                        )}
                     </span>
                 </div>
-            ),
-            cellClassName: 'whitespace-nowrap text-center',
-        },
-        role: {
-            header: (
-                <SortableHeader
-                    label="Role"
-                    field="role"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
-            cell: (user) => (
-                <div className="flex flex-wrap items-center justify-center gap-1">
-                    {user.roles && user.roles.length > 0 ? (
-                        user.roles.map((role) => (
-                            <RoleBadge key={role} role={role} />
-                        ))
-                    ) : (
-                        `None`
-                    )}
-                </div>
-            ),
-            cellClassName: 'whitespace-nowrap text-center',
-        },
-        status: {
-            header: (
-                <SortableHeader
-                    label="Status"
-                    field="status"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[80px] w-[100px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
-            cell: (user) => (
-                <StatusBadge key={user.id} status={user.status} />
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
@@ -346,11 +360,28 @@ export function UsersTable({
             cell: (user) => (
                 <div className="flex flex-col items-center justify-start gap-0.5 text-sm">
                     <span className="text-foreground">
-                        {user.createdAt ? format(user.createdAt, 'MMM dd, yyyy') : 'None'}
+                        {user.createdAt
+                            ? format(user.createdAt, 'MMM dd, yyyy')
+                            : 'None'}
                     </span>
                 </div>
             ),
             cellClassName: 'whitespace-nowrap',
+        },
+        status: {
+            header: (
+                <SortableHeader
+                    label="Status"
+                    field="status"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[80px] w-[100px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (user) => <StatusBadge key={user.id} status={user.status} />,
+            cellClassName: 'whitespace-nowrap text-center',
         },
         actions: {
             header: <span className="text-muted-foreground">Actions</span>,
@@ -371,7 +402,7 @@ export function UsersTable({
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="rounded-full bg-muted p-4">
-                    <Users className="h-8 w-8 text-muted-foreground" />
+                    <UserRound className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
                     No users found
@@ -396,7 +427,8 @@ export function UsersTable({
                             <div className="min-w-0 flex-1">
                                 <p className="flex items-center gap-x-2 gap-y-1 font-medium text-foreground flex-wrap">
                                     <span className="break-words">
-                                        {user.fullName ?? `${user.lastName ?? ''} ${user.firstName ?? ''}${user.secondName ? ` ${user.secondName}` : ''}`}
+                                        {user.fullName ??
+                                            `${user.lastName ?? ''} ${user.firstName ?? ''}${user.secondName ? ` ${user.secondName}` : ''}`}
                                     </span>
                                     <span className="whitespace-nowrap">
                                         {user.status ? (
@@ -405,19 +437,24 @@ export function UsersTable({
                                                 status={user.status}
                                             />
                                         ) : (
-                                            `None`
+                                            <span className="text-muted-foreground">
+                                                None
+                                            </span>
                                         )}
                                     </span>
                                 </p>
-                                {/* {user.roles && (
-                                    <p className="mt-0.5 flex flex-row gap-x-4 gap-y-2 text-sm text-muted-foreground flex-wrap">
+                                {user.roles && (
+                                    <p className="mt-0.5 flex flex-row gap-x-2 gap-y-2 text-sm text-muted-foreground flex-wrap">
                                         {user.roles.map((role) => (
                                             <span className="flex items-center gap-1 break-words">
-                                            <RoleBadge key={role.toString()} role={role} />
+                                                <RoleBadge
+                                                    key={role.toString()}
+                                                    role={role}
+                                                />
                                             </span>
                                         ))}
                                     </p>
-                                )} */}
+                                )}
                             </div>
                             <UserActionsMenu
                                 user={user}
@@ -427,19 +464,9 @@ export function UsersTable({
                         </div>
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                                <span className='font-medium text-muted-foreground'>Roles:</span>
-                                {user.roles.map((role) => (
-                                    <RoleBadge key={role.toString()} role={role} />
-                                ))}
-                            </span>
-                        </div>
-                            
-                        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Mail className="shrink-0 h-3.5 w-3.5" />
-                                <span className="font-medium text-muted-foreground break-words">
+                                <span className="font-medium text-foreground break-words">
                                     {user.email ?? 'None'}
                                 </span>
                             </span>
@@ -448,31 +475,52 @@ export function UsersTable({
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Award className="shrink-0 h-3.5 w-3.5" />
-                                <span className="font-medium text-muted-foreground break-words">
-                                    {user.positionId
-                                        ? (positionTitles[user.positionId] ??
-                                            `None`)
-                                        : 'None'}
+                                <span className="font-medium text-foreground break-words">
+                                    {user.positionId ? (
+                                        (positionTitles[user.positionId] ?? (
+                                            <span className="text-muted-foreground">
+                                                None
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="text-muted-foreground">
+                                            None
+                                        </span>
+                                    )}
                                 </span>
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <UsersRound className="shrink-0 h-3.5 w-3.5" />
-                                <span className="font-medium text-muted-foreground break-words">
-                                    {user.teamId
-                                        ? (teamTitles[user.teamId] ??
-                                            `None`)
-                                        : 'None'}
+                                <span className="font-medium text-foreground break-words">
+                                    {user.teamId ? (
+                                        (teamTitles[user.teamId] ?? (
+                                            <span className="text-muted-foreground">
+                                                None
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="text-muted-foreground">
+                                            None
+                                        </span>
+                                    )}
                                 </span>
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <Crown className="shrink-0 h-3.5 w-3.5" />
-                                <span className="font-medium text-muted-foreground break-words">
-                                    {user.managerId
-                                        ? (managerNames[user.managerId] ??
-                                            `None`)
-                                        : 'None'}
+                                <span className="font-medium text-foreground break-words">
+                                    {user.managerId ? (
+                                        (managerNames[user.managerId] ?? (
+                                            <span className="text-muted-foreground">
+                                                None
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="text-muted-foreground">
+                                            None
+                                        </span>
+                                    )}
                                 </span>
                             </span>
                         </div>
