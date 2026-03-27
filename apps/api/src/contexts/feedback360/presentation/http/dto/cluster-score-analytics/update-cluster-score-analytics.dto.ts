@@ -19,6 +19,24 @@ export class UpdateClusterScoreAnalyticsDto {
 
     @ApiPropertyOptional({
         example: 3.5,
+        description: 'Employee density',
+        type: 'number',
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.DENSITY.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.DENSITY.MAX,
+        required: false,
+    })
+    @ToOptionalInt({
+        min: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.DENSITY.MIN,
+        max: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.DENSITY.MAX,
+    })
+    @IsOptional()
+    @IsNumber()
+    @Min(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.DENSITY.MIN)
+    @Max(CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.DENSITY.MAX)
+    employeeDensity?: number;
+
+    @ApiPropertyOptional({
+        example: 3.5,
         description: 'Minimum score',
         type: 'number',
         minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.SCORE.MIN,

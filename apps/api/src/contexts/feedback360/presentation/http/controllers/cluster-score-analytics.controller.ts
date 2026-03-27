@@ -65,6 +65,7 @@ export class ClusterScoreAnalyticsController {
             lowerBound: dto.lowerBound,
             upperBound: dto.upperBound,
             employeesCount: dto.employeesCount,
+            employeeDensity: dto.employeeDensity,
             minScore: dto.minScore,
             maxScore: dto.maxScore,
             averageScore: dto.averageScore,

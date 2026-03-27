@@ -3,6 +3,7 @@ export interface ClusterScoreAnalyticsBaseDto<TDate = Date> {
     cycleId: number;
     clusterId: number;
     employeesCount: number;
+    employeeDensity: number;
     lowerBound: number;
     upperBound: number;
     minScore: number;

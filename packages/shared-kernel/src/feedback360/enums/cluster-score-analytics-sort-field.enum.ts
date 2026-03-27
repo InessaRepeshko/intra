@@ -3,6 +3,7 @@ export enum ClusterScoreAnalyticsSortField {
     CYCLE_ID = 'cycleId',
     CLUSTER_ID = 'clusterId',
     EMPLOYEES_COUNT = 'employeesCount',
+    EMPLOYEE_DENSITY = 'employeeDensity',
     LOWER_BOUND = 'lowerBound',
     UPPER_BOUND = 'upperBound',
     MIN_SCORE = 'minScore',

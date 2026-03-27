@@ -51,6 +51,7 @@ export class ClusterScoreAnalyticsService {
             cycleId: payload.cycleId,
             clusterId: payload.clusterId,
             employeesCount: payload.employeesCount,
+            employeeDensity: payload.employeeDensity,
             lowerBound,
             upperBound,
             minScore,
@@ -99,6 +100,9 @@ export class ClusterScoreAnalyticsService {
             ...(patch.employeesCount !== undefined
                 ? { employeesCount: patch.employeesCount }
                 : {}),
+            ...(patch.employeeDensity !== undefined
+                ? { employeeDensity: patch.employeeDensity }
+                : {}),
             ...(patch.minScore !== undefined
                 ? { minScore: patch.minScore }
                 : {}),
@@ -132,29 +136,45 @@ export class ClusterScoreAnalyticsService {
         await this.cycles.getById(cycleId);
 
         const clusters = await this.clusters.search({});
+        const clusterScores = await this.clusterScores.list({
+            cycleId,
+        });
 
         for (const cluster of clusters) {
             if (!cluster.id) {
                 continue;
             }
 
-            const clusterScores = await this.clusterScores.list({
-                cycleId,
-                clusterId: cluster.id,
-            });
+            const currentClusterScores = clusterScores.filter(
+                (cs) => cs.clusterId === cluster.id,
+            );
 
-            if (!clusterScores.length) {
+            if (!currentClusterScores.length) {
                 continue;
             }
 
-            const scores = clusterScores.map((cs) => new Decimal(cs.score));
+            const scores = currentClusterScores.map(
+                (cs) => new Decimal(cs.score),
+            );
             const minScore = Decimal.min(...scores).toDecimalPlaces(4);
             const maxScore = Decimal.max(...scores).toDecimalPlaces(4);
             const averageScore = scores
                 .reduce((a, b) => a.plus(b), new Decimal(0))
                 .dividedBy(scores.length)
                 .toDecimalPlaces(4);
-            const employeesCount = clusterScores.length;
+            const employeesCount = currentClusterScores.length;
+
+            const competenceClusterIds = clusters
+                .filter((c) => c.competenceId === cluster.competenceId)
+                .map((c) => c.id);
+            const rateesByCompetence = new Set(
+                clusterScores
+                    .filter((cs) => competenceClusterIds.includes(cs.clusterId))
+                    .map((cs) => cs.rateeId),
+            );
+            const employeeDensity = new Decimal(currentClusterScores.length)
+                .dividedBy(rateesByCompetence.size)
+                .toDecimalPlaces(4);
 
             const lowerBound = new Decimal(cluster.lowerBound);
             const upperBound = new Decimal(cluster.upperBound);
@@ -166,6 +186,7 @@ export class ClusterScoreAnalyticsService {
                 cycleId,
                 clusterId: cluster.id,
                 employeesCount,
+                employeeDensity,
                 lowerBound,
                 upperBound,
                 minScore,

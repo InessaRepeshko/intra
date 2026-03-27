@@ -21,6 +21,10 @@ import { IdentityUsersController } from './presentation/http/controllers/identit
         { provide: IDENTITY_USER_REPOSITORY, useExisting: UserRepository },
         { provide: IDENTITY_ROLE_REPOSITORY, useExisting: RoleRepository },
     ],
-    exports: [IdentityUserService, IdentityRoleService],
+    exports: [
+        IdentityUserService,
+        IdentityRoleService,
+        IDENTITY_USER_REPOSITORY,
+    ],
 })
 export class IdentityModule {}

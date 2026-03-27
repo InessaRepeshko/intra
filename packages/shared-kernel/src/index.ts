@@ -275,6 +275,26 @@ export {
     ReportSortField,
 } from './reporting/enums/report-sort-field.enum';
 
+export type {
+    StrategicReportDto,
+    StrategicReportResponseDto,
+} from './reporting/dto/strategic-report/strategic-report-dto.interface';
+export type { StrategicReportSearchQuery } from './reporting/dto/strategic-report/strategic-report-search-query.type';
+export {
+    STRATEGIC_REPORT_SOFT_FIELDS,
+    StrategicReportSortField,
+} from './reporting/enums/strategic-report-sort-field.enum';
+
+export type {
+    StrategicReportAnalyticsDto,
+    StrategicReportAnalyticsResponseDto,
+} from './reporting/dto/strategic-analytics/strategic-analytics-dto.interface';
+export type { StrategicReportAnalyticsSearchQuery } from './reporting/dto/strategic-analytics/strategic-report-analytics-search-query.type';
+export {
+    STRATEGIC_REPORT_ANALYTICS_SORT_FIELDS,
+    StrategicReportAnalyticsSortField,
+} from './reporting/enums/strategic-report-analytics-sort-field.enum';
+
 export type { EntitySummaryMetricsDto } from './reporting/dto/entity-summary-metrics-dto.interface';
 export type { EntitySummaryTotals } from './reporting/dto/entity-summary-totals.type';
 export type { ReportEntitySummaryTotalsDto } from './reporting/dto/report-entity-summary-totals-dto.interface';

@@ -67,6 +67,17 @@ export class ClusterScoreAnalyticsResponse implements ClusterScoreAnalyticsDto {
 
     @ApiProperty({
         example: 2.2,
+        description: 'Employee density in this cluster',
+        type: 'number',
+        required: true,
+        minimum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.DENSITY.MIN,
+        maximum: CLUSTER_SCORE_ANALYTICS_CONSTRAINTS.DENSITY.MAX,
+    })
+    @Expose()
+    employeeDensity!: number;
+
+    @ApiProperty({
+        example: 2.2,
         description: 'Minimum score in this cluster',
         type: 'number',
         required: true,

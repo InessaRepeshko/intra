@@ -208,6 +208,7 @@ model Competence {
   reviewQuestionRelations   ReviewQuestionRelation[]
   clusters                  Cluster[]
   reportAnalytics           ReportAnalytics[]
+  strategicReportAnalytics  StrategicReportAnalytics[]
 
   @@map("library_competences")
 }
@@ -360,6 +361,7 @@ model Cycle {
   reviews               Review[]
   reports               Report[]
   reviewQuestions       Question[]
+  strategicReports      StrategicReport[]
 
   @@index([hrId])
   @@index([stage])
@@ -504,17 +506,18 @@ model ClusterScore {
 }
 
 model ClusterScoreAnalytics {
-  id             Int      @id @default(autoincrement())
-  cycleId        Int      @map("cycle_id")
-  clusterId      Int      @map("cluster_id")
-  employeesCount Int      @default(0) @map("employees_count")
-  lowerBound     Decimal  @map("lower_bound") @db.Decimal(10, 4)
-  upperBound     Decimal  @map("upper_bound") @db.Decimal(10, 4)
-  minScore       Decimal  @map("min_score") @db.Decimal(10, 4)
-  maxScore       Decimal  @map("max_score") @db.Decimal(10, 4)
-  averageScore   Decimal  @map("average_score") @db.Decimal(10, 4)
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+  id              Int      @id @default(autoincrement())
+  cycleId         Int      @map("cycle_id")
+  clusterId       Int      @map("cluster_id")
+  employeesCount  Decimal  @default(0) @map("employees_count") @db.Decimal(10, 4)
+  employeeDensity Decimal? @map("employees_density") @db.Decimal(10, 4)
+  lowerBound      Decimal  @map("lower_bound") @db.Decimal(10, 4)
+  upperBound      Decimal  @map("upper_bound") @db.Decimal(10, 4)
+  minScore        Decimal  @map("min_score") @db.Decimal(10, 4)
+  maxScore        Decimal  @map("max_score") @db.Decimal(10, 4)
+  averageScore    Decimal  @map("average_score") @db.Decimal(10, 4)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
   cycle   Cycle   @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cluster Cluster @relation(fields: [clusterId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -759,4 +762,57 @@ model AuthVerification {
   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@map("auth_verification")
+}
+
+model StrategicReport {
+  id                          Int      @id @default(autoincrement())
+  cycleId                     Int?     @map("cycle_id")
+  rateeCount                  Int      @map("ratee_count")
+  respondentCount             Int      @map("respondent_count")
+  answerCount                 Int      @map("answer_count")
+  reviewerCount               Int      @map("reviewer_count")
+  teamCount                   Int      @map("team_count")
+  positionCount               Int      @map("position_count")
+  competenceCount             Int      @map("competence_count")
+  questionCount               Int      @map("question_count")
+  turnoutPctOfRatees          Decimal? @map("turnout_pct_of_ratees") @db.Decimal(10, 4)
+  turnoutPctOfRespondents     Decimal? @map("turnout_pct_of_respondents") @db.Decimal(10, 4)
+  competenceGeneralAvgSelf    Decimal? @map("competence_general_avg_self") @db.Decimal(10, 4)
+  competenceGeneralAvgTeam    Decimal? @map("competence_general_avg_team") @db.Decimal(10, 4)
+  competenceGeneralAvgOther   Decimal? @map("competence_general_avg_other") @db.Decimal(10, 4)
+  competenceGeneralPctSelf    Decimal? @map("competence_general_pct_self") @db.Decimal(10, 4)
+  competenceGeneralPctTeam    Decimal? @map("competence_general_pct_team") @db.Decimal(10, 4)
+  competenceGeneralPctOther   Decimal? @map("competence_general_pct_other") @db.Decimal(10, 4)
+  competenceGeneralDeltaTeam  Decimal? @map("competence_general_delta_team") @db.Decimal(10, 4)
+  competenceGeneralDeltaOther Decimal? @map("competence_general_delta_other") @db.Decimal(10, 4)
+  createdAt                   DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  cycle     Cycle?                     @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  analytics StrategicReportAnalytics[]
+
+  @@index([cycleId])
+  @@map("reporting_strategic_reports")
+}
+
+model StrategicReportAnalytics {
+  id                         Int      @id @default(autoincrement())
+  strategicReportId          Int      @map("strategic_report_id")
+  competenceId               Int      @map("competence_id")
+  competenceTitle            String   @map("competence_title") @db.Text
+  averageBySelfAssessment    Decimal? @map("average_by_self_assessment") @db.Decimal(10, 4)
+  averageByTeam              Decimal? @map("average_by_team") @db.Decimal(10, 4)
+  averageByOther             Decimal? @map("average_by_other") @db.Decimal(10, 4)
+  percentageBySelfAssessment Decimal? @map("percentage_by_self_assessment") @db.Decimal(10, 4)
+  percentageByTeam           Decimal? @map("percentage_by_team") @db.Decimal(10, 4)
+  percentageByOther          Decimal? @map("percentage_by_other") @db.Decimal(10, 4)
+  deltaPercentageByTeam      Decimal? @map("delta_percentage_by_team") @db.Decimal(10, 4)
+  deltaPercentageByOther     Decimal? @map("delta_percentage_by_other") @db.Decimal(10, 4)
+  createdAt                  DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  strategicReport StrategicReport @relation(fields: [strategicReportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  competence      Competence?     @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([strategicReportId])
+  @@index([competenceId])
+  @@map("reporting_strategic_report_analytics")
 }

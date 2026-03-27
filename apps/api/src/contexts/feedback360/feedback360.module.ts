@@ -5,7 +5,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { IdentityModule } from '../identity/identity.module';
 import { LibraryModule } from '../library/library.module';
-import { CycleFinishedListener } from './application/listeners/cycle-finished.listener';
+import { CycleStageListener } from './application/listeners/cycle-stage.listener';
 import { ANSWER_REPOSITORY } from './application/ports/answer.repository.port';
 import { CLUSTER_SCORE_ANALYTICS_REPOSITORY } from './application/ports/cluster-score-analytics.repository.port';
 import { CLUSTER_SCORE_REPOSITORY } from './application/ports/cluster-score.repository.port';
@@ -53,7 +53,7 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
         ClusterScoreAnalyticsController,
     ],
     providers: [
-        CycleFinishedListener,
+        CycleStageListener,
         CycleService,
         ReviewService,
         ReviewSchedulerService,

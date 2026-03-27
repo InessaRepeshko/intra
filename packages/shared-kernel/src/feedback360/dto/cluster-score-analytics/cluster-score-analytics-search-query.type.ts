@@ -5,6 +5,7 @@ export type ClusterScoreAnalyticsSearchQuery = {
     cycleId?: number;
     clusterId?: number;
     employeesCount?: number;
+    employeeDensity?: number;
     lowerBound?: number;
     upperBound?: number;
     minScore?: number;

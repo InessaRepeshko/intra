@@ -6,7 +6,8 @@ export type ClusterScoreAnalyticsProps = {
     clusterId: number;
     lowerBound: Decimal.Value;
     upperBound: Decimal.Value;
-    employeesCount: number;
+    employeesCount: Decimal.Value;
+    employeeDensity: Decimal.Value;
     minScore: Decimal.Value;
     maxScore: Decimal.Value;
     averageScore: Decimal.Value;
@@ -20,7 +21,8 @@ export class ClusterScoreAnalyticsDomain {
     readonly clusterId: number;
     readonly lowerBound: Decimal;
     readonly upperBound: Decimal;
-    readonly employeesCount: number;
+    readonly employeesCount: Decimal;
+    readonly employeeDensity: Decimal;
     readonly minScore: Decimal;
     readonly maxScore: Decimal;
     readonly averageScore: Decimal;
@@ -33,7 +35,8 @@ export class ClusterScoreAnalyticsDomain {
         this.clusterId = props.clusterId;
         this.lowerBound = new Decimal(props.lowerBound);
         this.upperBound = new Decimal(props.upperBound);
-        this.employeesCount = props.employeesCount;
+        this.employeesCount = new Decimal(props.employeesCount);
+        this.employeeDensity = new Decimal(props.employeeDensity);
         this.minScore = new Decimal(props.minScore);
         this.maxScore = new Decimal(props.maxScore);
         this.averageScore = new Decimal(props.averageScore);

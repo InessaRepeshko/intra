@@ -1,4 +1,3 @@
-import Decimal from 'decimal.js';
 import { ClusterScoreAnalyticsDomain } from '../../../domain/cluster-score-analytics.domain';
 import { ClusterScoreAnalyticsResponse } from '../models/cluster-score-analytics.response';
 import { ClusterScoreHttpMapper } from './cluster-score.http.mapper';
@@ -17,7 +16,12 @@ export class ClusterScoreAnalyticsHttpMapper {
         view.upperBound = ClusterScoreHttpMapper.toScoreRoundedNumber(
             domain.upperBound,
         )!;
-        view.employeesCount = domain.employeesCount;
+        view.employeesCount = ClusterScoreHttpMapper.toScoreRoundedNumber(
+            domain.employeesCount,
+        )!;
+        view.employeeDensity = ClusterScoreHttpMapper.toScoreRoundedNumber(
+            domain.employeeDensity,
+        )!;
         view.minScore = ClusterScoreHttpMapper.toScoreRoundedNumber(
             domain.minScore,
         )!;
@@ -30,14 +34,5 @@ export class ClusterScoreAnalyticsHttpMapper {
         view.createdAt = domain.createdAt!;
         view.updatedAt = domain.updatedAt!;
         return view;
-    }
-
-    private static toRoundedNumber(
-        value: Decimal | number | null | undefined,
-    ): number | null {
-        if (value === null || value === undefined) return null;
-        const decimalValue =
-            value instanceof Decimal ? value : new Decimal(value);
-        return Number(decimalValue.toDecimalPlaces(4).toFixed(4));
     }
 }

@@ -14,7 +14,8 @@ export class ClusterScoreAnalyticsMapper {
             id: analytics.id,
             cycleId: analytics.cycleId,
             clusterId: analytics.clusterId,
-            employeesCount: analytics.employeesCount,
+            employeesCount: new Decimal(analytics.employeesCount),
+            employeeDensity: new Decimal(analytics.employeeDensity),
             lowerBound: new Decimal(analytics.lowerBound),
             upperBound: new Decimal(analytics.upperBound),
             minScore: new Decimal(analytics.minScore),
@@ -37,7 +38,12 @@ export class ClusterScoreAnalyticsMapper {
             upperBound: ClusterScoreMapper.toScoreDecimalString(
                 analytics.upperBound,
             ),
-            employeesCount: analytics.employeesCount,
+            employeesCount: ClusterScoreMapper.toScoreDecimalString(
+                analytics.employeesCount,
+            ),
+            employeeDensity: ClusterScoreMapper.toScoreDecimalString(
+                analytics.employeeDensity,
+            ),
             minScore: ClusterScoreMapper.toScoreDecimalString(
                 analytics.minScore,
             ),

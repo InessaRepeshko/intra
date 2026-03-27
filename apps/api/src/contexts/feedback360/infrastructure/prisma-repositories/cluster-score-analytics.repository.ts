@@ -36,6 +36,7 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
             create: prismaAnalytics,
             update: {
                 employeesCount: prismaAnalytics.employeesCount,
+                employeeDensity: prismaAnalytics.employeeDensity,
                 minScore: prismaAnalytics.minScore,
                 maxScore: prismaAnalytics.maxScore,
                 averageScore: prismaAnalytics.averageScore,
@@ -97,6 +98,7 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
             cycleId,
             clusterId,
             employeesCount,
+            employeeDensity,
             minScore,
             maxScore,
             averageScore,
@@ -105,6 +107,14 @@ export class ClusterScoreAnalyticsRepository implements ClusterScoreAnalyticsRep
             ...(cycleId ? { cycleId } : {}),
             ...(clusterId ? { clusterId } : {}),
             ...(employeesCount ? { employeesCount } : {}),
+            ...(employeeDensity !== undefined
+                ? {
+                      employeeDensity:
+                          ClusterScoreMapper.toScoreDecimalString(
+                              employeeDensity,
+                          ),
+                  }
+                : {}),
             ...(minScore !== undefined
                 ? {
                       minScore:

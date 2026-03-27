@@ -123,6 +123,7 @@ Table library_competences {
   reviewQuestionRelations feedback360_review_question_relations [not null]
   clusters library_clusters [not null]
   reportAnalytics reporting_analytics [not null]
+  strategicReportAnalytics reporting_strategic_report_analytics [not null]
 }
 
 Table library_clusters {
@@ -218,6 +219,7 @@ Table feedback360_cycles {
   reviews feedback360_reviews [not null]
   reports reporting_reports [not null]
   reviewQuestions feedback360_questions [not null]
+  strategicReports reporting_strategic_reports [not null]
 }
 
 Table feedback360_reviews {
@@ -329,7 +331,8 @@ Table feedback360_cluster_score_analytics {
   id Int [pk, increment]
   cycleId Int [not null]
   clusterId Int [not null]
-  employeesCount Int [not null, default: 0]
+  employeesCount Decimal [not null, default: 0]
+  employeeDensity Decimal
   lowerBound Decimal [not null]
   upperBound Decimal [not null]
   minScore Decimal [not null]
@@ -522,6 +525,50 @@ Table auth_verification {
   updatedAt DateTime [default: `now()`, not null]
 }
 
+Table reporting_strategic_reports {
+  id Int [pk, increment]
+  cycleId Int
+  rateeCount Int [not null]
+  respondentCount Int [not null]
+  answerCount Int [not null]
+  reviewerCount Int [not null]
+  teamCount Int [not null]
+  positionCount Int [not null]
+  competenceCount Int [not null]
+  questionCount Int [not null]
+  turnoutPctOfRatees Decimal
+  turnoutPctOfRespondents Decimal
+  competenceGeneralAvgSelf Decimal
+  competenceGeneralAvgTeam Decimal
+  competenceGeneralAvgOther Decimal
+  competenceGeneralPctSelf Decimal
+  competenceGeneralPctTeam Decimal
+  competenceGeneralPctOther Decimal
+  competenceGeneralDeltaTeam Decimal
+  competenceGeneralDeltaOther Decimal
+  createdAt DateTime [default: `now()`, not null]
+  cycle feedback360_cycles
+  analytics reporting_strategic_report_analytics [not null]
+}
+
+Table reporting_strategic_report_analytics {
+  id Int [pk, increment]
+  strategicReportId Int [not null]
+  competenceId Int [not null]
+  competenceTitle String [not null]
+  averageBySelfAssessment Decimal
+  averageByTeam Decimal
+  averageByOther Decimal
+  percentageBySelfAssessment Decimal
+  percentageByTeam Decimal
+  percentageByOther Decimal
+  deltaPercentageByTeam Decimal
+  deltaPercentageByOther Decimal
+  createdAt DateTime [default: `now()`, not null]
+  strategicReport reporting_strategic_reports [not null]
+  competence library_competences
+}
+
 Enum IdentityRole {
   ADMIN
   HR
@@ -699,3 +746,9 @@ Ref: reporting_comments.questionId > feedback360_questions.id [delete: No Action
 Ref: auth_session.userId > auth_user.id [delete: Cascade]
 
 Ref: auth_account.userId > auth_user.id [delete: Cascade]
+
+Ref: reporting_strategic_reports.cycleId > feedback360_cycles.id [delete: No Action]
+
+Ref: reporting_strategic_report_analytics.strategicReportId > reporting_strategic_reports.id [delete: No Action]
+
+Ref: reporting_strategic_report_analytics.competenceId > library_competences.id [delete: No Action]
