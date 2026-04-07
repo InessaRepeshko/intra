@@ -5,84 +5,53 @@ import { ReviewStage } from '@intra/shared-kernel';
  * Defines which stage transitions are allowed
  */
 export const REVIEW_STAGE_TRANSITIONS: Record<ReviewStage, ReviewStage[]> = {
-    // Initial stage - can be cancelled or move to user verification
-    [ReviewStage.VERIFICATION_BY_HR]: [
-        ReviewStage.VERIFICATION_BY_USER,
-        ReviewStage.REJECTED,
-        ReviewStage.CANCELED,
-    ],
+    [ReviewStage.NEW]: [ReviewStage.SELF_ASSESSMENT, ReviewStage.CANCELED],
 
-    // User verifies respondents - can accept, reject, or cancel
-    [ReviewStage.VERIFICATION_BY_USER]: [
-        ReviewStage.SELF_ASSESSMENT,
-        ReviewStage.WAITING_TO_START,
-        ReviewStage.REJECTED,
-        ReviewStage.CANCELED,
-    ],
-
-    // Rejected - needs to go back for fixes
-    [ReviewStage.REJECTED]: [
-        ReviewStage.VERIFICATION_BY_HR,
-        ReviewStage.VERIFICATION_BY_USER,
-        ReviewStage.CANCELED,
-    ],
-
-    // Self assessment phase - can proceed or be cancelled
     [ReviewStage.SELF_ASSESSMENT]: [
         ReviewStage.WAITING_TO_START,
         ReviewStage.IN_PROGRESS,
         ReviewStage.CANCELED,
     ],
 
-    // Waiting for official start - can begin or be cancelled
     [ReviewStage.WAITING_TO_START]: [
         ReviewStage.IN_PROGRESS,
+        ReviewStage.FINISHED,
         ReviewStage.CANCELED,
     ],
 
-    // Active feedback collection - can complete or be cancelled
-    [ReviewStage.IN_PROGRESS]: [
-        ReviewStage.PREPARING_REPORT,
-        ReviewStage.CANCELED,
-    ],
+    [ReviewStage.IN_PROGRESS]: [ReviewStage.FINISHED, ReviewStage.CANCELED],
 
-    // Report generation in progress - moves to HR processing
+    [ReviewStage.FINISHED]: [ReviewStage.PREPARING_REPORT],
+
     [ReviewStage.PREPARING_REPORT]: [
         ReviewStage.PROCESSING_BY_HR,
+        ReviewStage.PUBLISHED,
         ReviewStage.ANALYSIS,
+        ReviewStage.ARCHIVED,
     ],
 
-    // HR reviews and moderates the report
     [ReviewStage.PROCESSING_BY_HR]: [
         ReviewStage.PUBLISHED,
         ReviewStage.ANALYSIS,
+        ReviewStage.ARCHIVED,
     ],
 
-    // Additional analysis if needed
-    [ReviewStage.ANALYSIS]: [
-        ReviewStage.PROCESSING_BY_HR,
-        ReviewStage.PUBLISHED,
-    ],
+    [ReviewStage.PUBLISHED]: [ReviewStage.ANALYSIS, ReviewStage.ARCHIVED],
 
-    // Report is published - can finalize
-    [ReviewStage.PUBLISHED]: [ReviewStage.FINISHED],
+    [ReviewStage.ANALYSIS]: [ReviewStage.ARCHIVED],
 
-    // Terminal states - no further transitions
-    [ReviewStage.FINISHED]: [],
-    [ReviewStage.CANCELED]: [],
+    [ReviewStage.CANCELED]: [ReviewStage.ARCHIVED],
+
+    [ReviewStage.ARCHIVED]: [],
 };
-
-/**
- * System actor ID for automated transitions
- */
-export const SYSTEM_ACTOR_ID = 0;
 
 /**
  * Transition reasons for automated stage changes
  */
 export const TRANSITION_REASONS = {
+    REVIEW_UPDATED: 'Review updated',
     ALL_RESPONSES_COLLECTED: 'All responses collected from respondents',
     DEADLINE_REACHED: 'Review deadline has been reached',
-    HR_FORCE_COMPLETION: 'Manually completed by HR',
+    FORCE_FINISH: 'Manually finished by HR or Admin',
     SYSTEM_AUTOMATED: 'Automated system transition',
 } as const;

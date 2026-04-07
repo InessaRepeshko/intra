@@ -214,7 +214,7 @@ export class ReviewQueryDto {
 
     @ApiPropertyOptional({
         enum: ReviewStage,
-        example: ReviewStage.VERIFICATION_BY_HR,
+        example: ReviewStage.NEW,
         description: 'Review stage',
     })
     @ToOptionalEnum(ReviewStage)

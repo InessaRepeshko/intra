@@ -2,40 +2,51 @@ import { CycleStage } from '@intra/shared-kernel';
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { StrategicReportingService } from 'src/contexts/reporting/application/services/strategic-reporting.service';
-import { CycleStageChangedEvent } from '../../../feedback360/application/events/cycle-stage-changed.event';
-import { ClusterScoreAnalyticsService } from '../../../feedback360/application/services/cluster-score-analytics.service';
+import { CycleStageProcessedEvent } from '../../../feedback360/application/events/cycle-stage-processed.event';
+import { CycleService } from '../../../feedback360/application/services/cycle.service';
 
+/**
+ * Event listener for cycle stage changes
+ * Automatically triggers strategic report generation
+ * when cycle reaches FINISHED stage
+ */
 @Injectable()
 export class CycleStageListener {
     private readonly logger = new Logger(CycleStageListener.name);
 
     constructor(
-        private readonly analytics: ClusterScoreAnalyticsService,
         private readonly strategicReportingService: StrategicReportingService,
+        private readonly cycleService: CycleService,
     ) {}
 
     /*
-     * Handles the cycle.stage.changed event
-     * Generates strategic report for the cycle
+     * Handles the cycle.stage.processed event
+     * Triggers strategic report generation for the cycle
      * when it transitions to the FINISHED stage
+     * updates review stage to PREPARING_REPORT
+     * and then moves it to PUBLISHED stage
      */
-    @OnEvent('cycle.stage.changed')
-    async handleCycleStageChanged(
-        event: CycleStageChangedEvent,
+    @OnEvent('cycle.stage.processed')
+    async handleCycleStageProcessed(
+        event: CycleStageProcessedEvent,
     ): Promise<void> {
-        this.logger.debug(
-            `Cycle ${event.cycleId} transitioned from ${event.fromStage} to ${event.toStage}`,
-        );
-
-        if (event.toStage !== CycleStage.FINISHED) {
+        if (event.currentStage !== CycleStage.FINISHED) {
             return;
         }
 
+        this.logger.debug(
+            `Cycle ${event.cycleId} with stage ${event.currentStage} was processed`,
+        );
         this.logger.debug(
             `Initiating strategic report generation for cycle ${event.cycleId}`,
         );
 
         try {
+            await this.cycleService.changeStage(
+                event.cycleId,
+                CycleStage.PREPARING_REPORT,
+            );
+
             const report =
                 await this.strategicReportingService.generateStrategicReportForCycle(
                     event.cycleId,
@@ -44,9 +55,15 @@ export class CycleStageListener {
             this.logger.debug(
                 `Successfully generated strategic report ${report.id} for cycle ${event.cycleId}`,
             );
+
+            await this.cycleService.changeStage(
+                event.cycleId,
+                CycleStage.PUBLISHED,
+            );
         } catch (error) {
             this.logger.error(
                 `Failed to generate strategic report for cycle ${event.cycleId}: ${error.message}`,
+                error.stack,
             );
         }
     }

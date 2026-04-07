@@ -9,4 +9,5 @@ export interface ReviewRepositoryPort {
     search(query: ReviewSearchQuery): Promise<ReviewDomain[]>;
     updateById(id: number, patch: UpdateReviewPayload): Promise<ReviewDomain>;
     deleteById(id: number): Promise<void>;
+    listByCycleId(cycleId: number): Promise<ReviewDomain[]>;
 }

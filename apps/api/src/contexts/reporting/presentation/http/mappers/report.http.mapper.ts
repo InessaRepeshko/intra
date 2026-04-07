@@ -17,6 +17,8 @@ export class ReportHttpMapper {
         response.reviewId = report.reviewId;
         response.cycleId = report.cycleId ?? null;
         response.respondentCount = report.respondentCount;
+        response.respondentCategories = report.respondentCategories;
+        response.answerCount = report.answerCount;
         response.turnoutPctOfTeam = ReportAnalyticsHttpMapper.roundScore(
             report.turnoutPctOfTeam,
         );

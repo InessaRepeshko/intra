@@ -67,6 +67,8 @@ export class ReportRepository implements ReportRepositoryPort {
             reviewId,
             cycleId,
             respondentCount,
+            respondentCategories,
+            answerCount,
             turnoutPctOfTeam,
             turnoutPctOfOther,
             questionTotAvgBySelf,
@@ -91,6 +93,16 @@ export class ReportRepository implements ReportRepositoryPort {
             ...(reviewId ? { reviewId } : {}),
             ...(cycleId ? { cycleId } : {}),
             ...(respondentCount ? { respondentCount } : {}),
+            ...(respondentCategories
+                ? {
+                      respondentCategories: {
+                          hasSome: respondentCategories.map((c) =>
+                              ReportMapper.toPrismaRespondentCategory(c),
+                          ),
+                      },
+                  }
+                : {}),
+            ...(answerCount ? { answerCount } : {}),
             ...(turnoutPctOfTeam ? { turnoutPctOfTeam } : {}),
             ...(turnoutPctOfOther ? { turnoutPctOfOther } : {}),
             ...(questionTotAvgBySelf ? { questionTotAvgBySelf } : {}),

@@ -221,7 +221,7 @@ export class CreateReviewDto {
 
     @ApiPropertyOptional({
         enum: ReviewStage,
-        example: ReviewStage.VERIFICATION_BY_HR,
+        example: ReviewStage.NEW,
         description: 'Review stage',
         type: 'string',
         required: false,

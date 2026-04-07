@@ -3,20 +3,15 @@ import { Card } from '@shared/components/ui/card';
 import { format } from 'date-fns';
 import { Calendar, FileText, RefreshCcw, Users } from 'lucide-react';
 import { Report } from '../model/mappers';
-import { RespondentCategory } from '../model/types';
 
 interface ReportCycleStatsCardProps {
     report: Report;
     cycleTitle: string;
-    respondentCategories: RespondentCategory[];
-    answerCount: number;
 }
 
 export function ReportCycleStatsCard({
     report,
     cycleTitle,
-    respondentCategories,
-    answerCount,
 }: ReportCycleStatsCardProps) {
     if (!report) {
         return <span className="text-muted-foreground">None</span>;
@@ -43,7 +38,7 @@ export function ReportCycleStatsCard({
                     </div>
                 )}
 
-                {report.respondentCount && respondentCategories.length > 0 && (
+                {report.respondentCategories && (
                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-1 text-sm text-muted-foreground">
                         <Users className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium text-foreground">
@@ -55,17 +50,17 @@ export function ReportCycleStatsCard({
                         <span className="text-muted-foreground whitespace-pre-wrap">
                             in categories
                         </span>
-                        {respondentCategories.map((category) => (
+                        {report.respondentCategories.map((category) => (
                             <CategoryBadge key={category} category={category} />
                         ))}
                     </div>
                 )}
 
-                {answerCount > 0 && (
+                {report.answerCount > 0 && (
                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-1 text-sm text-muted-foreground">
                         <FileText className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium text-foreground">
-                            {answerCount}
+                            {report.answerCount}
                         </span>
                         <span className="text-muted-foreground whitespace-pre-wrap">
                             answers

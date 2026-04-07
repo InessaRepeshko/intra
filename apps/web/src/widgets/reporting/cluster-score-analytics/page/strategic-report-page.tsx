@@ -6,8 +6,6 @@ import {
     useReportQuery,
     useReportRateeQuery,
     useReportReviewQuery,
-    useRespondentCategoryQuery,
-    useReviewAnswerCountQuery,
 } from '@entities/reporting/report/api/report.queries';
 import { EntityType } from '@entities/reporting/report/model/types';
 import { RateeHorisontalCard } from '@entities/reporting/report/ui/ratee-horisontal-card';
@@ -87,18 +85,6 @@ export function StrategicReportPage({ reportId }: { reportId: number }) {
         isLoading: isCycleTitleLoading,
         isError: isCycleTitleError,
     } = useCycleTitleQuery(cycleId);
-
-    const {
-        data: respondentCategories,
-        isLoading: isRespondentCategoriesLoading,
-        isError: isRespondentCategoriesError,
-    } = useRespondentCategoryQuery(reviewId);
-
-    const {
-        data: answerCount,
-        isLoading: isAnswerCountLoading,
-        isError: isAnswerCountError,
-    } = useReviewAnswerCountQuery(reviewId);
 
     const ratee = rateeData
         ? {
@@ -453,13 +439,9 @@ export function StrategicReportPage({ reportId }: { reportId: number }) {
                     {reportData &&
                         !isReportLoading &&
                         !isReportError &&
-                        respondentCategories &&
-                        answerCount &&
                         cycleTitle && (
                             <ReportCycleStatsCard
                                 report={reportData}
-                                respondentCategories={respondentCategories}
-                                answerCount={answerCount}
                                 cycleTitle={cycleTitle}
                             />
                         )}

@@ -35,7 +35,7 @@ import { formatNumber } from '@shared/lib/utils/format-number';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { useEffect } from 'react';
 import { Report } from '../model/mappers';
-import { RespondentCategory, ReviewStage, SortDirection } from '../model/types';
+import { ReviewStage, SortDirection } from '../model/types';
 
 interface ReportsTableProps {
     reports: Report[];
@@ -44,8 +44,6 @@ interface ReportsTableProps {
     rateeTeamTitles: Record<number, string | null>;
     cycleTitles: Record<number, string>;
     reviewStages: Record<number, ReviewStage>;
-    respondentCategories: Record<number, RespondentCategory[]>;
-    answerCounts: Record<number, number>;
     sortField: string;
     sortDirection: SortDirection;
     onSort: (field: string) => void;
@@ -67,7 +65,7 @@ function ReportActionsMenu({ report }: { report: Report }) {
                             router.push(`/reporting/reports/${report.id}`)
                         }
                     >
-                        <FileText className="mr-2 h-4 w-4" />
+                        <FileText className=" h-4 w-4" />
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top" sideOffset={6}>
@@ -85,8 +83,6 @@ export function ReportsTable({
     rateeTeamTitles,
     cycleTitles,
     reviewStages,
-    respondentCategories,
-    answerCounts,
     sortField,
     sortDirection,
     onSort,
@@ -99,6 +95,7 @@ export function ReportsTable({
         handleDragEnd,
         resetOrder,
     } = useDraggableColumns<
+        | 'id'
         | 'ratee'
         | 'cycle'
         | 'stage'
@@ -113,6 +110,7 @@ export function ReportsTable({
         | 'date'
         | 'actions'
     >('reports-table', [
+        'id',
         'ratee',
         'cycle',
         'stage',
@@ -135,6 +133,7 @@ export function ReportsTable({
     }, [resetTrigger, resetOrder]);
 
     const COLUMNS: Record<
+        | 'id'
         | 'ratee'
         | 'cycle'
         | 'stage'
@@ -155,6 +154,27 @@ export function ReportsTable({
             cellClassName: string;
         }
     > = {
+        id: {
+            header: (
+                <SortableHeader
+                    label="#"
+                    field="id"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[75px] w-[75px] text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => (
+                <div className="flex items-center justify-center gap-1.5">
+                    <span className="font-medium text-foreground">
+                        {report.id}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
         ratee: {
             header: (
                 <SortableHeader
@@ -291,15 +311,10 @@ export function ReportsTable({
                 'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => (
                 <div className="flex flex-wrap items-center justify-center gap-1">
-                    {respondentCategories[report.reviewId] ? (
-                        respondentCategories[report.reviewId].map(
-                            (category) => (
-                                <CategoryBadge
-                                    key={category}
-                                    category={category}
-                                />
-                            ),
-                        )
+                    {report.respondentCategories ? (
+                        report.respondentCategories.map((category) => (
+                            <CategoryBadge key={category} category={category} />
+                        ))
                     ) : (
                         <span className="text-muted-foreground">None</span>
                     )}
@@ -320,11 +335,11 @@ export function ReportsTable({
             headerClassName:
                 'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) =>
-                answerCounts[report.reviewId] ? (
+                report.answerCount ? (
                     <div className="flex items-center justify-center gap-1.5">
                         <FileText className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium text-foreground">
-                            {answerCounts[report.reviewId]}
+                            {report.answerCount}
                         </span>
                     </div>
                 ) : (
@@ -512,6 +527,9 @@ export function ReportsTable({
                         <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0 flex-1">
                                 <p className="flex items-center gap-x-2 gap-y-1 font-medium text-foreground flex-wrap">
+                                    <span className="text-muted-foreground">
+                                        #{report.id}
+                                    </span>
                                     <span className="break-words">
                                         {rateeFullNames[report.reviewId] ?? (
                                             <span className="text-muted-foreground">
@@ -599,9 +617,9 @@ export function ReportsTable({
                             <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
                                 <span className="flex items-center gap-1 text-muted-foreground flex-wrap">
                                     <Users className="h-3.5 w-3.5 shrink-0" />
-                                    {answerCounts[report.reviewId] ? (
+                                    {report.answerCount ? (
                                         <span className="font-medium text-foreground">
-                                            {answerCounts[report.reviewId]}
+                                            {report.answerCount}
                                         </span>
                                     ) : (
                                         `—`
@@ -616,15 +634,15 @@ export function ReportsTable({
                                         {' respondents in '}
                                     </span>
                                     <Flag className="flex h-3.5 w-3.5 shrink-0 gap-x-1" />
-                                    {respondentCategories[report.reviewId] ? (
-                                        respondentCategories[
-                                            report.reviewId
-                                        ].map((category) => (
-                                            <CategoryBadge
-                                                key={category}
-                                                category={category}
-                                            />
-                                        ))
+                                    {report.respondentCategories ? (
+                                        report.respondentCategories.map(
+                                            (category) => (
+                                                <CategoryBadge
+                                                    key={category}
+                                                    category={category}
+                                                />
+                                            ),
+                                        )
                                     ) : (
                                         <span className="text-muted-foreground">
                                             None

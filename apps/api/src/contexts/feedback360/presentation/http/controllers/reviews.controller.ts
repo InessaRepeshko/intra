@@ -120,8 +120,9 @@ export class ReviewController {
     async update(
         @Param('id') id: string,
         @Body() dto: UpdateReviewDto,
+        @CurrentUser() actor: UserDomain,
     ): Promise<ReviewResponse> {
-        const updated = await this.reviews.update(Number(id), dto);
+        const updated = await this.reviews.update(Number(id), dto, actor);
         return ReviewHttpMapper.toResponse(updated);
     }
 
@@ -429,30 +430,29 @@ export class ReviewController {
      * MANUAL TRIGGER: HR force-completes a review
      * Transitions review to PREPARING_REPORT regardless of pending responses
      */
-    @Post(':id/force-complete')
+    @Post(':id/force-finish')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: 'Force complete Review (HR/Admin only)',
+        summary: 'Force finish Review (HR/Admin only)',
         description:
-            'Manually transition review to PREPARING_REPORT stage, even if some responses are pending',
+            'Manually transition review to PREPARING_REPORT stage, even if some responses are pending or in-progress',
     })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
     @ApiResponse({
         status: HttpStatus.OK,
-        description: 'Review stage changed to PREPARING_REPORT',
+        type: ReviewResponse,
     })
     @ApiCreateAndUpdateErrorResponses()
-    async forceComplete(
+    async forceFinish(
         @Param('id') id: string,
         @CurrentUser() user: UserDomain,
-    ): Promise<{ message: string }> {
+    ): Promise<ReviewResponse> {
+        const reviewId = Number(id);
         const actorId = user.id!;
         const actorName = user.fullName;
 
-        await this.reviews.forceCompleteReview(Number(id), actorId, actorName);
-
-        return {
-            message: `Review ${id} has been force-completed and moved to PREPARING_REPORT stage`,
-        };
+        await this.reviews.forceFinishReview(reviewId, actorId, actorName);
+        const updated = await this.reviews.getById(reviewId);
+        return ReviewHttpMapper.toResponse(updated);
     }
 }

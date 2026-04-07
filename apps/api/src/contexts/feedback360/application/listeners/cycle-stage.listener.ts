@@ -1,14 +1,23 @@
 import { CycleStage } from '@intra/shared-kernel';
 import { Injectable, Logger } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { CycleStageChangedEvent } from '../../../feedback360/application/events/cycle-stage-changed.event';
 import { ClusterScoreAnalyticsService } from '../../../feedback360/application/services/cluster-score-analytics.service';
+import { CycleStageProcessedEvent } from '../events/cycle-stage-processed.event';
 
+/**
+ * Event listener for cycle stage changes
+ * Automatically triggers cluster score analytics generation for the cycle
+ * when it transitions to the FINISHED stage
+ */
 @Injectable()
 export class CycleStageListener {
     private readonly logger = new Logger(CycleStageListener.name);
 
-    constructor(private readonly analytics: ClusterScoreAnalyticsService) {}
+    constructor(
+        private readonly analytics: ClusterScoreAnalyticsService,
+        private readonly eventEmitter: EventEmitter2,
+    ) {}
 
     /*
      * Handles the cycle.stage.changed event
@@ -24,6 +33,11 @@ export class CycleStageListener {
         );
 
         if (event.toStage !== CycleStage.FINISHED) {
+            // Emit event for listeners to react
+            this.eventEmitter.emit(
+                'cycle.stage.processed',
+                CycleStageProcessedEvent.fromCycleStageChangedEvent(event),
+            );
             return;
         }
 
@@ -40,6 +54,12 @@ export class CycleStageListener {
         } catch (error) {
             this.logger.error(
                 `Failed to generate cluster score analytics for cycle ${event.cycleId}: ${error.message}`,
+            );
+        } finally {
+            // Emit event for listeners to react
+            this.eventEmitter.emit(
+                'cycle.stage.processed',
+                CycleStageProcessedEvent.fromCycleStageChangedEvent(event),
             );
         }
     }

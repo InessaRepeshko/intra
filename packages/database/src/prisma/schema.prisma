@@ -68,7 +68,8 @@ model User {
   reviewsAsReviewer  Reviewer[]           @relation("reviews_as_reviewer")
   reviewsAsManager   Review[]             @relation("review_as_manager")
   clusterScores      ClusterScore[]       @relation("cluster_ratee_scores")
-  stageChangeHistory ReviewStageHistory[] @relation("stage_change_actor")
+  stageChangeHistory ReviewStageHistory[] @relation("review_stage_change_actor")
+  cycleStageHistory  CycleStageHistory[]  @relation("cycle_stage_change_actor")
 
   @@index([managerId])
   @@index([positionId])
@@ -296,11 +297,13 @@ model CompetenceQuestionTemplateRelation {
  */
 
 enum CycleStage {
-  CANCELED @map("canceled")
-  NEW      @map("new")
-  ACTIVE   @map("active")
-  FINISHED @map("finished")
-  ARCHIVED @map("archived")
+  NEW              @map("new")
+  ACTIVE           @map("active")
+  FINISHED         @map("finished")
+  PREPARING_REPORT @map("preparing_report")
+  PUBLISHED        @map("published")
+  CANCELED         @map("canceled")
+  ARCHIVED         @map("archived")
 
   @@map("feedback360_cycle_stage")
 }
@@ -315,18 +318,17 @@ enum ResponseStatus {
 }
 
 enum ReviewStage {
-  CANCELED             @map("canceled")
-  VERIFICATION_BY_HR   @map("verification_by_hr")
-  VERIFICATION_BY_USER @map("verification_by_user")
-  REJECTED             @map("rejected")
-  SELF_ASSESSMENT      @map("self_assessment")
-  WAITING_TO_START     @map("waiting_to_start")
-  IN_PROGRESS          @map("in_progress")
-  PREPARING_REPORT     @map("preparing_report")
-  PROCESSING_BY_HR     @map("processing_by_hr")
-  PUBLISHED            @map("published")
-  ANALYSIS             @map("analysis")
-  FINISHED             @map("finished")
+  NEW              @map("new")
+  SELF_ASSESSMENT  @map("self_assessment")
+  WAITING_TO_START @map("waiting_to_start")
+  IN_PROGRESS      @map("in_progress")
+  FINISHED         @map("finished")
+  PREPARING_REPORT @map("preparing_report")
+  PROCESSING_BY_HR @map("processing_by_hr")
+  PUBLISHED        @map("published")
+  ANALYSIS         @map("analysis")
+  CANCELED         @map("canceled")
+  ARCHIVED         @map("archived")
 
   @@map("feedback360_review_stage")
 }
@@ -362,10 +364,30 @@ model Cycle {
   reports               Report[]
   reviewQuestions       Question[]
   strategicReports      StrategicReport[]
+  cycleStageHistories   CycleStageHistory[]
 
   @@index([hrId])
   @@index([stage])
   @@map("feedback360_cycles")
+}
+
+model CycleStageHistory {
+  id            Int        @id @default(autoincrement())
+  cycleId       Int        @map("cycle_id")
+  fromStage     CycleStage @map("from_stage")
+  toStage       CycleStage @map("to_stage")
+  changedById   Int?       @map("changed_by_id")
+  changedByName String?    @map("changed_by_name") @db.VarChar(302)
+  reason        String?    @db.Text
+  createdAt     DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+
+  cycle     Cycle @relation(fields: [cycleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  changedBy User? @relation("cycle_stage_change_actor", fields: [changedById], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([cycleId])
+  @@index([changedById])
+  @@index([createdAt])
+  @@map("feedback360_cycle_stage_history")
 }
 
 model Review {
@@ -385,7 +407,7 @@ model Review {
   managerPositionTitle String?     @map("manager_position_title") @db.Text
   cycleId              Int?        @map("cycle_id")
   reportId             Int?        @map("report_id")
-  stage                ReviewStage @default(VERIFICATION_BY_HR)
+  stage                ReviewStage @default(NEW)
   createdAt            DateTime    @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt            DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
@@ -595,7 +617,7 @@ model ReviewStageHistory {
   createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamp(0)
 
   review    Review @relation(fields: [reviewId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  changedBy User?  @relation("stage_change_actor", fields: [changedById], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  changedBy User?  @relation("review_stage_change_actor", fields: [changedById], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
   @@index([reviewId])
   @@index([changedById])
@@ -622,29 +644,31 @@ enum CommentSentiment {
 }
 
 model Report {
-  id                            Int      @id @default(autoincrement())
-  reviewId                      Int      @unique() @map("review_id")
-  cycleId                       Int?     @map("cycle_id")
-  respondentCount               Int      @map("respondent_count")
-  turnoutPctOfTeam              Decimal? @map("turnout_pct_of_team") @db.Decimal(10, 4)
-  turnoutPctOfOther             Decimal? @map("turnout_pct_of_other") @db.Decimal(10, 4)
-  questionTotAvgBySelf          Decimal? @map("question_tot_avg_by_self") @db.Decimal(10, 4)
-  questionTotAvgByTeam          Decimal? @map("question_tot_avg_by_team") @db.Decimal(10, 4)
-  questionTotAvgByOthers        Decimal? @map("question_tot_avg_by_others") @db.Decimal(10, 4)
-  questionTotPctBySelf          Decimal? @map("question_tot_pct_by_self") @db.Decimal(10, 4)
-  questionTotPctByTeam          Decimal? @map("question_tot_pct_by_team") @db.Decimal(10, 4)
-  questionTotPctByOthers        Decimal? @map("question_tot_pct_by_others") @db.Decimal(10, 4)
-  questionTotDeltaPctByTeam     Decimal? @map("question_tot_delta_pct_by_team") @db.Decimal(10, 4)
-  questionTotDeltaPctByOthers   Decimal? @map("question_tot_delta_pct_by_others") @db.Decimal(10, 4)
-  competenceTotAvgBySelf        Decimal? @map("competence_tot_avg_by_self") @db.Decimal(10, 4)
-  competenceTotAvgByTeam        Decimal? @map("competence_tot_avg_by_team") @db.Decimal(10, 4)
-  competenceTotAvgByOthers      Decimal? @map("competence_tot_avg_by_others") @db.Decimal(10, 4)
-  competenceTotPctBySelf        Decimal? @map("competence_tot_pct_by_self") @db.Decimal(10, 4)
-  competenceTotPctByTeam        Decimal? @map("competence_tot_pct_by_team") @db.Decimal(10, 4)
-  competenceTotPctByOthers      Decimal? @map("competence_tot_pct_by_others") @db.Decimal(10, 4)
-  competenceTotDeltaPctByTeam   Decimal? @map("competence_tot_delta_pct_by_team") @db.Decimal(10, 4)
-  competenceTotDeltaPctByOthers Decimal? @map("competence_tot_delta_pct_by_others") @db.Decimal(10, 4)
-  createdAt                     DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  id                            Int                  @id @default(autoincrement())
+  reviewId                      Int                  @unique() @map("review_id")
+  cycleId                       Int?                 @map("cycle_id")
+  respondentCount               Int                  @map("respondent_count")
+  respondentCategories          RespondentCategory[] @map("respondent_categories")
+  answerCount                   Int                  @map("answer_count")
+  turnoutPctOfTeam              Decimal?             @map("turnout_pct_of_team") @db.Decimal(10, 4)
+  turnoutPctOfOther             Decimal?             @map("turnout_pct_of_other") @db.Decimal(10, 4)
+  questionTotAvgBySelf          Decimal?             @map("question_tot_avg_by_self") @db.Decimal(10, 4)
+  questionTotAvgByTeam          Decimal?             @map("question_tot_avg_by_team") @db.Decimal(10, 4)
+  questionTotAvgByOthers        Decimal?             @map("question_tot_avg_by_others") @db.Decimal(10, 4)
+  questionTotPctBySelf          Decimal?             @map("question_tot_pct_by_self") @db.Decimal(10, 4)
+  questionTotPctByTeam          Decimal?             @map("question_tot_pct_by_team") @db.Decimal(10, 4)
+  questionTotPctByOthers        Decimal?             @map("question_tot_pct_by_others") @db.Decimal(10, 4)
+  questionTotDeltaPctByTeam     Decimal?             @map("question_tot_delta_pct_by_team") @db.Decimal(10, 4)
+  questionTotDeltaPctByOthers   Decimal?             @map("question_tot_delta_pct_by_others") @db.Decimal(10, 4)
+  competenceTotAvgBySelf        Decimal?             @map("competence_tot_avg_by_self") @db.Decimal(10, 4)
+  competenceTotAvgByTeam        Decimal?             @map("competence_tot_avg_by_team") @db.Decimal(10, 4)
+  competenceTotAvgByOthers      Decimal?             @map("competence_tot_avg_by_others") @db.Decimal(10, 4)
+  competenceTotPctBySelf        Decimal?             @map("competence_tot_pct_by_self") @db.Decimal(10, 4)
+  competenceTotPctByTeam        Decimal?             @map("competence_tot_pct_by_team") @db.Decimal(10, 4)
+  competenceTotPctByOthers      Decimal?             @map("competence_tot_pct_by_others") @db.Decimal(10, 4)
+  competenceTotDeltaPctByTeam   Decimal?             @map("competence_tot_delta_pct_by_team") @db.Decimal(10, 4)
+  competenceTotDeltaPctByOthers Decimal?             @map("competence_tot_delta_pct_by_others") @db.Decimal(10, 4)
+  createdAt                     DateTime             @default(now()) @map("created_at") @db.Timestamp(0)
 
   review    Review            @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cycle     Cycle?            @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)

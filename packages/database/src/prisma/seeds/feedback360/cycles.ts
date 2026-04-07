@@ -10,7 +10,7 @@ export const CYCLE_SEED_DATA = [
         title: 'Mid-Year Performance Review 2025',
         description:
             'Mid-year 360-degree feedback cycle focusing on H1 2025 achievements and development areas',
-        stage: CycleStage.FINISHED,
+        stage: CycleStage.ACTIVE,
         isActive: false,
         minRespondentsThreshold: 3,
         startDate: new Date('2025-05-01T09:00:00Z'),
@@ -23,7 +23,7 @@ export const CYCLE_SEED_DATA = [
         title: 'Annual Performance Review 2025',
         description:
             'Year-end 360-degree feedback cycle for comprehensive 2025 performance evaluation',
-        stage: CycleStage.FINISHED,
+        stage: CycleStage.ACTIVE,
         isActive: false,
         minRespondentsThreshold: 3,
         startDate: new Date('2025-11-01T09:00:00Z'),

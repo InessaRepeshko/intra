@@ -40,6 +40,13 @@ export class ReviewRepository implements ReviewRepositoryPort {
         return items.map(ReviewMapper.toDomain);
     }
 
+    async listByCycleId(cycleId: number): Promise<ReviewDomain[]> {
+        const reviews = await this.prisma.review.findMany({
+            where: { cycleId },
+        });
+        return reviews.map(ReviewMapper.toDomain);
+    }
+
     async updateById(
         id: number,
         patch: UpdateReviewPayload,

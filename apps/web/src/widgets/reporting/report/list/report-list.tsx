@@ -15,8 +15,6 @@ import {
     useRateePositionTitlesQuery,
     useRateeTeamTitlesQuery,
     useReportsQuery,
-    useRespondentCategoriesQuery,
-    useReviewAnswerCountsQuery,
     useReviewStagesQuery,
 } from '@entities/reporting/report/api/report.queries';
 import type { Report } from '@entities/reporting/report/model/mappers';
@@ -146,10 +144,6 @@ export function ReportsList() {
         return sortedStages;
     }, [allReportsData, reviewStages]);
 
-    // Fetch respondent categories and answer counts for all reports
-    const { respondentCategories } = useRespondentCategoriesQuery(allReviewIds);
-    const { answerCounts } = useReviewAnswerCountsQuery(allReviewIds);
-
     const handleSort = (field: string) => {
         if (sortField === field) {
             setSortDirection((prev) =>
@@ -185,10 +179,11 @@ export function ReportsList() {
             const lowerSearch = search.toLowerCase();
             result = result.filter(
                 (r) =>
-                    rateeFullNames[r.reviewId] &&
-                    rateeFullNames[r.reviewId]
-                        .toLowerCase()
-                        .includes(lowerSearch),
+                    r.id.toString().includes(lowerSearch) ||
+                    (rateeFullNames[r.reviewId] &&
+                        rateeFullNames[r.reviewId]
+                            .toLowerCase()
+                            .includes(lowerSearch)),
             );
         }
 
@@ -253,6 +248,11 @@ export function ReportsList() {
     const sortedReports = useMemo(() => {
         return [...filteredReports].sort((a, b) => {
             switch (sortField) {
+                case 'id': {
+                    return sortDirection === SortDirection.ASC
+                        ? a.id - b.id
+                        : b.id - a.id;
+                }
                 case 'title': {
                     const nameA = rateeFullNames[a.reviewId] ?? '';
                     const nameB = rateeFullNames[b.reviewId] ?? '';
@@ -294,11 +294,11 @@ export function ReportsList() {
                         : countB - countA;
                 }
                 case 'respondentCategories': {
-                    const indicesA = respondentCategories[a.reviewId]?.map(
-                        (cat) => RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(cat),
+                    const indicesA = a.respondentCategories?.map((cat) =>
+                        RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(cat),
                     );
-                    const indicesB = respondentCategories[b.reviewId]?.map(
-                        (cat) => RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(cat),
+                    const indicesB = b.respondentCategories?.map((cat) =>
+                        RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(cat),
                     );
                     const comparison = compareNumberArrays(indicesA, indicesB);
                     return sortDirection === SortDirection.ASC
@@ -306,8 +306,8 @@ export function ReportsList() {
                         : -comparison;
                 }
                 case 'answerCount': {
-                    const countA = answerCounts[a.reviewId] ?? -1;
-                    const countB = answerCounts[b.reviewId] ?? -1;
+                    const countA = a.answerCount ?? -1;
+                    const countB = b.answerCount ?? -1;
                     return sortDirection === SortDirection.ASC
                         ? countA - countB
                         : countB - countA;
@@ -368,8 +368,6 @@ export function ReportsList() {
         rateeTeamTitles,
         cycleTitles,
         reviewStages,
-        respondentCategories,
-        answerCounts,
     ]);
 
     const totalPages = Math.ceil(sortedReports.length / ITEMS_PER_PAGE);
@@ -488,8 +486,6 @@ export function ReportsList() {
                                     rateeTeamTitles={rateeTeamTitles}
                                     cycleTitles={cycleTitles}
                                     reviewStages={reviewStages}
-                                    respondentCategories={respondentCategories}
-                                    answerCounts={answerCounts}
                                     sortField={sortField}
                                     sortDirection={sortDirection}
                                     onSort={handleSort}

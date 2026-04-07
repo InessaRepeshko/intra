@@ -1,3 +1,4 @@
+import { RespondentCategory } from '../../../feedback360/enums/respondent-category.enum';
 import { ReportEntitySummaryTotalsDto } from '../report-entity-summary-totals-dto.interface';
 
 export interface ReportBaseDto<TDate = Date> {
@@ -5,6 +6,8 @@ export interface ReportBaseDto<TDate = Date> {
     reviewId: number;
     cycleId?: number | null;
     respondentCount: number;
+    respondentCategories: RespondentCategory[];
+    answerCount: number;
     turnoutPctOfTeam?: number | null;
     turnoutPctOfOther?: number | null;
     questionSummaryTotals?: ReportEntitySummaryTotalsDto | null;

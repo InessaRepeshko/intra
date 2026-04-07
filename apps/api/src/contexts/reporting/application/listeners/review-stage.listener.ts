@@ -1,50 +1,67 @@
 import { ReviewStage } from '@intra/shared-kernel';
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { ReviewStageChangedEvent } from '../../../feedback360/application/events/review-stage-changed.event';
+import { ReviewStageProcessedEvent } from 'src/contexts/feedback360/application/events/review-stage-processed.event';
+import { ReviewService } from '../../../feedback360/application/services/review.service';
 import { ReportingService } from '../services/reporting.service';
 
 /**
  * Event listener for review stage changes
- * Automatically triggers report generation when review reaches PREPARING_REPORT stage
+ * Automatically triggers individual report generation
+ * when review reaches FINISHED stage
  */
 @Injectable()
 export class ReviewStageListener {
     private readonly logger = new Logger(ReviewStageListener.name);
 
-    constructor(private readonly reportService: ReportingService) {}
+    constructor(
+        private readonly reportService: ReportingService,
+        private readonly reviewService: ReviewService,
+    ) {}
 
     /**
-     * Handles review.stage.changed events
-     * Triggers report generation when review transitions to PREPARING_REPORT
+     * Handles review.stage.processed events
+     * Triggers individual report generation for the review
+     * when review transitions to FINISHED stage
+     * updates review stage to PREPARING_REPORT
+     * and then moves it to PROCESSING_BY_HR stage
      */
-    @OnEvent('review.stage.changed')
-    async handleReviewStageChanged(
-        event: ReviewStageChangedEvent,
+    @OnEvent('review.stage.processed')
+    async handleReviewStageProcessed(
+        event: ReviewStageProcessedEvent,
     ): Promise<void> {
-        this.logger.debug(
-            `Review ${event.reviewId} transitioned from ${event.fromStage} to ${event.toStage}`,
-        );
-
-        if (event.toStage !== ReviewStage.PREPARING_REPORT) {
+        if (event.currentStage !== ReviewStage.FINISHED) {
             return;
         }
 
         this.logger.debug(
-            `Initiating report generation for review ${event.reviewId}`,
+            `Review ${event.reviewId} with stage ${event.currentStage} was processed`,
+        );
+        this.logger.debug(
+            `Initiating individual report generation for review ${event.reviewId}`,
         );
 
         try {
+            await this.reviewService.changeReviewStage(
+                event.reviewId,
+                ReviewStage.PREPARING_REPORT,
+            );
+
             const report = await this.reportService.generateReportForReview(
                 event.reviewId,
             );
 
             this.logger.debug(
-                `Successfully generated report ${report.id} for review ${event.reviewId}`,
+                `Successfully generated individual report ${report.id} for review ${event.reviewId}`,
+            );
+
+            await this.reviewService.changeReviewStage(
+                event.reviewId,
+                ReviewStage.PROCESSING_BY_HR,
             );
         } catch (error) {
             this.logger.error(
-                `Failed to generate report for review ${event.reviewId}: ${error.message}`,
+                `Failed to generate individual report for review ${event.reviewId}: ${error.message}`,
                 error.stack,
             );
         }

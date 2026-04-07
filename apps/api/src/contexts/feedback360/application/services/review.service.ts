@@ -16,6 +16,7 @@ import {
     ReviewQuestionRelationSearchQuery,
     ReviewSearchQuery,
     ReviewStage,
+    SYSTEM_ACTOR,
     UpdateRespondentPayload,
     UpdateReviewPayload,
     UpsertClusterScorePayload,
@@ -42,10 +43,14 @@ import { ReviewStageHistoryDomain } from '../../domain/review-stage-history.doma
 import { ReviewDomain } from '../../domain/review.domain';
 import { ReviewerDomain } from '../../domain/reviewer.domain';
 import {
+    RESPONSE_STATUS_TRANSITIONS,
+    TRANSITION_REASONS as RESPONSE_TRANSITION_REASONS,
+} from '../constants/response-status-transitions';
+import {
     REVIEW_STAGE_TRANSITIONS,
-    SYSTEM_ACTOR_ID,
-    TRANSITION_REASONS,
+    TRANSITION_REASONS as REVIEW_TRANSITION_REASONS,
 } from '../constants/review-stage-transitions';
+import { RespondentStatusChangedEvent } from '../events/respondent-status-changed.event';
 import { ReviewStageChangedEvent } from '../events/review-stage-changed.event';
 import {
     ANSWER_REPOSITORY,
@@ -127,7 +132,7 @@ export class ReviewService {
             managerPositionId: payload.managerPositionId ?? null,
             managerPositionTitle: payload.managerPositionTitle ?? null,
             cycleId: payload.cycleId ?? null,
-            stage: payload.stage ?? ReviewStage.VERIFICATION_BY_HR,
+            stage: payload.stage ?? ReviewStage.NEW,
             reportId: payload.reportId ?? null,
         });
 
@@ -141,7 +146,8 @@ export class ReviewService {
 
     async getById(id: number, actor?: UserDomain): Promise<ReviewDomain> {
         const review = await this.reviews.findById(id);
-        if (!review) throw new NotFoundException('Review not found');
+        if (!review)
+            throw new NotFoundException('Review with id ' + id + ' not found');
 
         await this.checkAccessToReview(review, actor);
 
@@ -225,11 +231,28 @@ export class ReviewService {
     async update(
         id: number,
         patch: UpdateReviewPayload,
+        actor: UserDomain,
     ): Promise<ReviewDomain> {
-        await this.getById(id);
+        const review = await this.getById(id);
+
+        if (review.stage !== ReviewStage.NEW) {
+            throw new BadRequestException(
+                'Review must be new to be updated. Current stage: ' +
+                    review.stage,
+            );
+        }
 
         if (patch.cycleId) {
-            await this.cycles.getById(patch.cycleId);
+            const cycle = await this.cycles.getById(patch.cycleId);
+            if (
+                cycle.stage !== CycleStage.NEW &&
+                cycle.stage !== CycleStage.ACTIVE
+            ) {
+                throw new BadRequestException(
+                    'Cycle must be new or active to be assigned to review. Current stage: ' +
+                        cycle.stage,
+                );
+            }
         }
 
         const payload: UpdateReviewPayload = {
@@ -265,14 +288,29 @@ export class ReviewService {
                 ? { managerPositionTitle: patch.managerPositionTitle }
                 : {}),
             ...(patch.cycleId !== undefined ? { cycleId: patch.cycleId } : {}),
-            ...(patch.stage !== undefined ? { stage: patch.stage } : {}),
             ...(patch.reportId !== undefined
                 ? { reportId: patch.reportId }
                 : {}),
         };
 
-        await this.reviews.updateById(id, payload);
-        return this.getById(id);
+        const updatedReview = await this.reviews.updateById(id, payload);
+
+        // Reactive Trigger: Check if all responses completed
+        if (patch.stage && patch.stage === ReviewStage.FINISHED) {
+            await this.completeReview(id);
+        }
+
+        if (patch.stage && patch.stage !== ReviewStage.FINISHED) {
+            await this.changeReviewStage(
+                id,
+                patch.stage,
+                actor.id,
+                actor.fullName,
+                REVIEW_TRANSITION_REASONS.REVIEW_UPDATED,
+            );
+        }
+
+        return updatedReview;
     }
 
     async delete(id: number): Promise<void> {
@@ -284,7 +322,16 @@ export class ReviewService {
         payload: CreateQuestionPayload,
     ): Promise<QuestionDomain> {
         if (payload.cycleId) {
-            await this.cycles.getById(payload.cycleId);
+            const cycle = await this.cycles.getById(payload.cycleId);
+            if (
+                cycle.stage !== CycleStage.NEW &&
+                cycle.stage !== CycleStage.ACTIVE
+            ) {
+                throw new BadRequestException(
+                    'Cycle must be in NEW or ACTIVE stage to be assigned to question. Current stage: ' +
+                        cycle.stage,
+                );
+            }
         }
 
         const baseQuestion = payload.questionTemplateId
@@ -321,13 +368,40 @@ export class ReviewService {
     }
 
     async deleteQuestion(id: number): Promise<void> {
+        const question = await this.questions.findById(id);
+
+        if (!question) {
+            throw new NotFoundException('Question not found');
+        }
+
+        if (question.cycleId) {
+            const cycle = await this.cycles.getById(question.cycleId);
+            if (
+                cycle.stage !== CycleStage.NEW &&
+                cycle.stage !== CycleStage.ACTIVE
+            ) {
+                throw new BadRequestException(
+                    'Question cannot be deleted from cycle that is not active. Current stage: ' +
+                        cycle.stage,
+                );
+            }
+        }
+
         await this.questions.deleteById(id);
     }
 
     async attachQuestion(
         payload: AddQuestionToReviewPayload,
     ): Promise<ReviewQuestionRelationDomain> {
-        await this.getById(payload.reviewId);
+        const review = await this.getById(payload.reviewId);
+
+        if (review.stage !== ReviewStage.NEW) {
+            throw new BadRequestException(
+                'Review must be not started to be assigned to question. Current stage: ' +
+                    review.stage,
+            );
+        }
+
         const questionTemplate = await this.questionTemplates.getById(
             payload.questionTemplateId,
         );
@@ -358,7 +432,15 @@ export class ReviewService {
     }
 
     async detachQuestion(reviewId: number, questionId: number): Promise<void> {
-        await this.getById(reviewId);
+        const review = await this.getById(reviewId);
+
+        if (review.stage !== ReviewStage.NEW) {
+            throw new BadRequestException(
+                'Question cannot be unassigned from review that is already started. Current stage: ' +
+                    review.stage,
+            );
+        }
+
         await this.questionRelations.unlink(reviewId, questionId);
     }
 
@@ -366,7 +448,17 @@ export class ReviewService {
         payload: CreateAnswerPayload,
         actor: UserDomain,
     ): Promise<AnswerDomain> {
-        await this.getById(payload.reviewId, actor);
+        const review = await this.getById(payload.reviewId, actor);
+
+        if (
+            review.stage !== ReviewStage.IN_PROGRESS &&
+            review.stage !== ReviewStage.SELF_ASSESSMENT
+        ) {
+            throw new BadRequestException(
+                'Review must be in progress to add answer. Current stage: ' +
+                    review.stage,
+            );
+        }
 
         const answer = AnswerDomain.create({
             reviewId: payload.reviewId,
@@ -377,7 +469,7 @@ export class ReviewService {
             textValue: payload.textValue ?? null,
         });
 
-        return this.answers.create(answer);
+        return await this.answers.create(answer);
     }
 
     async listAnswers(
@@ -394,7 +486,19 @@ export class ReviewService {
     async addRespondent(
         payload: AddRespondentPayload,
     ): Promise<RespondentDomain> {
-        await this.getById(payload.reviewId);
+        const review = await this.getById(payload.reviewId);
+
+        if (
+            review.stage !== ReviewStage.NEW &&
+            review.stage !== ReviewStage.IN_PROGRESS &&
+            review.stage !== ReviewStage.WAITING_TO_START &&
+            review.stage !== ReviewStage.SELF_ASSESSMENT
+        ) {
+            throw new BadRequestException(
+                'Respondent cannot be added to review that is already finished or cancelled. Current stage: ' +
+                    review.stage,
+            );
+        }
 
         const relation = RespondentDomain.create({
             reviewId: payload.reviewId,
@@ -417,28 +521,93 @@ export class ReviewService {
     }
 
     async updateRespondent(
-        id: number,
+        relationId: number,
         patch: UpdateRespondentPayload,
         actor: UserDomain,
     ): Promise<RespondentDomain> {
-        await this.checkAccessToUpdateResponseStatus(id, actor);
+        await this.checkAccessToUpdateResponseStatus(relationId, actor);
 
-        const updated = await this.respondents.updateById(id, patch);
+        const relation = await this.respondents.getById(relationId);
+        const review = await this.getById(relation.reviewId);
 
-        // Reactive Trigger: Check if all responses completed
         if (
-            patch.responseStatus === ResponseStatus.COMPLETED ||
-            patch.responseStatus === ResponseStatus.CANCELED
+            review.stage !== ReviewStage.IN_PROGRESS &&
+            review.stage !== ReviewStage.SELF_ASSESSMENT
         ) {
-            await this.checkReviewCompletion(updated.reviewId);
+            throw new BadRequestException(
+                'Review must be in progress to update response status. Current stage: ' +
+                    review.stage,
+            );
+        }
 
-            const review = await this.getById(updated.reviewId);
-            if (review.cycleId) {
-                await this.checkCompletion(review.cycleId);
-            }
+        const responseStatus = patch.responseStatus;
+        patch.responseStatus = undefined;
+
+        const updated = await this.respondents.updateById(relationId, patch);
+
+        if (responseStatus) {
+            await this.changeRespondentStatus(
+                review.id!,
+                relationId,
+                responseStatus,
+                actor.id!,
+                actor.fullName,
+                RESPONSE_TRANSITION_REASONS.SYSTEM_AUTOMATED,
+            );
         }
 
         return updated;
+    }
+
+    /**
+     * Centralized method for response status transitions with validation
+     * @param reviewId ID of the review
+     * @param nextStatus Target status
+     * @param actorId User ID who initiated the change (0 for system)
+     * @param actorName Full name of the actor
+     * @param reason Optional reason for the transition
+     */
+    async changeRespondentStatus(
+        reviewId: number,
+        relationId: number,
+        nextStatus: ResponseStatus,
+        actorId: number = SYSTEM_ACTOR.ID,
+        actorName: string = SYSTEM_ACTOR.NAME,
+        reason: string = RESPONSE_TRANSITION_REASONS.SYSTEM_AUTOMATED,
+    ): Promise<void> {
+        const review = await this.getById(reviewId);
+        const respondent = await this.respondents.getById(relationId);
+        if (respondent.reviewId != reviewId) {
+            throw new BadRequestException(
+                `Respondent relation ${relationId} does not belong to review ${reviewId}`,
+            );
+        }
+        const currentStatus = respondent.responseStatus;
+
+        // Validate transition is allowed
+        const allowedTransitions = RESPONSE_STATUS_TRANSITIONS[currentStatus];
+        if (!allowedTransitions.includes(nextStatus)) {
+            throw new BadRequestException(
+                `Invalid response status transition from ${currentStatus} to ${nextStatus}`,
+            );
+        }
+
+        await this.respondents.updateById(relationId, {
+            responseStatus: nextStatus,
+        });
+
+        this.eventEmitter.emit(
+            'respondent.status.changed',
+            new RespondentStatusChangedEvent(
+                reviewId,
+                relationId,
+                currentStatus,
+                nextStatus,
+                actorId,
+                actorName,
+                reason,
+            ),
+        );
     }
 
     /**
@@ -577,18 +746,18 @@ export class ReviewService {
     }
 
     /**
-     * Centralized method for stage transitions with validation and history tracking
+     * Centralized method for review stage transitions with validation and history tracking
      * @param reviewId ID of the review
      * @param nextStage Target stage
      * @param actorId User ID who initiated the change (0 for system)
      * @param actorName Full name of the actor
      * @param reason Optional reason for the transition
      */
-    async changeStage(
+    async changeReviewStage(
         reviewId: number,
         nextStage: ReviewStage,
-        actorId: number = SYSTEM_ACTOR_ID,
-        actorName: string | null = 'System',
+        actorId: number = SYSTEM_ACTOR.ID,
+        actorName: string | null = SYSTEM_ACTOR.NAME,
         reason?: string,
     ): Promise<void> {
         const review = await this.getById(reviewId);
@@ -596,9 +765,10 @@ export class ReviewService {
 
         // Validate transition is allowed
         const allowedTransitions = REVIEW_STAGE_TRANSITIONS[currentStage];
+
         if (!allowedTransitions.includes(nextStage)) {
             throw new BadRequestException(
-                `Invalid stage transition from ${currentStage} to ${nextStage}`,
+                `Invalid review stage transition from ${currentStage} to ${nextStage}`,
             );
         }
 
@@ -623,7 +793,7 @@ export class ReviewService {
             await this.stageHistory.create(history);
         });
 
-        // Emit event for other modules to react
+        // Emit event for listeners to react
         this.eventEmitter.emit(
             'review.stage.changed',
             new ReviewStageChangedEvent(
@@ -651,95 +821,52 @@ export class ReviewService {
      * If yes, automatically transitions the review to the PREPARING_REPORT stage.
      * @param reviewId The review identifier.
      */
-    async checkReviewCompletion(reviewId: number): Promise<void> {
-        const review = await this.getById(reviewId);
-
-        // Only check if review is currently in progress
-        if (review.stage !== ReviewStage.IN_PROGRESS) {
-            return;
-        }
+    async completeReview(reviewId: number): Promise<void> {
+        await this.getById(reviewId);
 
         // Get all respondents for this review
         const respondents = await this.respondents.listByReview(reviewId, {});
 
         // Check if there are any pending or in-progress respondents
-        const hasPendingResponses = respondents.some(
+        const incompleteRespondents = respondents.filter(
             (r) =>
                 r.responseStatus === ResponseStatus.PENDING ||
                 r.responseStatus === ResponseStatus.IN_PROGRESS,
         );
+        const hasPendingResponses = incompleteRespondents.length > 0;
 
         // If no pending responses, trigger report generation
         if (!hasPendingResponses && respondents.length > 0) {
-            await this.changeStage(
+            await this.changeReviewStage(
                 reviewId,
-                ReviewStage.PREPARING_REPORT,
-                SYSTEM_ACTOR_ID,
-                'System',
-                TRANSITION_REASONS.ALL_RESPONSES_COLLECTED,
+                ReviewStage.FINISHED,
+                SYSTEM_ACTOR.ID,
+                SYSTEM_ACTOR.NAME,
+                REVIEW_TRANSITION_REASONS.ALL_RESPONSES_COLLECTED,
+            );
+        } else {
+            throw new BadRequestException(
+                'All responses must be collected to finish the review. Incomplete responses count: ' +
+                    incompleteRespondents.length,
             );
         }
     }
 
     /**
-     * REACTIVE TRIGGER: Checks if all respondents in a cycle have completed their responses.
-     * If yes, automatically transitions the cycle to the FINISHED stage.
-     * @param cycleId The cycle identifier.
-     */
-    async checkCompletion(cycleId: number): Promise<void> {
-        const cycle = await this.cycles.getById(cycleId);
-
-        if (cycle.stage !== CycleStage.ACTIVE) {
-            return;
-        }
-
-        const reviews = await this.search({ cycleId });
-        if (!reviews.length) {
-            return;
-        }
-
-        let totalRespondents = 0;
-
-        for (const review of reviews) {
-            const respondents = await this.respondents.listByReview(
-                review.id!,
-                {},
-            );
-            totalRespondents += respondents.length;
-
-            const hasPendingResponses = respondents.some(
-                (r) =>
-                    r.responseStatus === ResponseStatus.PENDING ||
-                    r.responseStatus === ResponseStatus.IN_PROGRESS,
-            );
-
-            if (hasPendingResponses) {
-                return;
-            }
-        }
-
-        if (totalRespondents === 0) {
-            return;
-        }
-
-        await this.cycles.finish(cycleId);
-    }
-
-    /**
-     * MANUAL TRIGGER: HR force-completes a review
+     * MANUAL TRIGGER: HR or ADMIN force-finishes a review
      * Transitions review to PREPARING_REPORT regardless of pending responses
      */
-    async forceCompleteReview(
+    async forceFinishReview(
         reviewId: number,
         actorId: number,
         actorName: string,
     ): Promise<void> {
-        await this.changeStage(
+        await this.changeReviewStage(
             reviewId,
-            ReviewStage.PREPARING_REPORT,
+            ReviewStage.FINISHED,
             actorId,
             actorName,
-            TRANSITION_REASONS.HR_FORCE_COMPLETION,
+            REVIEW_TRANSITION_REASONS.FORCE_FINISH,
         );
     }
 }

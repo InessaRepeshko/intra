@@ -323,24 +323,21 @@ export class StrategicReportingService {
                 answerCount: this.calculateActualAnswerCount(answers),
             });
 
-            questionIds.forEach(async (questionId) => {
+            for (const questionId of questionIds) {
                 const question = await this.questions.findById(questionId);
                 if (question) {
                     allQuestions.add(question);
-
-                    if (question.competenceId) {
-                        competenceIds.add(question.competenceId);
-                    }
+                    competenceIds.add(question.competenceId!);
                 }
-            });
+            }
 
-            competenceIds.forEach(async (competenceId) => {
+            for (const competenceId of competenceIds) {
                 const competence =
                     await this.competences.findById(competenceId);
                 if (competence) {
                     allCompetences.add(competence);
                 }
-            });
+            }
 
             const reviewers = await this.reviewers.listByReview(review.id!, {});
             reviewers.forEach((reviewer) => allReviewers.add(reviewer));

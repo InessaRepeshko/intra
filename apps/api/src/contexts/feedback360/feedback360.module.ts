@@ -6,9 +6,12 @@ import { DatabaseModule } from 'src/database/database.module';
 import { IdentityModule } from '../identity/identity.module';
 import { LibraryModule } from '../library/library.module';
 import { CycleStageListener } from './application/listeners/cycle-stage.listener';
+import { RespondentStatusListener } from './application/listeners/respondent-status.listener';
+import { ReviewStageListener } from './application/listeners/review-stage.listener';
 import { ANSWER_REPOSITORY } from './application/ports/answer.repository.port';
 import { CLUSTER_SCORE_ANALYTICS_REPOSITORY } from './application/ports/cluster-score-analytics.repository.port';
 import { CLUSTER_SCORE_REPOSITORY } from './application/ports/cluster-score.repository.port';
+import { CYCLE_STAGE_HISTORY_REPOSITORY } from './application/ports/cycle-stage-history.repository.port';
 import { CYCLE_REPOSITORY } from './application/ports/cycle.repository.port';
 import { QUESTION_REPOSITORY } from './application/ports/question.repository.port';
 import { RESPONDENT_REPOSITORY } from './application/ports/respondent.repository.port';
@@ -23,6 +26,7 @@ import { ReviewService } from './application/services/review.service';
 import { AnswerRepository } from './infrastructure/prisma-repositories/answer.repository';
 import { ClusterScoreAnalyticsRepository } from './infrastructure/prisma-repositories/cluster-score-analytics.repository';
 import { ClusterScoreRepository } from './infrastructure/prisma-repositories/cluster-score.repository';
+import { CycleStageHistoryRepository } from './infrastructure/prisma-repositories/cycle-stage-history.repository';
 import { CycleRepository } from './infrastructure/prisma-repositories/cycle.repository';
 import { QuestionRepository } from './infrastructure/prisma-repositories/question.repository';
 import { RespondentRepository } from './infrastructure/prisma-repositories/respondent.repository';
@@ -54,6 +58,8 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
     ],
     providers: [
         CycleStageListener,
+        ReviewStageListener,
+        RespondentStatusListener,
         CycleService,
         ReviewService,
         ReviewSchedulerService,
@@ -68,6 +74,7 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
         ClusterScoreRepository,
         ClusterScoreAnalyticsRepository,
         ReviewStageHistoryRepository,
+        CycleStageHistoryRepository,
         { provide: CYCLE_REPOSITORY, useExisting: CycleRepository },
         { provide: REVIEW_REPOSITORY, useExisting: ReviewRepository },
         { provide: QUESTION_REPOSITORY, useExisting: QuestionRepository },
@@ -89,6 +96,10 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
         {
             provide: REVIEW_STAGE_HISTORY_REPOSITORY,
             useExisting: ReviewStageHistoryRepository,
+        },
+        {
+            provide: CYCLE_STAGE_HISTORY_REPOSITORY,
+            useExisting: CycleStageHistoryRepository,
         },
     ],
     exports: [

@@ -29,6 +29,7 @@ Table identity_users {
   reviewsAsManager feedback360_reviews [not null]
   clusterScores feedback360_cluster_scores [not null]
   stageChangeHistory feedback360_review_stage_history [not null]
+  cycleStageHistory feedback360_cycle_stage_history [not null]
 }
 
 Table identity_roles {
@@ -220,6 +221,20 @@ Table feedback360_cycles {
   reports reporting_reports [not null]
   reviewQuestions feedback360_questions [not null]
   strategicReports reporting_strategic_reports [not null]
+  cycleStageHistories feedback360_cycle_stage_history [not null]
+}
+
+Table feedback360_cycle_stage_history {
+  id Int [pk, increment]
+  cycleId Int [not null]
+  fromStage CycleStage [not null]
+  toStage CycleStage [not null]
+  changedById Int
+  changedByName String
+  reason String
+  createdAt DateTime [default: `now()`, not null]
+  cycle feedback360_cycles [not null]
+  changedBy identity_users
 }
 
 Table feedback360_reviews {
@@ -239,7 +254,7 @@ Table feedback360_reviews {
   managerPositionTitle String
   cycleId Int
   reportId Int
-  stage ReviewStage [not null, default: 'VERIFICATION_BY_HR']
+  stage ReviewStage [not null, default: 'NEW']
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
   ratee identity_users [not null]
@@ -413,6 +428,8 @@ Table reporting_reports {
   reviewId Int [unique, not null]
   cycleId Int
   respondentCount Int [not null]
+  respondentCategories RespondentCategory[] [not null]
+  answerCount Int [not null]
   turnoutPctOfTeam Decimal
   turnoutPctOfOther Decimal
   questionTotAvgBySelf Decimal
@@ -592,10 +609,12 @@ Enum QuestionTemplateStatus {
 }
 
 Enum CycleStage {
-  CANCELED
   NEW
   ACTIVE
   FINISHED
+  PREPARING_REPORT
+  PUBLISHED
+  CANCELED
   ARCHIVED
 }
 
@@ -607,18 +626,17 @@ Enum ResponseStatus {
 }
 
 Enum ReviewStage {
-  CANCELED
-  VERIFICATION_BY_HR
-  VERIFICATION_BY_USER
-  REJECTED
+  NEW
   SELF_ASSESSMENT
   WAITING_TO_START
   IN_PROGRESS
+  FINISHED
   PREPARING_REPORT
   PROCESSING_BY_HR
   PUBLISHED
   ANALYSIS
-  FINISHED
+  CANCELED
+  ARCHIVED
 }
 
 Enum RespondentCategory {
@@ -670,6 +688,10 @@ Ref: library_competence_question_template_relations.competenceId > library_compe
 Ref: library_competence_question_template_relations.questionTemplateId > library_question_templates.id
 
 Ref: feedback360_cycles.hrId > identity_users.id [delete: No Action]
+
+Ref: feedback360_cycle_stage_history.cycleId > feedback360_cycles.id [delete: Cascade]
+
+Ref: feedback360_cycle_stage_history.changedById > identity_users.id [delete: Set Null]
 
 Ref: feedback360_reviews.rateeId > identity_users.id [delete: No Action]
 

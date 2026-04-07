@@ -1,10 +1,7 @@
-import { CycleStage, ReviewStage } from '@intra/shared-kernel';
+import { CycleStage, ReviewStage, SYSTEM_ACTOR } from '@intra/shared-kernel';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import {
-    SYSTEM_ACTOR_ID,
-    TRANSITION_REASONS,
-} from '../constants/review-stage-transitions';
+import { TRANSITION_REASONS } from '../constants/review-stage-transitions';
 import { CycleService } from './cycle.service';
 import { ReviewService } from './review.service';
 
@@ -56,11 +53,11 @@ export class ReviewSchedulerService {
                     // Transition each review to PREPARING_REPORT
                     for (const review of reviews) {
                         try {
-                            await this.reviewService.changeStage(
+                            await this.reviewService.changeReviewStage(
                                 review.id!,
                                 ReviewStage.PREPARING_REPORT,
-                                SYSTEM_ACTOR_ID,
-                                'System',
+                                SYSTEM_ACTOR.ID,
+                                SYSTEM_ACTOR.NAME,
                                 TRANSITION_REASONS.DEADLINE_REACHED,
                             );
                             this.logger.log(
@@ -109,7 +106,7 @@ export class ReviewSchedulerService {
                 }
 
                 try {
-                    await this.cycleService.finish(cycle.id!);
+                    await this.cycleService.forceFinish(cycle.id!);
                     this.logger.log(
                         `Finished cycle ${cycle.id} (deadline reached)`,
                     );

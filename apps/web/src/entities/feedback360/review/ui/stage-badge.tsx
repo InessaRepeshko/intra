@@ -9,17 +9,9 @@ export const stageConfig: Record<
         label: 'Canceled',
         className: 'bg-red-100 text-red-800 border-red-200',
     },
-    [ReviewStage.VERIFICATION_BY_HR]: {
-        label: 'Verification by HR',
+    [ReviewStage.NEW]: {
+        label: 'New',
         className: 'bg-blue-100 text-blue-800 border-blue-200',
-    },
-    [ReviewStage.VERIFICATION_BY_USER]: {
-        label: 'Verification by User',
-        className: 'bg-blue-100 text-blue-800 border-blue-200',
-    },
-    [ReviewStage.REJECTED]: {
-        label: 'Rejected',
-        className: 'bg-red-100 text-red-800 border-red-200',
     },
     [ReviewStage.SELF_ASSESSMENT]: {
         label: 'Self-assessment',
@@ -32,6 +24,10 @@ export const stageConfig: Record<
     [ReviewStage.IN_PROGRESS]: {
         label: 'In progress',
         className: 'bg-amber-100 text-amber-800 border-amber-200',
+    },
+    [ReviewStage.FINISHED]: {
+        label: 'Finished',
+        className: 'bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200',
     },
     [ReviewStage.PREPARING_REPORT]: {
         label: 'Report generated',
@@ -49,8 +45,8 @@ export const stageConfig: Record<
         label: 'Analysis',
         className: 'bg-emerald-100 text-emerald-800 border-emerald-200',
     },
-    [ReviewStage.FINISHED]: {
-        label: 'Finished',
+    [ReviewStage.ARCHIVED]: {
+        label: 'Archived',
         className: 'bg-green-100 text-green-800 border-green-200',
     },
 };

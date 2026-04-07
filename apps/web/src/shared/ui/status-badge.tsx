@@ -22,7 +22,12 @@ const cycleStageMap: Record<
 > = {
     [CycleStage.NEW]: { label: 'New', variant: 'default' },
     [CycleStage.ACTIVE]: { label: 'Active', variant: 'warning' },
-    [CycleStage.FINISHED]: { label: 'Finished', variant: 'success' },
+    [CycleStage.FINISHED]: { label: 'Finished', variant: 'secondary' },
+    [CycleStage.PREPARING_REPORT]: {
+        label: 'Preparing Report',
+        variant: 'secondary',
+    },
+    [CycleStage.PUBLISHED]: { label: 'Published', variant: 'success' },
     [CycleStage.CANCELED]: { label: 'Cancelled', variant: 'destructive' },
     [CycleStage.ARCHIVED]: { label: 'Archived', variant: 'secondary' },
 };
@@ -32,15 +37,10 @@ const reviewStageMap: Record<
     { label: string; variant: StatusVariant }
 > = {
     [ReviewStage.CANCELED]: { label: 'Cancelled', variant: 'destructive' },
-    [ReviewStage.VERIFICATION_BY_HR]: {
-        label: 'HR Verification',
-        variant: 'secondary',
+    [ReviewStage.NEW]: {
+        label: 'New',
+        variant: 'default',
     },
-    [ReviewStage.VERIFICATION_BY_USER]: {
-        label: 'User Verification',
-        variant: 'secondary',
-    },
-    [ReviewStage.REJECTED]: { label: 'Rejected', variant: 'destructive' },
     [ReviewStage.SELF_ASSESSMENT]: {
         label: 'Self Assessment',
         variant: 'warning',
@@ -53,24 +53,25 @@ const reviewStageMap: Record<
         label: 'Collecting Responses',
         variant: 'warning',
     },
+    [ReviewStage.FINISHED]: { label: 'Completed', variant: 'secondary' },
     [ReviewStage.PREPARING_REPORT]: {
         label: 'Preparing Report',
         variant: 'secondary',
     },
     [ReviewStage.PROCESSING_BY_HR]: {
         label: 'Processing by HR',
-        variant: 'warning',
+        variant: 'success',
     },
     [ReviewStage.PUBLISHED]: { label: 'Ready to Review', variant: 'success' },
     [ReviewStage.ANALYSIS]: { label: 'Analysis', variant: 'success' },
-    [ReviewStage.FINISHED]: { label: 'Finished', variant: 'secondary' },
+    [ReviewStage.ARCHIVED]: { label: 'Archived', variant: 'secondary' },
 };
 
 const responseStatusMap: Record<
     ResponseStatus,
     { label: string; variant: StatusVariant }
 > = {
-    [ResponseStatus.PENDING]: { label: 'Pending', variant: 'secondary' },
+    [ResponseStatus.PENDING]: { label: 'Pending', variant: 'default' },
     [ResponseStatus.IN_PROGRESS]: { label: 'In Progress', variant: 'warning' },
     [ResponseStatus.COMPLETED]: { label: 'Completed', variant: 'success' },
     [ResponseStatus.CANCELED]: { label: 'Canceled', variant: 'destructive' },

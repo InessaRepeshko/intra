@@ -1,4 +1,5 @@
 /* Common */
+export { SYSTEM_ACTOR } from './common/constants/constants';
 export { SortDirection } from './common/enums/sort-direction.enum';
 
 /* Organisation */

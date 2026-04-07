@@ -113,6 +113,8 @@ export class CyclesController {
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: 'Force finish 360-Feedback cycle (HR/Admin only)',
+        description:
+            'Manually transition cycle to FINISHED stage, even if some reviews are in-progress',
     })
     @ApiParam({ name: 'id', description: 'Cycle id', type: 'number' })
     @ApiResponse({ status: HttpStatus.OK, type: CycleResponse })
@@ -125,7 +127,7 @@ export class CyclesController {
         const actorId = user.id!;
         const actorName = user.fullName;
 
-        await this.cycles.finish(cycleId, actorId, actorName);
+        await this.cycles.forceFinish(cycleId, actorId, actorName);
         const updated = await this.cycles.getById(cycleId);
         return CycleHttpMapper.toResponse(updated);
     }

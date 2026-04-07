@@ -44,7 +44,7 @@ function DashboardContent() {
     >;
 
     const myReportsAsRatee = mockReviews.filter(
-        (r) => r.rateeId === user.id && r.stage === 'REPORT_READY',
+        (r) => r.rateeId === user.id && r.stage === 'PROCESSING_BY_HR',
     );
 
     return (

@@ -1,6 +1,16 @@
-import { ReportSortField, SortDirection } from '@intra/shared-kernel';
+import {
+    ReportSortField,
+    RespondentCategory,
+    SortDirection,
+} from '@intra/shared-kernel';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsInt, IsOptional, IsPositive } from 'class-validator';
+import {
+    IsArray,
+    IsEnum,
+    IsInt,
+    IsOptional,
+    IsPositive,
+} from 'class-validator';
 import {
     ToOptionalDate,
     ToOptionalEnum,
@@ -38,6 +48,31 @@ export class ReportQueryDto {
     @IsInt()
     @IsPositive()
     respondentCount?: number;
+
+    @ApiPropertyOptional({
+        example: [RespondentCategory.SELF_ASSESSMENT, RespondentCategory.TEAM],
+        description: 'Filter by Feedback360 respondent categories',
+        type: 'array',
+        items: {
+            type: 'string',
+            enum: [RespondentCategory],
+        },
+    })
+    @IsOptional()
+    @IsArray()
+    @IsEnum(RespondentCategory, { each: true })
+    respondentCategories?: RespondentCategory[];
+
+    @ApiPropertyOptional({
+        example: 1,
+        description: 'Filter by Feedback360 answer count',
+        type: 'number',
+    })
+    @ToOptionalInt({ min: 1 })
+    @IsOptional()
+    @IsInt()
+    @IsPositive()
+    answerCount?: number;
 
     @ApiPropertyOptional({
         example: 1,

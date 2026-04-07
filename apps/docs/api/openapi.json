@@ -3569,6 +3569,8 @@
                 "NEW",
                 "ACTIVE",
                 "FINISHED",
+                "PREPARING_REPORT",
+                "PUBLISHED",
                 "CANCELED",
                 "ARCHIVED"
               ]
@@ -3988,6 +3990,7 @@
     },
     "/feedback360/cycles/{id}/force-finish": {
       "post": {
+        "description": "Manually transition cycle to FINISHED stage, even if some reviews are in-progress",
         "operationId": "CyclesController_forceFinish",
         "parameters": [
           {
@@ -4243,21 +4246,20 @@
             "in": "query",
             "description": "Review stage",
             "schema": {
-              "example": "VERIFICATION_BY_HR",
+              "example": "NEW",
               "type": "string",
               "enum": [
-                "CANCELED",
-                "VERIFICATION_BY_HR",
-                "VERIFICATION_BY_USER",
-                "REJECTED",
+                "NEW",
                 "SELF_ASSESSMENT",
                 "WAITING_TO_START",
                 "IN_PROGRESS",
+                "FINISHED",
                 "PREPARING_REPORT",
                 "PROCESSING_BY_HR",
                 "PUBLISHED",
                 "ANALYSIS",
-                "FINISHED"
+                "CANCELED",
+                "ARCHIVED"
               ]
             }
           },
@@ -4486,7 +4488,7 @@
             "name": "stage",
             "in": "query",
             "schema": {
-              "example": "VERIFICATION_BY_HR",
+              "example": "NEW",
               "type": "string"
             }
           },
@@ -6195,10 +6197,10 @@
         ]
       }
     },
-    "/feedback360/reviews/{id}/force-complete": {
+    "/feedback360/reviews/{id}/force-finish": {
       "post": {
-        "description": "Manually transition review to PREPARING_REPORT stage, even if some responses are pending",
-        "operationId": "ReviewController_forceComplete",
+        "description": "Manually transition review to PREPARING_REPORT stage, even if some responses are pending or in-progress",
+        "operationId": "ReviewController_forceFinish",
         "parameters": [
           {
             "name": "id",
@@ -6212,7 +6214,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Review stage changed to PREPARING_REPORT"
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid data"
@@ -6227,7 +6236,7 @@
             "description": "Conflict"
           }
         },
-        "summary": "Force complete Review (HR/Admin only)",
+        "summary": "Force finish Review (HR/Admin only)",
         "tags": [
           "Feedback360 / Reviews"
         ]
@@ -7430,6 +7439,39 @@
             }
           },
           {
+            "name": "respondentCategories",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 respondent categories",
+            "schema": {
+              "example": [
+                "SELF_ASSESSMENT",
+                "TEAM"
+              ],
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  {
+                    "SELF_ASSESSMENT": "SELF_ASSESSMENT",
+                    "TEAM": "TEAM",
+                    "OTHER": "OTHER"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "answerCount",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 answer count",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
             "name": "turnoutPctOfTeam",
             "required": false,
             "in": "query",
@@ -7634,6 +7676,8 @@
                 "reviewId",
                 "cycleId",
                 "respondentCount",
+                "respondentCategories",
+                "answerCount",
                 "turnoutPctOfTeam",
                 "turnoutPctOfOther",
                 "questionTotAvgBySelf",
@@ -7695,6 +7739,39 @@
             "description": "Filter by Feedback360 respondent count",
             "required": false,
             "name": "respondentCount",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by Feedback360 respondent categories",
+            "required": false,
+            "name": "respondentCategories",
+            "in": "query",
+            "schema": {
+              "example": [
+                "SELF_ASSESSMENT",
+                "TEAM"
+              ],
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  {
+                    "SELF_ASSESSMENT": "SELF_ASSESSMENT",
+                    "TEAM": "TEAM",
+                    "OTHER": "OTHER"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "description": "Filter by Feedback360 answer count",
+            "required": false,
+            "name": "answerCount",
             "in": "query",
             "schema": {
               "example": 1,
@@ -10219,6 +10296,8 @@
               "NEW",
               "ACTIVE",
               "FINISHED",
+              "PREPARING_REPORT",
+              "PUBLISHED",
               "CANCELED",
               "ARCHIVED"
             ],
@@ -10311,6 +10390,8 @@
               "NEW",
               "ACTIVE",
               "FINISHED",
+              "PREPARING_REPORT",
+              "PUBLISHED",
               "CANCELED",
               "ARCHIVED"
             ],
@@ -10415,6 +10496,8 @@
               "NEW",
               "ACTIVE",
               "FINISHED",
+              "PREPARING_REPORT",
+              "PUBLISHED",
               "CANCELED",
               "ARCHIVED"
             ],
@@ -10557,20 +10640,19 @@
           "stage": {
             "type": "string",
             "enum": [
-              "CANCELED",
-              "VERIFICATION_BY_HR",
-              "VERIFICATION_BY_USER",
-              "REJECTED",
+              "NEW",
               "SELF_ASSESSMENT",
               "WAITING_TO_START",
               "IN_PROGRESS",
+              "FINISHED",
               "PREPARING_REPORT",
               "PROCESSING_BY_HR",
               "PUBLISHED",
               "ANALYSIS",
-              "FINISHED"
+              "CANCELED",
+              "ARCHIVED"
             ],
-            "example": "VERIFICATION_BY_HR",
+            "example": "NEW",
             "description": "Review stage"
           },
           "reportId": {
@@ -10692,20 +10774,19 @@
           "stage": {
             "type": "string",
             "enum": [
-              "CANCELED",
-              "VERIFICATION_BY_HR",
-              "VERIFICATION_BY_USER",
-              "REJECTED",
+              "NEW",
               "SELF_ASSESSMENT",
               "WAITING_TO_START",
               "IN_PROGRESS",
+              "FINISHED",
               "PREPARING_REPORT",
               "PROCESSING_BY_HR",
               "PUBLISHED",
               "ANALYSIS",
-              "FINISHED"
+              "CANCELED",
+              "ARCHIVED"
             ],
-            "example": "VERIFICATION_BY_HR",
+            "example": "NEW",
             "description": "Review stage"
           },
           "reportId": {
@@ -10837,20 +10918,19 @@
           "stage": {
             "type": "string",
             "enum": [
-              "CANCELED",
-              "VERIFICATION_BY_HR",
-              "VERIFICATION_BY_USER",
-              "REJECTED",
+              "NEW",
               "SELF_ASSESSMENT",
               "WAITING_TO_START",
               "IN_PROGRESS",
+              "FINISHED",
               "PREPARING_REPORT",
               "PROCESSING_BY_HR",
               "PUBLISHED",
               "ANALYSIS",
-              "FINISHED"
+              "CANCELED",
+              "ARCHIVED"
             ],
-            "example": "VERIFICATION_BY_HR",
+            "example": "NEW",
             "description": "Review stage"
           },
           "reportId": {
@@ -12509,6 +12589,19 @@
             "nullable": false,
             "minimum": 3
           },
+          "respondentCategories": {
+            "type": "number",
+            "example": 10,
+            "description": "Respondent categories",
+            "nullable": false
+          },
+          "answerCount": {
+            "type": "number",
+            "example": 10,
+            "description": "Answer count",
+            "nullable": false,
+            "minimum": 3
+          },
           "turnoutPctOfTeam": {
             "type": "number",
             "example": 100,
@@ -12583,6 +12676,8 @@
           "id",
           "reviewId",
           "respondentCount",
+          "respondentCategories",
+          "answerCount",
           "createdAt",
           "questionSummaries",
           "competenceSummaries"

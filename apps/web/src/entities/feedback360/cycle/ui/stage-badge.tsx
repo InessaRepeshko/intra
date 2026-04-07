@@ -15,6 +15,14 @@ export const stageConfig: Record<
     },
     [CycleStage.FINISHED]: {
         label: 'Finished',
+        className: 'bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200',
+    },
+    [CycleStage.PREPARING_REPORT]: {
+        label: 'Preparing Report',
+        className: 'bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200',
+    },
+    [CycleStage.PUBLISHED]: {
+        label: 'Report Published',
         className: 'bg-green-100 text-green-800 border-green-200',
     },
     [CycleStage.ARCHIVED]: {

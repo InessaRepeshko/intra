@@ -1,6 +1,4 @@
-import { fetchReviewAnswerCount } from '@entities/feedback360/answer/api/answer.api';
 import { fetchCycleTitleById } from '@entities/feedback360/cycle/api/cycle.api';
-import { fetchRespondentCategoriesByReviewId } from '@entities/feedback360/respondent/api/respondent.api';
 import {
     fetchRateeFullNameByReviewId,
     fetchRateePositionTitleByReviewId,
@@ -25,7 +23,7 @@ import {
     mapReportAnalyticsDtoToModel,
     mapReportDtoToModel,
 } from '../model/mappers';
-import { ReportFilterQuery, RespondentCategory } from '../model/types';
+import { ReportFilterQuery } from '../model/types';
 import {
     fetchReportAnalyticsByReportId,
     fetchReportById,
@@ -55,13 +53,6 @@ export const reportKeys = {
     reviewStages: () => [...reportKeys.all, 'reviewStages'] as const,
     reviewStage: (reviewId: number) =>
         [...reportKeys.reviewStages(), reviewId] as const,
-    respondentCategories: () =>
-        [...reportKeys.all, 'respondentCategories'] as const,
-    respondentCategory: (reviewId: number) =>
-        [...reportKeys.respondentCategories(), reviewId] as const,
-    answerCounts: () => [...reportKeys.all, 'answerCounts'] as const,
-    answerCount: (reviewId: number) =>
-        [...reportKeys.answerCounts(), reviewId] as const,
     allReportAnalytics: () =>
         [...reportKeys.all, 'allReportAnalytics'] as const,
     reportAnalytics: (reportId: number) =>
@@ -236,64 +227,6 @@ export function useReviewStagesQuery(reviewIds: number[]) {
     const isLoading = queries.some((q) => q.isLoading);
 
     return { reviewStages, isLoading };
-}
-
-export function useRespondentCategoryQuery(reviewId: number) {
-    return useQuery<RespondentCategory[]>({
-        queryKey: reportKeys.respondentCategory(reviewId),
-        queryFn: () => fetchRespondentCategoriesByReviewId(reviewId),
-        enabled: reviewId > 0,
-    });
-}
-
-export function useRespondentCategoriesQuery(reviewIds: number[]) {
-    const queries = useQueries({
-        queries: reviewIds.map((reviewId) => ({
-            queryKey: reportKeys.respondentCategory(reviewId),
-            queryFn: () => fetchRespondentCategoriesByReviewId(reviewId),
-        })),
-    });
-
-    const respondentCategories: Record<number, RespondentCategory[]> = {};
-    reviewIds.forEach((reviewId, index) => {
-        const result = queries[index];
-        if (result.isSuccess && result.data !== undefined) {
-            respondentCategories[reviewId] = result.data;
-        }
-    });
-
-    const isLoading = queries.some((q) => q.isLoading);
-
-    return { respondentCategories, isLoading };
-}
-
-export function useReviewAnswerCountQuery(reviewId: number) {
-    return useQuery<number>({
-        queryKey: reportKeys.answerCount(reviewId),
-        queryFn: () => fetchReviewAnswerCount(reviewId),
-        enabled: reviewId > 0,
-    });
-}
-
-export function useReviewAnswerCountsQuery(reviewIds: number[]) {
-    const queries = useQueries({
-        queries: reviewIds.map((reviewId) => ({
-            queryKey: reportKeys.answerCount(reviewId),
-            queryFn: () => fetchReviewAnswerCount(reviewId),
-        })),
-    });
-
-    const answerCounts: Record<number, number> = {};
-    reviewIds.forEach((reviewId, index) => {
-        const result = queries[index];
-        if (result.isSuccess && result.data !== undefined) {
-            answerCounts[reviewId] = result.data;
-        }
-    });
-
-    const isLoading = queries.some((q) => q.isLoading);
-
-    return { answerCounts, isLoading };
 }
 
 export function useReportAnalyticsQuery(reportId: number) {

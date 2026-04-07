@@ -59,7 +59,7 @@ export class ReviewDomain {
         this.managerPositionId = props.managerPositionId ?? null;
         this.managerPositionTitle = props.managerPositionTitle ?? null;
         this.cycleId = props.cycleId ?? null;
-        this.stage = props.stage ?? ReviewStage.VERIFICATION_BY_HR;
+        this.stage = props.stage ?? ReviewStage.NEW;
         this.reportId = props.reportId ?? null;
         this.createdAt = props.createdAt;
         this.updatedAt = props.updatedAt;

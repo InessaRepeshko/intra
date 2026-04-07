@@ -7,6 +7,7 @@ import {
     IdentityRole,
     REPORT_ANALYTICS_CONSTRAINTS,
     ReportSearchQuery,
+    RESPONDENT_CATEGORIES,
     RespondentCategory,
 } from '@intra/shared-kernel';
 import {
@@ -203,7 +204,7 @@ export class ReportingService {
      * @returns The generated report.
      */
     async generateReportForReview(reviewId: number): Promise<ReportDomain> {
-        this.logger.debug(`Starting report generation for review ${reviewId}`);
+        this.logger.debug(`Started report generation for review ${reviewId}`);
 
         const existing = await this.reports.findByReviewId(reviewId);
         if (existing) {
@@ -221,10 +222,31 @@ export class ReportingService {
             {},
         );
         const respondentCount = allRespondents.length;
-
+        const respondentCategories: RespondentCategory[] = [
+            ...new Set(
+                allRespondents
+                    .map((r) => r.category)
+                    .sort(
+                        (a, b) =>
+                            RESPONDENT_CATEGORIES.indexOf(a) -
+                            RESPONDENT_CATEGORIES.indexOf(b),
+                    ),
+            ),
+        ];
         const allAnswers = await this.answers.list({
             reviewId,
         });
+        const questionCounts = allAnswers.reduce(
+            (acc, item) => {
+                acc[item.questionId] = (acc[item.questionId] || 0) + 1;
+                return acc;
+            },
+            {} as Record<number, number>,
+        );
+        const mostFrequentId = Object.values(questionCounts).reduce((a, b) =>
+            questionCounts[a] > questionCounts[b] ? a : b,
+        );
+        const answerCount = Number(mostFrequentId);
 
         if (this.isProduction) {
             await this.verifyAnonimityThreshold(review, allAnswers);
@@ -242,7 +264,7 @@ export class ReportingService {
         );
 
         this.logger.debug(
-            `Calculated respondent counts: ${respondentCount} total, team turnout ${teamTurnout}, other turnout ${otherTurnout}`,
+            `Calculated respondent counts: ${respondentCount} total in ${respondentCategories.join(', ')} categories, answer count ${answerCount}, team turnout ${teamTurnout}, other turnout ${otherTurnout}`,
         );
 
         const answers = await this.answers.list({
@@ -267,6 +289,8 @@ export class ReportingService {
             reviewId,
             cycleId: review.cycleId,
             respondentCount,
+            respondentCategories,
+            answerCount,
             turnoutPctOfTeam: teamTurnout,
             turnoutPctOfOther: otherTurnout,
             questionTotAvgBySelf: questionTotals.averageBySelfAssessment,

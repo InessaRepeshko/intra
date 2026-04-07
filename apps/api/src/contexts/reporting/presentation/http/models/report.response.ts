@@ -1,4 +1,8 @@
-import { REPORT_CONSTRAINTS, ReportDto } from '@intra/shared-kernel';
+import {
+    REPORT_CONSTRAINTS,
+    ReportDto,
+    RespondentCategory,
+} from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { CompetenceSummaryTotalsResponse } from './competence-summary-totals.response';
@@ -48,6 +52,27 @@ export class ReportResponse implements ReportDto {
     })
     @Expose()
     respondentCount!: number;
+
+    @ApiProperty({
+        example: 10,
+        description: 'Respondent categories',
+        type: 'number',
+        required: true,
+        nullable: false,
+    })
+    @Expose()
+    respondentCategories!: RespondentCategory[];
+
+    @ApiProperty({
+        example: 10,
+        description: 'Answer count',
+        type: 'number',
+        required: true,
+        nullable: false,
+        minimum: REPORT_CONSTRAINTS.ANSWER_COUNT.MIN,
+    })
+    @Expose()
+    answerCount!: number;
 
     @ApiProperty({
         example: 100.0,

@@ -3,6 +3,8 @@ export enum ReportSortField {
     REVIEW_ID = 'reviewId',
     CYCLE_ID = 'cycleId',
     RESPONDENT_COUNT = 'respondentCount',
+    RESPONDENT_CATEGORIES = 'respondentCategories',
+    ANSWER_COUNT = 'answerCount',
     TURNOUT_PCT_OF_TEAM = 'turnoutPctOfTeam',
     TURNOUT_PCT_OF_OTHER = 'turnoutPctOfOther',
     QUESTION_TOT_AVG_BY_SELF = 'questionTotAvgBySelf',

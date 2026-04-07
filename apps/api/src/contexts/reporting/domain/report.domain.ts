@@ -1,3 +1,4 @@
+import { RespondentCategory } from '@intra/shared-kernel';
 import Decimal from 'decimal.js';
 import { ReportAnalyticsDomain } from './report-analytics.domain';
 import { ReportCommentDomain } from './report-comment.domain';
@@ -7,6 +8,8 @@ export type ReportProps = {
     reviewId: number;
     cycleId?: number | null;
     respondentCount: number;
+    respondentCategories: RespondentCategory[];
+    answerCount: number;
     turnoutPctOfTeam?: Decimal.Value | null;
     turnoutPctOfOther?: Decimal.Value | null;
     questionTotAvgBySelf?: Decimal.Value | null;
@@ -35,6 +38,8 @@ export class ReportDomain {
     readonly reviewId: number;
     readonly cycleId?: number | null;
     readonly respondentCount: number;
+    readonly respondentCategories: RespondentCategory[];
+    readonly answerCount: number;
     readonly turnoutPctOfTeam?: Decimal | null;
     readonly turnoutPctOfOther?: Decimal | null;
     readonly questionTotAvgBySelf?: Decimal | null;
@@ -62,6 +67,8 @@ export class ReportDomain {
         this.reviewId = props.reviewId;
         this.cycleId = props.cycleId ?? null;
         this.respondentCount = props.respondentCount;
+        this.respondentCategories = props.respondentCategories;
+        this.answerCount = props.answerCount;
         this.turnoutPctOfTeam = this.toDecimalOrNull(props.turnoutPctOfTeam);
         this.turnoutPctOfOther = this.toDecimalOrNull(props.turnoutPctOfOther);
         this.questionTotAvgBySelf = this.toDecimalOrNull(

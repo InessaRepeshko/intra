@@ -67,7 +67,7 @@ export function ReportsFilters({
                     )}
                 />
                 <Input
-                    placeholder="Search by ratee full name..."
+                    placeholder="Search by report id or ratee full name..."
                     value={search}
                     onChange={(e) => onSearchChange(e.target.value)}
                     className="pl-9 truncate text-sm"

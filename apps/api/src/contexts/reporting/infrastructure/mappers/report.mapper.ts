@@ -3,7 +3,9 @@ import {
     Report as PrismaReport,
     ReportAnalytics as PrismaReportAnalytics,
     ReportComment as PrismaReportComment,
+    RespondentCategory as PrismaRespondentCategory,
 } from '@intra/database';
+import { RespondentCategory } from '@intra/shared-kernel';
 import { ReportDomain } from '../../domain/report.domain';
 import { ReportAnalyticsMapper } from './report-analytics.mapper';
 import { ReportCommentMapper } from './report-comment.mapper';
@@ -15,6 +17,10 @@ export class ReportMapper {
             reviewId: report.reviewId,
             cycleId: report.cycleId,
             respondentCount: report.respondentCount,
+            respondentCategories: report.respondentCategories.map((c) =>
+                ReportMapper.toDomainRespondentCategory(c),
+            ),
+            answerCount: report.answerCount,
             turnoutPctOfTeam: report.turnoutPctOfTeam,
             turnoutPctOfOther: report.turnoutPctOfOther,
             questionTotAvgBySelf: report.questionTotAvgBySelf,
@@ -50,6 +56,10 @@ export class ReportMapper {
             reviewId: report.reviewId,
             cycleId: report.cycleId,
             respondentCount: report.respondentCount,
+            respondentCategories: report.respondentCategories.map((c) =>
+                ReportMapper.toDomainRespondentCategory(c),
+            ),
+            answerCount: report.answerCount,
             turnoutPctOfTeam: report.turnoutPctOfTeam,
             turnoutPctOfOther: report.turnoutPctOfOther,
             questionTotAvgBySelf: report.questionTotAvgBySelf,
@@ -83,6 +93,10 @@ export class ReportMapper {
             reviewId: domain.reviewId,
             cycleId: domain.cycleId,
             respondentCount: domain.respondentCount,
+            respondentCategories: domain.respondentCategories.map((c) =>
+                ReportMapper.toPrismaRespondentCategory(c),
+            ),
+            answerCount: domain.answerCount,
             turnoutPctOfTeam: ReportAnalyticsMapper.toDecimalString(
                 domain.turnoutPctOfTeam,
             ),
@@ -139,5 +153,17 @@ export class ReportMapper {
                     domain.competenceTotDeltaPctByOthers,
                 ),
         };
+    }
+
+    static toDomainRespondentCategory(
+        category: PrismaRespondentCategory,
+    ): RespondentCategory {
+        return RespondentCategory[category];
+    }
+
+    static toPrismaRespondentCategory(
+        category: RespondentCategory,
+    ): PrismaRespondentCategory {
+        return category.toString().toUpperCase() as PrismaRespondentCategory;
     }
 }
