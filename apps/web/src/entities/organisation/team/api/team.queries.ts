@@ -71,15 +71,17 @@ export function useTeamAllUsersQuery(teamIds: number[]) {
 
     uniqueTeamIds.forEach((teamId, index) => {
         const result = queries[index];
-        users.push({
-            teamId,
-            users:
-                result.data?.sort((a, b) =>
-                    (a.user?.fullName ?? '').localeCompare(
-                        b.user?.fullName ?? '',
-                    ),
-                ) ?? [],
-        });
+        if (result.isSuccess && result.data !== undefined) {
+            users.push({
+                teamId,
+                users:
+                    result.data?.sort((a, b) =>
+                        (a.user?.fullName ?? '').localeCompare(
+                            b.user?.fullName ?? '',
+                        ),
+                    ) ?? [],
+            });
+        }
     });
 
     const isLoading = queries.some((q) => q.isLoading);

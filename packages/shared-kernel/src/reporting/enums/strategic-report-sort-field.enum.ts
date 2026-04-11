@@ -1,6 +1,7 @@
 export enum StrategicReportSortField {
     ID = 'id',
     CYCLE_ID = 'cycleId',
+    CYCLE_TITLE = 'cycleTitle',
     RATEE_COUNT = 'rateeCount',
     RESPONDENT_COUNT = 'respondentCount',
     ANSWER_COUNT = 'answerCount',

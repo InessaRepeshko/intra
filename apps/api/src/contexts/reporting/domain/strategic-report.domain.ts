@@ -3,7 +3,8 @@ import { StrategicReportAnalyticsDomain } from './strategic-report-analytics.dom
 
 export type StrategicReportProps = {
     id?: number;
-    cycleId?: number | null;
+    cycleId: number;
+    cycleTitle: string;
     rateeCount: number;
     respondentCount: number;
     answerCount: number;
@@ -28,7 +29,8 @@ export type StrategicReportProps = {
 
 export class StrategicReportDomain {
     readonly id?: number;
-    readonly cycleId?: number | null;
+    readonly cycleId: number;
+    readonly cycleTitle: string;
     readonly rateeCount: number;
     readonly respondentCount: number;
     readonly answerCount: number;
@@ -52,7 +54,8 @@ export class StrategicReportDomain {
 
     private constructor(props: StrategicReportProps) {
         this.id = props.id;
-        this.cycleId = props.cycleId ?? null;
+        this.cycleId = props.cycleId;
+        this.cycleTitle = props.cycleTitle;
         this.rateeCount = props.rateeCount;
         this.respondentCount = props.respondentCount;
         this.answerCount = props.answerCount;

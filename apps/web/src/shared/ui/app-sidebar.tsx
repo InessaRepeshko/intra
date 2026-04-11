@@ -19,6 +19,7 @@ import {
     Cat,
     ChevronDown,
     FileChartColumn,
+    FileChartLine,
     FileQuestionMark,
     FileText,
     Layers2,
@@ -99,15 +100,15 @@ const navItems: NavItem[] = [
         roles: [IdentityRole.HR, IdentityRole.ADMIN],
         children: [
             {
-                title: 'Reports',
-                href: '/reporting/reports',
+                title: 'Individual Reports',
+                href: '/reporting/individual-reports',
                 icon: FileText,
             },
-            // {
-            //     title: 'Analytics',
-            //     href: '/reporting/analytics',
-            //     icon: ChartColumnBig,
-            // },
+            {
+                title: 'Strategic Reports',
+                href: '/reporting/strategic-reports',
+                icon: FileChartLine,
+            },
             {
                 title: 'Cluster Score Analytics',
                 href: '/reporting/cluster-score-analytics',

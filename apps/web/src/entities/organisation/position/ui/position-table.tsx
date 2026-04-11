@@ -3,6 +3,7 @@
 import { format } from 'date-fns';
 import {
     Award,
+    Bookmark,
     Calendar,
     Eye,
     MoreHorizontal,
@@ -126,7 +127,7 @@ export function PositionTable({
         if (!competences?.length)
             return (
                 <span className="flex items-center justify-start gap-1 p-1">
-                    <Award className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                    <Bookmark className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                     <span className="text-muted-foreground">None</span>
                 </span>
             );
@@ -145,7 +146,7 @@ export function PositionTable({
                     isExpanded ? 'bg-muted/30' : 'max-w-[400px]',
                 )}
             >
-                <Award className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                <Bookmark className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                 {isExpanded ? (
                     <div className="flex flex-col items-start justify-start text-start flex-wrap gap-1 items-center justify-center animate-in fade-in slide-in-from-top-1">
                         {competences.map((c, index) => (
@@ -371,7 +372,7 @@ export function PositionTable({
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                             <span className="flex items-center gap-1 text-muted-foreground">
-                                <Award className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                <Bookmark className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                                 <span className="font-medium text-foreground">
                                     {competenceTitles[position.id]
                                         ? competenceTitles[position.id].length

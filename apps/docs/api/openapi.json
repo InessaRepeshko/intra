@@ -8346,6 +8346,16 @@
             }
           },
           {
+            "name": "cycleTitle",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 cycle title",
+            "schema": {
+              "example": "Annual review 2025",
+              "type": "string"
+            }
+          },
+          {
             "name": "rateeCount",
             "required": false,
             "in": "query",
@@ -8548,6 +8558,7 @@
               "enum": [
                 "id",
                 "cycleId",
+                "cycleTitle",
                 "rateeCount",
                 "respondentCount",
                 "answerCount",
@@ -8593,6 +8604,16 @@
             "schema": {
               "example": 1,
               "type": "number"
+            }
+          },
+          {
+            "description": "Filter by Feedback360 cycle title",
+            "required": false,
+            "name": "cycleTitle",
+            "in": "query",
+            "schema": {
+              "example": "Annual review 2025",
+              "type": "string"
             }
           },
           {
@@ -8871,7 +8892,7 @@
         ]
       }
     },
-    "/reporting/strategic-reports/{cycleId}": {
+    "/reporting/strategic-reports/cycles/{cycleId}": {
       "get": {
         "operationId": "StrategicReportingController_getByCycleId",
         "parameters": [
@@ -13050,7 +13071,13 @@
             "type": "number",
             "example": 1,
             "description": "Cycle id",
-            "nullable": true
+            "nullable": false
+          },
+          "cycleTitle": {
+            "type": "string",
+            "example": "Annual review 2025",
+            "description": "Cycle title",
+            "nullable": false
           },
           "rateeCount": {
             "type": "number",
@@ -13208,6 +13235,8 @@
         },
         "required": [
           "id",
+          "cycleId",
+          "cycleTitle",
           "rateeCount",
           "respondentCount",
           "answerCount",

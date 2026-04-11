@@ -790,7 +790,8 @@ model AuthVerification {
 
 model StrategicReport {
   id                          Int      @id @default(autoincrement())
-  cycleId                     Int?     @map("cycle_id")
+  cycleId                     Int      @map("cycle_id")
+  cycleTitle                  String   @map("cycle_title")
   rateeCount                  Int      @map("ratee_count")
   respondentCount             Int      @map("respondent_count")
   answerCount                 Int      @map("answer_count")

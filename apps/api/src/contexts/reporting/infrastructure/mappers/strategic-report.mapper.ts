@@ -11,6 +11,7 @@ export class StrategicReportMapper {
         return StrategicReportDomain.create({
             id: report.id,
             cycleId: report.cycleId,
+            cycleTitle: report.cycleTitle,
             rateeCount: report.rateeCount,
             respondentCount: report.respondentCount,
             answerCount: report.answerCount,
@@ -42,6 +43,7 @@ export class StrategicReportMapper {
         return StrategicReportDomain.create({
             id: report.id,
             cycleId: report.cycleId,
+            cycleTitle: report.cycleTitle,
             rateeCount: report.rateeCount,
             respondentCount: report.respondentCount,
             answerCount: report.answerCount,
@@ -72,6 +74,7 @@ export class StrategicReportMapper {
     ): Prisma.StrategicReportUncheckedCreateInput {
         return {
             cycleId: domain.cycleId,
+            cycleTitle: domain.cycleTitle,
             rateeCount: domain.rateeCount,
             respondentCount: domain.respondentCount,
             answerCount: domain.answerCount,

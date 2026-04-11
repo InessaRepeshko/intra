@@ -8,7 +8,7 @@ import {
     RadarChart,
 } from 'recharts';
 
-import { ReportAnalytics } from '@entities/reporting/report/model/mappers';
+import { ReportAnalytics } from '@entities/reporting/individual-report/model/mappers';
 import {
     Card,
     CardContent,

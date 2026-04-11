@@ -544,7 +544,8 @@ Table auth_verification {
 
 Table reporting_strategic_reports {
   id Int [pk, increment]
-  cycleId Int
+  cycleId Int [not null]
+  cycleTitle String [not null]
   rateeCount Int [not null]
   respondentCount Int [not null]
   answerCount Int [not null]

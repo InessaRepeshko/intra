@@ -78,6 +78,7 @@ export class StrategicReportRepository implements StrategicReportRepositoryPort 
     ): Prisma.StrategicReportWhereInput {
         const {
             cycleId,
+            cycleTitle,
             rateeCount,
             respondentCount,
             answerCount,
@@ -100,6 +101,7 @@ export class StrategicReportRepository implements StrategicReportRepositoryPort 
         } = query;
         return {
             ...(cycleId ? { cycleId } : {}),
+            ...(cycleTitle ? { cycleTitle } : {}),
             ...(rateeCount ? { rateeCount } : {}),
             ...(respondentCount ? { respondentCount } : {}),
             ...(answerCount ? { answerCount } : {}),

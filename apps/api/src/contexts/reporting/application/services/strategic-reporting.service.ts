@@ -390,6 +390,7 @@ export class StrategicReportingService {
 
         const report = StrategicReportDomain.create({
             cycleId: cycleId,
+            cycleTitle: cycle.title,
             rateeCount: allRatees.size,
             respondentCount: allRespondents.size,
             answerCount: allAnswers.size,

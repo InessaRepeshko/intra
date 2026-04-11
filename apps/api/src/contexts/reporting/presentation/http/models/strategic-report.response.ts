@@ -18,11 +18,21 @@ export class StrategicReportResponse implements StrategicReportDto {
         example: 1,
         description: 'Cycle id',
         type: 'number',
-        required: false,
-        nullable: true,
+        required: true,
+        nullable: false,
     })
     @Expose()
-    cycleId?: number | null;
+    cycleId!: number;
+
+    @ApiProperty({
+        example: 'Annual review 2025',
+        description: 'Cycle title',
+        type: 'string',
+        required: true,
+        nullable: false,
+    })
+    @Expose()
+    cycleTitle!: string;
 
     @ApiProperty({
         example: 10,

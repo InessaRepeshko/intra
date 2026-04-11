@@ -1,6 +1,7 @@
 export interface StrategicReportBaseDto<TDate = Date> {
     id: number;
-    cycleId?: number | null;
+    cycleId: number;
+    cycleTitle: string;
     rateeCount: number;
     respondentCount: number;
     answerCount: number;

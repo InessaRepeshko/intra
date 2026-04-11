@@ -82,7 +82,7 @@ export class StrategicReportingController {
         return StrategicReportHttpMapper.toResponse(report);
     }
 
-    @Get(':cycleId')
+    @Get('cycles/:cycleId')
     @ApiOperation({ summary: 'Get strategic report by cycle id' })
     @ApiParam({
         name: 'cycleId',

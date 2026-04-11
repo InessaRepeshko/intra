@@ -3,6 +3,7 @@ import { StrategicReportSortField } from '../../enums/strategic-report-sort-fiel
 
 export type StrategicReportSearchQuery = {
     cycleId?: number;
+    cycleTitle?: string;
     rateeCount?: number;
     respondentCount?: number;
     answerCount?: number;

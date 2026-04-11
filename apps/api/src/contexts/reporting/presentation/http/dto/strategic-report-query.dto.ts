@@ -1,6 +1,12 @@
 import { SortDirection, StrategicReportSortField } from '@intra/shared-kernel';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsInt, IsOptional, IsPositive } from 'class-validator';
+import {
+    IsEnum,
+    IsInt,
+    IsOptional,
+    IsPositive,
+    IsString,
+} from 'class-validator';
 import {
     ToOptionalDate,
     ToOptionalEnum,
@@ -17,6 +23,15 @@ export class StrategicReportQueryDto {
     @IsOptional()
     @IsInt()
     cycleId?: number;
+
+    @ApiPropertyOptional({
+        example: 'Annual review 2025',
+        description: 'Filter by Feedback360 cycle title',
+        type: 'string',
+    })
+    @IsOptional()
+    @IsString()
+    cycleTitle?: string;
 
     @ApiPropertyOptional({
         example: 1,

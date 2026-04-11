@@ -85,7 +85,7 @@ function ReviewActionsMenu({
                             size="sm"
                             onClick={() =>
                                 router.push(
-                                    `/reporting/reports/${review.reportId}`,
+                                    `/reporting/individual-reports/${review.reportId}`,
                                 )
                             }
                         >
@@ -496,7 +496,7 @@ export function ReviewsTable({
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">
-                                <Users className="h-3.5 w-3.5" />
+                                <Eye className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
                                     {reviewerCounts[review.id] ?? `—`}
                                 </span>

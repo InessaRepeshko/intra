@@ -6,7 +6,8 @@ export class StrategicReportHttpMapper {
     static toResponse(report: StrategicReportDomain): StrategicReportResponse {
         const response = new StrategicReportResponse();
         response.id = report.id!;
-        response.cycleId = report.cycleId ?? null;
+        response.cycleId = report.cycleId;
+        response.cycleTitle = report.cycleTitle;
         response.rateeCount = report.rateeCount;
         response.respondentCount = report.respondentCount;
         response.answerCount = report.answerCount;
