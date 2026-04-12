@@ -3,14 +3,14 @@
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
+import { SortDirection } from '@entities/reporting/individual-report/model/types';
 import {
     useAllStrategicReportRateesQuery,
     useStrategicReportAllTeamTitlesQuery,
     useStrategicReportsQuery,
 } from '@entities/reporting/strategic-report/api/strategic-report.queries';
-import type { StrategicReport } from '@entities/reporting/strategic-report/model/mappers';
-import { StrategicReportsFilters } from '@entities/reporting/strategic-report/ui/strategic-report-filters';
-import { StrategicReportsTable } from '@entities/reporting/strategic-report/ui/strategic-report-table';
+import { StrategicReportsFilters } from '@entities/reporting/strategic-report/ui/strategic-reports-filters';
+import { StrategicReportsTable } from '@entities/reporting/strategic-report/ui/strategic-reports-table';
 import {
     Card,
     CardContent,
@@ -19,11 +19,8 @@ import {
     CardTitle,
 } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
-import { compareNumberArrays, compareStringArrays } from '@shared/lib/utils/compare-arrays';
+import { compareStringArrays } from '@shared/lib/utils/compare-arrays';
 import { TablePagination } from '@shared/ui/table-pagination';
-import {
-    SortDirection,
-} from '@entities/reporting/individual-report/model/types';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -52,8 +49,10 @@ export function StrategicReportList() {
     const allCycleIds = allReportsData.map((r) => r.cycleId);
 
     // Fetch ratees and team titles for all reports
-    const { ratees: rateeData, isLoading: isRateesLoading } = useAllStrategicReportRateesQuery(allCycleIds);
-    const { teamTitles, isLoading: isTeamTitlesLoading } = useStrategicReportAllTeamTitlesQuery(allCycleIds);
+    const { ratees: rateeData, isLoading: isRateesLoading } =
+        useAllStrategicReportRateesQuery(allCycleIds);
+    const { teamTitles, isLoading: isTeamTitlesLoading } =
+        useStrategicReportAllTeamTitlesQuery(allCycleIds);
 
     // Filter unique cycles and teams for filters
     const cycleOptions = useMemo(() => {
@@ -123,9 +122,7 @@ export function StrategicReportList() {
                 (r) =>
                     r.id.toString().includes(lowerSearch) ||
                     (r.cycleTitle &&
-                        r.cycleTitle
-                            .toLowerCase()
-                            .includes(lowerSearch)),
+                        r.cycleTitle.toLowerCase().includes(lowerSearch)),
             );
         }
 
@@ -184,8 +181,12 @@ export function StrategicReportList() {
                         : titleB.localeCompare(titleA);
                 }
                 case 'ratees': {
-                    const rateesA = rateeData[a.cycleId]?.ratees.map((r) => r.fullName) || [];
-                    const rateesB = rateeData[b.cycleId]?.ratees.map((r) => r.fullName) || [];
+                    const rateesA =
+                        rateeData[a.cycleId]?.ratees.map((r) => r.fullName) ||
+                        [];
+                    const rateesB =
+                        rateeData[b.cycleId]?.ratees.map((r) => r.fullName) ||
+                        [];
                     const comparison = compareStringArrays(rateesA, rateesB);
                     return sortDirection === SortDirection.ASC
                         ? comparison
@@ -213,8 +214,10 @@ export function StrategicReportList() {
                         : countB - countA;
                 }
                 case 'teams': {
-                    const teamsA = teamTitles[a.cycleId]?.map((t) => t.title) || [];
-                    const teamsB = teamTitles[b.cycleId]?.map((t) => t.title) || [];
+                    const teamsA =
+                        teamTitles[a.cycleId]?.map((t) => t.title) || [];
+                    const teamsB =
+                        teamTitles[b.cycleId]?.map((t) => t.title) || [];
                     const comparison = compareStringArrays(teamsA, teamsB);
                     return sortDirection === SortDirection.ASC
                         ? comparison
@@ -241,16 +244,23 @@ export function StrategicReportList() {
                         ? countA - countB
                         : countB - countA;
                 }
-                case 'turnoutPctOfRatees': {
-                    const valA = a.turnoutPctOfRatees ?? -1;
-                    const valB = b.turnoutPctOfRatees ?? -1;
+                case 'turnoutAvgPctOfRatees': {
+                    const valA = a.turnoutAvgPctOfRatees ?? -1;
+                    const valB = b.turnoutAvgPctOfRatees ?? -1;
                     return sortDirection === SortDirection.ASC
                         ? valA - valB
                         : valB - valA;
                 }
-                case 'turnoutPctOfRespondents': {
-                    const valA = a.turnoutPctOfRespondents ?? -1;
-                    const valB = b.turnoutPctOfRespondents ?? -1;
+                case 'turnoutAvgPctOfTeams': {
+                    const valA = a.turnoutAvgPctOfTeams ?? -1;
+                    const valB = b.turnoutAvgPctOfTeams ?? -1;
+                    return sortDirection === SortDirection.ASC
+                        ? valA - valB
+                        : valB - valA;
+                }
+                case 'turnoutAvgPctOfOthers': {
+                    const valA = a.turnoutAvgPctOfOthers ?? -1;
+                    const valB = b.turnoutAvgPctOfOthers ?? -1;
                     return sortDirection === SortDirection.ASC
                         ? valA - valB
                         : valB - valA;
@@ -298,11 +308,7 @@ export function StrategicReportList() {
                     return 0;
             }
         });
-    }, [
-        filteredReports,
-        sortField,
-        sortDirection,
-    ]);
+    }, [filteredReports, sortField, sortDirection]);
 
     const totalPages = Math.ceil(sortedReports.length / ITEMS_PER_PAGE);
     const paginatedReports = sortedReports.slice(
@@ -373,11 +379,13 @@ export function StrategicReportList() {
                         />
 
                         {/* Loading State */}
-                        {(isLoading || isRateesLoading || isTeamTitlesLoading) && (
-                            <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
-                                <Spinner />
-                            </div>
-                        )}
+                        {(isLoading ||
+                            isRateesLoading ||
+                            isTeamTitlesLoading) && (
+                                <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
+                                    <Spinner />
+                                </div>
+                            )}
 
                         {/* Error State */}
                         {isError && (
@@ -392,30 +400,33 @@ export function StrategicReportList() {
                         )}
 
                         {/* Table */}
-                        {!isLoading && !isError && !isRateesLoading && !isTeamTitlesLoading && (
-                            <>
-                                <StrategicReportsTable
-                                    strategicReports={paginatedReports}
-                                    ratees={rateeData}
-                                    teams={teamTitles}
-                                    sortField={sortField}
-                                    sortDirection={sortDirection}
-                                    onSort={handleSort}
-                                    resetTrigger={resetTrigger}
-                                // onDelete={setDeleteReport}
-                                />
+                        {!isLoading &&
+                            !isError &&
+                            !isRateesLoading &&
+                            !isTeamTitlesLoading && (
+                                <>
+                                    <StrategicReportsTable
+                                        strategicReports={paginatedReports}
+                                        ratees={rateeData}
+                                        teams={teamTitles}
+                                        sortField={sortField}
+                                        sortDirection={sortDirection}
+                                        onSort={handleSort}
+                                        resetTrigger={resetTrigger}
+                                    // onDelete={setDeleteReport}
+                                    />
 
-                                {/* Pagination */}
-                                <TablePagination
-                                    entityName="reports"
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    totalItems={filteredReports.length}
-                                    limit={ITEMS_PER_PAGE}
-                                    onPageChange={setCurrentPage}
-                                />
-                            </>
-                        )}
+                                    {/* Pagination */}
+                                    <TablePagination
+                                        entityName="reports"
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        totalItems={filteredReports.length}
+                                        limit={ITEMS_PER_PAGE}
+                                        onPageChange={setCurrentPage}
+                                    />
+                                </>
+                            )}
                     </CardContent>
                 </Card>
             </div>

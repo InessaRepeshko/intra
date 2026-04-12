@@ -1,7 +1,7 @@
 import { CycleStage } from '@intra/shared-kernel';
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { StrategicReportingService } from 'src/contexts/reporting/application/services/strategic-reporting.service';
+import { StrategicReportingService } from 'src/contexts/reporting/application/services/strategic-reports.service';
 import { CycleStageProcessedEvent } from '../../../feedback360/application/events/cycle-stage-processed.event';
 import { CycleService } from '../../../feedback360/application/services/cycle.service';
 

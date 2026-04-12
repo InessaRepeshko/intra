@@ -2,6 +2,7 @@ import { Prisma } from '@intra/database';
 import {
     AnswerSearchQuery,
     AnswerSortField,
+    RespondentCategory,
     SortDirection,
 } from '@intra/shared-kernel';
 import { Injectable } from '@nestjs/common';
@@ -34,6 +35,45 @@ export class AnswerRepository implements AnswerRepositoryPort {
         const orderBy = this.buildOrder(query);
         const answers = await this.prisma.answer.findMany({ where, orderBy });
         return answers.map(AnswerMapper.toDomain);
+    }
+
+    async findById(id: number): Promise<AnswerDomain | null> {
+        const answer = await this.prisma.answer.findUnique({ where: { id } });
+        return answer ? AnswerMapper.toDomain(answer) : null;
+    }
+
+    async getAnswersCountByRespondentCategories(
+        reviewId: number,
+    ): Promise<{ respondentCategory: RespondentCategory; answers: number }[]> {
+        // 1. Calculate the number of unique questions in the review
+        const questions = await this.prisma.answer.findMany({
+            where: { reviewId },
+            distinct: ['questionId'],
+            select: { questionId: true },
+        });
+
+        const questionsCount = questions.length;
+
+        if (questionsCount === 0) return [];
+
+        // 2. Calculate total number of answers by respondent category
+        const stats = await this.prisma.answer.groupBy({
+            by: ['respondentCategory'],
+            where: { reviewId: reviewId },
+            _count: { _all: true },
+        });
+
+        // 3. Map the result: divide the total count by the number of questions
+        return stats.map((stat) => {
+            const totalRows = stat._count._all;
+            return {
+                respondentCategory: AnswerMapper.fromPrismaCategory(
+                    stat.respondentCategory,
+                ),
+                // Math.ceil on the off chance someone skipped a question
+                answers: Math.ceil(totalRows / questionsCount),
+            };
+        });
     }
 
     async deleteById(id: number): Promise<void> {

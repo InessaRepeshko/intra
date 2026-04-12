@@ -242,21 +242,41 @@ export class StrategicReportingService {
 
         const allReviews = new Set<ReviewDomain>();
         const reviewIds = new Set<number>();
+
+        const turnouts: {
+            reportId: number;
+            rateeTurnout: Decimal;
+            teamTurnout: Decimal;
+            otherTurnout: Decimal;
+        }[] = [];
+
         for (const report of reports) {
             const review = await this.reviews.findById(report.reviewId);
             if (review) {
                 allReviews.add(review);
                 reviewIds.add(review.id!);
             }
+
+            turnouts.push({
+                reportId: report.id!,
+                rateeTurnout: new Decimal(0),
+                teamTurnout: report.turnoutPctOfTeam
+                    ? new Decimal(report.turnoutPctOfTeam)
+                    : new Decimal(0),
+                otherTurnout: report.turnoutPctOfOther
+                    ? new Decimal(report.turnoutPctOfOther)
+                    : new Decimal(0),
+            });
         }
 
         const allRatees = new Set<UserDomain>();
         const allRespondents = new Set<RespondentDomain>();
         const allAnswers = new Set<AnswerDomain>();
-        const allAnswerCounts = new Set<{
-            reviewId: number;
-            answerCount: Decimal;
-        }>();
+        const actualAnswersByCategory: Record<string, Decimal> = {
+            [RespondentCategory.SELF_ASSESSMENT]: new Decimal(0),
+            [RespondentCategory.TEAM]: new Decimal(0),
+            [RespondentCategory.OTHER]: new Decimal(0),
+        };
         const allReviewers = new Set<ReviewerDomain>();
         const allTeams = new Set<TeamDomain>();
         const allPositions = new Set<PositionDomain>();
@@ -311,6 +331,7 @@ export class StrategicReportingService {
             const answers = await this.answers.list({
                 reviewId: review.id!,
             });
+
             answers.forEach((answer) => {
                 allAnswers.add(answer);
 
@@ -318,10 +339,39 @@ export class StrategicReportingService {
                     questionIds.add(answer.questionId);
                 }
             });
-            allAnswerCounts.add({
-                reviewId: review.id!,
-                answerCount: this.calculateActualAnswerCount(answers),
+
+            const answersCounts =
+                await this.answers.getAnswersCountByRespondentCategories(
+                    review.id!,
+                );
+
+            answersCounts.forEach((stat) => {
+                if (
+                    actualAnswersByCategory[stat.respondentCategory] !==
+                    undefined
+                ) {
+                    actualAnswersByCategory[stat.respondentCategory] =
+                        actualAnswersByCategory[stat.respondentCategory].plus(
+                            stat.answers,
+                        );
+                }
             });
+
+            const selfAssessmentStat = answersCounts.find(
+                (stat) =>
+                    stat.respondentCategory ===
+                    RespondentCategory.SELF_ASSESSMENT,
+            );
+            const hasSelfAssessment =
+                selfAssessmentStat && selfAssessmentStat.answers > 0;
+            const currentTurnout = turnouts.find(
+                (t) => t.reportId === review.reportId,
+            );
+            if (currentTurnout) {
+                currentTurnout.rateeTurnout = hasSelfAssessment
+                    ? new Decimal(100)
+                    : new Decimal(0);
+            }
 
             for (const questionId of questionIds) {
                 const question = await this.questions.findById(questionId);
@@ -342,28 +392,6 @@ export class StrategicReportingService {
             const reviewers = await this.reviewers.listByReview(review.id!, {});
             reviewers.forEach((reviewer) => allReviewers.add(reviewer));
         }
-
-        const rateeTurnout = this.calculateTurnout(
-            Array.from(allRespondents),
-            Array.from(allAnswers),
-            Array.from(allReviews).map((review) => review.id!),
-            RespondentCategory.SELF_ASSESSMENT,
-        );
-        const teamTurnout = this.calculateTurnout(
-            Array.from(allRespondents),
-            Array.from(allAnswers),
-            Array.from(allReviews).map((review) => review.id!),
-            RespondentCategory.TEAM,
-        );
-        const otherTurnout = this.calculateTurnout(
-            Array.from(allRespondents),
-            Array.from(allAnswers),
-            Array.from(allReviews).map((review) => review.id!),
-            RespondentCategory.OTHER,
-        );
-        const respondentTurnout = teamTurnout?.add(
-            otherTurnout ?? new Decimal(0),
-        );
 
         const allReportAnalytics = await Promise.all(
             reports.map(async (report) => {
@@ -388,29 +416,71 @@ export class StrategicReportingService {
             maxScore,
         );
 
+        const allRateeIds = [
+            ...new Set<number>([...allRatees].map((r) => r.id!)),
+        ].sort((a, b) => a - b);
+        const allRespondentIds = [
+            ...new Set<number>([...allRespondents].map((r) => r.respondentId!)),
+        ].sort((a, b) => a - b);
+        let allAnswerCount = new Decimal(0);
+        Object.values(actualAnswersByCategory).forEach((count) => {
+            allAnswerCount = allAnswerCount.plus(count);
+        });
+        const allReviewerIds = [
+            ...new Set<number>([...allReviewers].map((r) => r.reviewerId!)),
+        ].sort((a, b) => a - b);
+        const allTeamIds = [
+            ...new Set<number>([...allTeams].map((r) => r.id!)),
+        ].sort((a, b) => a - b);
+        const allPositionIds = [
+            ...new Set<number>([...allPositions].map((r) => r.id!)),
+        ].sort((a, b) => a - b);
+        const allCompetenceIds = [
+            ...new Set<number>([...allCompetences].map((r) => r.id!)),
+        ].sort((a, b) => a - b);
+        const allQuestionIds = [
+            ...new Set<number>([...allQuestions].map((r) => r.id!)),
+        ].sort((a, b) => a - b);
+
+        const rateeTurnout = turnouts
+            .reduce((acc, t) => acc.plus(t.rateeTurnout), new Decimal(0))
+            .dividedBy(turnouts.length);
+        const teamTurnout = turnouts
+            .reduce((acc, t) => acc.plus(t.teamTurnout), new Decimal(0))
+            .dividedBy(turnouts.length);
+        const otherTurnout = turnouts
+            .reduce((acc, t) => acc.plus(t.otherTurnout), new Decimal(0))
+            .dividedBy(turnouts.length);
+
         const report = StrategicReportDomain.create({
             cycleId: cycleId,
             cycleTitle: cycle.title,
-            rateeCount: allRatees.size,
-            respondentCount: allRespondents.size,
-            answerCount: allAnswers.size,
-            reviewerCount: allReviewers.size,
-            teamCount: allTeams.size,
-            positionCount: allPositions.size,
-            competenceCount: allCompetences.size,
-            questionCount: allQuestions.size,
-            turnoutPctOfRatees: rateeTurnout,
-            turnoutPctOfRespondents: respondentTurnout,
+            rateeCount: allRateeIds.length,
+            rateeIds: allRateeIds,
+            respondentCount: allRespondentIds.length,
+            respondentIds: allRespondentIds,
+            answerCount: allAnswerCount.toNumber(),
+            reviewerCount: allReviewerIds.length,
+            reviewerIds: allReviewerIds,
+            teamCount: allTeamIds.length,
+            teamIds: allTeamIds,
+            positionCount: allPositionIds.length,
+            positionIds: allPositionIds,
+            competenceCount: allCompetenceIds.length,
+            competenceIds: allCompetenceIds,
+            questionCount: allQuestionIds.length,
+            questionIds: allQuestionIds,
+            turnoutAvgPctOfRatees: rateeTurnout,
+            turnoutAvgPctOfTeams: teamTurnout,
+            turnoutAvgPctOfOthers: otherTurnout,
             competenceGeneralAvgSelf: competenceTotals.averageBySelfAssessment,
             competenceGeneralAvgTeam: competenceTotals.averageByTeam,
             competenceGeneralAvgOther: competenceTotals.averageByOther,
-            competenceGeneralPctSelf:
-                competenceTotals.percentageBySelfAssessment,
+            competenceGeneralPctSelf: competenceTotals.percentageBySelfAssessment,
             competenceGeneralPctTeam: competenceTotals.percentageByTeam,
             competenceGeneralPctOther: competenceTotals.percentageByOther,
             competenceGeneralDeltaTeam: competenceTotals.deltaPercentageByTeam,
-            competenceGeneralDeltaOther:
-                competenceTotals.deltaPercentageByOther,
+            competenceGeneralDeltaOther: competenceTotals.deltaPercentageByOther,
             analytics: [],
         });
 
@@ -473,50 +543,23 @@ export class StrategicReportingService {
     }
 
     /**
-     * Calculates the turnout percentage for a specific category of respondents.
+     * Calculates the turnout percentage of respondents.
      * Formula: (actual answers / assigned respondents) * 100
-     * @param respondents The list of all respondents.
-     * @param answers The list of all answers.
-     * @param category The category to calculate turnout for.
-     * @returns The turnout percentage as a Decimal, or null if no respondents in category.
+     * @param respondentCount The count of all assigned respondents.
+     * @param actualAnswers The count of actual answers for the category.
+     * @returns The turnout percentage as a Decimal.
      */
     private calculateTurnout(
-        respondents: RespondentDomain[],
-        answers: AnswerDomain[],
-        reviewIds: number[],
-        category: RespondentCategory,
-    ): Decimal | null {
-        const assignedRespondents = respondents.filter(
-            (respondent) => respondent.category === category,
-        );
-
-        let actualAnswers = new Decimal(0);
-
-        for (const reviewId of reviewIds) {
-            actualAnswers = actualAnswers.plus(
-                this.calculateActualAnswerCount(
-                    answers
-                        .filter((a) => a.reviewId === reviewId)
-                        .filter(
-                            (answer) => answer.respondentCategory === category,
-                        ),
-                ),
-            );
-        }
-
-        if (assignedRespondents.length === 0) {
-            return null;
-        }
-
-        if (actualAnswers.equals(0)) {
+        respondentCount: Decimal,
+        actualAnswers: Decimal,
+    ): Decimal {
+        if (actualAnswers?.equals(0)) {
             return new Decimal(0);
         }
 
-        const turnout = new Decimal(actualAnswers)
-            .dividedBy(assignedRespondents.length)
-            .times(100);
+        const turnout = actualAnswers.dividedBy(respondentCount).times(100);
 
-        return this.roundDecimal(turnout);
+        return this.roundDecimal(turnout) ?? new Decimal(0);
     }
 
     /**
@@ -582,13 +625,13 @@ export class StrategicReportingService {
                 maxScore,
             );
 
-            const deltaPercentageByTeam = this.calculateDeltaPercent(
-                averageBySelf,
-                averageByTeam,
+            const deltaPercentageByTeam = this.calculateDelta(
+                percentageByTeam,
+                percentageBySelf,
             );
-            const deltaPercentageByOther = this.calculateDeltaPercent(
-                averageBySelf,
-                averageByOther,
+            const deltaPercentageByOther = this.calculateDelta(
+                percentageByOther,
+                percentageBySelf,
             );
 
             competenceAnalytics.push(
@@ -615,25 +658,6 @@ export class StrategicReportingService {
         }
 
         return competenceAnalytics;
-    }
-
-    /**
-     * Calculates the percentage difference between two values
-     * by subtracting the comparison value from the base value and dividing by the base value.
-     * Formula: ((base - comparison) / base) * 100
-     * @param comparison The comparison value.
-     * @param base The base value.
-     * @returns The percentage difference.
-     */
-    private calculateDeltaPercent(
-        comparison: Decimal | null,
-        base: Decimal | null,
-    ): Decimal | null {
-        if (base === null || comparison === null) {
-            return null;
-        }
-        const delta = base.minus(comparison).dividedBy(base).times(100);
-        return this.roundDecimal(delta);
     }
 
     /**
@@ -669,13 +693,13 @@ export class StrategicReportingService {
             maxScore,
         );
 
-        const deltaPercentageByTeam = this.calculateDeltaPercent(
-            averageBySelf,
-            averageByTeam,
+        const deltaPercentageByTeam = this.calculateDelta(
+            percentageByTeam,
+            percentageBySelf,
         );
-        const deltaPercentageByOther = this.calculateDeltaPercent(
-            averageBySelf,
-            averageByOther,
+        const deltaPercentageByOther = this.calculateDelta(
+            percentageByOther,
+            percentageBySelf,
         );
         return {
             averageBySelfAssessment: this.toRoundedNumber(averageBySelf),
@@ -685,33 +709,8 @@ export class StrategicReportingService {
             percentageByTeam: this.toRoundedNumber(percentageByTeam),
             percentageByOther: this.toRoundedNumber(percentageByOther),
             deltaPercentageByTeam: this.toRoundedNumber(deltaPercentageByTeam),
-            deltaPercentageByOther: this.toRoundedNumber(
-                deltaPercentageByOther,
-            ),
+            deltaPercentageByOther: this.toRoundedNumber(deltaPercentageByOther),
         };
-    }
-
-    /**
-     * Calculates the actual answer count for a specific review.
-     * @param answers The review answers to calculate the actual answer count from.
-     * @returns The actual answer count.
-     */
-    private calculateActualAnswerCount(answers: AnswerDomain[]): Decimal {
-        if (answers.length === 0) return new Decimal(0);
-
-        const questionCounts = answers.reduce(
-            (acc, item) => {
-                acc[item.questionId] = (acc[item.questionId] || 0) + 1;
-                return acc;
-            },
-            {} as Record<number, number>,
-        );
-
-        const mostFrequentId = Object.values(questionCounts).reduce((a, b) =>
-            questionCounts[a] > questionCounts[b] ? a : b,
-        );
-
-        return new Decimal(mostFrequentId);
     }
 
     /**
@@ -729,6 +728,24 @@ export class StrategicReportingService {
             return null;
         }
         return this.roundDecimal(value.dividedBy(maxScore).times(100));
+    }
+
+    /**
+     * Calculates the difference between two values in percentage points.
+     * Formula: respondent rating - self rating.
+     * @param respondent The respondent rating.
+     * @param self The self rating.
+     * @returns The difference in percentage points.
+     */
+    private calculateDelta(
+        respondent: Decimal | null,
+        self: Decimal | null,
+    ): Decimal | null {
+        if (respondent === null || self === null) {
+            return null;
+        }
+
+        return this.roundDecimal(respondent.minus(self));
     }
 
     /**

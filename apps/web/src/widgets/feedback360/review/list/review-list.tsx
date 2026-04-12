@@ -200,8 +200,9 @@ export function ReviewsList() {
             const lowerSearch = search.toLowerCase();
             result = result.filter(
                 (c) =>
-                    c.rateeFullName &&
-                    c.rateeFullName.toLowerCase().includes(lowerSearch),
+                    c.id.toString().includes(lowerSearch) ||
+                    (c.rateeFullName &&
+                        c.rateeFullName.toLowerCase().includes(lowerSearch)),
             );
         }
 
@@ -258,6 +259,10 @@ export function ReviewsList() {
     const sortedReviews = useMemo(() => {
         return [...filteredReviews].sort((a, b) => {
             switch (sortField) {
+                case 'id':
+                    return sortDirection === SortDirection.ASC
+                        ? a.id - b.id
+                        : b.id - a.id;
                 case 'title':
                     return sortDirection === SortDirection.ASC
                         ? (a.rateeFullName ?? '').localeCompare(

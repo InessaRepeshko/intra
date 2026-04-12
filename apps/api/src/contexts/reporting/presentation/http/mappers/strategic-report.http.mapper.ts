@@ -9,20 +9,31 @@ export class StrategicReportHttpMapper {
         response.cycleId = report.cycleId;
         response.cycleTitle = report.cycleTitle;
         response.rateeCount = report.rateeCount;
+        response.rateeIds = report.rateeIds ?? [];
         response.respondentCount = report.respondentCount;
+        response.respondentIds = report.respondentIds ?? [];
         response.answerCount = report.answerCount;
         response.reviewerCount = report.reviewerCount;
+        response.reviewerIds = report.reviewerIds ?? [];
         response.teamCount = report.teamCount;
+        response.teamIds = report.teamIds ?? [];
         response.positionCount = report.positionCount;
+        response.positionIds = report.positionIds ?? [];
         response.competenceCount = report.competenceCount;
+        response.competenceIds = report.competenceIds ?? [];
         response.questionCount = report.questionCount;
-        response.turnoutPctOfRatees =
+        response.questionIds = report.questionIds ?? [];
+        response.turnoutAvgPctOfRatees =
             StrategicReportAnalyticsHttpMapper.roundScore(
-                report.turnoutPctOfRatees,
+                report.turnoutAvgPctOfRatees,
             );
-        response.turnoutPctOfRespondents =
+        response.turnoutAvgPctOfTeams =
             StrategicReportAnalyticsHttpMapper.roundScore(
-                report.turnoutPctOfRespondents,
+                report.turnoutAvgPctOfTeams,
+            );
+        response.turnoutAvgPctOfOthers =
+            StrategicReportAnalyticsHttpMapper.roundScore(
+                report.turnoutAvgPctOfOthers,
             );
         response.competenceGeneralAvgSelf =
             StrategicReportAnalyticsHttpMapper.roundScore(

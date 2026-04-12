@@ -5,7 +5,7 @@ import {
     REPORT_COMMENT_REPOSITORY,
     ReportCommentRepositoryPort,
 } from '../ports/report-comment.repository.port';
-import { ReportingService } from './reporting.service';
+import { ReportingService } from './reports.service';
 
 @Injectable()
 export class ReportCommentService {

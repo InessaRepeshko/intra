@@ -6,15 +6,23 @@ export type StrategicReportProps = {
     cycleId: number;
     cycleTitle: string;
     rateeCount: number;
+    rateeIds: number[];
     respondentCount: number;
+    respondentIds: number[];
     answerCount: number;
     reviewerCount: number;
+    reviewerIds: number[];
     teamCount: number;
+    teamIds: number[];
     positionCount: number;
+    positionIds: number[];
     competenceCount: number;
+    competenceIds: number[];
     questionCount: number;
-    turnoutPctOfRatees?: Decimal.Value | null;
-    turnoutPctOfRespondents?: Decimal.Value | null;
+    questionIds: number[];
+    turnoutAvgPctOfRatees?: Decimal.Value | null;
+    turnoutAvgPctOfTeams?: Decimal.Value | null;
+    turnoutAvgPctOfOthers?: Decimal.Value | null;
     competenceGeneralAvgSelf?: Decimal.Value | null;
     competenceGeneralAvgTeam?: Decimal.Value | null;
     competenceGeneralAvgOther?: Decimal.Value | null;
@@ -32,15 +40,23 @@ export class StrategicReportDomain {
     readonly cycleId: number;
     readonly cycleTitle: string;
     readonly rateeCount: number;
+    readonly rateeIds: number[];
     readonly respondentCount: number;
+    readonly respondentIds: number[];
     readonly answerCount: number;
     readonly reviewerCount: number;
+    readonly reviewerIds: number[];
     readonly teamCount: number;
+    readonly teamIds: number[];
     readonly positionCount: number;
+    readonly positionIds: number[];
     readonly competenceCount: number;
+    readonly competenceIds: number[];
     readonly questionCount: number;
-    readonly turnoutPctOfRatees?: Decimal | null;
-    readonly turnoutPctOfRespondents?: Decimal | null;
+    readonly questionIds: number[];
+    readonly turnoutAvgPctOfRatees?: Decimal | null;
+    readonly turnoutAvgPctOfTeams?: Decimal | null;
+    readonly turnoutAvgPctOfOthers?: Decimal | null;
     readonly competenceGeneralAvgSelf?: Decimal | null;
     readonly competenceGeneralAvgTeam?: Decimal | null;
     readonly competenceGeneralAvgOther?: Decimal | null;
@@ -57,18 +73,28 @@ export class StrategicReportDomain {
         this.cycleId = props.cycleId;
         this.cycleTitle = props.cycleTitle;
         this.rateeCount = props.rateeCount;
+        this.rateeIds = props.rateeIds;
         this.respondentCount = props.respondentCount;
+        this.respondentIds = props.respondentIds;
         this.answerCount = props.answerCount;
         this.reviewerCount = props.reviewerCount;
+        this.reviewerIds = props.reviewerIds;
         this.teamCount = props.teamCount;
+        this.teamIds = props.teamIds;
         this.positionCount = props.positionCount;
+        this.positionIds = props.positionIds;
         this.competenceCount = props.competenceCount;
+        this.competenceIds = props.competenceIds;
         this.questionCount = props.questionCount;
-        this.turnoutPctOfRatees = this.toDecimalOrNull(
-            props.turnoutPctOfRatees,
+        this.questionIds = props.questionIds;
+        this.turnoutAvgPctOfRatees = this.toDecimalOrNull(
+            props.turnoutAvgPctOfRatees,
         );
-        this.turnoutPctOfRespondents = this.toDecimalOrNull(
-            props.turnoutPctOfRespondents,
+        this.turnoutAvgPctOfTeams = this.toDecimalOrNull(
+            props.turnoutAvgPctOfTeams,
+        );
+        this.turnoutAvgPctOfOthers = this.toDecimalOrNull(
+            props.turnoutAvgPctOfOthers,
         );
         this.competenceGeneralAvgSelf = this.toDecimalOrNull(
             props.competenceGeneralAvgSelf,

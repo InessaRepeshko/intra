@@ -145,6 +145,7 @@ export function ReviewsTable({
         handleDragEnd,
         resetOrder,
     } = useDraggableColumns<
+        | 'id'
         | 'ratee'
         | 'cycle'
         | 'date'
@@ -155,6 +156,7 @@ export function ReviewsTable({
         | 'reviewers'
         | 'actions'
     >('reviews-table', [
+        'id',
         'ratee',
         'cycle',
         'date',
@@ -173,6 +175,7 @@ export function ReviewsTable({
     }, [resetTrigger, resetOrder]);
 
     const COLUMNS: Record<
+        | 'id'
         | 'ratee'
         | 'cycle'
         | 'date'
@@ -189,6 +192,27 @@ export function ReviewsTable({
             cellClassName: string;
         }
     > = {
+        id: {
+            header: (
+                <SortableHeader
+                    label="#"
+                    field="id"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[75px] w-[75px] text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (review) => (
+                <div className="flex items-center justify-center gap-1.5">
+                    <span className="font-medium text-foreground">
+                        {review.id}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
         ratee: {
             header: (
                 <SortableHeader
@@ -346,7 +370,7 @@ export function ReviewsTable({
                 <div className="flex items-center justify-center gap-1.5">
                     <FileText className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium text-foreground">
-                        {answerCounts[review.id] ?? `—`}
+                        {answerCounts[review.id]?.toString() ?? `—`}
                     </span>
                 </div>
             ),
@@ -417,6 +441,9 @@ export function ReviewsTable({
                         <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0 flex-1">
                                 <p className="flex items-center gap-x-2 gap-y-1 font-medium text-foreground flex-wrap">
+                                    <span className="text-muted-foreground">
+                                        #{review.id}
+                                    </span>
                                     <span className="break-words">
                                         {review.rateeFullName}
                                     </span>

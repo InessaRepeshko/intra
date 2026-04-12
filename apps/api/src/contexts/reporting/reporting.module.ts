@@ -16,9 +16,9 @@ import { STRATEGIC_REPORT_ANALYTICS_REPOSITORY } from './application/ports/strat
 import { STRATEGIC_REPORT_REPOSITORY } from './application/ports/strategic-report.repository.port';
 import { ReportAnalyticsService } from './application/services/report-analytics.service';
 import { ReportCommentService } from './application/services/report-comment.service';
-import { ReportingService } from './application/services/reporting.service';
+import { ReportingService } from './application/services/reports.service';
 import { StrategicReportAnalyticsService } from './application/services/strategic-report-analytics.service';
-import { StrategicReportingService } from './application/services/strategic-reporting.service';
+import { StrategicReportingService } from './application/services/strategic-reports.service';
 import { TextAnswerService } from './application/services/text-answer.service';
 import { ReportAnalyticsRepository } from './infrastructure/prisma-repositories/report-analytics.repository';
 import { ReportCommentRepository } from './infrastructure/prisma-repositories/report-comment.repository';

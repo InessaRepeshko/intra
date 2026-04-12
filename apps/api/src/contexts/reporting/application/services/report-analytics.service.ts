@@ -5,7 +5,7 @@ import {
     REPORT_ANALYTICS_REPOSITORY,
     ReportAnalyticsRepositoryPort,
 } from '../ports/report-analytics.repository.port';
-import { ReportingService } from './reporting.service';
+import { ReportingService } from './reports.service';
 
 @Injectable()
 export class ReportAnalyticsService {

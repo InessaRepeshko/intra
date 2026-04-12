@@ -5,7 +5,7 @@ import {
     STRATEGIC_REPORT_ANALYTICS_REPOSITORY,
     StrategicReportAnalyticsRepositoryPort,
 } from '../ports/strategic-report-analytics.repository.port';
-import { StrategicReportingService } from './strategic-reporting.service';
+import { StrategicReportingService } from './strategic-reports.service';
 
 @Injectable()
 export class StrategicReportAnalyticsService {

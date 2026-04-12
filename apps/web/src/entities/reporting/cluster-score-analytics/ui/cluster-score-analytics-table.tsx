@@ -388,7 +388,7 @@ export function ClusterScoreAnalyticsTable({
                 />
             ),
             headerClassName:
-                'min-w-[200px] w-[250px] whitespace-nowrap cursor-grab active:cursor-grabbing',
+                'min-w-[250px] w-[300px] whitespace-nowrap cursor-grab active:cursor-grabbing',
             cell: (clusterScoreAnalytics) => (
                 <div className="flex flex-row items-center gap-1.5 w-full">
                     <RefreshCcw className="shrink-0 h-3.5 w-3.5 text-muted-foreground" />
@@ -543,6 +543,31 @@ export function ClusterScoreAnalyticsTable({
                             />
                         </div>
 
+                        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                            <span className="flex items-center gap-1 text-muted-foreground">
+                                <RefreshCcw className="shrink-0 h-3.5 w-3.5" />
+                                <span className="font-medium text-foreground break-words">
+                                    {cycleTitles[
+                                        clusterScoreAnalytics.cycleId
+                                    ] ?? (
+                                            <span className="text-muted-foreground">
+                                                None
+                                            </span>
+                                        )}
+                                </span>
+                            </span>
+
+                            <span className="flex items-center gap-1 text-muted-foreground">
+                                <Calendar className="h-3.5 w-3.5" />
+                                <span className="font-medium text-muted-foreground break-words">
+                                    {format(
+                                        clusterScoreAnalytics.createdAt,
+                                        'MMM dd, yyyy',
+                                    )}
+                                </span>
+                            </span>
+                        </div>
+
                         <div className="mt-3 flex flex-wrap items-center gap-x-10 gap-y-2 text-sm">
                             <span className="flex flex-wrap items-center gap-1 text-muted-foreground break-words">
                                 {'Bounds from'}
@@ -589,31 +614,6 @@ export function ClusterScoreAnalyticsTable({
                                     {clusterScoreAnalytics.averageScore ?? `—`}
                                 </span>
                                 {' avg'}
-                            </span>
-                        </div>
-
-                        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                                <RefreshCcw className="shrink-0 h-3.5 w-3.5" />
-                                <span className="font-medium text-foreground break-words">
-                                    {cycleTitles[
-                                        clusterScoreAnalytics.cycleId
-                                    ] ?? (
-                                        <span className="text-muted-foreground">
-                                            None
-                                        </span>
-                                    )}
-                                </span>
-                            </span>
-
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                                <Calendar className="h-3.5 w-3.5" />
-                                <span className="font-medium text-muted-foreground break-words">
-                                    {format(
-                                        clusterScoreAnalytics.createdAt,
-                                        'MMM dd, yyyy',
-                                    )}
-                                </span>
                             </span>
                         </div>
                     </div>

@@ -24,23 +24,11 @@ export async function fetchReviewAnswers(
 export async function fetchReviewAnswerCount(
     reviewId: number,
 ): Promise<number> {
-    const { data } = await apiClient.get<AnswerDto[]>(
-        `${ANSWERS_BASE(reviewId)}`,
+    const { data } = await apiClient.get<number>(
+        `${ANSWERS_BASE(reviewId)}/count`,
     );
 
-    const questionCounts = data.reduce(
-        (acc, item) => {
-            acc[item.questionId] = (acc[item.questionId] || 0) + 1;
-            return acc;
-        },
-        {} as Record<number, number>,
-    );
-
-    const mostFrequentId = Object.values(questionCounts).reduce((a, b) =>
-        questionCounts[a] > questionCounts[b] ? a : b,
-    );
-
-    return Number(mostFrequentId);
+    return data;
 }
 
 export async function createAnswerToReview(

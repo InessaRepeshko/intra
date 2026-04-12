@@ -1,16 +1,19 @@
 import { SortDirection, StrategicReportSortField } from '@intra/shared-kernel';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
+    IsArray,
     IsEnum,
     IsInt,
     IsOptional,
     IsPositive,
     IsString,
+    Min,
 } from 'class-validator';
 import {
     ToOptionalDate,
     ToOptionalEnum,
     ToOptionalInt,
+    ToOptionalIntArray,
 } from 'src/common/transforms/query-sanitize.transform';
 
 export class StrategicReportQueryDto {
@@ -46,6 +49,19 @@ export class StrategicReportQueryDto {
 
     @ApiPropertyOptional({
         example: 1,
+        description: 'Filter by Feedback360 ratee ids',
+        type: 'number',
+        isArray: true,
+    })
+    @ToOptionalIntArray()
+    @IsOptional()
+    @IsArray()
+    @IsInt({ each: true })
+    @Min(1, { each: true })
+    rateeIds?: number[];
+
+    @ApiPropertyOptional({
+        example: 1,
         description: 'Filter by Feedback360 respondent count',
         type: 'number',
     })
@@ -54,6 +70,19 @@ export class StrategicReportQueryDto {
     @IsInt()
     @IsPositive()
     respondentCount?: number;
+
+    @ApiPropertyOptional({
+        example: 1,
+        description: 'Filter by Feedback360 respondent ids',
+        type: 'number',
+        isArray: true,
+    })
+    @ToOptionalIntArray()
+    @IsOptional()
+    @IsArray()
+    @IsInt({ each: true })
+    @Min(1, { each: true })
+    respondentIds?: number[];
 
     @ApiPropertyOptional({
         example: 1,
@@ -79,6 +108,19 @@ export class StrategicReportQueryDto {
 
     @ApiPropertyOptional({
         example: 1,
+        description: 'Filter by Feedback360 reviewer ids',
+        type: 'number',
+        isArray: true,
+    })
+    @ToOptionalIntArray()
+    @IsOptional()
+    @IsArray()
+    @IsInt({ each: true })
+    @Min(1, { each: true })
+    reviewerIds?: number[];
+
+    @ApiPropertyOptional({
+        example: 1,
         description: 'Filter by Feedback360 team count',
         type: 'number',
     })
@@ -87,6 +129,19 @@ export class StrategicReportQueryDto {
     @IsInt()
     @IsPositive()
     teamCount?: number;
+
+    @ApiPropertyOptional({
+        example: 1,
+        description: 'Filter by Feedback360 team ids',
+        type: 'number',
+        isArray: true,
+    })
+    @ToOptionalIntArray()
+    @IsOptional()
+    @IsArray()
+    @IsInt({ each: true })
+    @Min(1, { each: true })
+    teamIds?: number[];
 
     @ApiPropertyOptional({
         example: 1,
@@ -101,6 +156,19 @@ export class StrategicReportQueryDto {
 
     @ApiPropertyOptional({
         example: 1,
+        description: 'Filter by Feedback360 position ids',
+        type: 'number',
+        isArray: true,
+    })
+    @ToOptionalIntArray()
+    @IsOptional()
+    @IsArray()
+    @IsInt({ each: true })
+    @Min(1, { each: true })
+    positionIds?: number[];
+
+    @ApiPropertyOptional({
+        example: 1,
         description: 'Filter by Feedback360 competence count',
         type: 'number',
     })
@@ -109,6 +177,19 @@ export class StrategicReportQueryDto {
     @IsInt()
     @IsPositive()
     competenceCount?: number;
+
+    @ApiPropertyOptional({
+        example: 1,
+        description: 'Filter by Feedback360 competence ids',
+        type: 'number',
+        isArray: true,
+    })
+    @ToOptionalIntArray()
+    @IsOptional()
+    @IsArray()
+    @IsInt({ each: true })
+    @Min(1, { each: true })
+    competenceIds?: number[];
 
     @ApiPropertyOptional({
         example: 1,
@@ -123,7 +204,20 @@ export class StrategicReportQueryDto {
 
     @ApiPropertyOptional({
         example: 1,
-        description: 'Filter by ratee turnout percentage',
+        description: 'Filter by Feedback360 question ids',
+        type: 'number',
+        isArray: true,
+    })
+    @ToOptionalIntArray()
+    @IsOptional()
+    @IsArray()
+    @IsInt({ each: true })
+    @Min(1, { each: true })
+    questionIds?: number[];
+
+    @ApiPropertyOptional({
+        example: 1,
+        description: 'Filter by ratee turnout average percentage',
         type: 'number',
     })
     @ToOptionalInt({ min: 1 })
@@ -134,14 +228,25 @@ export class StrategicReportQueryDto {
 
     @ApiPropertyOptional({
         example: 1,
-        description: 'Filter by respondent turnout percentage',
+        description: 'Filter by team respondent turnout average percentage',
         type: 'number',
     })
     @ToOptionalInt({ min: 1 })
     @IsOptional()
     @IsInt()
     @IsPositive()
-    turnoutPctOfRespondents?: number;
+    turnoutPctOfTeams?: number;
+
+    @ApiPropertyOptional({
+        example: 1,
+        description: 'Filter by other respondent turnout average percentage',
+        type: 'number',
+    })
+    @ToOptionalInt({ min: 1 })
+    @IsOptional()
+    @IsInt()
+    @IsPositive()
+    turnoutPctOfOthers?: number;
 
     @ApiPropertyOptional({
         example: 1,

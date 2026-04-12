@@ -109,6 +109,8 @@ export function IndividualReportsTable({
         | 'self_competence'
         | 'team_competence'
         | 'others_competence'
+        | 'delta_team_competence'
+        | 'delta_others_competence'
         | 'date'
         | 'actions'
     >('reports-table', [
@@ -124,6 +126,8 @@ export function IndividualReportsTable({
         'self_competence',
         'team_competence',
         'others_competence',
+        'delta_team_competence',
+        'delta_others_competence',
         'date',
         'actions',
     ]);
@@ -147,6 +151,8 @@ export function IndividualReportsTable({
         | 'self_competence'
         | 'team_competence'
         | 'others_competence'
+        | 'delta_team_competence'
+        | 'delta_others_competence'
         | 'date'
         | 'actions',
         {
@@ -398,7 +404,7 @@ export function IndividualReportsTable({
         self_competence: {
             header: (
                 <SortableHeader
-                    label="Competence % by self"
+                    label="Rating % by self"
                     wrapLabelText={true}
                     field="competenceTotPctBySelf"
                     currentField={sortField}
@@ -424,7 +430,7 @@ export function IndividualReportsTable({
         team_competence: {
             header: (
                 <SortableHeader
-                    label="Competence % by team"
+                    label="Rating % by team"
                     wrapLabelText={true}
                     field="competenceTotPctByTeam"
                     currentField={sortField}
@@ -449,7 +455,7 @@ export function IndividualReportsTable({
         others_competence: {
             header: (
                 <SortableHeader
-                    label="Competence % by others"
+                    label="Rating % by others"
                     wrapLabelText={true}
                     field="competenceTotPctByOthers"
                     currentField={sortField}
@@ -469,6 +475,78 @@ export function IndividualReportsTable({
                     </span>
                 </div>
             ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        delta_team_competence: {
+            header: (
+                <SortableHeader
+                    label="Delta % by team"
+                    wrapLabelText={true}
+                    field="deltaPercentageByTeam"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => {
+                const numberValue = report.competenceSummaryTotals?.deltaPercentageByTeam ?? null;
+                const isPositive = numberValue !== null && numberValue > 0;
+                const isNegative = numberValue !== null && numberValue < 0;
+                const color = isPositive
+                    ? 'text-green-800'
+                    : isNegative
+                        ? 'text-red-800'
+                        : 'ml-5 text-muted-foreground';
+                const stringValue = report.competenceSummaryTotals?.deltaPercentageByTeam
+                    ? (isPositive ? '↑ +' : isNegative ? '↓ ' : '') +
+                    formatNumber(report.competenceSummaryTotals?.deltaPercentageByTeam)
+                    : `0`;
+                return (
+                    <div className="flex items-center justify-start pl-3 gap-1.5">
+                        <span className={`font-medium ${color}`}>
+                            {stringValue}
+                        </span>
+                    </div>
+                );
+            },
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        delta_others_competence: {
+            header: (
+                <SortableHeader
+                    label="Delta % by others"
+                    wrapLabelText={true}
+                    field="competenceTotPctByOthers"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => {
+                const numberValue = report.competenceSummaryTotals?.deltaPercentageByOther ?? null;
+                const isPositive = numberValue !== null && numberValue > 0;
+                const isNegative = numberValue !== null && numberValue < 0;
+                const color = isPositive
+                    ? 'text-green-800'
+                    : isNegative
+                        ? 'text-red-800'
+                        : 'ml-5 text-muted-foreground';
+                const stringValue = report.competenceSummaryTotals?.deltaPercentageByOther
+                    ? (isPositive ? '↑ +' : isNegative ? '↓ ' : '') +
+                    formatNumber(report.competenceSummaryTotals?.deltaPercentageByOther)
+                    : `0`;
+                return (
+                    <div className="flex items-center justify-start pl-3 gap-1.5">
+                        <span className={`font-medium ${color}`}>
+                            {stringValue}
+                        </span>
+                    </div>
+                );
+            },
             cellClassName: 'whitespace-nowrap text-center',
         },
         date: {
@@ -618,6 +696,9 @@ export function IndividualReportsTable({
 
                             <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
                                 <span className="flex items-center gap-1 text-muted-foreground flex-wrap">
+                                    <span className="flex items-center gap-1 text-foreground mr-2">
+                                        Participation Stats
+                                    </span>
                                     <Users className="h-3.5 w-3.5 shrink-0" />
                                     {report.answerCount ? (
                                         <span className="font-medium text-foreground">
@@ -657,7 +738,7 @@ export function IndividualReportsTable({
                             {report.turnoutPctOfTeam &&
                                 report.turnoutPctOfOther && (
                                     <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                                        <span className="flex items-center gap-1 text-muted-foreground">
+                                        <span className="flex items-center gap-1 text-foreground">
                                             Turnout
                                         </span>
                                         <span className="flex items-center gap-1 text-muted-foreground">
@@ -684,8 +765,8 @@ export function IndividualReportsTable({
 
                             {report.competenceSummaryTotals && (
                                 <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                                    <span className="flex items-center gap-1 text-muted-foreground">
-                                        Competence
+                                    <span className="flex items-center gap-1 text-foreground">
+                                        Rating
                                     </span>
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <BookmarkCheck className="h-3.5 w-3.5 shrink-0" />

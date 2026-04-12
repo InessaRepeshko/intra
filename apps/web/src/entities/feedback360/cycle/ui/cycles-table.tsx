@@ -116,8 +116,9 @@ export function CyclesTable({
         handleDragEnd,
         resetOrder,
     } = useDraggableColumns<
-        'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions'
+        'id' | 'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions'
     >('cycles-table', [
+        'id',
         'name',
         'dates',
         'anonymity',
@@ -133,7 +134,7 @@ export function CyclesTable({
     }, [resetTrigger, resetOrder]);
 
     const COLUMNS: Record<
-        'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions',
+        'id' | 'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions',
         {
             header: React.ReactNode;
             headerClassName: string;
@@ -141,6 +142,27 @@ export function CyclesTable({
             cellClassName: string;
         }
     > = {
+        id: {
+            header: (
+                <SortableHeader
+                    label="#"
+                    field="id"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[75px] w-[75px] text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (cycle) => (
+                <div className="flex items-center justify-center gap-1.5">
+                    <span className="font-medium text-foreground">
+                        {cycle.id}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
         name: {
             header: (
                 <SortableHeader
@@ -194,7 +216,7 @@ export function CyclesTable({
         anonymity: {
             header: (
                 <SortableHeader
-                    label="Anonymity"
+                    label="Anonymity Threshold"
                     field="minRespondentsThreshold"
                     currentField={sortField}
                     currentDirection={sortDirection}
@@ -293,6 +315,9 @@ export function CyclesTable({
                         <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0 flex-1">
                                 <p className="flex items-center gap-2 font-medium text-foreground flex-wrap">
+                                    <span className="text-muted-foreground">
+                                        #{cycle.id}
+                                    </span>
                                     <span className="break-words">
                                         {cycle.title}
                                     </span>

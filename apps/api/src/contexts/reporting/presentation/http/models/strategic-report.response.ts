@@ -45,6 +45,16 @@ export class StrategicReportResponse implements StrategicReportDto {
     rateeCount!: number;
 
     @ApiProperty({
+        example: [1, 2, 3],
+        description: 'Ratee ids',
+        type: 'number',
+        required: true,
+        nullable: false,
+    })
+    @Expose()
+    rateeIds!: number[];
+
+    @ApiProperty({
         example: 10,
         description: 'Respondent count',
         type: 'number',
@@ -53,6 +63,16 @@ export class StrategicReportResponse implements StrategicReportDto {
     })
     @Expose()
     respondentCount!: number;
+
+    @ApiProperty({
+        example: [1, 2, 3],
+        description: 'Respondent ids',
+        type: 'number',
+        required: true,
+        nullable: false,
+    })
+    @Expose()
+    respondentIds!: number[];
 
     @ApiProperty({
         example: 10,
@@ -75,6 +95,16 @@ export class StrategicReportResponse implements StrategicReportDto {
     reviewerCount!: number;
 
     @ApiProperty({
+        example: [1, 2, 3],
+        description: 'Reviewer ids',
+        type: 'number',
+        required: true,
+        nullable: false,
+    })
+    @Expose()
+    reviewerIds!: number[];
+
+    @ApiProperty({
         example: 10,
         description: 'Team count',
         type: 'number',
@@ -83,6 +113,16 @@ export class StrategicReportResponse implements StrategicReportDto {
     })
     @Expose()
     teamCount!: number;
+
+    @ApiProperty({
+        example: [1, 2, 3],
+        description: 'Team ids',
+        type: 'number',
+        required: true,
+        nullable: false,
+    })
+    @Expose()
+    teamIds!: number[];
 
     @ApiProperty({
         example: 10,
@@ -95,6 +135,16 @@ export class StrategicReportResponse implements StrategicReportDto {
     positionCount!: number;
 
     @ApiProperty({
+        example: [1, 2, 3],
+        description: 'Position ids',
+        type: 'number',
+        required: true,
+        nullable: false,
+    })
+    @Expose()
+    positionIds!: number[];
+
+    @ApiProperty({
         example: 10,
         description: 'Competence count',
         type: 'number',
@@ -103,6 +153,16 @@ export class StrategicReportResponse implements StrategicReportDto {
     })
     @Expose()
     competenceCount!: number;
+
+    @ApiProperty({
+        example: [1, 2, 3],
+        description: 'Competence ids',
+        type: 'number',
+        required: true,
+        nullable: false,
+    })
+    @Expose()
+    competenceIds!: number[];
 
     @ApiProperty({
         example: 10,
@@ -115,21 +175,18 @@ export class StrategicReportResponse implements StrategicReportDto {
     questionCount!: number;
 
     @ApiProperty({
-        example: 100.0,
-        description: 'Turnout of ratees',
+        example: [1, 2, 3],
+        description: 'Question ids',
         type: 'number',
-        format: 'float',
-        required: false,
-        nullable: true,
-        minimum: REPORT_CONSTRAINTS.PERCENTAGE.MIN,
-        maximum: REPORT_CONSTRAINTS.PERCENTAGE.MAX,
+        required: true,
+        nullable: false,
     })
     @Expose()
-    turnoutPctOfRatees?: number | null;
+    questionIds!: number[];
 
     @ApiProperty({
         example: 100.0,
-        description: 'Turnout of respondents',
+        description: 'Average turnout of ratees',
         type: 'number',
         format: 'float',
         required: false,
@@ -138,7 +195,33 @@ export class StrategicReportResponse implements StrategicReportDto {
         maximum: REPORT_CONSTRAINTS.PERCENTAGE.MAX,
     })
     @Expose()
-    turnoutPctOfRespondents?: number | null;
+    turnoutAvgPctOfRatees?: number | null;
+
+    @ApiProperty({
+        example: 100.0,
+        description: 'Average turnout of team respondents',
+        type: 'number',
+        format: 'float',
+        required: false,
+        nullable: true,
+        minimum: REPORT_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_CONSTRAINTS.PERCENTAGE.MAX,
+    })
+    @Expose()
+    turnoutAvgPctOfTeams?: number | null;
+
+    @ApiProperty({
+        example: 100.0,
+        description: 'Average turnout of other respondents',
+        type: 'number',
+        format: 'float',
+        required: false,
+        nullable: true,
+        minimum: REPORT_CONSTRAINTS.PERCENTAGE.MIN,
+        maximum: REPORT_CONSTRAINTS.PERCENTAGE.MAX,
+    })
+    @Expose()
+    turnoutAvgPctOfOthers?: number | null;
 
     @ApiProperty({
         example: 100.0,

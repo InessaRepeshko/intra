@@ -233,33 +233,34 @@ export class ReportingService {
                     ),
             ),
         ];
-        const allAnswers = await this.answers.list({
-            reviewId,
+        const answersCounts =
+            await this.answers.getAnswersCountByRespondentCategories(reviewId);
+
+        let answerCount = 0;
+        answersCounts.forEach((stat) => {
+            answerCount += stat.answers;
         });
-        const questionCounts = allAnswers.reduce(
-            (acc, item) => {
-                acc[item.questionId] = (acc[item.questionId] || 0) + 1;
-                return acc;
-            },
-            {} as Record<number, number>,
-        );
-        const mostFrequentId = Object.values(questionCounts).reduce((a, b) =>
-            questionCounts[a] > questionCounts[b] ? a : b,
-        );
-        const answerCount = Number(mostFrequentId);
 
         if (this.isProduction) {
-            await this.verifyAnonimityThreshold(review, allAnswers);
+            await this.verifyAnonimityThreshold(review, answersCounts);
         }
+
+        const actualAnswersByCategory = answersCounts.reduce(
+            (acc, stat) => {
+                acc[stat.respondentCategory] = stat.answers;
+                return acc;
+            },
+            {} as Record<string, number>,
+        );
 
         const teamTurnout = this.calculateTurnout(
             allRespondents,
-            allAnswers,
+            actualAnswersByCategory[RespondentCategory.TEAM] || 0,
             RespondentCategory.TEAM,
         );
         const otherTurnout = this.calculateTurnout(
             allRespondents,
-            allAnswers,
+            actualAnswersByCategory[RespondentCategory.OTHER] || 0,
             RespondentCategory.OTHER,
         );
 
@@ -360,7 +361,10 @@ export class ReportingService {
      */
     private async verifyAnonimityThreshold(
         review: ReviewDomain,
-        answers: AnswerDomain[],
+        answersCounts: {
+            respondentCategory: RespondentCategory;
+            answers: number;
+        }[],
     ) {
         let anonimityThreshold;
 
@@ -371,37 +375,31 @@ export class ReportingService {
             anonimityThreshold = CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN;
         }
 
-        const respondentCategories = new Set(
-            answers.map((answer) => answer.respondentCategory),
-        );
         let isAnonimityThresholdMet: {
             category: RespondentCategory;
             met: boolean;
         }[] = [];
 
         if (
-            respondentCategories.size === 1 &&
-            respondentCategories.has(RespondentCategory.SELF_ASSESSMENT)
+            answersCounts.length === 1 &&
+            answersCounts[0].respondentCategory ===
+                RespondentCategory.SELF_ASSESSMENT
         ) {
             throw new NotFoundException(
                 `Not enough answers in category to meet the anonymity threshold ${anonimityThreshold} for review ${review.id}: only self assessment answers available.`,
             );
         }
 
-        respondentCategories.forEach((category) => {
-            if (category === RespondentCategory.SELF_ASSESSMENT) {
+        answersCounts.forEach((stat) => {
+            if (
+                stat.respondentCategory === RespondentCategory.SELF_ASSESSMENT
+            ) {
                 return;
             }
 
-            const answerCount = this.calculateActualAnswerCount(
-                answers.filter(
-                    (answer) => answer.respondentCategory === category,
-                ),
-            );
-
             isAnonimityThresholdMet.push({
-                category,
-                met: answerCount < anonimityThreshold,
+                category: stat.respondentCategory,
+                met: stat.answers >= anonimityThreshold,
             });
         });
 
@@ -574,27 +572,24 @@ export class ReportingService {
      * Calculates the turnout percentage for a specific category of respondents.
      * Formula: (actual answers / assigned respondents) * 100
      * @param respondents The list of all respondents.
-     * @param answers The list of all answers.
+     * @param actualAnswers The count of actual answers for the category.
      * @param category The category to calculate turnout for.
      * @returns The turnout percentage as a Decimal, or null if no respondents in category.
      */
     private calculateTurnout(
         respondents: RespondentDomain[],
-        answers: AnswerDomain[],
+        actualAnswers: number,
         category: RespondentCategory,
     ): Decimal | null {
         const assignedRespondents = respondents.filter(
             (respondent) => respondent.category === category,
-        );
-        const actualAnswers = this.calculateActualAnswerCount(
-            answers.filter((answer) => answer.respondentCategory === category),
         );
 
         if (assignedRespondents.length === 0) {
             return null;
         }
 
-        if (actualAnswers.equals(0)) {
+        if (actualAnswers === 0) {
             return new Decimal(0);
         }
 
@@ -676,13 +671,13 @@ export class ReportingService {
                 maxScore,
             );
 
-            const deltaPercentageByTeam = this.calculateDeltaPercent(
-                averageBySelf,
-                averageByTeam,
+            const deltaPercentageByTeam = this.calculateDelta(
+                percentageByTeam,
+                percentageBySelf,
             );
-            const deltaPercentageByOther = this.calculateDeltaPercent(
-                averageBySelf,
-                averageByOther,
+            const deltaPercentageByOther = this.calculateDelta(
+                percentageByOther,
+                percentageBySelf,
             );
 
             questionAnalytics.push(
@@ -775,13 +770,13 @@ export class ReportingService {
                 maxScore,
             );
 
-            const deltaPercentageByTeam = this.calculateDeltaPercent(
-                averageBySelf,
-                averageByTeam,
+            const deltaPercentageByTeam = this.calculateDelta(
+                percentageByTeam,
+                percentageBySelf,
             );
-            const deltaPercentageByOther = this.calculateDeltaPercent(
-                averageBySelf,
-                averageByOther,
+            const deltaPercentageByOther = this.calculateDelta(
+                percentageByOther,
+                percentageBySelf,
             );
 
             competenceAnalytics.push(
@@ -880,22 +875,20 @@ export class ReportingService {
     }
 
     /**
-     * Calculates the percentage difference between two values
-     * by subtracting the comparison value from the base value and dividing by the base value.
-     * Formula: ((base - comparison) / base) * 100
-     * @param comparison The comparison value.
-     * @param base The base value.
-     * @returns The percentage difference.
+     * Calculates the difference between two values in percentage points.
+     * Formula: respondent rating - self rating.
+     * @param respondent The respondent rating.
+     * @param self The self assessment rating.
+     * @returns The difference in percentage points.
      */
-    private calculateDeltaPercent(
-        comparison: Decimal | null,
-        base: Decimal | null,
+    private calculateDelta(
+        respondent: Decimal | null,
+        self: Decimal | null,
     ): Decimal | null {
-        if (base === null || comparison === null) {
+        if (respondent === null || self === null) {
             return null;
         }
-        const delta = base.minus(comparison).dividedBy(base).times(100);
-        return this.roundDecimal(delta);
+        return this.roundDecimal(respondent.minus(self));
     }
 
     /**
@@ -931,13 +924,13 @@ export class ReportingService {
             maxScore,
         );
 
-        const deltaPercentageByTeam = this.calculateDeltaPercent(
-            averageBySelf,
-            averageByTeam,
+        const deltaPercentageByTeam = this.calculateDelta(
+            percentageByTeam,
+            percentageBySelf,
         );
-        const deltaPercentageByOther = this.calculateDeltaPercent(
-            averageBySelf,
-            averageByOther,
+        const deltaPercentageByOther = this.calculateDelta(
+            percentageByOther,
+            percentageBySelf,
         );
         return {
             averageBySelfAssessment: this.toRoundedNumber(averageBySelf),
@@ -951,29 +944,6 @@ export class ReportingService {
                 deltaPercentageByOther,
             ),
         };
-    }
-
-    /**
-     * Calculates the actual answer count for a specific review.
-     * @param answers The review answers to calculate the actual answer count from.
-     * @returns The actual answer count.
-     */
-    private calculateActualAnswerCount(answers: AnswerDomain[]): Decimal {
-        if (answers.length === 0) return new Decimal(0);
-
-        const questionCounts = answers.reduce(
-            (acc, item) => {
-                acc[item.questionId] = (acc[item.questionId] || 0) + 1;
-                return acc;
-            },
-            {} as Record<number, number>,
-        );
-
-        const mostFrequentId = Object.values(questionCounts).reduce((a, b) =>
-            questionCounts[a] > questionCounts[b] ? a : b,
-        );
-
-        return new Decimal(mostFrequentId);
     }
 
     /**
@@ -1034,13 +1004,13 @@ export class ReportingService {
             maxScore,
         );
 
-        const deltaPercentageByTeam = this.calculateDeltaPercent(
-            averageBySelf,
-            averageByTeam,
+        const deltaPercentageByTeam = this.calculateDelta(
+            percentageByTeam,
+            percentageBySelf,
         );
-        const deltaPercentageByOther = this.calculateDeltaPercent(
-            averageBySelf,
-            averageByOther,
+        const deltaPercentageByOther = this.calculateDelta(
+            percentageByOther,
+            percentageBySelf,
         );
 
         return {

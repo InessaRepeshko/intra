@@ -1,3 +1,4 @@
+import { fetchReviewRespondents } from '@entities/feedback360/respondent/api/respondent.api';
 import { fetchReviewById } from '@entities/feedback360/review/api/review.api';
 import {
     type Review,
@@ -8,6 +9,7 @@ import {
     type User,
     mapUserResponseDtoToModel,
 } from '@entities/identity/user/model/mappers';
+import { fetchTeamTitlesByIds } from '@entities/organisation/team/api/team.api';
 import { fetchReports } from '@entities/reporting/individual-report/api/individual-report.api';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import {
@@ -22,8 +24,6 @@ import {
     fetchStrategicReportById,
     fetchStrategicReports,
 } from './strategic-report.api';
-import { fetchTeamTitlesByIds } from '@entities/organisation/team/api/team.api';
-import { fetchReviewRespondents } from '@entities/feedback360/respondent/api/respondent.api';
 
 export const strategicReportKeys = {
     all: ['strategic-reports'] as const,
@@ -163,7 +163,9 @@ export function useAllStrategicReportRateesQuery(cycleIds: number[]) {
                 const reviews = await Promise.all(
                     reviewIds.map((reviewId) => fetchReviewById(reviewId)),
                 );
-                const rateeIds = [...new Set(reviews.map((review) => review.rateeId))];
+                const rateeIds = [
+                    ...new Set(reviews.map((review) => review.rateeId)),
+                ];
                 const users = await Promise.all(
                     rateeIds.map((rateeId) => fetchUserById(rateeId)),
                 );
@@ -210,14 +212,14 @@ export function useStrategicReportTeamTitlesQuery(cycleId: number) {
                     return { reviewId, respondents };
                 }),
             );
-            reviewRespondents.forEach((review) => 
-                review.respondents.forEach((respondent) => 
-                    teamIds.push(respondent.teamId)
-                )
+            reviewRespondents.forEach((review) =>
+                review.respondents.forEach((respondent) =>
+                    teamIds.push(respondent.teamId),
+                ),
             );
-            const uniqueTeamIds = Array.from(new Set(teamIds))
-                .filter((t): t is number => t !== undefined && t !== null && t > 0);
-
+            const uniqueTeamIds = Array.from(new Set(teamIds)).filter(
+                (t): t is number => t !== undefined && t !== null && t > 0,
+            );
 
             const teams = await fetchTeamTitlesByIds(uniqueTeamIds);
             return teams;
@@ -242,18 +244,19 @@ export function useStrategicReportAllTeamTitlesQuery(cycleIds: number[]) {
 
                 const reviewRespondents = await Promise.all(
                     reviewIds.map(async (reviewId) => {
-                        const respondents = await fetchReviewRespondents(reviewId);
+                        const respondents =
+                            await fetchReviewRespondents(reviewId);
                         return { reviewId, respondents };
                     }),
                 );
                 reviewRespondents.forEach((review) =>
                     review.respondents.forEach((respondent) =>
-                        teamIds.push(respondent.teamId)
-                    )
+                        teamIds.push(respondent.teamId),
+                    ),
                 );
-                const uniqueTeamIds = Array.from(new Set(teamIds))
-                    .filter((t): t is number => t !== undefined && t !== null && t > 0);
-
+                const uniqueTeamIds = Array.from(new Set(teamIds)).filter(
+                    (t): t is number => t !== undefined && t !== null && t > 0,
+                );
 
                 const teams = await fetchTeamTitlesByIds(uniqueTeamIds);
                 return teams;
@@ -267,7 +270,9 @@ export function useStrategicReportAllTeamTitlesQuery(cycleIds: number[]) {
     uniqueCycleIds.forEach((cycleId, index) => {
         const result = queries[index];
         if (result.isSuccess && result.data !== undefined) {
-            teamTitles[cycleId] = result.data?.sort((a, b) => a.title.localeCompare(b.title));
+            teamTitles[cycleId] = result.data?.sort((a, b) =>
+                a.title.localeCompare(b.title),
+            );
         }
     });
 
@@ -275,4 +280,3 @@ export function useStrategicReportAllTeamTitlesQuery(cycleIds: number[]) {
 
     return { teamTitles, isLoading };
 }
-

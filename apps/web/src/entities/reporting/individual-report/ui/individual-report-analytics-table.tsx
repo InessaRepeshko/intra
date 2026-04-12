@@ -10,18 +10,19 @@ import {
     TableHeader,
     TableRow,
 } from '@shared/components/ui/table';
-import { calculateAverageNumberForArray } from '@shared/lib/utils/calculate-average';
 import { formatNumber } from '@shared/lib/utils/format-number';
 import { TableColumnHeader } from '@shared/ui/table-column-header';
 import { ReportAnalytics } from '../model/mappers';
-import { EntityType } from '../model/types';
+import { EntityType, ReportEntitySummaryTotalsDto } from '../model/types';
 
 interface IndividualReportAnalyticsTableProps {
     reportAnalytics: ReportAnalytics[];
+    summaryTotals: ReportEntitySummaryTotalsDto;
 }
 
 export function IndividualReportAnalyticsTable({
     reportAnalytics,
+    summaryTotals,
 }: IndividualReportAnalyticsTableProps) {
     const sortedAnalytics = [...reportAnalytics]
         .sort((a, b) => {
@@ -30,14 +31,6 @@ export function IndividualReportAnalyticsTable({
             return nameA.localeCompare(nameB);
         })
         .map((a, index) => ({ ...a, num: index + 1 }));
-
-    const getValidAverage = (arr: (number | null | undefined)[]) => {
-        const validValues = arr.filter(
-            (val): val is number => typeof val === 'number',
-        );
-        if (validValues.length === 0) return null;
-        return calculateAverageNumberForArray(validValues);
-    };
 
     sortedAnalytics.push({
         num: -1,
@@ -48,30 +41,14 @@ export function IndividualReportAnalyticsTable({
         questionId: -1,
         questionTitle: 'Average by questions',
         competenceTitle: 'Average by competencies',
-        averageBySelfAssessment: getValidAverage(
-            sortedAnalytics.map((a) => a.averageBySelfAssessment),
-        ),
-        averageByTeam: getValidAverage(
-            sortedAnalytics.map((a) => a.averageByTeam),
-        ),
-        averageByOther: getValidAverage(
-            sortedAnalytics.map((a) => a.averageByOther),
-        ),
-        percentageBySelfAssessment: getValidAverage(
-            sortedAnalytics.map((a) => a.percentageBySelfAssessment),
-        ),
-        percentageByTeam: getValidAverage(
-            sortedAnalytics.map((a) => a.percentageByTeam),
-        ),
-        percentageByOther: getValidAverage(
-            sortedAnalytics.map((a) => a.percentageByOther),
-        ),
-        deltaPercentageByTeam: getValidAverage(
-            sortedAnalytics.map((a) => a.deltaPercentageByTeam),
-        ),
-        deltaPercentageByOther: getValidAverage(
-            sortedAnalytics.map((a) => a.deltaPercentageByOther),
-        ),
+        averageBySelfAssessment: summaryTotals.averageBySelfAssessment,
+        averageByTeam: summaryTotals.averageByTeam,
+        averageByOther: summaryTotals.averageByOther,
+        percentageBySelfAssessment: summaryTotals.percentageBySelfAssessment,
+        percentageByTeam: summaryTotals.percentageByTeam,
+        percentageByOther: summaryTotals.percentageByOther,
+        deltaPercentageByTeam: summaryTotals.deltaPercentageByTeam,
+        deltaPercentageByOther: summaryTotals.deltaPercentageByOther,
         createdAt: sortedAnalytics[0].createdAt,
     });
 
@@ -98,7 +75,7 @@ export function IndividualReportAnalyticsTable({
         }
     > = {
         num: {
-            header: (reportAnalytics) => (
+            header: () => (
                 <TableColumnHeader
                     label={`#`}
                     className="justify-center items-center text-center !mb-1.5"

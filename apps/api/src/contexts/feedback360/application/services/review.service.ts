@@ -483,6 +483,19 @@ export class ReviewService {
         return this.answers.list({ reviewId: reviewId, respondentCategory });
     }
 
+    async countReviewAnswers(
+        reviewId: number,
+        actor?: UserDomain,
+    ): Promise<number> {
+        const review = await this.getById(reviewId);
+        await this.checkAccessToReviewAnswers(review, actor);
+
+        const counts =
+            await this.answers.getAnswersCountByRespondentCategories(reviewId);
+
+        return counts.reduce((acc, c) => acc + c.answers, 0);
+    }
+
     async addRespondent(
         payload: AddRespondentPayload,
     ): Promise<RespondentDomain> {

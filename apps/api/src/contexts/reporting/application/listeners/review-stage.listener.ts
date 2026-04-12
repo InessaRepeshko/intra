@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ReviewStageProcessedEvent } from 'src/contexts/feedback360/application/events/review-stage-processed.event';
 import { ReviewService } from '../../../feedback360/application/services/review.service';
-import { ReportingService } from '../services/reporting.service';
+import { ReportingService } from '../services/reports.service';
 
 /**
  * Event listener for review stage changes

@@ -48,7 +48,7 @@ export function CyclesFilters({
                     )}
                 />
                 <Input
-                    placeholder="Search by title or description..."
+                    placeholder="Search by id or title or description..."
                     value={search}
                     onChange={(e) => onSearchChange(e.target.value)}
                     className="pl-9 truncate text-sm"

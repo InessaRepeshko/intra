@@ -5299,6 +5299,41 @@
         ]
       }
     },
+    "/feedback360/reviews/{id}/answers/count": {
+      "get": {
+        "operationId": "ReviewController_countAnswers",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Review id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Count of answers to Review",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Count answers to Review",
+        "tags": [
+          "Feedback360 / Reviews"
+        ]
+      }
+    },
     "/feedback360/reviews/{id}/respondents": {
       "post": {
         "operationId": "ReviewController_addRespondent",
@@ -8366,6 +8401,19 @@
             }
           },
           {
+            "name": "rateeIds",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 ratee ids",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
             "name": "respondentCount",
             "required": false,
             "in": "query",
@@ -8373,6 +8421,19 @@
             "schema": {
               "example": 1,
               "type": "number"
+            }
+          },
+          {
+            "name": "respondentIds",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 respondent ids",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
             }
           },
           {
@@ -8396,6 +8457,19 @@
             }
           },
           {
+            "name": "reviewerIds",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 reviewer ids",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
             "name": "teamCount",
             "required": false,
             "in": "query",
@@ -8403,6 +8477,19 @@
             "schema": {
               "example": 1,
               "type": "number"
+            }
+          },
+          {
+            "name": "teamIds",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 team ids",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
             }
           },
           {
@@ -8416,6 +8503,19 @@
             }
           },
           {
+            "name": "positionIds",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 position ids",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
             "name": "competenceCount",
             "required": false,
             "in": "query",
@@ -8423,6 +8523,19 @@
             "schema": {
               "example": 1,
               "type": "number"
+            }
+          },
+          {
+            "name": "competenceIds",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 competence ids",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
             }
           },
           {
@@ -8436,20 +8549,43 @@
             }
           },
           {
+            "name": "questionIds",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Feedback360 question ids",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
             "name": "turnoutPctOfRatees",
             "required": false,
             "in": "query",
-            "description": "Filter by ratee turnout percentage",
+            "description": "Filter by ratee turnout average percentage",
             "schema": {
               "example": 1,
               "type": "number"
             }
           },
           {
-            "name": "turnoutPctOfRespondents",
+            "name": "turnoutPctOfTeams",
             "required": false,
             "in": "query",
-            "description": "Filter by respondent turnout percentage",
+            "description": "Filter by team respondent turnout average percentage",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "turnoutPctOfOthers",
+            "required": false,
+            "in": "query",
+            "description": "Filter by other respondent turnout average percentage",
             "schema": {
               "example": 1,
               "type": "number"
@@ -8560,15 +8696,23 @@
                 "cycleId",
                 "cycleTitle",
                 "rateeCount",
+                "rateeIds",
                 "respondentCount",
+                "respondentIds",
                 "answerCount",
                 "reviewerCount",
+                "reviewerIds",
                 "teamCount",
+                "teamIds",
                 "positionCount",
+                "positionIds",
                 "competenceCount",
+                "competenceIds",
                 "questionCount",
-                "turnoutPctOfRatees",
-                "turnoutPctOfRespondents",
+                "questionIds",
+                "turnoutAvgPctOfRatees",
+                "turnoutAvgPctOfTeams",
+                "turnoutAvgPctOfOthers",
                 "competenceGeneralAvgSelf",
                 "competenceGeneralAvgTeam",
                 "competenceGeneralAvgOther",
@@ -8627,6 +8771,19 @@
             }
           },
           {
+            "description": "Filter by Feedback360 ratee ids",
+            "required": false,
+            "name": "rateeIds",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
             "description": "Filter by Feedback360 respondent count",
             "required": false,
             "name": "respondentCount",
@@ -8634,6 +8791,19 @@
             "schema": {
               "example": 1,
               "type": "number"
+            }
+          },
+          {
+            "description": "Filter by Feedback360 respondent ids",
+            "required": false,
+            "name": "respondentIds",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
             }
           },
           {
@@ -8657,6 +8827,19 @@
             }
           },
           {
+            "description": "Filter by Feedback360 reviewer ids",
+            "required": false,
+            "name": "reviewerIds",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
             "description": "Filter by Feedback360 team count",
             "required": false,
             "name": "teamCount",
@@ -8664,6 +8847,19 @@
             "schema": {
               "example": 1,
               "type": "number"
+            }
+          },
+          {
+            "description": "Filter by Feedback360 team ids",
+            "required": false,
+            "name": "teamIds",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
             }
           },
           {
@@ -8677,6 +8873,19 @@
             }
           },
           {
+            "description": "Filter by Feedback360 position ids",
+            "required": false,
+            "name": "positionIds",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
             "description": "Filter by Feedback360 competence count",
             "required": false,
             "name": "competenceCount",
@@ -8684,6 +8893,19 @@
             "schema": {
               "example": 1,
               "type": "number"
+            }
+          },
+          {
+            "description": "Filter by Feedback360 competence ids",
+            "required": false,
+            "name": "competenceIds",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
             }
           },
           {
@@ -8697,7 +8919,20 @@
             }
           },
           {
-            "description": "Filter by ratee turnout percentage",
+            "description": "Filter by Feedback360 question ids",
+            "required": false,
+            "name": "questionIds",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "description": "Filter by ratee turnout average percentage",
             "required": false,
             "name": "turnoutPctOfRatees",
             "in": "query",
@@ -8707,9 +8942,19 @@
             }
           },
           {
-            "description": "Filter by respondent turnout percentage",
+            "description": "Filter by team respondent turnout average percentage",
             "required": false,
-            "name": "turnoutPctOfRespondents",
+            "name": "turnoutPctOfTeams",
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by other respondent turnout average percentage",
+            "required": false,
+            "name": "turnoutPctOfOthers",
             "in": "query",
             "schema": {
               "example": 1,
@@ -13085,10 +13330,30 @@
             "description": "Ratee count",
             "nullable": false
           },
+          "rateeIds": {
+            "type": "number",
+            "example": [
+              1,
+              2,
+              3
+            ],
+            "description": "Ratee ids",
+            "nullable": false
+          },
           "respondentCount": {
             "type": "number",
             "example": 10,
             "description": "Respondent count",
+            "nullable": false
+          },
+          "respondentIds": {
+            "type": "number",
+            "example": [
+              1,
+              2,
+              3
+            ],
+            "description": "Respondent ids",
             "nullable": false
           },
           "answerCount": {
@@ -13103,10 +13368,30 @@
             "description": "Reviewer count",
             "nullable": false
           },
+          "reviewerIds": {
+            "type": "number",
+            "example": [
+              1,
+              2,
+              3
+            ],
+            "description": "Reviewer ids",
+            "nullable": false
+          },
           "teamCount": {
             "type": "number",
             "example": 10,
             "description": "Team count",
+            "nullable": false
+          },
+          "teamIds": {
+            "type": "number",
+            "example": [
+              1,
+              2,
+              3
+            ],
+            "description": "Team ids",
             "nullable": false
           },
           "positionCount": {
@@ -13115,10 +13400,30 @@
             "description": "Position count",
             "nullable": false
           },
+          "positionIds": {
+            "type": "number",
+            "example": [
+              1,
+              2,
+              3
+            ],
+            "description": "Position ids",
+            "nullable": false
+          },
           "competenceCount": {
             "type": "number",
             "example": 10,
             "description": "Competence count",
+            "nullable": false
+          },
+          "competenceIds": {
+            "type": "number",
+            "example": [
+              1,
+              2,
+              3
+            ],
+            "description": "Competence ids",
             "nullable": false
           },
           "questionCount": {
@@ -13127,19 +13432,38 @@
             "description": "Question count",
             "nullable": false
           },
-          "turnoutPctOfRatees": {
+          "questionIds": {
+            "type": "number",
+            "example": [
+              1,
+              2,
+              3
+            ],
+            "description": "Question ids",
+            "nullable": false
+          },
+          "turnoutAvgPctOfRatees": {
             "type": "number",
             "example": 100,
-            "description": "Turnout of ratees",
+            "description": "Average turnout of ratees",
             "format": "float",
             "nullable": true,
             "minimum": 0,
             "maximum": 100
           },
-          "turnoutPctOfRespondents": {
+          "turnoutAvgPctOfTeams": {
             "type": "number",
             "example": 100,
-            "description": "Turnout of respondents",
+            "description": "Average turnout of team respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "turnoutAvgPctOfOthers": {
+            "type": "number",
+            "example": 100,
+            "description": "Average turnout of other respondents",
             "format": "float",
             "nullable": true,
             "minimum": 0,
@@ -13238,13 +13562,20 @@
           "cycleId",
           "cycleTitle",
           "rateeCount",
+          "rateeIds",
           "respondentCount",
+          "respondentIds",
           "answerCount",
           "reviewerCount",
+          "reviewerIds",
           "teamCount",
+          "teamIds",
           "positionCount",
+          "positionIds",
           "competenceCount",
+          "competenceIds",
           "questionCount",
+          "questionIds",
           "createdAt",
           "analytics"
         ]

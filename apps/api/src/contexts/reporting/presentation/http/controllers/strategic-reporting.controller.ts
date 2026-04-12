@@ -28,7 +28,7 @@ import {
 } from 'src/common/documentation/api.error.responses.decorator';
 import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { StrategicReportAnalyticsService } from '../../../application/services/strategic-report-analytics.service';
-import { StrategicReportingService } from '../../../application/services/strategic-reporting.service';
+import { StrategicReportingService } from '../../../application/services/strategic-reports.service';
 import { StrategicReportQueryDto } from '../dto/strategic-report-query.dto';
 import { StrategicReportAnalyticsHttpMapper } from '../mappers/strategic-report-analytics.http.mapper';
 import { StrategicReportHttpMapper } from '../mappers/strategic-report.http.mapper';

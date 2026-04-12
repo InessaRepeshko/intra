@@ -6,11 +6,6 @@ import type { DateRange } from 'react-day-picker';
 import { useCycleTitlesQuery } from '@entities/feedback360/cycle/api/cycle.queries';
 import { RESPONDENT_CATEGORIES_ENUM_VALUES } from '@entities/feedback360/respondent/model/types';
 import {
-    REVIEW_STAGE_ENUM_VALUES,
-    ReviewStage,
-    SortDirection,
-} from '@entities/reporting/individual-report/model/types';
-import {
     useRateeFullNamesQuery,
     useRateePositionTitlesQuery,
     useRateeTeamTitlesQuery,
@@ -18,6 +13,11 @@ import {
     useReviewStagesQuery,
 } from '@entities/reporting/individual-report/api/individual-report.queries';
 import type { Report } from '@entities/reporting/individual-report/model/mappers';
+import {
+    REVIEW_STAGE_ENUM_VALUES,
+    ReviewStage,
+    SortDirection,
+} from '@entities/reporting/individual-report/model/types';
 import { IndividualReportsFilters } from '@entities/reporting/individual-report/ui/individual-reports-filters';
 import { IndividualReportsTable } from '@entities/reporting/individual-report/ui/individual-reports-table';
 import {

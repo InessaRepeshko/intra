@@ -10,6 +10,7 @@ import {
     ReportSortField,
     ReportTextAnswerDto,
     SortDirection,
+    ReportEntitySummaryTotalsDto,
 } from '@intra/shared-kernel';
 
 import {
@@ -40,4 +41,5 @@ export type {
     ReportFilterQuery,
     ReportResponseDto,
     ReportTextAnswerDto,
+    ReportEntitySummaryTotalsDto,
 };

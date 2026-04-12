@@ -10,9 +10,6 @@ import {
     FileChartLine,
     FileQuestionMark,
     FileText,
-    Flag,
-    Percent,
-    RefreshCcw,
     UserRound,
     UserRoundPen,
     Users,
@@ -20,7 +17,10 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import { StageBadge } from '@entities/feedback360/cycle/ui/stage-badge';
+import { cn } from '@/shared/lib/utils/cn';
+import { AvatarGroupList } from '@/shared/ui/avatar-group-list';
+import { AvatarGroupWithCount } from '@/shared/ui/avatar-group-with-count';
+import { User } from '@entities/identity/user/model/mappers';
 import { Button } from '@shared/components/ui/button';
 import {
     Table,
@@ -39,15 +39,10 @@ import {
 import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { formatNumber } from '@shared/lib/utils/format-number';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { StrategicReport } from '../model/mappers';
 import { SortDirection } from '../model/types';
-import { User } from '@entities/identity/user/model/mappers';
-import { cn } from '@/shared/lib/utils/cn';
-import { AvatarGroupList } from '@/shared/ui/avatar-group-list';
-import { AvatarGroupWithCount } from '@/shared/ui/avatar-group-with-count';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import { Review } from '@entities/feedback360/review/model/mappers';
 
 interface StrategicReportsTableProps {
     strategicReports: StrategicReport[];
@@ -114,8 +109,9 @@ export function StrategicReportsTable({
         | 'positionCount'
         | 'competenceCount'
         | 'questionCount'
-        | 'turnoutPctOfRatees'
-        | 'turnoutPctOfRespondents'
+        | 'turnoutAvgPctOfRatees'
+        | 'turnoutAvgPctOfTeams'
+        | 'turnoutAvgPctOfOthers'
         | 'competencePctSelf'
         | 'competencePctTeam'
         | 'competencePctOther'
@@ -134,8 +130,9 @@ export function StrategicReportsTable({
         'positionCount',
         'competenceCount',
         'questionCount',
-        'turnoutPctOfRatees',
-        'turnoutPctOfRespondents',
+        'turnoutAvgPctOfRatees',
+        'turnoutAvgPctOfTeams',
+        'turnoutAvgPctOfOthers',
         'competencePctSelf',
         'competencePctTeam',
         'competencePctOther',
@@ -258,8 +255,9 @@ export function StrategicReportsTable({
         | 'positionCount'
         | 'competenceCount'
         | 'questionCount'
-        | 'turnoutPctOfRatees'
-        | 'turnoutPctOfRespondents'
+        | 'turnoutAvgPctOfRatees'
+        | 'turnoutAvgPctOfTeams'
+        | 'turnoutAvgPctOfOthers'
         | 'competencePctSelf'
         | 'competencePctTeam'
         | 'competencePctOther'
@@ -330,8 +328,7 @@ export function StrategicReportsTable({
                 'min-w-[200px] w-[300px] whitespace-nowrap text-start align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => {
                 const users =
-                    ratees
-                        .find((ratee) => ratee.cycleId === report.cycleId)
+                    ratees.find((ratee) => ratee.cycleId === report.cycleId)
                         ?.ratees || [];
                 return <ExpandableUsers users={users} />;
             },
@@ -487,12 +484,12 @@ export function StrategicReportsTable({
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
-        turnoutPctOfRatees: {
+        turnoutAvgPctOfRatees: {
             header: (
                 <SortableHeader
                     label="Turnout % of ratees"
                     wrapLabelText={true}
-                    field="turnoutPctOfRatees"
+                    field="turnoutAvgPctOfRatees"
                     currentField={sortField}
                     currentDirection={sortDirection}
                     onSort={onSort}
@@ -504,18 +501,18 @@ export function StrategicReportsTable({
                 <div className="flex items-center justify-start pl-3 gap-1.5">
                     <UserRoundPen className="h-4 w-4 text-amber-700" />
                     <span className="font-medium text-foreground">
-                        {formatNumber(report.turnoutPctOfRatees)}
+                        {formatNumber(report.turnoutAvgPctOfRatees)}
                     </span>
                 </div>
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
-        turnoutPctOfRespondents: {
+        turnoutAvgPctOfTeams: {
             header: (
                 <SortableHeader
-                    label="Turnout % of respondents"
+                    label="Turnout % of teams"
                     wrapLabelText={true}
-                    field="turnoutPctOfRespondents"
+                    field="turnoutAvgPctOfTeams"
                     currentField={sortField}
                     currentDirection={sortDirection}
                     onSort={onSort}
@@ -527,7 +524,30 @@ export function StrategicReportsTable({
                 <div className="flex items-center justify-start pl-3 gap-1.5">
                     <UserRoundPen className="h-4 w-4 text-blue-700" />
                     <span className="font-medium text-foreground">
-                        {formatNumber(report.turnoutPctOfRespondents)}
+                        {formatNumber(report.turnoutAvgPctOfTeams)}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        turnoutAvgPctOfOthers: {
+            header: (
+                <SortableHeader
+                    label="Turnout % of others"
+                    wrapLabelText={true}
+                    field="turnoutAvgPctOfOthers"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[140px] w-[140px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+            cell: (report) => (
+                <div className="flex items-center justify-start pl-3 gap-1.5">
+                    <UserRoundPen className="h-4 w-4 text-violet-700" />
+                    <span className="font-medium text-foreground">
+                        {formatNumber(report.turnoutAvgPctOfOthers)}
                     </span>
                 </div>
             ),
@@ -622,11 +642,11 @@ export function StrategicReportsTable({
                 const color = isPositive
                     ? 'text-green-800'
                     : isNegative
-                        ? 'text-red-800'
-                        : 'ml-5 text-muted-foreground';
+                      ? 'text-red-800'
+                      : 'ml-5 text-muted-foreground';
                 const stringValue = report.competenceGeneralDeltaTeam
                     ? (isPositive ? '↑ +' : isNegative ? '↓ ' : '') +
-                    formatNumber(report.competenceGeneralDeltaTeam)
+                      formatNumber(report.competenceGeneralDeltaTeam)
                     : `0`;
                 return (
                     <div className="flex items-center justify-start pl-3 gap-1.5">
@@ -658,11 +678,11 @@ export function StrategicReportsTable({
                 const color = isPositive
                     ? 'text-green-800'
                     : isNegative
-                        ? 'text-red-800'
-                        : 'ml-5 text-muted-foreground';
+                      ? 'text-red-800'
+                      : 'ml-5 text-muted-foreground';
                 const stringValue = report.competenceGeneralDeltaOther
                     ? (isPositive ? '↑ +' : isNegative ? '↓ ' : '') +
-                    formatNumber(report.competenceGeneralDeltaOther)
+                      formatNumber(report.competenceGeneralDeltaOther)
                     : `0`;
                 return (
                     <div className="flex items-center justify-start pl-3 gap-1.5">
@@ -752,6 +772,9 @@ export function StrategicReportsTable({
                             </span>
 
                             <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                                <span className="flex items-center gap-1 text-foreground">
+                                    Participation Stats
+                                </span>
                                 <span className="flex items-center gap-1 text-muted-foreground">
                                     <UserRound className="h-3.5 w-3.5" />
                                     <span className="font-medium text-foreground">
@@ -786,6 +809,9 @@ export function StrategicReportsTable({
                             </span>
 
                             <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                                <span className="flex items-center gap-1 text-foreground">
+                                    Review Stats
+                                </span>
                                 <span className="flex items-center gap-1 text-muted-foreground">
                                     <UsersRound className="h-3.5 w-3.5" />
                                     <span className="font-medium text-foreground">
@@ -820,13 +846,15 @@ export function StrategicReportsTable({
                             </span>
 
                             <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                                <span className="flex items-center gap-1 text-muted-foreground">
+                                <span className="flex items-center gap-1 text-foreground">
                                     Turnout
                                 </span>
                                 <span className="flex items-center gap-1 text-muted-foreground">
                                     <UserRoundPen className="h-3.5 w-3.5 shrink-0" />
                                     <span className="font-medium text-foreground">
-                                        {formatNumber(report.turnoutPctOfRatees)}
+                                        {formatNumber(
+                                            report.turnoutAvgPctOfRatees,
+                                        )}
                                     </span>
                                     {'% ratees'}
                                 </span>
@@ -834,20 +862,34 @@ export function StrategicReportsTable({
                                 <span className="flex items-center gap-1 text-muted-foreground">
                                     <UserRoundPen className="h-3.5 w-3.5 shrink-0" />
                                     <span className="font-medium text-foreground">
-                                        {formatNumber(report.turnoutPctOfRespondents)}
+                                        {formatNumber(
+                                            report.turnoutAvgPctOfTeams,
+                                        )}
                                     </span>
-                                    {'% respondents'}
+                                    {'% teams'}
+                                </span>
+
+                                <span className="flex items-center gap-1 text-muted-foreground">
+                                    <UserRoundPen className="h-3.5 w-3.5 shrink-0" />
+                                    <span className="font-medium text-foreground">
+                                        {formatNumber(
+                                            report.turnoutAvgPctOfOthers,
+                                        )}
+                                    </span>
+                                    {'% others'}
                                 </span>
                             </span>
 
                             <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                                <span className="flex items-center gap-1 text-muted-foreground">
+                                <span className="flex items-center gap-1 text-foreground">
                                     Rating
                                 </span>
                                 <span className="flex items-center gap-1 text-muted-foreground">
                                     <BookmarkCheck className="h-3.5 w-3.5 shrink-0" />
                                     <span className="font-medium text-foreground">
-                                        {formatNumber(report.competenceGeneralPctSelf)}
+                                        {formatNumber(
+                                            report.competenceGeneralPctSelf,
+                                        )}
                                     </span>
                                     {'% by self'}
                                 </span>
@@ -855,7 +897,9 @@ export function StrategicReportsTable({
                                 <span className="flex items-center gap-1 text-muted-foreground">
                                     <BookmarkCheck className="h-3.5 w-3.5 shrink-0" />
                                     <span className="font-medium text-foreground">
-                                        {formatNumber(report.competenceGeneralPctTeam)}
+                                        {formatNumber(
+                                            report.competenceGeneralPctTeam,
+                                        )}
                                     </span>
                                     {'% by team'}
                                 </span>
@@ -863,7 +907,9 @@ export function StrategicReportsTable({
                                 <span className="flex items-center gap-1 text-muted-foreground">
                                     <BookmarkCheck className="h-3.5 w-3.5 shrink-0" />
                                     <span className="font-medium text-foreground">
-                                        {formatNumber(report.competenceGeneralPctOther)}
+                                        {formatNumber(
+                                            report.competenceGeneralPctOther,
+                                        )}
                                     </span>
                                     {'% by others'}
                                 </span>
@@ -871,7 +917,7 @@ export function StrategicReportsTable({
                         </div>
                     </div>
                 ))}
-            </div> 
+            </div>
 
             {/* Desktop table layout (visible on md+) */}
             <div className="hidden overflow-x-auto lg:block">

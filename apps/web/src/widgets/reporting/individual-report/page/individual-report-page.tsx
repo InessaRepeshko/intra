@@ -648,6 +648,7 @@ export function IndividualReportPage({ reportId }: { reportId: number }) {
                                 <>
                                     <IndividualReportAnalyticsTable
                                         reportAnalytics={questions}
+                                        summaryTotals={reportData?.questionSummaryTotals ?? {}}
                                     />
                                 </>
                             )}
@@ -704,6 +705,7 @@ export function IndividualReportPage({ reportId }: { reportId: number }) {
                                 <>
                                     <IndividualReportAnalyticsTable
                                         reportAnalytics={competences}
+                                        summaryTotals={reportData?.competenceSummaryTotals ?? {}}
                                     />
                                 </>
                             )}

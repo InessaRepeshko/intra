@@ -191,8 +191,13 @@ export function useReviewCycleTitlesQuery(
     const cycleTitles: Record<number, string> = {};
     reviewIds.forEach((reviewId, index) => {
         const result = queries[index];
-        if (result.isSuccess && result.data !== undefined) {
-            cycleTitles[reviewId] = result.data;
+        const cycleId = cycleIds[index];
+        if (
+            result.isSuccess &&
+            result.data !== undefined &&
+            cycleId !== undefined
+        ) {
+            cycleTitles[cycleId] = result.data;
         }
     });
 

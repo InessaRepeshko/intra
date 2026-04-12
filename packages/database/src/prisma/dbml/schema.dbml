@@ -547,15 +547,23 @@ Table reporting_strategic_reports {
   cycleId Int [not null]
   cycleTitle String [not null]
   rateeCount Int [not null]
+  rateeIds Int[] [not null]
   respondentCount Int [not null]
+  respondentIds Int[] [not null]
   answerCount Int [not null]
   reviewerCount Int [not null]
+  reviewerIds Int[] [not null]
   teamCount Int [not null]
+  teamIds Int[] [not null]
   positionCount Int [not null]
+  positionIds Int[] [not null]
   competenceCount Int [not null]
+  competenceIds Int[] [not null]
   questionCount Int [not null]
-  turnoutPctOfRatees Decimal
-  turnoutPctOfRespondents Decimal
+  questionIds Int[] [not null]
+  turnoutAvgPctOfRatees Decimal
+  turnoutAvgPctOfTeams Decimal
+  turnoutAvgPctOfOthers Decimal
   competenceGeneralAvgSelf Decimal
   competenceGeneralAvgTeam Decimal
   competenceGeneralAvgOther Decimal

@@ -1,4 +1,9 @@
-import { Prisma, Answer as PrismaAnswer } from '@intra/database';
+import {
+    Prisma,
+    Answer as PrismaAnswer,
+    RespondentCategory as PrismaRespondentCategory,
+} from '@intra/database';
+import { RespondentCategory } from '@intra/shared-kernel';
 import { AnswerDomain } from '../../domain/answer.domain';
 import { QuestionMapper } from './question.mapper';
 import { RespondentMapper } from './respondent.mapper';
@@ -30,5 +35,19 @@ export class AnswerMapper {
             textValue: answer.textValue,
             createdAt: answer.createdAt,
         };
+    }
+
+    static toPrismaCategory(
+        domainCategory: RespondentCategory,
+    ): PrismaRespondentCategory {
+        return domainCategory
+            .toString()
+            .toUpperCase() as PrismaRespondentCategory;
+    }
+
+    static fromPrismaCategory(
+        prismaCategory: PrismaRespondentCategory,
+    ): RespondentCategory {
+        return prismaCategory.toString().toUpperCase() as RespondentCategory;
     }
 }

@@ -265,6 +265,29 @@ export class ReviewController {
         return answers.map(AnswerHttpMapper.toResponse);
     }
 
+    @Get(':id/answers/count')
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
+    @ApiOperation({ summary: 'Count answers to Review' })
+    @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: Number,
+        description: 'Count of answers to Review',
+        example: 5,
+    })
+    @ApiListReadErrorResponses()
+    async countAnswers(
+        @Param('id') id: string,
+        @CurrentUser() actor: UserDomain,
+    ): Promise<number> {
+        return this.reviews.countReviewAnswers(Number(id), actor);
+    }
+
     @Post(':id/respondents')
     @ApiOperation({ summary: 'Add respondent to Review' })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
