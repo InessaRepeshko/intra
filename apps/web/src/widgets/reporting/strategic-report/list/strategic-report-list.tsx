@@ -382,10 +382,10 @@ export function StrategicReportList() {
                         {(isLoading ||
                             isRateesLoading ||
                             isTeamTitlesLoading) && (
-                                <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
-                                    <Spinner />
-                                </div>
-                            )}
+                            <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
+                                <Spinner />
+                            </div>
+                        )}
 
                         {/* Error State */}
                         {isError && (
@@ -413,7 +413,7 @@ export function StrategicReportList() {
                                         sortDirection={sortDirection}
                                         onSort={handleSort}
                                         resetTrigger={resetTrigger}
-                                    // onDelete={setDeleteReport}
+                                        // onDelete={setDeleteReport}
                                     />
 
                                     {/* Pagination */}

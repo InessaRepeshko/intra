@@ -3,12 +3,14 @@ import {
     Report as PrismaReport,
     ReportAnalytics as PrismaReportAnalytics,
     ReportComment as PrismaReportComment,
+    ReportInsights as PrismaReportInsight,
     RespondentCategory as PrismaRespondentCategory,
 } from '@intra/database';
 import { RespondentCategory } from '@intra/shared-kernel';
 import { ReportDomain } from '../../domain/report.domain';
 import { ReportAnalyticsMapper } from './report-analytics.mapper';
 import { ReportCommentMapper } from './report-comment.mapper';
+import { ReportInsightMapper } from './report-insight.mapper';
 
 export class ReportMapper {
     static toDomain(report: PrismaReport): ReportDomain {
@@ -42,6 +44,7 @@ export class ReportMapper {
             createdAt: report.createdAt,
             analytics: [],
             comments: [],
+            insights: [],
         });
     }
 
@@ -49,6 +52,7 @@ export class ReportMapper {
         report: PrismaReport & {
             analytics: PrismaReportAnalytics[];
             comments: PrismaReportComment[];
+            insights: PrismaReportInsight[];
         },
     ): ReportDomain {
         return ReportDomain.create({
@@ -84,6 +88,9 @@ export class ReportMapper {
             ),
             comments: report.comments.map((c) =>
                 ReportCommentMapper.toDomain(c),
+            ),
+            insights: report.insights.map((i) =>
+                ReportInsightMapper.toDomain(i),
             ),
         });
     }

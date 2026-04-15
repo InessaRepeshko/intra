@@ -355,6 +355,24 @@ export function IndividualReportList() {
                         ? valA - valB
                         : valB - valA;
                 }
+                case 'deltaPercentageByTeam': {
+                    const valA =
+                        a.competenceSummaryTotals?.deltaPercentageByTeam ?? -1;
+                    const valB =
+                        b.competenceSummaryTotals?.deltaPercentageByTeam ?? -1;
+                    return sortDirection === SortDirection.ASC
+                        ? valA - valB
+                        : valB - valA;
+                }
+                case 'deltaPercentageByOther': {
+                    const valA =
+                        a.competenceSummaryTotals?.deltaPercentageByOther ?? -1;
+                    const valB =
+                        b.competenceSummaryTotals?.deltaPercentageByOther ?? -1;
+                    return sortDirection === SortDirection.ASC
+                        ? valA - valB
+                        : valB - valA;
+                }
                 default:
                     return 0;
             }

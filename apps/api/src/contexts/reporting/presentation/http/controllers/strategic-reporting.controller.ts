@@ -27,11 +27,14 @@ import {
     ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
 import { UserDomain } from 'src/contexts/identity/domain/user.domain';
+import { StartegicReportInsightService } from '../../../application/services/startegic-report-insight.service';
 import { StrategicReportAnalyticsService } from '../../../application/services/strategic-report-analytics.service';
 import { StrategicReportingService } from '../../../application/services/strategic-reports.service';
 import { StrategicReportQueryDto } from '../dto/strategic-report-query.dto';
+import { StrategicReportInsightHttpMapper } from '../mappers/startegic-report-insight.http.mapper';
 import { StrategicReportAnalyticsHttpMapper } from '../mappers/strategic-report-analytics.http.mapper';
 import { StrategicReportHttpMapper } from '../mappers/strategic-report.http.mapper';
+import { StrategicReportInsightResponse } from '../models/startegic-report-insight.response';
 import { StrategicReportAnalyticsResponse } from '../models/strategic-report-analytics.response';
 import { StrategicReportResponse } from '../models/strategic-report.response';
 
@@ -45,6 +48,7 @@ export class StrategicReportingController {
     constructor(
         private readonly strategicReporting: StrategicReportingService,
         private readonly strategicAnalyticsService: StrategicReportAnalyticsService,
+        private readonly strategicInsightService: StartegicReportInsightService,
     ) {}
 
     @Get()
@@ -150,5 +154,55 @@ export class StrategicReportingController {
             actor,
         );
         return StrategicReportAnalyticsHttpMapper.toResponse(analytics);
+    }
+
+    @Get(':id/insights')
+    @ApiOperation({ summary: 'List strategic report insights by report id' })
+    @ApiParam({
+        name: 'id',
+        description: 'Strategic report identifier',
+        type: 'number',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: StrategicReportInsightResponse,
+        isArray: true,
+    })
+    @ApiReadErrorResponses()
+    async listStrategicReportInsights(
+        @Param('id', ParseIntPipe) id: number,
+        @CurrentUser() actor: UserDomain,
+    ): Promise<StrategicReportInsightResponse[]> {
+        const insights =
+            await this.strategicInsightService.getByStrategicReportId(
+                id,
+                actor,
+            );
+        return insights.map((insight) =>
+            StrategicReportInsightHttpMapper.toResponse(insight),
+        );
+    }
+
+    @Get('insights/:insightId')
+    @ApiOperation({ summary: 'Get strategic report insight by id' })
+    @ApiParam({
+        name: 'insightId',
+        description: 'Insight identifier',
+        type: 'number',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: StrategicReportInsightResponse,
+    })
+    @ApiReadErrorResponses()
+    async getStrategicReportInsightById(
+        @Param('insightId', ParseIntPipe) insightId: number,
+        @CurrentUser() actor: UserDomain,
+    ): Promise<StrategicReportInsightResponse> {
+        const insight = await this.strategicInsightService.getById(
+            insightId,
+            actor,
+        );
+        return StrategicReportInsightHttpMapper.toResponse(insight);
     }
 }

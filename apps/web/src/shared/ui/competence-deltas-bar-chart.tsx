@@ -27,22 +27,14 @@ import {
     type ChartConfig,
 } from '@shared/components/ui/chart';
 import { formatNumber } from '@shared/lib/utils/format-number';
+import { StrategicReportAnalytics } from '@entities/reporting/strategic-report/model/mappers';
 
-interface CompetenceChartBarData {
+interface CompetenceDeltasBarChartData {
     id: number;
     competence: string;
     team: number;
     others: number;
 }
-
-const chartData = [
-    { competence: 'competence1', team: 186, others: 186 },
-    { competence: 'competence2', team: 205, others: -186 },
-    { competence: 'competence3', team: -207, others: 186 },
-    { competence: 'competence5', team: 173, others: -186 },
-    { competence: 'competence6', team: -209, others: 186 },
-    { competence: 'competence7', team: 214, others: 186 },
-];
 
 const chartConfig = {
     team: {
@@ -53,29 +45,14 @@ const chartConfig = {
         label: 'Others delta %',
         color: 'var(--color-violet-400)',
     },
-    // competence: {
-    //     label: 'Self',
-    //     // color: 'var(--color-slate-400)',
-    //     color: 'var(--color-amber-400)',
-    // },
-    // delta: {
-    //     label: 'Team',
-    //     // color: 'var(--color-slate-600)',
-    //     color: 'var(--color-blue-400)',
-    // },
-    // competence: {
-    //     label: 'Others',
-    //     // color: 'var(--color-slate-900)',
-    //     color: 'var(--color-violet-400)',
-    // },
 } satisfies ChartConfig;
 
-export function CompetenciesBarChart({
+export function CompetenceDeltasBarChart({
     reportAnalytics,
 }: {
-    reportAnalytics: ReportAnalytics[];
+    reportAnalytics: ReportAnalytics[] | StrategicReportAnalytics[];
 }) {
-    const data: CompetenceChartBarData[] = [];
+    const data: CompetenceDeltasBarChartData[] = [];
 
     let hasTeamData = false;
     let hasOthersData = false;

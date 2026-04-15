@@ -16,6 +16,7 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from '@shared/components/ui/chart';
+import { StrategicReportAnalytics } from '@entities/reporting/strategic-report/model/mappers';
 
 interface CompetenceRadialChartData {
     category: string;
@@ -53,7 +54,7 @@ const chartConfig = {
 export function CompetenciesRadialChartsGroup({
     reportAnalytics,
 }: {
-    reportAnalytics: ReportAnalytics[];
+    reportAnalytics: ReportAnalytics[] | StrategicReportAnalytics[];
 }) {
     const data: CompetenceRadialChartsData[] = [];
 

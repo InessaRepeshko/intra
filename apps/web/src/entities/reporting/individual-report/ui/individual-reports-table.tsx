@@ -491,17 +491,22 @@ export function IndividualReportsTable({
             headerClassName:
                 'min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => {
-                const numberValue = report.competenceSummaryTotals?.deltaPercentageByTeam ?? null;
+                const numberValue =
+                    report.competenceSummaryTotals?.deltaPercentageByTeam ??
+                    null;
                 const isPositive = numberValue !== null && numberValue > 0;
                 const isNegative = numberValue !== null && numberValue < 0;
                 const color = isPositive
                     ? 'text-green-800'
                     : isNegative
-                        ? 'text-red-800'
-                        : 'ml-5 text-muted-foreground';
-                const stringValue = report.competenceSummaryTotals?.deltaPercentageByTeam
+                      ? 'text-red-800'
+                      : 'ml-5 text-muted-foreground';
+                const stringValue = report.competenceSummaryTotals
+                    ?.deltaPercentageByTeam
                     ? (isPositive ? '↑ +' : isNegative ? '↓ ' : '') +
-                    formatNumber(report.competenceSummaryTotals?.deltaPercentageByTeam)
+                      formatNumber(
+                          report.competenceSummaryTotals?.deltaPercentageByTeam,
+                      )
                     : `0`;
                 return (
                     <div className="flex items-center justify-start pl-3 gap-1.5">
@@ -518,7 +523,7 @@ export function IndividualReportsTable({
                 <SortableHeader
                     label="Delta % by others"
                     wrapLabelText={true}
-                    field="competenceTotPctByOthers"
+                    field="deltaPercentageByOther"
                     currentField={sortField}
                     currentDirection={sortDirection}
                     onSort={onSort}
@@ -527,17 +532,23 @@ export function IndividualReportsTable({
             headerClassName:
                 'min-w-[130px] w-[130px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => {
-                const numberValue = report.competenceSummaryTotals?.deltaPercentageByOther ?? null;
+                const numberValue =
+                    report.competenceSummaryTotals?.deltaPercentageByOther ??
+                    null;
                 const isPositive = numberValue !== null && numberValue > 0;
                 const isNegative = numberValue !== null && numberValue < 0;
                 const color = isPositive
                     ? 'text-green-800'
                     : isNegative
-                        ? 'text-red-800'
-                        : 'ml-5 text-muted-foreground';
-                const stringValue = report.competenceSummaryTotals?.deltaPercentageByOther
+                      ? 'text-red-800'
+                      : 'ml-5 text-muted-foreground';
+                const stringValue = report.competenceSummaryTotals
+                    ?.deltaPercentageByOther
                     ? (isPositive ? '↑ +' : isNegative ? '↓ ' : '') +
-                    formatNumber(report.competenceSummaryTotals?.deltaPercentageByOther)
+                      formatNumber(
+                          report.competenceSummaryTotals
+                              ?.deltaPercentageByOther,
+                      )
                     : `0`;
                 return (
                     <div className="flex items-center justify-start pl-3 gap-1.5">

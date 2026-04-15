@@ -9,7 +9,9 @@ import { CompetenceSummaryTotalsResponse } from './competence-summary-totals.res
 import { CompetenceSummaryResponse } from './competence-summary.response';
 import { QuestionSummaryTotalsResponse } from './question-summary-totals.response';
 import { QuestionSummaryResponse } from './question-summary.response';
+import { ReportAnalyticsResponse } from './report-analytics.response';
 import { ReportCommentResponse } from './report-comment.response';
+import { ReportInsightResponse } from './report-insight.response';
 
 export class ReportResponse implements ReportDto {
     @ApiProperty({
@@ -150,6 +152,39 @@ export class ReportResponse implements ReportDto {
     })
     @Expose()
     competenceSummaryTotals?: CompetenceSummaryTotalsResponse | null;
+
+    @ApiProperty({
+        type: ReportInsightResponse,
+        isArray: true,
+        default: [],
+        nullable: true,
+        required: false,
+        description: 'Report question insights',
+    })
+    @Expose()
+    questionInsights?: ReportInsightResponse[] | null;
+
+    @ApiProperty({
+        type: ReportInsightResponse,
+        isArray: true,
+        default: [],
+        nullable: true,
+        required: false,
+        description: 'Report competence insights',
+    })
+    @Expose()
+    competenceInsights?: ReportInsightResponse[] | null;
+
+    @ApiProperty({
+        type: ReportAnalyticsResponse,
+        isArray: true,
+        default: [],
+        nullable: true,
+        required: false,
+        description: 'Report analytics',
+    })
+    @Expose()
+    analytics?: ReportAnalyticsResponse[] | null;
 
     @ApiProperty({
         type: ReportCommentResponse,

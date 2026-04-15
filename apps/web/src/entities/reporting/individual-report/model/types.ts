@@ -1,16 +1,18 @@
 import {
     ENTITY_TYPES as ENTITY_TYPES_ENUM_VALUES,
     EntityType,
+    InsightType,
     ReportAnalyticsDto,
     ReportAnalyticsSearchQuery as ReportAnalyticsFilterQuery,
     ReportAnalyticsResponseDto,
     ReportDto,
+    ReportEntitySummaryTotalsDto,
     ReportSearchQuery as ReportFilterQuery,
+    ReportInsightResponseDto,
     ReportResponseDto,
     ReportSortField,
     ReportTextAnswerDto,
     SortDirection,
-    ReportEntitySummaryTotalsDto,
 } from '@intra/shared-kernel';
 
 import {
@@ -26,6 +28,7 @@ import {
 export {
     ENTITY_TYPES_ENUM_VALUES,
     EntityType,
+    InsightType,
     ReportSortField,
     RESPONDENT_CATEGORIES_ENUM_VALUES,
     RespondentCategory,
@@ -38,8 +41,9 @@ export type {
     ReportAnalyticsFilterQuery,
     ReportAnalyticsResponseDto,
     ReportDto,
+    ReportEntitySummaryTotalsDto,
     ReportFilterQuery,
+    ReportInsightResponseDto,
     ReportResponseDto,
     ReportTextAnswerDto,
-    ReportEntitySummaryTotalsDto,
 };

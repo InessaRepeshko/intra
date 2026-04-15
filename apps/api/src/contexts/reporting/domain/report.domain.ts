@@ -2,6 +2,7 @@ import { RespondentCategory } from '@intra/shared-kernel';
 import Decimal from 'decimal.js';
 import { ReportAnalyticsDomain } from './report-analytics.domain';
 import { ReportCommentDomain } from './report-comment.domain';
+import { ReportInsightDomain } from './report-insight.domain';
 
 export type ReportProps = {
     id?: number;
@@ -31,6 +32,7 @@ export type ReportProps = {
     createdAt?: Date;
     analytics: ReportAnalyticsDomain[];
     comments?: ReportCommentDomain[];
+    insights?: ReportInsightDomain[];
 };
 
 export class ReportDomain {
@@ -61,6 +63,7 @@ export class ReportDomain {
     readonly createdAt?: Date;
     readonly analytics: ReportAnalyticsDomain[];
     readonly comments?: ReportCommentDomain[];
+    readonly insights?: ReportInsightDomain[];
 
     private constructor(props: ReportProps) {
         this.id = props.id;
@@ -122,6 +125,7 @@ export class ReportDomain {
         this.createdAt = props.createdAt;
         this.analytics = props.analytics ?? [];
         this.comments = props.comments ?? [];
+        this.insights = props.insights ?? [];
     }
 
     static create(props: ReportProps): ReportDomain {
@@ -134,6 +138,10 @@ export class ReportDomain {
 
     withComments(comments: ReportCommentDomain[]): ReportDomain {
         return new ReportDomain({ ...this, comments });
+    }
+
+    withInsights(insights: ReportInsightDomain[]): ReportDomain {
+        return new ReportDomain({ ...this, insights });
     }
 
     private toDecimalOrNull(

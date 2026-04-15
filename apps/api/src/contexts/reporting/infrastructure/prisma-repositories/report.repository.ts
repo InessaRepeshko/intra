@@ -32,6 +32,7 @@ export class ReportRepository implements ReportRepositoryPort {
             include: {
                 analytics: { orderBy: { id: 'asc' } },
                 comments: { orderBy: { id: 'asc' } },
+                insights: { orderBy: { id: 'asc' } },
             },
         });
 
@@ -44,6 +45,7 @@ export class ReportRepository implements ReportRepositoryPort {
             include: {
                 analytics: { orderBy: { id: 'asc' } },
                 comments: { orderBy: { id: 'asc' } },
+                insights: { orderBy: { id: 'asc' } },
             },
         });
 
@@ -56,6 +58,7 @@ export class ReportRepository implements ReportRepositoryPort {
             include: {
                 analytics: { orderBy: { id: 'asc' } },
                 comments: { orderBy: { id: 'asc' } },
+                insights: { orderBy: { id: 'asc' } },
             },
         });
 

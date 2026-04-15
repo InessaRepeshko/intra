@@ -1,6 +1,7 @@
 import { REPORT_CONSTRAINTS, StrategicReportDto } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
+import { StrategicReportInsightResponse } from './startegic-report-insight.response';
 import { StrategicReportAnalyticsResponse } from './strategic-report-analytics.response';
 
 export class StrategicReportResponse implements StrategicReportDto {
@@ -346,4 +347,15 @@ export class StrategicReportResponse implements StrategicReportDto {
     })
     @Expose()
     analytics!: StrategicReportAnalyticsResponse[];
+
+    @ApiProperty({
+        type: StrategicReportInsightResponse,
+        isArray: true,
+        default: [],
+        nullable: false,
+        required: true,
+        description: 'Strategic report competence insights',
+    })
+    @Expose()
+    insights!: StrategicReportInsightResponse[];
 }

@@ -550,10 +550,10 @@ export function ClusterScoreAnalyticsTable({
                                     {cycleTitles[
                                         clusterScoreAnalytics.cycleId
                                     ] ?? (
-                                            <span className="text-muted-foreground">
-                                                None
-                                            </span>
-                                        )}
+                                        <span className="text-muted-foreground">
+                                            None
+                                        </span>
+                                    )}
                                 </span>
                             </span>
 

@@ -17,6 +17,7 @@ import {
     type ChartConfig,
 } from '@shared/components/ui/chart';
 import { calculateAverageNumberForArray } from '@shared/lib/utils/calculate-average';
+import { StrategicReportAnalytics } from '@entities/reporting/strategic-report/model/mappers';
 
 interface CompetenceRadialChartData {
     category: string;
@@ -45,7 +46,7 @@ const chartConfig = {
 export function CompetenciesRadialChart({
     reportAnalytics,
 }: {
-    reportAnalytics: ReportAnalytics[];
+    reportAnalytics: ReportAnalytics[] | StrategicReportAnalytics[];
 }) {
     const hasSelfData = reportAnalytics.some(
         (a) => a.percentageBySelfAssessment != null,

@@ -1,5 +1,6 @@
 import { StrategicReportDomain } from '../../../domain/strategic-report.domain';
 import { StrategicReportResponse } from '../models/strategic-report.response';
+import { StrategicReportInsightHttpMapper } from './startegic-report-insight.http.mapper';
 import { StrategicReportAnalyticsHttpMapper } from './strategic-report-analytics.http.mapper';
 
 export class StrategicReportHttpMapper {
@@ -72,6 +73,11 @@ export class StrategicReportHttpMapper {
         response.analytics =
             report.analytics?.map((c) =>
                 StrategicReportAnalyticsHttpMapper.toResponse(c),
+            ) ?? [];
+
+        response.insights =
+            report.insights?.map((c) =>
+                StrategicReportInsightHttpMapper.toResponse(c),
             ) ?? [];
         return response;
     }

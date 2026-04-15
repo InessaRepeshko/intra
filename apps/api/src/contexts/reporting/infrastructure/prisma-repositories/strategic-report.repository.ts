@@ -38,6 +38,7 @@ export class StrategicReportRepository implements StrategicReportRepositoryPort 
             data: StrategicReportMapper.toPrisma(domain),
             include: {
                 analytics: { orderBy: { id: 'asc' } },
+                insights: { orderBy: { id: 'asc' } },
             },
         });
 
@@ -49,6 +50,7 @@ export class StrategicReportRepository implements StrategicReportRepositoryPort 
             where: { id },
             include: {
                 analytics: { orderBy: { id: 'asc' } },
+                insights: { orderBy: { id: 'asc' } },
             },
         });
 
@@ -64,6 +66,7 @@ export class StrategicReportRepository implements StrategicReportRepositoryPort 
             where: { cycleId },
             include: {
                 analytics: { orderBy: { id: 'asc' } },
+                insights: { orderBy: { id: 'asc' } },
             },
             orderBy: { createdAt: 'desc' },
         });

@@ -1,4 +1,5 @@
 import Decimal from 'decimal.js';
+import { StrategicReportInsightDomain } from './startegic-report-insight.domain';
 import { StrategicReportAnalyticsDomain } from './strategic-report-analytics.domain';
 
 export type StrategicReportProps = {
@@ -33,6 +34,7 @@ export type StrategicReportProps = {
     competenceGeneralDeltaOther?: Decimal.Value | null;
     createdAt?: Date;
     analytics?: StrategicReportAnalyticsDomain[];
+    insights?: StrategicReportInsightDomain[];
 };
 
 export class StrategicReportDomain {
@@ -67,6 +69,7 @@ export class StrategicReportDomain {
     readonly competenceGeneralDeltaOther?: Decimal | null;
     readonly createdAt?: Date;
     readonly analytics?: StrategicReportAnalyticsDomain[];
+    readonly insights?: StrategicReportInsightDomain[];
 
     private constructor(props: StrategicReportProps) {
         this.id = props.id;
@@ -122,6 +125,7 @@ export class StrategicReportDomain {
         );
         this.createdAt = props.createdAt;
         this.analytics = props.analytics ?? [];
+        this.insights = props.insights ?? [];
     }
 
     static create(props: StrategicReportProps): StrategicReportDomain {
@@ -132,6 +136,12 @@ export class StrategicReportDomain {
         analytics: StrategicReportAnalyticsDomain[],
     ): StrategicReportDomain {
         return new StrategicReportDomain({ ...this, analytics });
+    }
+
+    withInsights(
+        insights: StrategicReportInsightDomain[],
+    ): StrategicReportDomain {
+        return new StrategicReportDomain({ ...this, insights });
     }
 
     private toDecimalOrNull(

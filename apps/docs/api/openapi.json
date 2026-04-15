@@ -8247,6 +8247,85 @@
         ]
       }
     },
+    "/reporting/reports/{id}/insights": {
+      "get": {
+        "operationId": "ReportingController_listReportInsights",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Report identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportInsightResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "List report insights by report id",
+        "tags": [
+          "Reporting / Reports"
+        ]
+      }
+    },
+    "/reporting/reports/insights/{insightId}": {
+      "get": {
+        "operationId": "ReportingController_getReportInsightById",
+        "parameters": [
+          {
+            "name": "insightId",
+            "required": true,
+            "in": "path",
+            "description": "Insight identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportInsightResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get report insight by id",
+        "tags": [
+          "Reporting / Reports"
+        ]
+      }
+    },
     "/reporting/reports/{id}/comments": {
       "get": {
         "operationId": "ReportingController_listReportComments",
@@ -9249,6 +9328,85 @@
           }
         },
         "summary": "Get strategic report analytics by id",
+        "tags": [
+          "Reporting / Strategic Reports"
+        ]
+      }
+    },
+    "/reporting/strategic-reports/{id}/insights": {
+      "get": {
+        "operationId": "StrategicReportingController_listStrategicReportInsights",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Strategic report identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StrategicReportInsightResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "List strategic report insights by report id",
+        "tags": [
+          "Reporting / Strategic Reports"
+        ]
+      }
+    },
+    "/reporting/strategic-reports/insights/{insightId}": {
+      "get": {
+        "operationId": "StrategicReportingController_getStrategicReportInsightById",
+        "parameters": [
+          {
+            "name": "insightId",
+            "required": true,
+            "in": "path",
+            "description": "Insight identifier",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StrategicReportInsightResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get strategic report insight by id",
         "tags": [
           "Reporting / Strategic Reports"
         ]
@@ -12743,6 +12901,252 @@
           "deltaPercentageByOther"
         ]
       },
+      "ReportInsightResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "Analytics ID"
+          },
+          "reportId": {
+            "type": "number",
+            "example": 1,
+            "description": "Report ID"
+          },
+          "insightType": {
+            "type": "string",
+            "enum": [
+              "HIGHEST_RATING",
+              "LOWEST_RATING",
+              "HIGHEST_DELTA",
+              "LOWEST_DELTA"
+            ],
+            "example": "HIGHEST_RATING",
+            "description": "Insight type"
+          },
+          "entityType": {
+            "type": "string",
+            "enum": [
+              "QUESTION",
+              "COMPETENCE"
+            ],
+            "example": "QUESTION",
+            "description": "Entity type"
+          },
+          "questionId": {
+            "type": "number",
+            "example": 1,
+            "description": "Question ID",
+            "nullable": true
+          },
+          "questionTitle": {
+            "type": "string",
+            "example": "Listens actively before responding.",
+            "description": "Question title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "competenceId": {
+            "type": "number",
+            "example": 1,
+            "description": "Competence ID",
+            "nullable": true
+          },
+          "competenceTitle": {
+            "type": "string",
+            "example": "Leadership",
+            "description": "Competence title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "averageScore": {
+            "type": "number",
+            "example": 4,
+            "description": "Average score",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageRating": {
+            "type": "number",
+            "example": 5,
+            "description": "Average rating",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "averageDelta": {
+            "type": "number",
+            "example": 5,
+            "description": "Average delta",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T00:00:00.000Z",
+            "description": "Created at"
+          }
+        },
+        "required": [
+          "id",
+          "reportId",
+          "insightType",
+          "entityType",
+          "questionId",
+          "questionTitle",
+          "competenceTitle",
+          "averageScore",
+          "averageRating",
+          "averageDelta",
+          "createdAt"
+        ]
+      },
+      "ReportAnalyticsResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "Analytics ID"
+          },
+          "reportId": {
+            "type": "number",
+            "example": 1,
+            "description": "Report ID"
+          },
+          "entityType": {
+            "type": "string",
+            "enum": [
+              "QUESTION",
+              "COMPETENCE"
+            ],
+            "example": "QUESTION",
+            "description": "Entity type"
+          },
+          "questionId": {
+            "type": "number",
+            "example": 1,
+            "description": "Question ID",
+            "nullable": true
+          },
+          "questionTitle": {
+            "type": "string",
+            "example": "Listens actively before responding.",
+            "description": "Question title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "competenceId": {
+            "type": "number",
+            "example": 1,
+            "description": "Competence ID",
+            "nullable": true
+          },
+          "competenceTitle": {
+            "type": "string",
+            "example": "Leadership",
+            "description": "Competence title",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "averageBySelfAssessment": {
+            "type": "number",
+            "example": 4,
+            "description": "Average score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByTeam": {
+            "type": "number",
+            "example": 5,
+            "description": "Average score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageByOther": {
+            "type": "number",
+            "example": 5,
+            "description": "Average score by other",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "percentageBySelfAssessment": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by self assessment",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByTeam": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by team",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "percentageByOther": {
+            "type": "number",
+            "example": 100,
+            "description": "Percentage of score by other respondents",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByTeam": {
+            "type": "number",
+            "example": 15,
+            "description": "Delta score by team",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "deltaPercentageByOther": {
+            "type": "number",
+            "example": -10,
+            "description": "Delta score by other",
+            "format": "signed float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T00:00:00.000Z",
+            "description": "Created at"
+          }
+        },
+        "required": [
+          "id",
+          "reportId",
+          "entityType",
+          "percentageBySelfAssessment",
+          "percentageByTeam",
+          "percentageByOther",
+          "createdAt"
+        ]
+      },
       "ReportCommentResponse": {
         "type": "object",
         "properties": {
@@ -12928,6 +13332,33 @@
               }
             ]
           },
+          "questionInsights": {
+            "default": [],
+            "nullable": true,
+            "description": "Report question insights",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportInsightResponse"
+            }
+          },
+          "competenceInsights": {
+            "default": [],
+            "nullable": true,
+            "description": "Report competence insights",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportInsightResponse"
+            }
+          },
+          "analytics": {
+            "default": [],
+            "nullable": true,
+            "description": "Report analytics",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportAnalyticsResponse"
+            }
+          },
           "comments": {
             "default": [],
             "nullable": true,
@@ -12983,144 +13414,6 @@
           "questionId",
           "respondentCategory",
           "textValue"
-        ]
-      },
-      "ReportAnalyticsResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "example": 1,
-            "description": "Analytics ID"
-          },
-          "reportId": {
-            "type": "number",
-            "example": 1,
-            "description": "Report ID"
-          },
-          "entityType": {
-            "type": "string",
-            "enum": [
-              "QUESTION",
-              "COMPETENCE"
-            ],
-            "example": "QUESTION",
-            "description": "Entity type"
-          },
-          "questionId": {
-            "type": "number",
-            "example": 1,
-            "description": "Question ID",
-            "nullable": true
-          },
-          "questionTitle": {
-            "type": "string",
-            "example": "Listens actively before responding.",
-            "description": "Question title",
-            "nullable": true,
-            "minimum": 1,
-            "maximum": 255
-          },
-          "competenceId": {
-            "type": "number",
-            "example": 1,
-            "description": "Competence ID",
-            "nullable": true
-          },
-          "competenceTitle": {
-            "type": "string",
-            "example": "Leadership",
-            "description": "Competence title",
-            "nullable": true,
-            "minimum": 1,
-            "maximum": 255
-          },
-          "averageBySelfAssessment": {
-            "type": "number",
-            "example": 4,
-            "description": "Average score by self assessment",
-            "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 5
-          },
-          "averageByTeam": {
-            "type": "number",
-            "example": 5,
-            "description": "Average score by team",
-            "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 5
-          },
-          "averageByOther": {
-            "type": "number",
-            "example": 5,
-            "description": "Average score by other",
-            "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 5
-          },
-          "percentageBySelfAssessment": {
-            "type": "number",
-            "example": 100,
-            "description": "Percentage of score by self assessment",
-            "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 100
-          },
-          "percentageByTeam": {
-            "type": "number",
-            "example": 100,
-            "description": "Percentage of score by team",
-            "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 100
-          },
-          "percentageByOther": {
-            "type": "number",
-            "example": 100,
-            "description": "Percentage of score by other respondents",
-            "format": "float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 100
-          },
-          "deltaPercentageByTeam": {
-            "type": "number",
-            "example": 15,
-            "description": "Delta score by team",
-            "format": "signed float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 100
-          },
-          "deltaPercentageByOther": {
-            "type": "number",
-            "example": -10,
-            "description": "Delta score by other",
-            "format": "signed float",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 100
-          },
-          "createdAt": {
-            "type": "string",
-            "example": "2024-01-01T00:00:00.000Z",
-            "description": "Created at"
-          }
-        },
-        "required": [
-          "id",
-          "reportId",
-          "entityType",
-          "percentageBySelfAssessment",
-          "percentageByTeam",
-          "percentageByOther",
-          "createdAt"
         ]
       },
       "CreateReportCommentDto": {
@@ -13300,6 +13593,89 @@
           "percentageBySelfAssessment",
           "percentageByTeam",
           "percentageByOther",
+          "createdAt"
+        ]
+      },
+      "StrategicReportInsightResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "Analytics ID"
+          },
+          "strategicReportId": {
+            "type": "number",
+            "example": 1,
+            "description": "Strategic report ID"
+          },
+          "insightType": {
+            "type": "string",
+            "enum": [
+              "HIGHEST_RATING",
+              "LOWEST_RATING",
+              "HIGHEST_DELTA",
+              "LOWEST_DELTA"
+            ],
+            "example": "HIGHEST_RATING",
+            "description": "Insight type"
+          },
+          "competenceId": {
+            "type": "number",
+            "example": 1,
+            "description": "Competence ID",
+            "nullable": false
+          },
+          "competenceTitle": {
+            "type": "string",
+            "example": "Leadership",
+            "description": "Competence title",
+            "nullable": false,
+            "minimum": 1,
+            "maximum": 255
+          },
+          "averageScore": {
+            "type": "number",
+            "example": 4,
+            "description": "Average score",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 5
+          },
+          "averageRating": {
+            "type": "number",
+            "example": 5,
+            "description": "Average rating",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "averageDelta": {
+            "type": "number",
+            "example": 5,
+            "description": "Average delta",
+            "format": "float",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T00:00:00.000Z",
+            "description": "Created at"
+          }
+        },
+        "required": [
+          "id",
+          "strategicReportId",
+          "insightType",
+          "competenceId",
+          "competenceTitle",
+          "averageScore",
+          "averageRating",
+          "averageDelta",
           "createdAt"
         ]
       },
@@ -13555,6 +13931,15 @@
             "items": {
               "$ref": "#/components/schemas/StrategicReportAnalyticsResponse"
             }
+          },
+          "insights": {
+            "default": [],
+            "nullable": false,
+            "description": "Strategic report competence insights",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StrategicReportInsightResponse"
+            }
           }
         },
         "required": [
@@ -13577,7 +13962,8 @@
           "questionCount",
           "questionIds",
           "createdAt",
-          "analytics"
+          "analytics",
+          "insights"
         ]
       }
     }

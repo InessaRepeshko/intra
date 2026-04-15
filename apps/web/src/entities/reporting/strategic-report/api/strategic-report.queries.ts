@@ -1,3 +1,8 @@
+import { fetchCycleById } from '@entities/feedback360/cycle/api/cycle.api';
+import {
+    Cycle,
+    mapCycleDtoToModel,
+} from '@entities/feedback360/cycle/model/mappers';
 import { fetchReviewRespondents } from '@entities/feedback360/respondent/api/respondent.api';
 import { fetchReviewById } from '@entities/feedback360/review/api/review.api';
 import {
@@ -24,6 +29,7 @@ import {
     fetchStrategicReportById,
     fetchStrategicReports,
 } from './strategic-report.api';
+import { fetchPositionById } from '@entities/organisation/position/api/position.api';
 
 export const strategicReportKeys = {
     all: ['strategic-reports'] as const,
@@ -42,6 +48,9 @@ export const strategicReportKeys = {
     reviews: () => [...strategicReportKeys.all, 'reviews'] as const,
     review: (reviewId: number) =>
         [...strategicReportKeys.reviews(), reviewId] as const,
+    cycles: () => [...strategicReportKeys.all, 'cycles'] as const,
+    cycle: (cycleId: number) =>
+        [...strategicReportKeys.cycles(), cycleId] as const,
     allRatees: () => [...strategicReportKeys.all, 'ratees'] as const,
     ratees: (cycleId: number) =>
         [...strategicReportKeys.allRatees(), cycleId] as const,
@@ -121,7 +130,7 @@ export function useStrategicReportReviewsQuery(reviewIds: number[]) {
     });
 }
 
-export function useReportReviewQuery(reviewId: number) {
+export function useStrategicReportReviewQuery(reviewId: number) {
     return useQuery<Review>({
         queryKey: strategicReportKeys.review(reviewId),
         queryFn: async () => {
@@ -129,6 +138,30 @@ export function useReportReviewQuery(reviewId: number) {
             return mapReviewDtoToModel(dto);
         },
         enabled: reviewId > 0,
+    });
+}
+
+export function useStrategicReportCyclesQuery(cycleIds: number[]) {
+    return useQueries<Cycle[]>({
+        queries: cycleIds.map((cycleId) => ({
+            queryKey: strategicReportKeys.cycle(cycleId),
+            queryFn: async () => {
+                const dto = await fetchCycleById(cycleId);
+                return mapCycleDtoToModel(dto);
+            },
+            enabled: cycleId > 0,
+        })),
+    });
+}
+
+export function useStrategicReportCycleQuery(cycleId: number) {
+    return useQuery<Cycle>({
+        queryKey: strategicReportKeys.cycle(cycleId),
+        queryFn: async () => {
+            const dto = await fetchCycleById(cycleId);
+            return mapCycleDtoToModel(dto);
+        },
+        enabled: cycleId > 0,
     });
 }
 
@@ -145,7 +178,14 @@ export function useStrategicReportRateesQuery(cycleId: number) {
             const users = await Promise.all(
                 rateeIds.map((rateeId) => fetchUserById(rateeId)),
             );
-            return users.map(mapUserResponseDtoToModel);
+            const positions = await Promise.all(
+                users.map((user) => user.positionId ? fetchPositionById(user.positionId) : null),
+            );
+            const usersData = users.map(mapUserResponseDtoToModel);
+            usersData.forEach((user, index) => {
+                user.positionTitle = positions.find((position) => position?.id === user.positionId)?.title || '';
+            });
+            return usersData;
         },
         enabled: cycleId > 0,
     });
@@ -169,7 +209,14 @@ export function useAllStrategicReportRateesQuery(cycleIds: number[]) {
                 const users = await Promise.all(
                     rateeIds.map((rateeId) => fetchUserById(rateeId)),
                 );
-                return users.map(mapUserResponseDtoToModel);
+                const positions = await Promise.all(
+                    users.map((user) => user.positionId ? fetchPositionById(user.positionId) : null),
+                );
+                const usersData = users.map(mapUserResponseDtoToModel);
+                usersData.forEach((user, index) => {
+                    user.positionTitle = positions.find((position) => position?.id === user.positionId)?.title || '';
+                });
+                return usersData;
             },
             enabled: cycleId > 0,
         })),

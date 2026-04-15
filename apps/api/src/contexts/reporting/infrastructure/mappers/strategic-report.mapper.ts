@@ -2,9 +2,11 @@ import {
     Prisma,
     StrategicReport as PrismaStrategicReport,
     StrategicReportAnalytics as PrismaStrategicReportAnalytics,
+    StrategicReportInsights as PrismaStrategicReportInsight,
 } from '@intra/database';
 import { StrategicReportDomain } from '../../domain/strategic-report.domain';
 import { StrategicReportAnalyticsMapper } from './strategic-report-analytics.mapper';
+import { StrategicReportInsightMapper } from './strategic-report-insight.mapper';
 
 export class StrategicReportMapper {
     static toDomain(report: PrismaStrategicReport): StrategicReportDomain {
@@ -40,12 +42,14 @@ export class StrategicReportMapper {
             competenceGeneralDeltaOther: report.competenceGeneralDeltaOther,
             createdAt: report.createdAt,
             analytics: [],
+            insights: [],
         });
     }
 
     static toDomainWithRelations(
         report: PrismaStrategicReport & {
             analytics: PrismaStrategicReportAnalytics[];
+            insights: PrismaStrategicReportInsight[];
         },
     ): StrategicReportDomain {
         return StrategicReportDomain.create({
@@ -81,6 +85,9 @@ export class StrategicReportMapper {
             createdAt: report.createdAt,
             analytics: report.analytics.map((a) =>
                 StrategicReportAnalyticsMapper.toDomain(a),
+            ),
+            insights: report.insights.map((i) =>
+                StrategicReportInsightMapper.toDomain(i),
             ),
         });
     }

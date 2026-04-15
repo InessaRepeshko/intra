@@ -123,8 +123,10 @@ Table library_competences {
   reviewQuestions feedback360_questions [not null]
   reviewQuestionRelations feedback360_review_question_relations [not null]
   clusters library_clusters [not null]
-  reportAnalytics reporting_analytics [not null]
+  reportAnalytics reporting_individual_report_analytics [not null]
   strategicReportAnalytics reporting_strategic_report_analytics [not null]
+  reportInsights reporting_individual_report_insights [not null]
+  strategicReportInsights reporting_strategic_report_insights [not null]
 }
 
 Table library_clusters {
@@ -218,7 +220,7 @@ Table feedback360_cycles {
   clusterScores feedback360_cluster_scores [not null]
   clusterScoreAnalytics feedback360_cluster_score_analytics [not null]
   reviews feedback360_reviews [not null]
-  reports reporting_reports [not null]
+  reports reporting_individual_reports [not null]
   reviewQuestions feedback360_questions [not null]
   strategicReports reporting_strategic_reports [not null]
   cycleStageHistories feedback360_cycle_stage_history [not null]
@@ -265,7 +267,7 @@ Table feedback360_reviews {
   manager identity_users
   answers feedback360_answers [not null]
   reviewQuestionRelations feedback360_review_question_relations [not null]
-  report reporting_reports
+  report reporting_individual_reports
   respondents feedback360_respondents [not null]
   reviewers feedback360_reviewers [not null]
   clusterScores feedback360_cluster_scores [not null]
@@ -286,8 +288,9 @@ Table feedback360_questions {
   competence library_competences
   answers feedback360_answers [not null]
   reviewQuestionRelations feedback360_review_question_relations [not null]
-  reportComments reporting_comments [not null]
-  reportAnalytics reporting_analytics [not null]
+  reportComments reporting_individual_report_comments [not null]
+  reportAnalytics reporting_individual_report_analytics [not null]
+  reportInsights reporting_individual_report_insights [not null]
 }
 
 Table feedback360_review_question_relations {
@@ -423,7 +426,7 @@ Table feedback360_review_stage_history {
   changedBy identity_users
 }
 
-Table reporting_reports {
+Table reporting_individual_reports {
   id Int [pk, increment]
   reviewId Int [unique, not null]
   cycleId Int
@@ -451,11 +454,12 @@ Table reporting_reports {
   createdAt DateTime [default: `now()`, not null]
   review feedback360_reviews [not null]
   cycle feedback360_cycles
-  analytics reporting_analytics [not null]
-  comments reporting_comments [not null]
+  analytics reporting_individual_report_analytics [not null]
+  comments reporting_individual_report_comments [not null]
+  insights reporting_individual_report_insights [not null]
 }
 
-Table reporting_analytics {
+Table reporting_individual_report_analytics {
   id Int [pk, increment]
   reportId Int [not null]
   entityType EntityType [not null]
@@ -472,12 +476,30 @@ Table reporting_analytics {
   deltaPercentageByTeam Decimal
   deltaPercentageByOther Decimal
   createdAt DateTime [default: `now()`, not null]
-  report reporting_reports [not null]
+  report reporting_individual_reports [not null]
   question feedback360_questions
   competence library_competences
 }
 
-Table reporting_comments {
+Table reporting_individual_report_insights {
+  id Int [pk, increment]
+  reportId Int [not null]
+  insightType InsightType [not null]
+  entityType EntityType [not null]
+  questionId Int
+  questionTitle String
+  competenceId Int
+  competenceTitle String
+  averageScore Decimal
+  averageRating Decimal
+  averageDelta Decimal
+  createdAt DateTime [default: `now()`, not null]
+  report reporting_individual_reports [not null]
+  question feedback360_questions
+  competence library_competences
+}
+
+Table reporting_individual_report_comments {
   id Int [pk, increment]
   reportId Int [not null]
   questionId Int [not null]
@@ -487,7 +509,7 @@ Table reporting_comments {
   commentSentiment CommentSentiment [default: 'POSITIVE']
   numberOfMentions Int [not null]
   createdAt DateTime [default: `now()`, not null]
-  report reporting_reports [not null]
+  report reporting_individual_reports [not null]
   question feedback360_questions
 }
 
@@ -575,6 +597,7 @@ Table reporting_strategic_reports {
   createdAt DateTime [default: `now()`, not null]
   cycle feedback360_cycles
   analytics reporting_strategic_report_analytics [not null]
+  insights reporting_strategic_report_insights [not null]
 }
 
 Table reporting_strategic_report_analytics {
@@ -590,6 +613,20 @@ Table reporting_strategic_report_analytics {
   percentageByOther Decimal
   deltaPercentageByTeam Decimal
   deltaPercentageByOther Decimal
+  createdAt DateTime [default: `now()`, not null]
+  strategicReport reporting_strategic_reports [not null]
+  competence library_competences
+}
+
+Table reporting_strategic_report_insights {
+  id Int [pk, increment]
+  strategicReportId Int [not null]
+  insightType InsightType [not null]
+  competenceId Int [not null]
+  competenceTitle String [not null]
+  averageScore Decimal
+  averageRating Decimal
+  averageDelta Decimal
   createdAt DateTime [default: `now()`, not null]
   strategicReport reporting_strategic_reports [not null]
   competence library_competences
@@ -662,6 +699,13 @@ Enum EntityType {
 Enum CommentSentiment {
   NEGATIVE
   POSITIVE
+}
+
+Enum InsightType {
+  HIGHEST_RATING
+  LOWEST_RATING
+  HIGHEST_DELTA
+  LOWEST_DELTA
 }
 
 Ref: identity_users.managerId - identity_users.id [delete: No Action]
@@ -760,19 +804,25 @@ Ref: feedback360_review_stage_history.reviewId > feedback360_reviews.id [delete:
 
 Ref: feedback360_review_stage_history.changedById > identity_users.id [delete: Set Null]
 
-Ref: reporting_reports.reviewId - feedback360_reviews.id [delete: No Action]
+Ref: reporting_individual_reports.reviewId - feedback360_reviews.id [delete: No Action]
 
-Ref: reporting_reports.cycleId > feedback360_cycles.id [delete: No Action]
+Ref: reporting_individual_reports.cycleId > feedback360_cycles.id [delete: No Action]
 
-Ref: reporting_analytics.reportId > reporting_reports.id [delete: No Action]
+Ref: reporting_individual_report_analytics.reportId > reporting_individual_reports.id [delete: No Action]
 
-Ref: reporting_analytics.questionId > feedback360_questions.id [delete: No Action]
+Ref: reporting_individual_report_analytics.questionId > feedback360_questions.id [delete: No Action]
 
-Ref: reporting_analytics.competenceId > library_competences.id [delete: No Action]
+Ref: reporting_individual_report_analytics.competenceId > library_competences.id [delete: No Action]
 
-Ref: reporting_comments.reportId > reporting_reports.id [delete: No Action]
+Ref: reporting_individual_report_insights.reportId > reporting_individual_reports.id [delete: No Action]
 
-Ref: reporting_comments.questionId > feedback360_questions.id [delete: No Action]
+Ref: reporting_individual_report_insights.questionId > feedback360_questions.id [delete: No Action]
+
+Ref: reporting_individual_report_insights.competenceId > library_competences.id [delete: No Action]
+
+Ref: reporting_individual_report_comments.reportId > reporting_individual_reports.id [delete: No Action]
+
+Ref: reporting_individual_report_comments.questionId > feedback360_questions.id [delete: No Action]
 
 Ref: auth_session.userId > auth_user.id [delete: Cascade]
 
@@ -783,3 +833,7 @@ Ref: reporting_strategic_reports.cycleId > feedback360_cycles.id [delete: No Act
 Ref: reporting_strategic_report_analytics.strategicReportId > reporting_strategic_reports.id [delete: No Action]
 
 Ref: reporting_strategic_report_analytics.competenceId > library_competences.id [delete: No Action]
+
+Ref: reporting_strategic_report_insights.strategicReportId > reporting_strategic_reports.id [delete: No Action]
+
+Ref: reporting_strategic_report_insights.competenceId > library_competences.id [delete: No Action]

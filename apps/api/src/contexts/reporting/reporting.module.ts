@@ -11,18 +11,24 @@ import { CycleStageListener } from './application/listeners/cycle-stage.listener
 import { ReviewStageListener } from './application/listeners/review-stage.listener';
 import { REPORT_ANALYTICS_REPOSITORY } from './application/ports/report-analytics.repository.port';
 import { REPORT_COMMENT_REPOSITORY } from './application/ports/report-comment.repository.port';
+import { REPORT_INSIGHT_REPOSITORY } from './application/ports/report-insight.repository.port';
 import { REPORT_REPOSITORY } from './application/ports/report.repository.port';
 import { STRATEGIC_REPORT_ANALYTICS_REPOSITORY } from './application/ports/strategic-report-analytics.repository.port';
+import { STRATEGIC_REPORT_INSIGHT_REPOSITORY } from './application/ports/strategic-report-insight.repository.port';
 import { STRATEGIC_REPORT_REPOSITORY } from './application/ports/strategic-report.repository.port';
 import { ReportAnalyticsService } from './application/services/report-analytics.service';
 import { ReportCommentService } from './application/services/report-comment.service';
+import { ReportInsightService } from './application/services/report-insight.service';
 import { ReportingService } from './application/services/reports.service';
+import { StartegicReportInsightService } from './application/services/startegic-report-insight.service';
 import { StrategicReportAnalyticsService } from './application/services/strategic-report-analytics.service';
 import { StrategicReportingService } from './application/services/strategic-reports.service';
 import { TextAnswerService } from './application/services/text-answer.service';
 import { ReportAnalyticsRepository } from './infrastructure/prisma-repositories/report-analytics.repository';
 import { ReportCommentRepository } from './infrastructure/prisma-repositories/report-comment.repository';
+import { ReportInsightRepository } from './infrastructure/prisma-repositories/report-insight.repository';
 import { ReportRepository } from './infrastructure/prisma-repositories/report.repository';
+import { StrategicReportInsightRepository } from './infrastructure/prisma-repositories/startegic-report-insight.repository';
 import { StrategicReportAnalyticsRepository } from './infrastructure/prisma-repositories/strategic-report-analytics.repository';
 import { StrategicReportRepository } from './infrastructure/prisma-repositories/strategic-report.repository';
 import { ReportingController } from './presentation/http/controllers/reporting.controller';
@@ -72,12 +78,16 @@ import { LibraryModule } from '../library/library.module';
         CycleStageListener,
         ReportingService,
         StrategicReportingService,
+        ReportInsightService,
+        StartegicReportInsightService,
         ReportAnalyticsService,
         StrategicReportAnalyticsService,
         ReportCommentService,
         TextAnswerService,
+        ReportInsightRepository,
         ReportRepository,
         ReportAnalyticsRepository,
+        StrategicReportInsightRepository,
         StrategicReportRepository,
         StrategicReportAnalyticsRepository,
         ReportCommentRepository,
@@ -94,8 +104,16 @@ import { LibraryModule } from '../library/library.module';
         CompetenceRepository,
         { provide: REPORT_REPOSITORY, useExisting: ReportRepository },
         {
+            provide: REPORT_INSIGHT_REPOSITORY,
+            useExisting: ReportInsightRepository,
+        },
+        {
             provide: REPORT_ANALYTICS_REPOSITORY,
             useExisting: ReportAnalyticsRepository,
+        },
+        {
+            provide: STRATEGIC_REPORT_INSIGHT_REPOSITORY,
+            useExisting: StrategicReportInsightRepository,
         },
         {
             provide: STRATEGIC_REPORT_REPOSITORY,
@@ -127,6 +145,8 @@ import { LibraryModule } from '../library/library.module';
     exports: [
         ReportingService,
         StrategicReportingService,
+        ReportInsightService,
+        StartegicReportInsightService,
         ReportAnalyticsService,
         ReportCommentService,
         TextAnswerService,

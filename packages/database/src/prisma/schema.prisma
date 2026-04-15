@@ -210,6 +210,8 @@ model Competence {
   clusters                  Cluster[]
   reportAnalytics           ReportAnalytics[]
   strategicReportAnalytics  StrategicReportAnalytics[]
+  reportInsights            ReportInsights[]
+  strategicReportInsights   StrategicReportInsights[]
 
   @@map("library_competences")
 }
@@ -454,6 +456,7 @@ model Question {
   reviewQuestionRelations ReviewQuestionRelation[]
   reportComments          ReportComment[]
   reportAnalytics         ReportAnalytics[]
+  reportInsights          ReportInsights[]
 
   @@index([cycleId])
   @@index([questionTemplateId])
@@ -674,9 +677,10 @@ model Report {
   cycle     Cycle?            @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   analytics ReportAnalytics[]
   comments  ReportComment[]
+  insights  ReportInsights[]
 
   @@index([cycleId])
-  @@map("reporting_reports")
+  @@map("reporting_individual_reports")
 }
 
 model ReportAnalytics {
@@ -704,7 +708,40 @@ model ReportAnalytics {
   @@index([reportId])
   @@index([questionId])
   @@index([competenceId])
-  @@map("reporting_analytics")
+  @@map("reporting_individual_report_analytics")
+}
+
+enum InsightType {
+  HIGHEST_RATING @map("highest_rating")
+  LOWEST_RATING  @map("lowest_rating")
+  HIGHEST_DELTA  @map("highest_delta")
+  LOWEST_DELTA   @map("lowest_delta")
+
+  @@map("reporting_insight_type")
+}
+
+model ReportInsights {
+  id              Int         @id @default(autoincrement())
+  reportId        Int         @map("report_id")
+  insightType     InsightType @map("insight_type")
+  entityType      EntityType  @map("entity_type")
+  questionId      Int?        @map("question_id")
+  questionTitle   String?     @map("question_title") @db.Text
+  competenceId    Int?        @map("competence_id")
+  competenceTitle String?     @map("competence_title") @db.Text
+  averageScore    Decimal?    @map("average_score") @db.Decimal(10, 4)
+  averageRating   Decimal?    @map("average_rating") @db.Decimal(10, 4)
+  averageDelta    Decimal?    @map("average_delta") @db.Decimal(10, 4)
+  createdAt       DateTime    @default(now()) @map("created_at") @db.Timestamp(0)
+
+  report     Report      @relation(fields: [reportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question   Question?   @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  competence Competence? @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([reportId])
+  @@index([questionId])
+  @@index([competenceId])
+  @@map("reporting_individual_report_insights")
 }
 
 model ReportComment {
@@ -723,7 +760,7 @@ model ReportComment {
 
   @@index([reportId])
   @@index([questionId])
-  @@map("reporting_comments")
+  @@map("reporting_individual_report_comments")
 }
 
 model AuthUser {
@@ -822,6 +859,7 @@ model StrategicReport {
 
   cycle     Cycle?                     @relation(fields: [cycleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   analytics StrategicReportAnalytics[]
+  insights  StrategicReportInsights[]
 
   @@index([cycleId])
   @@map("reporting_strategic_reports")
@@ -848,4 +886,23 @@ model StrategicReportAnalytics {
   @@index([strategicReportId])
   @@index([competenceId])
   @@map("reporting_strategic_report_analytics")
+}
+
+model StrategicReportInsights {
+  id                Int         @id @default(autoincrement())
+  strategicReportId Int         @map("strategic_report_id")
+  insightType       InsightType @map("insight_type")
+  competenceId      Int         @map("competence_id")
+  competenceTitle   String      @map("competence_title") @db.Text
+  averageScore      Decimal?    @map("average_score") @db.Decimal(10, 4)
+  averageRating     Decimal?    @map("average_rating") @db.Decimal(10, 4)
+  averageDelta      Decimal?    @map("average_delta") @db.Decimal(10, 4)
+  createdAt         DateTime    @default(now()) @map("created_at") @db.Timestamp(0)
+
+  strategicReport StrategicReport @relation(fields: [strategicReportId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  competence      Competence?     @relation(fields: [competenceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([strategicReportId])
+  @@index([competenceId])
+  @@map("reporting_strategic_report_insights")
 }

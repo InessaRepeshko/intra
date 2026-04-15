@@ -30,6 +30,7 @@ import {
     ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
 import { UserDomain } from 'src/contexts/identity/domain/user.domain';
+import { ReportInsightService } from 'src/contexts/reporting/application/services/report-insight.service';
 import { ReportAnalyticsService } from '../../../application/services/report-analytics.service';
 import { ReportCommentService } from '../../../application/services/report-comment.service';
 import { ReportingService } from '../../../application/services/reports.service';
@@ -39,9 +40,11 @@ import { CreateReportCommentDto } from '../dto/create-report-comment.dto';
 import { ReportQueryDto } from '../dto/report-query.dto';
 import { ReportAnalyticsHttpMapper } from '../mappers/report-analytics.http.mapper';
 import { ReportCommentHttpMapper } from '../mappers/report-comment.http.mapper';
+import { ReportInsightHttpMapper } from '../mappers/report-insight.http.mapper';
 import { ReportHttpMapper } from '../mappers/report.http.mapper';
 import { ReportAnalyticsResponse } from '../models/report-analytics.response';
 import { ReportCommentResponse } from '../models/report-comment.response';
+import { ReportInsightResponse } from '../models/report-insight.response';
 import { ReportResponse } from '../models/report.response';
 import { TextAnswerResponse } from '../models/text-answer.response';
 
@@ -61,6 +64,7 @@ export class ReportingController {
         private readonly reporting: ReportingService,
         private readonly textAnswerService: TextAnswerService,
         private readonly analyticsService: ReportAnalyticsService,
+        private readonly insightService: ReportInsightService,
         private readonly commentService: ReportCommentService,
     ) {}
 
@@ -179,6 +183,46 @@ export class ReportingController {
             actor,
         );
         return ReportAnalyticsHttpMapper.toResponse(analytics);
+    }
+
+    @Get(':id/insights')
+    @ApiOperation({ summary: 'List report insights by report id' })
+    @ApiParam({
+        name: 'id',
+        description: 'Report identifier',
+        type: 'number',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: ReportInsightResponse,
+        isArray: true,
+    })
+    @ApiReadErrorResponses()
+    async listReportInsights(
+        @Param('id', ParseIntPipe) id: number,
+        @CurrentUser() actor: UserDomain,
+    ): Promise<ReportInsightResponse[]> {
+        const insights = await this.insightService.getByReportId(id, actor);
+        return insights.map((insight) =>
+            ReportInsightHttpMapper.toResponse(insight),
+        );
+    }
+
+    @Get('insights/:insightId')
+    @ApiOperation({ summary: 'Get report insight by id' })
+    @ApiParam({
+        name: 'insightId',
+        description: 'Insight identifier',
+        type: 'number',
+    })
+    @ApiResponse({ status: HttpStatus.OK, type: ReportInsightResponse })
+    @ApiReadErrorResponses()
+    async getReportInsightById(
+        @Param('insightId', ParseIntPipe) insightId: number,
+        @CurrentUser() actor: UserDomain,
+    ): Promise<ReportInsightResponse> {
+        const insight = await this.insightService.getById(insightId, actor);
+        return ReportInsightHttpMapper.toResponse(insight);
     }
 
     @Get(':id/comments')

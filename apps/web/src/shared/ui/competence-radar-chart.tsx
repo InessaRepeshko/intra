@@ -24,6 +24,7 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from '@shared/components/ui/chart';
+import { StrategicReportAnalytics } from '@entities/reporting/strategic-report/model/mappers';
 
 interface CompetenceRadarCharData {
     competence: string;
@@ -47,10 +48,12 @@ const chartConfig = {
     },
 } satisfies ChartConfig;
 
-export function CompetenciesRadarChart({
+export function CompetenceRadarChart({
     reportAnalytics,
 }: {
-    reportAnalytics: ReportAnalytics[];
+    reportAnalytics: ReportAnalytics[] | StrategicReportAnalytics[];
+    title?: string;
+    description?: string;
 }) {
     const data: CompetenceRadarCharData[] = [];
 
@@ -76,9 +79,7 @@ export function CompetenciesRadarChart({
             <CardHeader className="items-center">
                 <CardTitle>Competence Alignment Overview</CardTitle>
                 <CardDescription>
-                    Multi-source evaluation of key skill clusters showing the
-                    alignment between internal and external performance
-                    perspectives.
+                    Multi-source evaluation of key skill clusters showing the alignment between internal and external performance perspectives.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -120,21 +121,6 @@ export function CompetenciesRadarChart({
                                         fontWeight={500}
                                         {...props}
                                     >
-                                        {/* <tspan className="fill-amber-500">
-                                            {formatNumber(record.self) + '%'}
-                                        </tspan>
-                                        <tspan className="fill-muted-foreground">
-                                            {' / '}
-                                        </tspan>
-                                        <tspan className="fill-blue-500">
-                                            {formatNumber(record.team) + '%'}
-                                        </tspan>
-                                        <tspan className="fill-muted-foreground">
-                                            {' / '}
-                                        </tspan>
-                                        <tspan className="fill-violet-500">
-                                            {formatNumber(record.others) + '%'}
-                                        </tspan> */}
                                         <tspan
                                             x={x}
                                             dy={'1rem'}

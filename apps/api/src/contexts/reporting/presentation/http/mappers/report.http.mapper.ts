@@ -9,6 +9,7 @@ import { ReportResponse } from '../models/report.response';
 import { TextAnswerResponse } from '../models/text-answer.response';
 import { ReportAnalyticsHttpMapper } from './report-analytics.http.mapper';
 import { ReportCommentHttpMapper } from './report-comment.http.mapper';
+import { ReportInsightHttpMapper } from './report-insight.http.mapper';
 
 export class ReportHttpMapper {
     static toResponse(report: ReportDomain): ReportResponse {
@@ -41,10 +42,22 @@ export class ReportHttpMapper {
         response.competenceSummaryTotals =
             ReportHttpMapper.toCompetenceSummaryTotalsResponse(report);
 
+        response.questionInsights = report.insights
+            ?.filter((i) => i.entityType === EntityType.QUESTION)
+            ?.map((i) => ReportInsightHttpMapper.toResponse(i));
+
+        response.competenceInsights = report.insights
+            ?.filter((i) => i.entityType === EntityType.COMPETENCE)
+            ?.map((i) => ReportInsightHttpMapper.toResponse(i));
+
+        response.analytics = report.analytics.map((a) =>
+            ReportAnalyticsHttpMapper.toResponse(a),
+        );
         response.comments =
             report.comments?.map((c) =>
                 ReportCommentHttpMapper.toResponse(c),
             ) ?? [];
+
         return response;
     }
 

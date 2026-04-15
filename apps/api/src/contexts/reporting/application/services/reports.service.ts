@@ -2,9 +2,12 @@ import {
     AnswerType,
     CompetenceAccumulator,
     CYCLE_CONSTRAINTS,
+    EntityAverageInsightsDto,
+    EntityInsightSummaryDto,
     EntitySummaryTotals,
     EntityType,
     IdentityRole,
+    InsightType,
     REPORT_ANALYTICS_CONSTRAINTS,
     ReportSearchQuery,
     RESPONDENT_CATEGORIES,
@@ -58,6 +61,7 @@ import {
 } from '../../../library/application/ports/cluster.repository.port';
 import { ClusterDomain } from '../../../library/domain/cluster.domain';
 import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
+import { ReportInsightDomain } from '../../domain/report-insight.domain';
 import { ReportDomain } from '../../domain/report.domain';
 import {
     REPORT_ANALYTICS_REPOSITORY,
@@ -67,6 +71,10 @@ import {
     REPORT_COMMENT_REPOSITORY,
     ReportCommentRepositoryPort,
 } from '../ports/report-comment.repository.port';
+import {
+    REPORT_INSIGHT_REPOSITORY,
+    ReportInsightRepositoryPort,
+} from '../ports/report-insight.repository.port';
 import {
     REPORT_REPOSITORY,
     ReportRepositoryPort,
@@ -81,6 +89,8 @@ export class ReportingService {
         private readonly reports: ReportRepositoryPort,
         @Inject(REPORT_ANALYTICS_REPOSITORY)
         private readonly analyticsRepo: ReportAnalyticsRepositoryPort,
+        @Inject(REPORT_INSIGHT_REPOSITORY)
+        private readonly insightsRepo: ReportInsightRepositoryPort,
         @Inject(REPORT_COMMENT_REPOSITORY)
         private readonly commentsRepo: ReportCommentRepositoryPort,
         @Inject(RESPONDENT_REPOSITORY)
@@ -281,6 +291,7 @@ export class ReportingService {
         const maxScore = new Decimal(REPORT_ANALYTICS_CONSTRAINTS.SCORE.MAX);
         const { questionAnalytics, competenceAnalytics, questionTotals } =
             this.buildAnalyticsPayload(answers, relations, maxScore);
+
         const competenceTotals = this.calculateCompetenceSummaryTotals(
             competenceAnalytics,
             maxScore,
@@ -315,9 +326,9 @@ export class ReportingService {
             comments: [],
         });
 
-        const created = await this.reports.create(report);
+        const createdReport = await this.reports.create(report);
 
-        await this.analyticsRepo.createMany(created.id!, [
+        await this.analyticsRepo.createMany(createdReport.id!, [
             ...questionAnalytics,
             ...competenceAnalytics,
         ]);
@@ -333,22 +344,36 @@ export class ReportingService {
             `Generated ${questionAnalytics.length} question analytics and ${competenceAnalytics.length} competence analytics`,
         );
 
-        const fullReport = await this.reports.findById(created.id!);
-        if (!fullReport) {
-            throw new NotFoundException(
-                `Report ${created.id} could not be loaded after creation`,
-            );
-        }
+        const questionInsights = await this.calculateEntityInsights(
+            questionAnalytics,
+            EntityType.QUESTION,
+            createdReport.id!,
+        );
+
+        const competenceInsights = await this.calculateEntityInsights(
+            competenceAnalytics,
+            EntityType.COMPETENCE,
+            createdReport.id!,
+        );
+
+        await this.insightsRepo.createMany(createdReport.id!, [
+            ...questionInsights,
+            ...competenceInsights,
+        ]);
 
         this.logger.debug(
-            `Successfully created report ${fullReport.id} for review ${reviewId}`,
+            `Generated ${questionInsights.length} question insights and ${competenceInsights.length} competence insights`,
+        );
+
+        this.logger.debug(
+            `Successfully created report ${createdReport.id} for review ${reviewId}`,
         );
 
         await this.reviews.updateById(reviewId, {
-            reportId: fullReport.id,
+            reportId: createdReport.id,
         });
 
-        return fullReport;
+        return createdReport;
     }
 
     /**
@@ -671,11 +696,11 @@ export class ReportingService {
                 maxScore,
             );
 
-            const deltaPercentageByTeam = this.calculateDelta(
+            const deltaPercentageByTeam = this.calculateDeltaRating(
                 percentageByTeam,
                 percentageBySelf,
             );
-            const deltaPercentageByOther = this.calculateDelta(
+            const deltaPercentageByOther = this.calculateDeltaRating(
                 percentageByOther,
                 percentageBySelf,
             );
@@ -770,11 +795,11 @@ export class ReportingService {
                 maxScore,
             );
 
-            const deltaPercentageByTeam = this.calculateDelta(
+            const deltaPercentageByTeam = this.calculateDeltaRating(
                 percentageByTeam,
                 percentageBySelf,
             );
-            const deltaPercentageByOther = this.calculateDelta(
+            const deltaPercentageByOther = this.calculateDeltaRating(
                 percentageByOther,
                 percentageBySelf,
             );
@@ -881,7 +906,7 @@ export class ReportingService {
      * @param self The self assessment rating.
      * @returns The difference in percentage points.
      */
-    private calculateDelta(
+    private calculateDeltaRating(
         respondent: Decimal | null,
         self: Decimal | null,
     ): Decimal | null {
@@ -924,11 +949,11 @@ export class ReportingService {
             maxScore,
         );
 
-        const deltaPercentageByTeam = this.calculateDelta(
+        const deltaPercentageByTeam = this.calculateDeltaRating(
             percentageByTeam,
             percentageBySelf,
         );
-        const deltaPercentageByOther = this.calculateDelta(
+        const deltaPercentageByOther = this.calculateDeltaRating(
             percentageByOther,
             percentageBySelf,
         );
@@ -1004,11 +1029,11 @@ export class ReportingService {
             maxScore,
         );
 
-        const deltaPercentageByTeam = this.calculateDelta(
+        const deltaPercentageByTeam = this.calculateDeltaRating(
             percentageByTeam,
             percentageBySelf,
         );
-        const deltaPercentageByOther = this.calculateDelta(
+        const deltaPercentageByOther = this.calculateDeltaRating(
             percentageByOther,
             percentageBySelf,
         );
@@ -1025,5 +1050,242 @@ export class ReportingService {
                 deltaPercentageByOther,
             ),
         };
+    }
+
+    /**
+     * Calculates the metrics insights for entities (questions or competences).
+     * @param entities The entities to calculate the metrics insights for.
+     * @param type The type of entities (question or competence).
+     * @param reportId The ID of the report.
+     * @returns The metrics insights.
+     */
+    private calculateEntityInsights(
+        entities: ReportAnalyticsDomain[],
+        type: EntityType,
+        reportId: number,
+    ): ReportInsightDomain[] {
+        const averages: EntityAverageInsightsDto[] = [...entities]
+            .sort((a, b) => {
+                const nameA =
+                    type === EntityType.QUESTION
+                        ? (a.questionTitle ?? '')
+                        : (a.competenceTitle ?? '');
+                const nameB =
+                    type === EntityType.QUESTION
+                        ? (b.questionTitle ?? '')
+                        : (b.competenceTitle ?? '');
+                return nameA.localeCompare(nameB);
+            })
+            .map((entity, index) => {
+                return {
+                    entityId:
+                        type === EntityType.QUESTION
+                            ? entity.questionId
+                            : entity.competenceId,
+                    entityType: type,
+                    entityTitle:
+                        (type === EntityType.QUESTION
+                            ? entity.questionTitle
+                            : entity.competenceTitle) ?? '',
+                    num: index + 1,
+                    averageScore: this.getValidAverage([
+                        entity.averageByTeam,
+                        entity.averageByOther,
+                    ]),
+                    averageRating: this.getValidAverage([
+                        entity.percentageByTeam,
+                        entity.percentageByOther,
+                    ]),
+                    averageDelta: this.getValidAverage([
+                        entity.deltaPercentageByTeam,
+                        entity.deltaPercentageByOther,
+                    ]),
+                };
+            });
+
+        const validRatings = averages
+            .map((e) => e.averageRating)
+            .filter((v): v is number => v !== undefined && v !== null);
+        const validDeltas = averages
+            .map((e) => e.averageDelta)
+            .filter((v): v is number => v !== undefined && v !== null);
+
+        const maxRating =
+            validRatings.length > 0 ? Math.max(...validRatings) : null;
+        const minRating =
+            validRatings.length > 0 ? Math.min(...validRatings) : null;
+        const maxDelta =
+            validDeltas.length > 0 ? Math.max(...validDeltas) : null;
+        const minDelta =
+            validDeltas.length > 0 ? Math.min(...validDeltas) : null;
+
+        const insightSummaries: EntityInsightSummaryDto = {
+            highestRating:
+                maxRating !== null
+                    ? averages.find((e) =>
+                          new Decimal(e.averageRating ?? 0).equals(maxRating),
+                      )
+                    : undefined,
+            lowestRating:
+                minRating !== null
+                    ? averages.find((e) =>
+                          new Decimal(e.averageRating ?? 0).equals(minRating),
+                      )
+                    : undefined,
+            highestDelta:
+                maxDelta !== null
+                    ? averages.find((e) =>
+                          new Decimal(e.averageDelta ?? 0).equals(maxDelta),
+                      )
+                    : undefined,
+            lowestDelta:
+                minDelta !== null
+                    ? averages.find((e) =>
+                          new Decimal(e.averageDelta ?? 0).equals(minDelta),
+                      )
+                    : undefined,
+        };
+
+        const insights: ReportInsightDomain[] = [];
+
+        insights.push(
+            ReportInsightDomain.create({
+                reportId: reportId!,
+                insightType: InsightType.HIGHEST_RATING,
+                entityType: type,
+                questionId:
+                    type === EntityType.QUESTION
+                        ? (insightSummaries.highestRating?.entityId ?? null)
+                        : null,
+                questionTitle:
+                    type === EntityType.QUESTION
+                        ? (insightSummaries.highestRating?.entityTitle ?? null)
+                        : null,
+                competenceId:
+                    type === EntityType.COMPETENCE
+                        ? (insightSummaries.highestRating?.entityId ?? null)
+                        : null,
+                competenceTitle:
+                    type === EntityType.COMPETENCE
+                        ? (insightSummaries.highestRating?.entityTitle ?? null)
+                        : null,
+                averageScore: insightSummaries.highestRating?.averageScore,
+                averageRating: insightSummaries.highestRating?.averageRating,
+                averageDelta: insightSummaries.highestRating?.averageDelta,
+                createdAt: undefined,
+            }),
+        );
+
+        insights.push(
+            ReportInsightDomain.create({
+                reportId: reportId!,
+                insightType: InsightType.LOWEST_RATING,
+                entityType: type,
+                questionId:
+                    type === EntityType.QUESTION
+                        ? (insightSummaries.lowestRating?.entityId ?? null)
+                        : null,
+                questionTitle:
+                    type === EntityType.QUESTION
+                        ? (insightSummaries.lowestRating?.entityTitle ?? null)
+                        : null,
+                competenceId:
+                    type === EntityType.COMPETENCE
+                        ? (insightSummaries.lowestRating?.entityId ?? null)
+                        : null,
+                competenceTitle:
+                    type === EntityType.COMPETENCE
+                        ? (insightSummaries.lowestRating?.entityTitle ?? null)
+                        : null,
+                averageScore: insightSummaries.lowestRating?.averageScore,
+                averageRating: insightSummaries.lowestRating?.averageRating,
+                averageDelta: insightSummaries.lowestRating?.averageDelta,
+                createdAt: undefined,
+            }),
+        );
+
+        insights.push(
+            ReportInsightDomain.create({
+                reportId: reportId!,
+                insightType: InsightType.HIGHEST_DELTA,
+                entityType: type,
+                questionId:
+                    type === EntityType.QUESTION
+                        ? (insightSummaries.highestDelta?.entityId ?? null)
+                        : null,
+                questionTitle:
+                    type === EntityType.QUESTION
+                        ? (insightSummaries.highestDelta?.entityTitle ?? null)
+                        : null,
+                competenceId:
+                    type === EntityType.COMPETENCE
+                        ? (insightSummaries.highestDelta?.entityId ?? null)
+                        : null,
+                competenceTitle:
+                    type === EntityType.COMPETENCE
+                        ? (insightSummaries.highestDelta?.entityTitle ?? null)
+                        : null,
+                averageScore: insightSummaries.highestDelta?.averageScore,
+                averageRating: insightSummaries.highestDelta?.averageRating,
+                averageDelta: insightSummaries.highestDelta?.averageDelta,
+                createdAt: undefined,
+            }),
+        );
+
+        insights.push(
+            ReportInsightDomain.create({
+                reportId: reportId!,
+                insightType: InsightType.LOWEST_DELTA,
+                entityType: type,
+                questionId:
+                    type === EntityType.QUESTION
+                        ? (insightSummaries.lowestDelta?.entityId ?? null)
+                        : null,
+                questionTitle:
+                    type === EntityType.QUESTION
+                        ? (insightSummaries.lowestDelta?.entityTitle ?? null)
+                        : null,
+                competenceId:
+                    type === EntityType.COMPETENCE
+                        ? (insightSummaries.lowestDelta?.entityId ?? null)
+                        : null,
+                competenceTitle:
+                    type === EntityType.COMPETENCE
+                        ? (insightSummaries.lowestDelta?.entityTitle ?? null)
+                        : null,
+                averageScore: insightSummaries.lowestDelta?.averageScore,
+                averageRating: insightSummaries.lowestDelta?.averageRating,
+                averageDelta: insightSummaries.lowestDelta?.averageDelta,
+                createdAt: undefined,
+            }),
+        );
+
+        return insights;
+    }
+
+    /**
+     * Calculates the average of an array of numbers.
+     * @param arr The array of numbers.
+     * @returns The average of the numbers.
+     */
+    private getValidAverage = (arr: (Decimal | null | undefined)[]) => {
+        const validValues = arr.filter(
+            (val): val is Decimal => val !== null && val !== undefined,
+        );
+        if (validValues.length === 0) return null;
+        return this.calculateAverageNumberForArray(validValues);
+    };
+
+    /**
+     * Calculates the average of an array of numbers.
+     * @param numbers The array of numbers.
+     * @returns The average of the numbers.
+     */
+    private calculateAverageNumberForArray(numbers: Decimal[]): Decimal {
+        let sum = Decimal(0);
+        for (const number of numbers) {
+            sum = sum.add(number);
+        }
+        return sum.div(numbers.length);
     }
 }

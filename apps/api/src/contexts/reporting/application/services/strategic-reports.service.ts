@@ -1,7 +1,10 @@
 import {
+    EntityAverageInsightsDto,
+    EntityInsightSummaryDto,
     EntitySummaryTotals,
     EntityType,
     IdentityRole,
+    InsightType,
     REPORT_ANALYTICS_CONSTRAINTS,
     RespondentCategory,
     StrategicReportSearchQuery,
@@ -64,6 +67,7 @@ import { AnswerDomain } from '../../../feedback360/domain/answer.domain';
 import { RespondentDomain } from '../../../feedback360/domain/respondent.domain';
 import { ReviewDomain } from '../../../feedback360/domain/review.domain';
 import { ReportAnalyticsDomain } from '../../domain/report-analytics.domain';
+import { StrategicReportInsightDomain } from '../../domain/startegic-report-insight.domain';
 import { StrategicReportAnalyticsDomain } from '../../domain/strategic-report-analytics.domain';
 import { StrategicReportDomain } from '../../domain/strategic-report.domain';
 import {
@@ -78,6 +82,10 @@ import {
     STRATEGIC_REPORT_ANALYTICS_REPOSITORY,
     StrategicReportAnalyticsRepositoryPort,
 } from '../ports/strategic-report-analytics.repository.port';
+import {
+    STRATEGIC_REPORT_INSIGHT_REPOSITORY,
+    StrategicReportInsightRepositoryPort,
+} from '../ports/strategic-report-insight.repository.port';
 import {
     STRATEGIC_REPORT_REPOSITORY,
     StrategicReportRepositoryPort,
@@ -116,6 +124,8 @@ export class StrategicReportingService {
         private readonly questions: QuestionRepositoryPort,
         @Inject(REPORT_ANALYTICS_REPOSITORY)
         private readonly reportAnalyticsRepo: ReportAnalyticsRepositoryPort,
+        @Inject(STRATEGIC_REPORT_INSIGHT_REPOSITORY)
+        private readonly insightsRepo: StrategicReportInsightRepositoryPort,
     ) {}
 
     async search(
@@ -278,10 +288,10 @@ export class StrategicReportingService {
             [RespondentCategory.OTHER]: new Decimal(0),
         };
         const allReviewers = new Set<ReviewerDomain>();
-        const allTeams = new Set<TeamDomain>();
-        const allPositions = new Set<PositionDomain>();
-        const allCompetences = new Set<CompetenceDomain>();
-        const allQuestions = new Set<QuestionDomain>();
+        const allTeams = new Map<number, TeamDomain>();
+        const allPositions = new Map<number, PositionDomain>();
+        const allCompetences = new Map<number, CompetenceDomain>();
+        const allQuestions = new Map<number, QuestionDomain>();
 
         for (const review of allReviews) {
             const teamIds = new Set<number>();
@@ -314,19 +324,23 @@ export class StrategicReportingService {
                 }
             });
 
-            teamIds.forEach(async (teamId) => {
-                const team = await this.teams.findById(teamId);
-                if (team) {
-                    allTeams.add(team);
+            for (const teamId of teamIds) {
+                if (!allTeams.has(teamId)) {
+                    const team = await this.teams.findById(teamId);
+                    if (team) {
+                        allTeams.set(teamId, team);
+                    }
                 }
-            });
+            }
 
-            positionIds.forEach(async (positionId) => {
-                const position = await this.positions.findById(positionId);
-                if (position) {
-                    allPositions.add(position);
+            for (const positionId of positionIds) {
+                if (!allPositions.has(positionId)) {
+                    const position = await this.positions.findById(positionId);
+                    if (position) {
+                        allPositions.set(positionId, position);
+                    }
                 }
-            });
+            }
 
             const answers = await this.answers.list({
                 reviewId: review.id!,
@@ -374,18 +388,25 @@ export class StrategicReportingService {
             }
 
             for (const questionId of questionIds) {
-                const question = await this.questions.findById(questionId);
-                if (question) {
-                    allQuestions.add(question);
-                    competenceIds.add(question.competenceId!);
+                if (!allQuestions.has(questionId)) {
+                    const question = await this.questions.findById(questionId);
+                    if (question) {
+                        allQuestions.set(questionId, question);
+                    }
+                }
+                const q = allQuestions.get(questionId);
+                if (q && q.competenceId) {
+                    competenceIds.add(q.competenceId);
                 }
             }
 
             for (const competenceId of competenceIds) {
-                const competence =
-                    await this.competences.findById(competenceId);
-                if (competence) {
-                    allCompetences.add(competence);
+                if (!allCompetences.has(competenceId)) {
+                    const competence =
+                        await this.competences.findById(competenceId);
+                    if (competence) {
+                        allCompetences.set(competenceId, competence);
+                    }
                 }
             }
 
@@ -409,7 +430,7 @@ export class StrategicReportingService {
         const competenceAnalytics = this.buildStrategicAnalyticPayload(
             allReportAnalytics,
             maxScore,
-            Array.from(allCompetences),
+            Array.from(allCompetences.values()),
         );
         const competenceTotals = this.calculateCompetenceSummaryTotals(
             competenceAnalytics,
@@ -429,18 +450,16 @@ export class StrategicReportingService {
         const allReviewerIds = [
             ...new Set<number>([...allReviewers].map((r) => r.reviewerId!)),
         ].sort((a, b) => a - b);
-        const allTeamIds = [
-            ...new Set<number>([...allTeams].map((r) => r.id!)),
-        ].sort((a, b) => a - b);
-        const allPositionIds = [
-            ...new Set<number>([...allPositions].map((r) => r.id!)),
-        ].sort((a, b) => a - b);
-        const allCompetenceIds = [
-            ...new Set<number>([...allCompetences].map((r) => r.id!)),
-        ].sort((a, b) => a - b);
-        const allQuestionIds = [
-            ...new Set<number>([...allQuestions].map((r) => r.id!)),
-        ].sort((a, b) => a - b);
+        const allTeamIds = Array.from(allTeams.keys()).sort((a, b) => a - b);
+        const allPositionIds = Array.from(allPositions.keys()).sort(
+            (a, b) => a - b,
+        );
+        const allCompetenceIds = Array.from(allCompetences.keys()).sort(
+            (a, b) => a - b,
+        );
+        const allQuestionIds = Array.from(allQuestions.keys()).sort(
+            (a, b) => a - b,
+        );
 
         const rateeTurnout = turnouts
             .reduce((acc, t) => acc.plus(t.rateeTurnout), new Decimal(0))
@@ -476,28 +495,45 @@ export class StrategicReportingService {
             competenceGeneralAvgSelf: competenceTotals.averageBySelfAssessment,
             competenceGeneralAvgTeam: competenceTotals.averageByTeam,
             competenceGeneralAvgOther: competenceTotals.averageByOther,
-            competenceGeneralPctSelf: competenceTotals.percentageBySelfAssessment,
+            competenceGeneralPctSelf:
+                competenceTotals.percentageBySelfAssessment,
             competenceGeneralPctTeam: competenceTotals.percentageByTeam,
             competenceGeneralPctOther: competenceTotals.percentageByOther,
             competenceGeneralDeltaTeam: competenceTotals.deltaPercentageByTeam,
-            competenceGeneralDeltaOther: competenceTotals.deltaPercentageByOther,
+            competenceGeneralDeltaOther:
+                competenceTotals.deltaPercentageByOther,
             analytics: [],
         });
 
-        const created = await this.strategicReports.create(report);
+        const createdReport = await this.strategicReports.create(report);
 
-        await this.strategicAnalyticsRepo.createMany(created.id!, [
+        await this.strategicAnalyticsRepo.createMany(createdReport.id!, [
             ...competenceAnalytics,
         ]);
 
         this.logger.debug(
-            `Generated ${competenceAnalytics.length} strategic report analytics for report ${created.id}`,
+            `Generated ${competenceAnalytics.length} strategic report analytics for report ${createdReport.id}`,
         );
 
-        const fullReport = await this.strategicReports.findById(created.id!);
+        const competenceInsights = await this.calculateEntityInsights(
+            competenceAnalytics,
+            createdReport.id!,
+        );
+
+        await this.insightsRepo.createMany(createdReport.id!, [
+            ...competenceInsights,
+        ]);
+
+        this.logger.debug(
+            `Generated ${competenceInsights.length} competence insights`,
+        );
+
+        const fullReport = await this.strategicReports.findById(
+            createdReport.id!,
+        );
         if (!fullReport) {
             throw new NotFoundException(
-                `Strategic report ${created.id} could not be loaded after creation`,
+                `Strategic report ${createdReport.id} could not be loaded after creation`,
             );
         }
 
@@ -578,23 +614,11 @@ export class StrategicReportingService {
         maxScore: Decimal,
         allCompetences: CompetenceDomain[],
     ): StrategicReportAnalyticsDomain[] {
-        const reportCompetenceAnalytics = reportAnalytics.map((r) => {
-            return {
-                reportId: r.reportId,
-                reportAnalytics: r.reportAnalytics?.filter(
-                    (a) =>
-                        a.entityType === EntityType.COMPETENCE &&
-                        a.competenceId !== null &&
-                        a.competenceId !== undefined,
-                ),
-            };
-        });
-
         const competenceAnalytics: StrategicReportAnalyticsDomain[] = [];
 
         for (const competence of allCompetences) {
             const currentCompetenceScores: ReportAnalyticsDomain[] = [];
-            reportCompetenceAnalytics.forEach((r) => {
+            reportAnalytics.forEach((r) => {
                 r.reportAnalytics?.forEach((a) => {
                     if (a.competenceId === competence.id) {
                         currentCompetenceScores.push(a);
@@ -709,7 +733,9 @@ export class StrategicReportingService {
             percentageByTeam: this.toRoundedNumber(percentageByTeam),
             percentageByOther: this.toRoundedNumber(percentageByOther),
             deltaPercentageByTeam: this.toRoundedNumber(deltaPercentageByTeam),
-            deltaPercentageByOther: this.toRoundedNumber(deltaPercentageByOther),
+            deltaPercentageByOther: this.toRoundedNumber(
+                deltaPercentageByOther,
+            ),
         };
     }
 
@@ -756,5 +782,175 @@ export class StrategicReportingService {
     private toRoundedNumber(value: Decimal | null): number | null {
         if (value === null) return null;
         return Number(this.roundDecimal(value)?.toFixed(4));
+    }
+
+    /**
+     * Calculates the metrics insights for entities (questions or competences).
+     * @param entities The entities to calculate the metrics insights for.
+     * @param type The type of entities (question or competence).
+     * @param reportId The ID of the report.
+     * @returns The metrics insights.
+     */
+    private calculateEntityInsights(
+        entities: StrategicReportAnalyticsDomain[],
+        strategicReportId: number,
+    ): StrategicReportInsightDomain[] {
+        const averages: EntityAverageInsightsDto[] = [...entities]
+            .sort((a, b) => {
+                const nameA = a.competenceTitle ?? '';
+                const nameB = b.competenceTitle ?? '';
+                return nameA.localeCompare(nameB);
+            })
+            .map((entity, index) => {
+                return {
+                    entityId: entity.competenceId,
+                    entityType: EntityType.COMPETENCE,
+                    entityTitle: entity.competenceTitle,
+                    questionId: null,
+                    questionTitle: null,
+                    num: index + 1,
+                    averageScore: this.getValidAverage([
+                        entity.averageByTeam,
+                        entity.averageByOther,
+                    ]),
+                    averageRating: this.getValidAverage([
+                        entity.percentageByTeam,
+                        entity.percentageByOther,
+                    ]),
+                    averageDelta: this.getValidAverage([
+                        entity.deltaPercentageByTeam,
+                        entity.deltaPercentageByOther,
+                    ]),
+                };
+            });
+
+        const validRatings = averages
+            .map((e) => e.averageRating)
+            .filter((v): v is number => v !== undefined && v !== null);
+        const validDeltas = averages
+            .map((e) => e.averageDelta)
+            .filter((v): v is number => v !== undefined && v !== null);
+
+        const maxRating =
+            validRatings.length > 0 ? Math.max(...validRatings) : null;
+        const minRating =
+            validRatings.length > 0 ? Math.min(...validRatings) : null;
+        const maxDelta =
+            validDeltas.length > 0 ? Math.max(...validDeltas) : null;
+        const minDelta =
+            validDeltas.length > 0 ? Math.min(...validDeltas) : null;
+
+        const insightSummaries: EntityInsightSummaryDto = {
+            highestRating:
+                maxRating !== null
+                    ? averages.find((e) =>
+                          new Decimal(e.averageRating ?? 0).equals(maxRating),
+                      )
+                    : undefined,
+            lowestRating:
+                minRating !== null
+                    ? averages.find((e) =>
+                          new Decimal(e.averageRating ?? 0).equals(minRating),
+                      )
+                    : undefined,
+            highestDelta:
+                maxDelta !== null
+                    ? averages.find((e) =>
+                          new Decimal(e.averageDelta ?? 0).equals(maxDelta),
+                      )
+                    : undefined,
+            lowestDelta:
+                minDelta !== null
+                    ? averages.find((e) =>
+                          new Decimal(e.averageDelta ?? 0).equals(minDelta),
+                      )
+                    : undefined,
+        };
+
+        const insights: StrategicReportInsightDomain[] = [];
+
+        insights.push(
+            StrategicReportInsightDomain.create({
+                strategicReportId: strategicReportId!,
+                insightType: InsightType.HIGHEST_RATING,
+                competenceId: insightSummaries.highestRating?.entityId ?? -1,
+                competenceTitle:
+                    insightSummaries.highestRating?.entityTitle ?? '',
+                averageScore: insightSummaries.highestRating?.averageScore,
+                averageRating: insightSummaries.highestRating?.averageRating,
+                averageDelta: insightSummaries.highestRating?.averageDelta,
+                createdAt: undefined,
+            }),
+        );
+
+        insights.push(
+            StrategicReportInsightDomain.create({
+                strategicReportId: strategicReportId!,
+                insightType: InsightType.LOWEST_RATING,
+                competenceId: insightSummaries.lowestRating?.entityId ?? -1,
+                competenceTitle:
+                    insightSummaries.lowestRating?.entityTitle ?? '',
+                averageScore: insightSummaries.lowestRating?.averageScore,
+                averageRating: insightSummaries.lowestRating?.averageRating,
+                averageDelta: insightSummaries.lowestRating?.averageDelta,
+                createdAt: undefined,
+            }),
+        );
+
+        insights.push(
+            StrategicReportInsightDomain.create({
+                strategicReportId: strategicReportId!,
+                insightType: InsightType.HIGHEST_DELTA,
+                competenceId: insightSummaries.highestDelta?.entityId ?? -1,
+                competenceTitle:
+                    insightSummaries.highestDelta?.entityTitle ?? '',
+                averageScore: insightSummaries.highestDelta?.averageScore,
+                averageRating: insightSummaries.highestDelta?.averageRating,
+                averageDelta: insightSummaries.highestDelta?.averageDelta,
+                createdAt: undefined,
+            }),
+        );
+
+        insights.push(
+            StrategicReportInsightDomain.create({
+                strategicReportId: strategicReportId!,
+                insightType: InsightType.LOWEST_DELTA,
+                competenceId: insightSummaries.lowestDelta?.entityId ?? -1,
+                competenceTitle:
+                    insightSummaries.lowestDelta?.entityTitle ?? '',
+                averageScore: insightSummaries.lowestDelta?.averageScore,
+                averageRating: insightSummaries.lowestDelta?.averageRating,
+                averageDelta: insightSummaries.lowestDelta?.averageDelta,
+                createdAt: undefined,
+            }),
+        );
+
+        return insights;
+    }
+
+    /**
+     * Calculates the average of an array of numbers.
+     * @param arr The array of numbers.
+     * @returns The average of the numbers.
+     */
+    private getValidAverage = (arr: (Decimal | null | undefined)[]) => {
+        const validValues = arr.filter(
+            (val): val is Decimal => val !== null && val !== undefined,
+        );
+        if (validValues.length === 0) return null;
+        return this.calculateAverageNumberForArray(validValues);
+    };
+
+    /**
+     * Calculates the average of an array of numbers.
+     * @param numbers The array of numbers.
+     * @returns The average of the numbers.
+     */
+    private calculateAverageNumberForArray(numbers: Decimal[]): Decimal {
+        let sum = Decimal(0);
+        for (const number of numbers) {
+            sum = sum.add(number);
+        }
+        return sum.div(numbers.length);
     }
 }

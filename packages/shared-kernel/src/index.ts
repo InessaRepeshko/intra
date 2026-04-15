@@ -296,11 +296,23 @@ export {
     StrategicReportAnalyticsSortField,
 } from './reporting/enums/strategic-report-analytics-sort-field.enum';
 
+export { REPORT_INSIGHTS_CONSTRAINTS } from './reporting/constraints/report-insights.constraints';
+export type { EntityAverageInsightsDto } from './reporting/dto/entity-average-insight-dto.interface';
+export type { EntityInsightSummaryDto } from './reporting/dto/entity-insight-summary-dto.interface';
 export type { EntitySummaryMetricsDto } from './reporting/dto/entity-summary-metrics-dto.interface';
 export type { EntitySummaryTotals } from './reporting/dto/entity-summary-totals.type';
 export type { ReportEntitySummaryTotalsDto } from './reporting/dto/report-entity-summary-totals-dto.interface';
 export type { CompetenceAccumulator } from './reporting/dto/report/competence/competence-accumulator.type';
 export type { QuestionAccumulator } from './reporting/dto/report/question/question-accumulator.type';
+export type {
+    ReportInsightDto,
+    ReportInsightResponseDto,
+} from './reporting/dto/report/report-insight-dto.interface';
+export type {
+    StrategicReportInsightDto,
+    StrategicReportInsightResponseDto,
+} from './reporting/dto/strategic-report/strategic-report-insight-dto.interface';
+export { INSIGHT_TYPES, InsightType } from './reporting/enums/insight.enum';
 
 /* Auth */
 export type {
