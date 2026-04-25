@@ -53,8 +53,12 @@ const chartConfig = {
 
 export function CompetenciesRadialChartsGroup({
     reportAnalytics,
+    title,
+    description,
 }: {
     reportAnalytics: ReportAnalytics[] | StrategicReportAnalytics[];
+    title?: string;
+    description?: string;
 }) {
     const data: CompetenceRadialChartsData[] = [];
 
@@ -103,11 +107,9 @@ export function CompetenciesRadialChartsGroup({
     return (
         <Card className="flex flex-col h-full">
             <CardHeader className="items-center pb-0">
-                <CardTitle>Individual Competence Profiles</CardTitle>
+                <CardTitle>{title || 'Individual Competence Profiles'}</CardTitle>
                 <CardDescription>
-                    A comparative analysis of skill proficiency levels for each
-                    competence, segmented by rater category (self, team, and
-                    others).
+                    {description || 'A comparative analysis of skill proficiency levels for each competence, segmented by rater category (self, team, and others).'}
                 </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-row flex-wrap pb-0 justify-center gap-6 pt-0">

@@ -60,7 +60,7 @@ function IndividualReportActionsMenu({ report }: { report: Report }) {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-muted-foreground text-center"
+                        className="h-8 w-8 text-muted-foreground text-center cursor-pointer"
                         onClick={() =>
                             router.push(
                                 `/reporting/individual-reports/${report.id}`,
@@ -90,6 +90,8 @@ export function IndividualReportsTable({
     onSort,
     resetTrigger,
 }: IndividualReportsTableProps) {
+    const router = useRouter();
+
     const {
         columnOrder,
         handleDragStart,
@@ -176,9 +178,20 @@ export function IndividualReportsTable({
                 'min-w-[75px] w-[75px] text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => (
                 <div className="flex items-center justify-center gap-1.5">
-                    <span className="font-medium text-foreground">
-                        {report.id}
-                    </span>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground text-center cursor-pointer hover:underline"
+                        onClick={() =>
+                            router.push(
+                                `/reporting/individual-reports/${report.id}`,
+                            )
+                        }
+                    >
+                        <span className="font-medium text-foreground">
+                            {report.id}
+                        </span>
+                    </Button>
                 </div>
             ),
             cellClassName: 'whitespace-nowrap text-center',

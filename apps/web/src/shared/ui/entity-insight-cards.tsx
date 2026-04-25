@@ -14,8 +14,12 @@ import { Compass, Lightbulb, Search, Trophy } from 'lucide-react';
 
 export function EntityInsightCards({
     insights,
+    title,
+    description,
 }: {
     insights: ReportInsight[] | StrategicReportInsight[];
+    title?: string;
+    description?: string;
 }) {
     if (
         insights === undefined ||
@@ -45,13 +49,9 @@ export function EntityInsightCards({
     return (
         <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
             <CardHeader className="items-center pb-0">
-                <CardTitle>Competence Insights</CardTitle>
+                <CardTitle> {title || 'Competence Insights'}</CardTitle>
                 <CardDescription>
-                    The summary highlighting the most significant findings from
-                    the 360-degree assessment, including the ratee's core
-                    professional excellence, primary development priorities, and
-                    critical alignment gaps between self-perception and external
-                    feedback.
+                    {description || 'The summary highlighting the most significant findings from the 360-degree assessment, including the ratee\'s core professional excellence, primary development priorities, and critical alignment gaps between self-perception and external feedback.'}
                 </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-row flex-wrap gap-8 w-full justify-around items-center mb-4">

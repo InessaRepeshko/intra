@@ -4,7 +4,7 @@ import {
     mapCycleDtoToModel,
 } from '@entities/feedback360/cycle/model/mappers';
 import { fetchReviewRespondents } from '@entities/feedback360/respondent/api/respondent.api';
-import { fetchReviewById } from '@entities/feedback360/review/api/review.api';
+import { fetchReviewById, fetchReviews } from '@entities/feedback360/review/api/review.api';
 import {
     type Review,
     mapReviewDtoToModel,
@@ -15,7 +15,7 @@ import {
     mapUserResponseDtoToModel,
 } from '@entities/identity/user/model/mappers';
 import { fetchTeamTitlesByIds } from '@entities/organisation/team/api/team.api';
-import { fetchReports } from '@entities/reporting/individual-report/api/individual-report.api';
+import { fetchReports, fetchReportByReviewId } from '@entities/reporting/individual-report/api/individual-report.api';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import {
     type StrategicReport,
@@ -30,6 +30,10 @@ import {
     fetchStrategicReports,
 } from './strategic-report.api';
 import { fetchPositionById } from '@entities/organisation/position/api/position.api';
+import { type Report as IndividualReport, mapReportDtoToModel as mapIndividualReportDtoToModel } from '@entities/reporting/individual-report/model/mappers';
+import { fetchReports as fetchIndividualReports } from '@entities/reporting/individual-report/api/individual-report.api';
+
+
 
 export const strategicReportKeys = {
     all: ['strategic-reports'] as const,
@@ -57,6 +61,10 @@ export const strategicReportKeys = {
     allTeamTitles: () => [...strategicReportKeys.all, 'allTeamTitles'] as const,
     teamTitles: (cycleId: number) =>
         [...strategicReportKeys.allTeamTitles(), cycleId] as const,
+    allIndividualReports: () =>
+        [...strategicReportKeys.all, 'allIndividualReports'] as const,
+    individualReports: (cycleId: number) =>
+        [...strategicReportKeys.allIndividualReports(), cycleId] as const,
 };
 
 export function useStrategicReportsQuery(params?: StrategicReportFilterQuery) {
@@ -326,4 +334,25 @@ export function useStrategicReportAllTeamTitlesQuery(cycleIds: number[]) {
     const isLoading = queries.some((q) => q.isLoading);
 
     return { teamTitles, isLoading };
+}
+
+export function useStrategicReportIndividualReportsQuery(cycleId: number) {
+    return useQuery<{rateeId: number, individualReport: IndividualReport}[]>({
+        queryKey: strategicReportKeys.individualReports(cycleId),
+        queryFn: async () => {
+            const reviews = await fetchReviews({ cycleId: cycleId });
+            const reviewIds = reviews.map((review) => {return {id: review.id, rateeId: review.rateeId}});
+            const reports: {rateeId: number, individualReport: IndividualReport}[] = [];
+            for (const reviewId of reviewIds) {
+                const report = await fetchReportByReviewId(reviewId.id);
+                reports.push({
+                    rateeId: reviewId.rateeId, 
+                    individualReport: mapIndividualReportDtoToModel(report)
+                });
+            }
+
+            return reports;
+        },
+        enabled: cycleId > 0,
+    });
 }

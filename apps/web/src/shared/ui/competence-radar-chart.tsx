@@ -50,6 +50,8 @@ const chartConfig = {
 
 export function CompetenceRadarChart({
     reportAnalytics,
+    title,
+    description,
 }: {
     reportAnalytics: ReportAnalytics[] | StrategicReportAnalytics[];
     title?: string;
@@ -76,10 +78,10 @@ export function CompetenceRadarChart({
 
     return (
         <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
-            <CardHeader className="items-center">
-                <CardTitle>Competence Alignment Overview</CardTitle>
+            <CardHeader className="items-center py-0 my-0">
+                <CardTitle>{title || 'Competence Alignment Overview'}</CardTitle>
                 <CardDescription>
-                    Multi-source evaluation of key skill clusters showing the alignment between internal and external performance perspectives.
+                    {description || 'Multi-source evaluation of key skill clusters showing the alignment between internal and external performance perspectives.'}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -89,7 +91,10 @@ export function CompetenceRadarChart({
                 >
                     <RadarChart
                         data={data}
-                        margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
+                        margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius="100%"
                     >
                         <PolarRadiusAxis
                             angle={30}
@@ -165,7 +170,7 @@ export function CompetenceRadarChart({
                             />
                         )}
                         <ChartLegend
-                            className="mt-8 text-sm text-muted-foreground"
+                            className="m-0 text-sm text-muted-foreground"
                             content={<ChartLegendContent />}
                         />
                     </RadarChart>

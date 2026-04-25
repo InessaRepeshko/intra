@@ -43,10 +43,14 @@ const chartConfig = {
     },
 } satisfies ChartConfig;
 
-export function CompetenciesRadialChart({
+export function CompetenceRadialChart({
     reportAnalytics,
+    title,
+    description,
 }: {
     reportAnalytics: ReportAnalytics[] | StrategicReportAnalytics[];
+    title?: string;
+    description?: string;
 }) {
     const hasSelfData = reportAnalytics.some(
         (a) => a.percentageBySelfAssessment != null,
@@ -97,11 +101,9 @@ export function CompetenciesRadialChart({
     return (
         <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
             <CardHeader className="items-center pb-0">
-                <CardTitle>Rating Alignment Overview</CardTitle>
+                <CardTitle>{title || 'Rating Alignment Overview'}</CardTitle>
                 <CardDescription>
-                    A comparative analysis of skill proficiency levels across
-                    all competencies, segmented by rater category (self, team,
-                    and others).
+                    {description || 'A comparative analysis of skill proficiency levels across all competencies, segmented by rater category (self, team, and others).'}
                 </CardDescription>
             </CardHeader>
             <CardContent>

@@ -22,7 +22,7 @@ import { Spinner } from '@shared/components/ui/spinner';
 import { AnalyticsTableEntityInsights } from '@shared/ui/analytics-table-entity-insights';
 import { CompetenceRadarChart } from '@shared/ui/competence-radar-chart';
 import { CompetenceDeltasBarChart } from '@shared/ui/competence-deltas-bar-chart';
-import { CompetenciesRadialChart } from '@shared/ui/competencies-radial-chart';
+import { CompetenceRadialChart } from '@shared/ui/competencies-radial-chart';
 import { CompetenciesRadialChartsGroup } from '@shared/ui/competencies-radial-charts-group';
 import { EntityInsightCards } from '@shared/ui/entity-insight-cards';
 import { notFound } from 'next/navigation';
@@ -126,7 +126,7 @@ export function IndividualReportPage({ reportId }: { reportId: number }) {
                 {/* Charts */}
                 {!isReportLoading && !isReviewLoading && (
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 w-full">
-                        <CompetenciesRadialChart
+                        <CompetenceRadialChart
                             reportAnalytics={competenceAnalytics}
                         />
                         <CompetenceRadarChart

@@ -3,8 +3,9 @@ import {
     SortDirection,
     TeamMemberDto,
     TeamMemberResponseDto,
+    UserResponseDto
 } from '@intra/shared-kernel';
 
 export { SortDirection };
 
-export type { AddTeamMemberPayload, TeamMemberDto, TeamMemberResponseDto };
+export type { AddTeamMemberPayload, TeamMemberDto, TeamMemberResponseDto, UserResponseDto };

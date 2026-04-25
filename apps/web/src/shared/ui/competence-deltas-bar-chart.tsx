@@ -49,8 +49,12 @@ const chartConfig = {
 
 export function CompetenceDeltasBarChart({
     reportAnalytics,
+    title,
+    description,
 }: {
     reportAnalytics: ReportAnalytics[] | StrategicReportAnalytics[];
+    title?: string;
+    description?: string;
 }) {
     const data: CompetenceDeltasBarChartData[] = [];
 
@@ -89,13 +93,9 @@ export function CompetenceDeltasBarChart({
         hasOthersData && (
             <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
                 <CardHeader className="items-center">
-                    <CardTitle>Perception Variance Analysis</CardTitle>
+                    <CardTitle>{title || 'Perception Variance Analysis'}</CardTitle>
                     <CardDescription>
-                        The chart illustrates the percentage deviation between
-                        the participant's self-assessment and the aggregated
-                        ratings from team members and others. Upward bars reveal
-                        "Hidden Strengths," while downward bars pinpoint "Blind
-                        Spots".
+                        {description || 'The chart illustrates the percentage deviation between the participant\'s self-assessment and the aggregated ratings from team members and others. Upward bars reveal "Hidden Strengths," while downward bars pinpoint "Blind Spots".'}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>

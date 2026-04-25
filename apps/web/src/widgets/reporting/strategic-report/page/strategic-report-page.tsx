@@ -23,11 +23,15 @@ import { Spinner } from '@shared/components/ui/spinner';
 import { AnalyticsTableEntityInsights } from '@shared/ui/analytics-table-entity-insights';
 import { notFound } from 'next/navigation';
 import { CompetenceDeltasBarChart } from '@shared/ui/competence-deltas-bar-chart';
-import { CompetenciesRadialChart } from '@shared/ui/competencies-radial-chart';
+import { CompetenceRadialChart } from '@shared/ui/competencies-radial-chart';
 import { CompetenceRadarChart } from '@shared/ui/competence-radar-chart';
 import { CompetenciesRadialChartsGroup } from '@shared/ui/competencies-radial-charts-group';
 import { CompetenceBarChart } from '@shared/ui/competence-bar-chart';
-import { CycleRateesHorisontalCard } from '@entities/reporting/strategic-report/ui/cycle-ratees-horisontal-card';
+import { CycleStatsCards } from '@shared/ui/cycle-stats-cards';
+import { TeamPerformanceProgressChart } from '@shared/ui/team-performance-chart';
+import { useAllTeamMembersQuery } from '@entities/organisation/team-member/api/team-member.queries';
+import { calculateAverageNumberForArray } from '@shared/lib/utils/calculate-average';
+import { useStrategicReportIndividualReportsQuery } from '@entities/reporting/strategic-report/api/strategic-report.queries';
 
 export function StrategicReportPage({ reportId }: { reportId: number }) {
     const {
@@ -55,7 +59,19 @@ export function StrategicReportPage({ reportId }: { reportId: number }) {
         isError: isTeamsError
     } = useStrategicReportTeamTitlesQuery(cycleId);
 
-    if (isReportLoading || isCycleLoading || isRateesLoading || isTeamsLoading) {
+    const { 
+        teamMembers: teamMembersData, 
+        isLoading: isTeamMembersLoading, 
+        isError: isTeamMembersError
+    } = useAllTeamMembersQuery(reportData?.teamIds || []);
+
+    const { 
+        data: individualReportsData, 
+        isLoading: isIndividualReportsLoading, 
+        isError: isIndividualReportsError 
+    } = useStrategicReportIndividualReportsQuery(cycleId);
+
+    if (isReportLoading || isCycleLoading || isRateesLoading || isTeamsLoading || isIndividualReportsLoading) {
         return (
             <div className="flex flex-col items-center justify-center py-16">
                 <Spinner />
@@ -63,9 +79,43 @@ export function StrategicReportPage({ reportId }: { reportId: number }) {
         );
     }
 
-    if (isReportError || isCycleError || isRateesError || isTeamsError || !reportData) {
+    if (isReportError || isCycleError || isRateesError || isTeamsError || isIndividualReportsError || !reportData) {
         return notFound();
     }
+
+    const teamPerformanceData = reportData.teamIds.map((teamId) => {
+        const team = teamsData?.find((t) => t.id === teamId);
+        const ratees = rateesData?.filter((ratee) => ratee.teamId === teamId);
+        const members = teamMembersData[teamId].filter((member) => 
+            member.isPrimary === true
+            && ratees?.some((ratee) => ratee.id === member.memberId)
+        );
+        const reports = individualReportsData?.filter((report) => members.some((member) => member.memberId === report.rateeId));
+        const ratings = reports?.map((report) => {
+            const percentageByTeam = report.individualReport.competenceSummaryTotals?.percentageByTeam;
+            const percentageByOther = report.individualReport.competenceSummaryTotals?.percentageByOther;
+            const ratings: number[] = [];
+            if (percentageByTeam !== undefined && percentageByTeam !== null) {
+                ratings.push(percentageByTeam);
+            }
+            if (percentageByOther !== undefined && percentageByOther !== null) {
+                ratings.push(percentageByOther);
+            }
+            return {
+                rateeId: report.rateeId,
+                averageRating: calculateAverageNumberForArray(ratings),
+            }
+        });
+
+        const teamPerformance = {
+            teamId: teamId,
+            teamTitle: team?.title || 'None',
+            averageRating: calculateAverageNumberForArray(ratings?.map((rating) => rating.averageRating) ?? []),
+            employeesCount: members.length,
+        };
+        return teamPerformance;
+    });
+
 
     return (
         <main className="min-h-screen">
@@ -83,18 +133,27 @@ export function StrategicReportPage({ reportId }: { reportId: number }) {
                     )}
                 </div>
 
-                <CycleRateesHorisontalCard
-                    allTeams={teamsData || []}
-                    ratees={rateesData || []}
-                />
-                <EntityInsightCards
-                    insights={reportData.insights ?? []}
-                />
+                {reportData && !isReportLoading && !isReportError && (
+                    <CycleStatsCards report={reportData} />
+                )}
 
-                {!isReportLoading && !isCycleLoading && (
+                {reportData && !isReportLoading && !isReportError && (
+                    <EntityInsightCards
+                        insights={reportData.insights ?? []}
+                        title="Organizational Talent Profile"
+                        description="Strategic identification of the company's collective strengths, priority development areas, and perception alignment gaps based on aggregated multi-source feedback."
+                    />
+                )}
+
+                {reportData && !isReportLoading && !isCycleLoading && (
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 w-full">
                         <CompetenceBarChart
                             reportAnalytics={reportData.analytics || []}
+                        />
+                        <CompetenceRadarChart
+                            reportAnalytics={reportData.analytics || []}
+                            title="Competence Alignment Overview"
+                            description="Multi-source evaluation of key skill clusters showing the alignment between internal self-perception and external performance perspectives. This visualization identifies organizational consensus and potential areas for behavioral calibration."
                         />
                     </div>
                 )}
@@ -102,18 +161,20 @@ export function StrategicReportPage({ reportId }: { reportId: number }) {
                 {/* Charts */}
                 {!isReportLoading && !isCycleLoading && (
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 w-full">
-                        <CompetenciesRadialChart
+                        <CompetenceRadialChart
                             reportAnalytics={reportData.analytics || []}
+                            title="Aggregate Perception Balance"
+                            description="A comparative analysis of total skill proficiency levels segmented by rater category (self, team, and others). It provides a high-level summary of how accurately employees' overall contributions are perceived by their immediate and extended professional environment."
                         />
-                        <CompetenceRadarChart
-                            reportAnalytics={reportData.analytics || []}
-                        />
+                        <TeamPerformanceProgressChart teamPerformanceData={teamPerformanceData} />
                     </div>
                 )}
 
                 {!isReportLoading && !isCycleLoading && (
                     <CompetenciesRadialChartsGroup
                         reportAnalytics={reportData.analytics || []}
+                        title="Competency Distribution by Stakeholder"
+                        description="Granular breakdown of proficiency levels for each core competence. By isolating specific domains, this chart highlights where stakeholder feedback diverges, revealing localized strengths or weaknesses."
                     />
                 )}
 
@@ -121,10 +182,11 @@ export function StrategicReportPage({ reportId }: { reportId: number }) {
                     <div className="flex flex-row flex-wrap w-full justify-around gap-8">
                         <CompetenceDeltasBarChart
                             reportAnalytics={reportData.analytics || []}
+                            title="Self-Awareness & Feedback Alignment"
+                            description={`This chart illustrates the percentage deviation between the participants' self-assessments and the aggregated ratings from others. Upward bars reveal " Hidden Strengths" where external recognition exceeds self-evaluation, while downward bars pinpoint "Blind Spots" requiring closer alignment.`}
                         />
                     </div>
                 )}
-
 
                 {/* Analytics Table */}
                 <Card>

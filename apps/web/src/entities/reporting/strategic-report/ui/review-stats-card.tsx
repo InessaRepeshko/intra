@@ -7,7 +7,7 @@ import {
     ChartColumnStacked,
     FileQuestionMark,
     Percent,
-    UserRound,
+    Building2,
 } from 'lucide-react';
 import { StrategicReport } from '../model/mappers';
 
@@ -22,14 +22,14 @@ export function ReviewStatsCard({ report }: { report: StrategicReport }) {
                 <h3 className="flex flex-wrap items-center justify-center sm:justify-start gap-x-1 text-lg text-muted-foreground">
                     <ChartColumnStacked className="shrink-0 h-3.5 w-3.5" />
                     <span className="font-medium text-foreground break-words">
-                        360° Feedback Review Statistics
+                        Performance Summary
                     </span>
                 </h3>
             )}
             <div className="flex flex-wrap gap-4 w-full min-w-0 justify-between items-start sm:gap-2">
                 <div className="flex flex-col gap-2 justify-start min-w-[180px] flex-1">
                     <div className="flex flex-wrap items-center justify-start gap-x-1 text-sm w-full">
-                        <UserRound className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        <Building2 className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                         <span className="flex items-center gap-1 text-foreground font-medium">
                             {report.teamCount}
                         </span>

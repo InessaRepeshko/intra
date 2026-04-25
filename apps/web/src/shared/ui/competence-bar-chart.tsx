@@ -29,15 +29,15 @@ interface CompetenceBarChartData {
 }
 
 const BLUE_SHADES: Record<number, string> = {
-    1: '#dbeafe', // 100
-    2: '#bfdbfe', // 200
-    3: '#93c5fd', // 300
-    4: '#60a5fa', // 400
-    5: '#3b82f6', // 500
-    6: '#2563eb', // 600
-    7: '#1d4ed8', // 700
-    8: '#1e40af', // 800
-    9: '#1e3a8a', // 900
+    1: 'oklch(95.6% 0.045 203.388)', // 100
+    2: 'oklch(90.1% 0.058 230.902)', // 200
+    3: 'oklch(82.8% 0.111 230.318)', // 300
+    4: 'oklch(74.6% 0.16 232.661)', // 400
+    5: 'oklch(68.5% 0.169 237.323)', // 500
+    6: 'oklch(58.8% 0.158 241.966)', // 600
+    7: 'oklch(50% 0.134 242.749)', // 700
+    8: 'oklch(44.3% 0.11 240.79)', // 800
+    9: 'oklch(39.1% 0.09 240.876)', // 900
 };
 
 const generateColors = (n: number) => {
@@ -78,8 +78,12 @@ const chartConfig = {
 
 export function CompetenceBarChart({
     reportAnalytics,
+    title,
+    description,
 }: {
     reportAnalytics: StrategicReportAnalytics[];
+    title?: string;
+    description?: string;
 }) {
     const data: CompetenceBarChartData[] = [];
 
@@ -103,8 +107,8 @@ export function CompetenceBarChart({
         data && data.length > 0 && (
         <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
             <CardHeader className="items-center">
-                <CardTitle>Company-wide Competency Ratings</CardTitle>
-                <CardDescription>Average scores across all employees</CardDescription>
+                <CardTitle>{title || 'Organizational Proficiency Benchmarks'}</CardTitle>
+                    <CardDescription>{description || 'Average competency scores calculated across the entire workforce. This chart establishes performance baselines for each domain, helping prioritize corporate training initiatives based on collective skill levels.'}</CardDescription>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig} className="mx-auto max-h-[500px]">

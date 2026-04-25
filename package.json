@@ -52,7 +52,7 @@
         "start:debug": "turbo run start:debug --filter=@intra/api",
         "start:prod": "turbo run start:prod",
         "start:web": "turbo run start:dev --filter=@intra/web",
-        "start:api": "turbo run start:dev --filter=@intra/api",
+        "start:api": "pnpm run docker:up && turbo run start:dev --filter=@intra/api",
         "refresh": "turbo run refresh --filter=@intra/api",
         "refresh:test": "turbo run refresh:test --filter=@intra/api",
         "// --- Testing Commands ---": "",

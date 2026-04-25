@@ -26,7 +26,7 @@ export function CycleParticipationStatsCard({
                 <h3 className="flex flex-wrap items-center justify-center sm:justify-start gap-x-1 text-lg text-muted-foreground">
                     <ChartColumnStacked className="shrink-0 h-3.5 w-3.5" />
                     <span className="font-medium text-foreground break-words">
-                        Cycle Participation Statistics
+                        Engagement & Participation
                     </span>
                 </h3>
             )}
