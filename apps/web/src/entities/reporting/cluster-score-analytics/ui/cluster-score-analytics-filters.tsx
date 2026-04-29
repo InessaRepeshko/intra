@@ -16,7 +16,7 @@ import { cn } from '@shared/lib/utils/cn';
 import { DateRangePicker } from '@shared/ui/date-range-picker';
 import { MultiSelect } from '@shared/ui/multi-select';
 import { RotateCcw } from 'lucide-react';
-import { getHashColor } from './cluster-badge';
+import { getColorForLabel } from './cluster-badge';
 
 interface ClusterScoreAnalyticsFiltersProps {
     search: string;
@@ -81,6 +81,20 @@ export function ClusterScoreAnalyticsFilters({
             </div>
 
             <MultiSelect
+                options={cycleOptions.map((opt) => ({
+                    label: opt,
+                    value: opt,
+                }))}
+                value={cycles}
+                onValueChange={onCyclesChange}
+                placeholder="All Cycles"
+                emptyText="No cycles found"
+                className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
+                showClear
+                icon={<RefreshCcw className="h-4 w-4" />}
+            />
+
+            <MultiSelect
                 options={competenceOptions.map((opt) => ({
                     label: opt,
                     value: opt,
@@ -98,7 +112,7 @@ export function ClusterScoreAnalyticsFilters({
                 options={clusterScoreOptions.map((opt) => ({
                     label: opt,
                     value: opt,
-                    badgeClassName: getHashColor(opt),
+                    badgeClassName: getColorForLabel(opt),
                 }))}
                 value={clusterScores}
                 onValueChange={onClusterScoresChange}
@@ -135,20 +149,6 @@ export function ClusterScoreAnalyticsFilters({
                 className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
                 showClear
                 icon={<ArrowUpToLine className="h-4 w-4" />}
-            />
-
-            <MultiSelect
-                options={cycleOptions.map((opt) => ({
-                    label: opt,
-                    value: opt,
-                }))}
-                value={cycles}
-                onValueChange={onCyclesChange}
-                placeholder="All Cycles"
-                emptyText="No cycles found"
-                className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
-                showClear
-                icon={<RefreshCcw className="h-4 w-4" />}
             />
 
             <DateRangePicker

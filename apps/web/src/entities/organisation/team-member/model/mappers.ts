@@ -1,4 +1,7 @@
-import { User, mapUserResponseDtoToModel } from '@entities/identity/user/model/mappers';
+import {
+    User,
+    mapUserResponseDtoToModel,
+} from '@entities/identity/user/model/mappers';
 import { TeamMemberResponseDto, UserResponseDto } from './types';
 
 export interface TeamMember extends Omit<TeamMemberResponseDto, 'createdAt'> {
@@ -14,13 +17,16 @@ export function mapTeamMemberDtoToModel(
     };
 }
 
-export interface UserTeamMember extends Omit<TeamMemberResponseDto, 'createdAt'> {
+export interface UserTeamMember extends Omit<
+    TeamMemberResponseDto,
+    'createdAt'
+> {
     createdAt: Date;
     user: User | null;
 }
 
 export function mapUserTeamMemberDtoToModel(
-    dto: (TeamMemberResponseDto & { user: UserResponseDto | null }),
+    dto: TeamMemberResponseDto & { user: UserResponseDto | null },
 ): UserTeamMember {
     return {
         id: dto.id,

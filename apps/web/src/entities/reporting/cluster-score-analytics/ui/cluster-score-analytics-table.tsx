@@ -9,6 +9,7 @@ import {
     Eye,
     MoreHorizontal,
     Pencil,
+    Percent,
     RefreshCcw,
     SeparatorHorizontal,
     Trash2,
@@ -36,6 +37,7 @@ import {
     TableRow,
 } from '@shared/components/ui/table';
 import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
+import { formatNumber } from '@shared/lib/utils/format-number';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { useEffect } from 'react';
 import { SortDirection } from '../model/types';
@@ -120,25 +122,27 @@ export function ClusterScoreAnalyticsTable({
     } = useDraggableColumns<
         | 'competence'
         | 'cluster'
+        | 'cycle'
         | 'lowerBound'
         | 'upperBound'
         | 'minScore'
         | 'maxScore'
         | 'averageScore'
         | 'employeeCount'
-        | 'cycle'
+        | 'employeeDensity'
         | 'date'
         | 'actions'
     >('competence-table', [
         'competence',
         'cluster',
+        'cycle',
         'lowerBound',
         'upperBound',
         'minScore',
         'maxScore',
         'averageScore',
         'employeeCount',
-        'cycle',
+        'employeeDensity',
         'date',
         'actions',
     ]);
@@ -152,13 +156,14 @@ export function ClusterScoreAnalyticsTable({
     const COLUMNS: Record<
         | 'competence'
         | 'cluster'
+        | 'cycle'
         | 'lowerBound'
         | 'upperBound'
         | 'minScore'
         | 'maxScore'
         | 'averageScore'
         | 'employeeCount'
-        | 'cycle'
+        | 'employeeDensity'
         | 'date'
         | 'actions',
         {
@@ -292,7 +297,7 @@ export function ClusterScoreAnalyticsTable({
         minScore: {
             header: (
                 <SortableHeader
-                    label="Lowest rating"
+                    label="Lowest Score"
                     field="minScore"
                     currentField={sortField}
                     currentDirection={sortDirection}
@@ -314,7 +319,7 @@ export function ClusterScoreAnalyticsTable({
         maxScore: {
             header: (
                 <SortableHeader
-                    label="Highest rating"
+                    label="Highest Score"
                     field="maxScore"
                     currentField={sortField}
                     currentDirection={sortDirection}
@@ -336,7 +341,7 @@ export function ClusterScoreAnalyticsTable({
         averageScore: {
             header: (
                 <SortableHeader
-                    label="Average rating"
+                    label="Average Score"
                     field="averageScore"
                     currentField={sortField}
                     currentDirection={sortDirection}
@@ -373,6 +378,31 @@ export function ClusterScoreAnalyticsTable({
                     <span className="font-medium text-foreground">
                         {clusterScoreAnalytics.employeesCount ?? `—`}
                     </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        employeeDensity: {
+            header: (
+                <SortableHeader
+                    label="Density of ratees"
+                    field="employeeDensity"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[100px] w-[150px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (clusterScoreAnalytics) => (
+                <div className="flex items-center justify-center gap-1.5">
+                    <span className="font-medium text-foreground">
+                        {formatNumber(
+                            clusterScoreAnalytics.employeeDensity * 100,
+                            2,
+                        ) ?? `—`}
+                    </span>
+                    <Percent className="h-4 w-4 text-muted-foreground" />
                 </div>
             ),
             cellClassName: 'whitespace-nowrap text-center',

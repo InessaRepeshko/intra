@@ -1,7 +1,6 @@
-import { fetchTeamMembers } from "./team-member.api";
-import { mapUserTeamMemberDtoToModel, TeamMember, UserTeamMember, mapTeamMemberDtoToModel } from "../model/mappers";
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { TeamMemberResponseDto } from "@entities/organisation/team-member/model/types";
+import { mapUserTeamMemberDtoToModel, UserTeamMember } from '../model/mappers';
+import { fetchTeamMembers } from './team-member.api';
 
 export const teamMemberKeys = {
     all: ['team-members'] as const,
@@ -39,7 +38,6 @@ export function useAllTeamMembersQuery(teamIds: number[]) {
             teamMembers[teamId] = result.data.map(mapUserTeamMemberDtoToModel);
         }
     });
-
 
     const isLoading = queries.some((q) => q.isLoading);
     const isError = queries.some((q) => q.isError);

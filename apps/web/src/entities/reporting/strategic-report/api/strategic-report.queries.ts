@@ -4,7 +4,10 @@ import {
     mapCycleDtoToModel,
 } from '@entities/feedback360/cycle/model/mappers';
 import { fetchReviewRespondents } from '@entities/feedback360/respondent/api/respondent.api';
-import { fetchReviewById, fetchReviews } from '@entities/feedback360/review/api/review.api';
+import {
+    fetchReviewById,
+    fetchReviews,
+} from '@entities/feedback360/review/api/review.api';
 import {
     type Review,
     mapReviewDtoToModel,
@@ -14,8 +17,21 @@ import {
     type User,
     mapUserResponseDtoToModel,
 } from '@entities/identity/user/model/mappers';
+import { fetchPositionById } from '@entities/organisation/position/api/position.api';
 import { fetchTeamTitlesByIds } from '@entities/organisation/team/api/team.api';
-import { fetchReports, fetchReportByReviewId } from '@entities/reporting/individual-report/api/individual-report.api';
+import { fetchClusterScoreAnalyticsByCycleId } from '@entities/reporting/cluster-score-analytics/api/cluster-score-analytics.api';
+import {
+    type ClusterScoreAnalytics,
+    mapClusterScoreAnalyticsDtoToModel,
+} from '@entities/reporting/cluster-score-analytics/model/mappers';
+import {
+    fetchReportByReviewId,
+    fetchReports,
+} from '@entities/reporting/individual-report/api/individual-report.api';
+import {
+    type Report as IndividualReport,
+    mapReportDtoToModel as mapIndividualReportDtoToModel,
+} from '@entities/reporting/individual-report/model/mappers';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import {
     type StrategicReport,
@@ -29,11 +45,6 @@ import {
     fetchStrategicReportById,
     fetchStrategicReports,
 } from './strategic-report.api';
-import { fetchPositionById } from '@entities/organisation/position/api/position.api';
-import { type Report as IndividualReport, mapReportDtoToModel as mapIndividualReportDtoToModel } from '@entities/reporting/individual-report/model/mappers';
-import { fetchReports as fetchIndividualReports } from '@entities/reporting/individual-report/api/individual-report.api';
-
-
 
 export const strategicReportKeys = {
     all: ['strategic-reports'] as const,
@@ -65,6 +76,10 @@ export const strategicReportKeys = {
         [...strategicReportKeys.all, 'allIndividualReports'] as const,
     individualReports: (cycleId: number) =>
         [...strategicReportKeys.allIndividualReports(), cycleId] as const,
+    allClusterScoreAnalytics: () =>
+        [...strategicReportKeys.all, 'clusterScoreAnalytics'] as const,
+    clusterScoreAnalyticsByCycle: (cycleId: number) =>
+        [...strategicReportKeys.allClusterScoreAnalytics(), cycleId] as const,
 };
 
 export function useStrategicReportsQuery(params?: StrategicReportFilterQuery) {
@@ -187,11 +202,16 @@ export function useStrategicReportRateesQuery(cycleId: number) {
                 rateeIds.map((rateeId) => fetchUserById(rateeId)),
             );
             const positions = await Promise.all(
-                users.map((user) => user.positionId ? fetchPositionById(user.positionId) : null),
+                users.map((user) =>
+                    user.positionId ? fetchPositionById(user.positionId) : null,
+                ),
             );
             const usersData = users.map(mapUserResponseDtoToModel);
             usersData.forEach((user, index) => {
-                user.positionTitle = positions.find((position) => position?.id === user.positionId)?.title || '';
+                user.positionTitle =
+                    positions.find(
+                        (position) => position?.id === user.positionId,
+                    )?.title || '';
             });
             return usersData;
         },
@@ -218,11 +238,18 @@ export function useAllStrategicReportRateesQuery(cycleIds: number[]) {
                     rateeIds.map((rateeId) => fetchUserById(rateeId)),
                 );
                 const positions = await Promise.all(
-                    users.map((user) => user.positionId ? fetchPositionById(user.positionId) : null),
+                    users.map((user) =>
+                        user.positionId
+                            ? fetchPositionById(user.positionId)
+                            : null,
+                    ),
                 );
                 const usersData = users.map(mapUserResponseDtoToModel);
                 usersData.forEach((user, index) => {
-                    user.positionTitle = positions.find((position) => position?.id === user.positionId)?.title || '';
+                    user.positionTitle =
+                        positions.find(
+                            (position) => position?.id === user.positionId,
+                        )?.title || '';
                 });
                 return usersData;
             },
@@ -337,21 +364,37 @@ export function useStrategicReportAllTeamTitlesQuery(cycleIds: number[]) {
 }
 
 export function useStrategicReportIndividualReportsQuery(cycleId: number) {
-    return useQuery<{rateeId: number, individualReport: IndividualReport}[]>({
+    return useQuery<{ rateeId: number; individualReport: IndividualReport }[]>({
         queryKey: strategicReportKeys.individualReports(cycleId),
         queryFn: async () => {
             const reviews = await fetchReviews({ cycleId: cycleId });
-            const reviewIds = reviews.map((review) => {return {id: review.id, rateeId: review.rateeId}});
-            const reports: {rateeId: number, individualReport: IndividualReport}[] = [];
+            const reviewIds = reviews.map((review) => {
+                return { id: review.id, rateeId: review.rateeId };
+            });
+            const reports: {
+                rateeId: number;
+                individualReport: IndividualReport;
+            }[] = [];
             for (const reviewId of reviewIds) {
                 const report = await fetchReportByReviewId(reviewId.id);
                 reports.push({
-                    rateeId: reviewId.rateeId, 
-                    individualReport: mapIndividualReportDtoToModel(report)
+                    rateeId: reviewId.rateeId,
+                    individualReport: mapIndividualReportDtoToModel(report),
                 });
             }
 
             return reports;
+        },
+        enabled: cycleId > 0,
+    });
+}
+
+export function useClusterScoreAnalyticsByCycleQuery(cycleId: number) {
+    return useQuery<ClusterScoreAnalytics[]>({
+        queryKey: strategicReportKeys.clusterScoreAnalyticsByCycle(cycleId),
+        queryFn: async () => {
+            const dtos = await fetchClusterScoreAnalyticsByCycleId(cycleId);
+            return dtos.map(mapClusterScoreAnalyticsDtoToModel);
         },
         enabled: cycleId > 0,
     });

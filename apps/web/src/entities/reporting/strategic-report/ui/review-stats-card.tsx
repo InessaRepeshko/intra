@@ -4,10 +4,10 @@ import {
     Award,
     Bookmark,
     BookmarkCheck,
+    Building2,
     ChartColumnStacked,
     FileQuestionMark,
     Percent,
-    Building2,
 } from 'lucide-react';
 import { StrategicReport } from '../model/mappers';
 

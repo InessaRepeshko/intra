@@ -51,7 +51,8 @@ export function EntityInsightCards({
             <CardHeader className="items-center pb-0">
                 <CardTitle> {title || 'Competence Insights'}</CardTitle>
                 <CardDescription>
-                    {description || 'The summary highlighting the most significant findings from the 360-degree assessment, including the ratee\'s core professional excellence, primary development priorities, and critical alignment gaps between self-perception and external feedback.'}
+                    {description ||
+                        "The summary highlighting the most significant findings from the 360-degree assessment, including the ratee's core professional excellence, primary development priorities, and critical alignment gaps between self-perception and external feedback."}
                 </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-row flex-wrap gap-8 w-full justify-around items-center mb-4">

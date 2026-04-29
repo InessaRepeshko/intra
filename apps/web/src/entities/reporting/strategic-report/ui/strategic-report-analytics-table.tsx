@@ -93,10 +93,7 @@ export function StrategicReportAnalyticsTable({
         },
         title: {
             header: (reportAnalytics) => (
-                <TableColumnHeader
-                    label={`${reportAnalytics?.competenceTitle}`}
-                    wrapLabelText={true}
-                />
+                <TableColumnHeader label={`Competence`} wrapLabelText={true} />
             ),
             headerClassName:
                 'min-w-[250px] w-[350px] align-bottom  rounded-full',

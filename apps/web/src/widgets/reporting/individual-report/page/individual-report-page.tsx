@@ -20,8 +20,8 @@ import {
 } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { AnalyticsTableEntityInsights } from '@shared/ui/analytics-table-entity-insights';
-import { CompetenceRadarChart } from '@shared/ui/competence-radar-chart';
 import { CompetenceDeltasBarChart } from '@shared/ui/competence-deltas-bar-chart';
+import { CompetenceRadarChart } from '@shared/ui/competence-radar-chart';
 import { CompetenceRadialChart } from '@shared/ui/competencies-radial-chart';
 import { CompetenciesRadialChartsGroup } from '@shared/ui/competencies-radial-charts-group';
 import { EntityInsightCards } from '@shared/ui/entity-insight-cards';
@@ -57,10 +57,10 @@ export function IndividualReportPage({ reportId }: { reportId: number }) {
 
     const ratee = rateeData
         ? {
-            ...rateeData,
-            positionTitle: reviewData?.rateePositionTitle,
-            teamTitle: reviewData?.teamTitle,
-        }
+              ...rateeData,
+              positionTitle: reviewData?.rateePositionTitle,
+              teamTitle: reviewData?.teamTitle,
+          }
         : null;
 
     const questionAnalytics =
@@ -136,17 +136,17 @@ export function IndividualReportPage({ reportId }: { reportId: number }) {
                 )}
 
                 {!isReportLoading && !isReviewLoading && (
-                    <CompetenciesRadialChartsGroup
-                        reportAnalytics={competenceAnalytics}
-                    />
-                )}
-
-                {!isReportLoading && !isReviewLoading && (
                     <div className="flex flex-row flex-wrap w-full justify-around gap-8">
                         <CompetenceDeltasBarChart
                             reportAnalytics={competenceAnalytics}
                         />
                     </div>
+                )}
+
+                {!isReportLoading && !isReviewLoading && (
+                    <CompetenciesRadialChartsGroup
+                        reportAnalytics={competenceAnalytics}
+                    />
                 )}
 
                 {/* Questions Analytic Table */}

@@ -34,12 +34,12 @@ export function RateeHorisontalCard({ ratee }: { ratee: User }) {
                 </AvatarFallback>
             </Avatar>
 
-            <div className="flex flex-col gap-1 flex-1 min-w-0 justify-center">
+            <div className="flex flex-col gap-1 flex-1 min-w-0 justify-center gap-x-2">
                 <h3 className="text-2xl font-semibold text-foreground whitespace-pre-wrap">
                     {ratee.fullName}
                 </h3>
 
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-lg text-muted-foreground mt-0.5">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-lg text-foreground mt-0.5">
                     {ratee.positionTitle && (
                         <span className="font-medium whitespace-pre-wrap max-w-full">
                             {ratee.positionTitle}

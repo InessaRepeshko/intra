@@ -9,6 +9,7 @@ import {
 } from 'recharts';
 
 import { ReportAnalytics } from '@entities/reporting/individual-report/model/mappers';
+import { StrategicReportAnalytics } from '@entities/reporting/strategic-report/model/mappers';
 import {
     Card,
     CardContent,
@@ -24,7 +25,7 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from '@shared/components/ui/chart';
-import { StrategicReportAnalytics } from '@entities/reporting/strategic-report/model/mappers';
+import { formatNumber } from '@shared/lib/utils/format-number';
 
 interface CompetenceRadarCharData {
     competence: string;
@@ -35,15 +36,15 @@ interface CompetenceRadarCharData {
 
 const chartConfig = {
     self: {
-        label: 'Self',
+        label: 'Self rating',
         color: 'var(--color-amber-400)',
     },
     team: {
-        label: 'Team',
+        label: 'Team rating',
         color: 'var(--color-blue-400)',
     },
     others: {
-        label: 'Others',
+        label: 'Others rating',
         color: 'var(--color-violet-400)',
     },
 } satisfies ChartConfig;
@@ -76,12 +77,16 @@ export function CompetenceRadarChart({
         });
     });
 
+    data.sort((a, b) => a.competence.localeCompare(b.competence));
     return (
         <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
             <CardHeader className="items-center py-0 my-0">
-                <CardTitle>{title || 'Competence Alignment Overview'}</CardTitle>
+                <CardTitle>
+                    {title || 'Competence Alignment Overview'}
+                </CardTitle>
                 <CardDescription>
-                    {description || 'Multi-source evaluation of key skill clusters showing the alignment between internal and external performance perspectives.'}
+                    {description ||
+                        'Multi-source evaluation of key skill clusters showing the alignment between internal and external performance perspectives.'}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -97,14 +102,63 @@ export function CompetenceRadarChart({
                         outerRadius="100%"
                     >
                         <PolarRadiusAxis
-                            angle={30}
+                            angle={90}
                             domain={[0, 100]}
-                            tick={false}
+                            tickCount={6}
                             axisLine={false}
+                            tick={{
+                                fill: 'hsl(var(--muted-foreground))',
+                                fontSize: 12,
+                                dy: 15,
+                                dx: 0,
+                                textAnchor: 'start',
+                            }}
+                            tickFormatter={(value) =>
+                                `${formatNumber(value, 0)}%`
+                            }
                         />
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent indicator="line" />}
+                            content={
+                                <ChartTooltipContent
+                                    indicator="line"
+                                    labelKey="competence"
+                                    formatter={(value, name, item, index) => {
+                                        return (
+                                            <div className="flex min-w-[150px] flex-col items-start text-xs text-muted-foreground">
+                                                {index === 0 && (
+                                                    <div className="text-foreground font-medium mb-1">
+                                                        {
+                                                            item.payload
+                                                                .competence
+                                                        }
+                                                    </div>
+                                                )}
+                                                <div className="flex items-center justify-start gap-1 w-full p-0 m-0">
+                                                    <span
+                                                        className="h-2.5 w-1 shrink-0 rounded-[2px] bg-(--color-bg) mr-1"
+                                                        style={{
+                                                            backgroundColor:
+                                                                item.fill,
+                                                        }}
+                                                    ></span>
+                                                    <span>
+                                                        {chartConfig[
+                                                            name as keyof typeof chartConfig
+                                                        ]?.label || name}
+                                                    </span>
+                                                    <span className="ml-auto flex items-center justify-end gap-0.5 font-mono font-medium text-foreground">
+                                                        {formatNumber(
+                                                            Number(value),
+                                                        )}
+                                                        %
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        );
+                                    }}
+                                />
+                            }
                         />
                         <PolarAngleAxis
                             dataKey="competence"
@@ -120,7 +174,7 @@ export function CompetenceRadarChart({
                                 return (
                                     <text
                                         x={x}
-                                        y={index === 0 ? y - 10 : y}
+                                        y={index === 0 ? y - 12 : y}
                                         textAnchor={textAnchor}
                                         fontSize={14}
                                         fontWeight={500}

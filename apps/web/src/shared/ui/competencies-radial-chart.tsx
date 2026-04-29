@@ -1,8 +1,7 @@
 'use client';
 
-import { LabelList, PolarAngleAxis, RadialBar, RadialBarChart } from 'recharts';
-
 import { ReportAnalytics } from '@entities/reporting/individual-report/model/mappers';
+import { StrategicReportAnalytics } from '@entities/reporting/strategic-report/model/mappers';
 import {
     Card,
     CardContent,
@@ -12,15 +11,25 @@ import {
 } from '@shared/components/ui/card';
 import {
     ChartContainer,
+    ChartLegend,
+    ChartLegendContent,
     ChartTooltip,
     ChartTooltipContent,
     type ChartConfig,
 } from '@shared/components/ui/chart';
 import { calculateAverageNumberForArray } from '@shared/lib/utils/calculate-average';
-import { StrategicReportAnalytics } from '@entities/reporting/strategic-report/model/mappers';
+import { formatNumber } from '@shared/lib/utils/format-number';
+import {
+    Cell,
+    LabelList,
+    PolarAngleAxis,
+    RadialBar,
+    RadialBarChart,
+} from 'recharts';
 
 interface CompetenceRadialChartData {
     category: string;
+    name: string;
     rating: number;
     fill: string;
 }
@@ -30,15 +39,15 @@ const chartConfig = {
         label: 'Rating %',
     },
     self: {
-        label: 'Self',
+        label: 'Self average rating',
         color: 'var(--color-amber-400)',
     },
     team: {
-        label: 'Team',
+        label: 'Team average rating',
         color: 'var(--color-blue-400)',
     },
     others: {
-        label: 'Others',
+        label: 'Others average rating',
         color: 'var(--color-violet-400)',
     },
 } satisfies ChartConfig;
@@ -65,6 +74,7 @@ export function CompetenceRadialChart({
     if (hasSelfData) {
         data.push({
             category: 'self',
+            name: 'Self average rating',
             rating: calculateAverageNumberForArray(
                 reportAnalytics
                     .map((a) => a.percentageBySelfAssessment)
@@ -77,6 +87,7 @@ export function CompetenceRadialChart({
     if (hasTeamData) {
         data.push({
             category: 'team',
+            name: 'Team average rating',
             rating: calculateAverageNumberForArray(
                 reportAnalytics
                     .map((a) => a.percentageByTeam)
@@ -89,6 +100,7 @@ export function CompetenceRadialChart({
     if (hasOthersData) {
         data.push({
             category: 'others',
+            name: 'Others average rating',
             rating: calculateAverageNumberForArray(
                 reportAnalytics
                     .map((a) => a.percentageByOther)
@@ -103,7 +115,8 @@ export function CompetenceRadialChart({
             <CardHeader className="items-center pb-0">
                 <CardTitle>{title || 'Rating Alignment Overview'}</CardTitle>
                 <CardDescription>
-                    {description || 'A comparative analysis of skill proficiency levels across all competencies, segmented by rater category (self, team, and others).'}
+                    {description ||
+                        'A comparative analysis of skill proficiency levels across all competencies, segmented by rater category (self, team, and others).'}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -128,8 +141,29 @@ export function CompetenceRadialChart({
                             cursor={false}
                             content={
                                 <ChartTooltipContent
-                                    hideLabel
-                                    nameKey="category"
+                                    indicator="line"
+                                    labelKey="name"
+                                    formatter={(value, name, item) => (
+                                        <div className="flex min-w-[180px] flex-col items-start text-xs text-muted-foreground">
+                                            <div className="flex items-center justify-start gap-1 w-full p-0 m-0">
+                                                <span
+                                                    className="h-2.5 w-1 shrink-0 rounded-[2px] mr-1"
+                                                    style={{
+                                                        backgroundColor:
+                                                            item.payload.fill ||
+                                                            item.fill,
+                                                    }}
+                                                />
+                                                <span>{item.payload.name}</span>
+                                                <span className="ml-auto flex items-center justify-end gap-0.5 font-mono font-medium text-foreground tabular-nums">
+                                                    {formatNumber(
+                                                        Number(value),
+                                                    )}
+                                                    %
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )}
                                 />
                             }
                         />
@@ -137,15 +171,31 @@ export function CompetenceRadialChart({
                             dataKey="rating"
                             background
                             fillOpacity={0.6}
-                            cornerRadius={10}
+                            cornerRadius={50}
                         >
+                            {data.map((entry) => (
+                                <Cell key={entry.category} fill={entry.fill} />
+                            ))}
                             <LabelList
                                 position="insideStart"
                                 dataKey="category"
                                 className="fill-white capitalize mix-blend-luminosity"
                                 fontSize={13}
                             />
+                            <LabelList
+                                position="insideEnd"
+                                dataKey="rating"
+                                className="fill-white font-semibold"
+                                fontSize={13}
+                                formatter={(value: number) =>
+                                    `${formatNumber(value)}%`
+                                }
+                            />
                         </RadialBar>
+                        <ChartLegend
+                            className="m-0 text-sm text-muted-foreground"
+                            content={<ChartLegendContent nameKey="category" />}
+                        />
                     </RadialBarChart>
                 </ChartContainer>
             </CardContent>

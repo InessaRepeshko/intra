@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 
 import { ReportAnalytics } from '@entities/reporting/individual-report/model/mappers';
+import { StrategicReportAnalytics } from '@entities/reporting/strategic-report/model/mappers';
 import {
     Card,
     CardContent,
@@ -27,7 +28,6 @@ import {
     type ChartConfig,
 } from '@shared/components/ui/chart';
 import { formatNumber } from '@shared/lib/utils/format-number';
-import { StrategicReportAnalytics } from '@entities/reporting/strategic-report/model/mappers';
 
 interface CompetenceDeltasBarChartData {
     id: number;
@@ -38,11 +38,11 @@ interface CompetenceDeltasBarChartData {
 
 const chartConfig = {
     team: {
-        label: 'Team delta %',
+        label: 'Team rating delta',
         color: 'var(--color-blue-400)',
     },
     others: {
-        label: 'Others delta %',
+        label: 'Others rating delta',
         color: 'var(--color-violet-400)',
     },
 } satisfies ChartConfig;
@@ -85,6 +85,7 @@ export function CompetenceDeltasBarChart({
     for (let i = minVal; i <= maxVal; i += 10) {
         customTicks.push(i);
     }
+    data.sort((a, b) => a.competence.localeCompare(b.competence));
 
     return (
         data &&
@@ -93,15 +94,18 @@ export function CompetenceDeltasBarChart({
         hasOthersData && (
             <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
                 <CardHeader className="items-center">
-                    <CardTitle>{title || 'Perception Variance Analysis'}</CardTitle>
+                    <CardTitle>
+                        {title || 'Perception Variance Analysis'}
+                    </CardTitle>
                     <CardDescription>
-                        {description || 'The chart illustrates the percentage deviation between the participant\'s self-assessment and the aggregated ratings from team members and others. Upward bars reveal "Hidden Strengths," while downward bars pinpoint "Blind Spots".'}
+                        {description ||
+                            'The chart illustrates the percentage deviation between the participant\'s self-assessment and the aggregated ratings from team members and others. Upward bars reveal "Hidden Strengths," while downward bars pinpoint "Blind Spots".'}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ChartContainer
                         config={chartConfig}
-                        className="mx-auto max-h-[500px]"
+                        className="mx-auto max-h-[500px] " // w-full px-5
                     >
                         <BarChart
                             accessibilityLayer
@@ -114,29 +118,51 @@ export function CompetenceDeltasBarChart({
                             <XAxis
                                 dataKey="competence"
                                 type="category"
+                                height={30}
+                                interval={0}
                                 tickLine={false}
-                                tickMargin={10}
                                 axisLine={false}
-                                tick={({ x, y, payload }) => (
-                                    <text
-                                        x={x}
-                                        y={y + 15}
-                                        textAnchor="middle"
-                                        className="text-[13px] font-medium"
-                                        style={{
-                                            fill: 'hsl(var(--foreground))',
-                                        }}
-                                    >
-                                        {payload.value}
-                                    </text>
-                                )}
+                                tick={({ x, y, payload }) => {
+                                    const words = payload.value.split(/\s+/);
+                                    const index = words.indexOf('&');
+                                    if (index !== -1) {
+                                        words[index + 1] =
+                                            '& ' + words[index + 1];
+                                        words.splice(index, 1);
+                                    }
+                                    return (
+                                        <text
+                                            x={x}
+                                            y={y + 15}
+                                            textAnchor="middle"
+                                            className="text-[13px] font-medium"
+                                            style={{
+                                                fill: 'hsl(var(--foreground))',
+                                            }}
+                                        >
+                                            {words.map(
+                                                (word: string, i: number) => (
+                                                    <tspan
+                                                        key={i}
+                                                        x={x}
+                                                        dy={i === 0 ? 0 : 14}
+                                                    >
+                                                        {word}
+                                                    </tspan>
+                                                ),
+                                            )}
+                                        </text>
+                                    );
+                                }}
                             />
                             <YAxis
                                 type="number"
                                 axisLine={false}
                                 tickLine={false}
-                                tickFormatter={() => ''}
-                                width={0}
+                                tickFormatter={(v: number) =>
+                                    v > 0 ? `+${v}%` : `${v}%`
+                                }
+                                width={50}
                                 domain={[minVal, maxVal]}
                                 ticks={customTicks}
                             />
@@ -147,26 +173,44 @@ export function CompetenceDeltasBarChart({
                                     <ChartTooltipContent
                                         indicator="line"
                                         labelKey="competence"
-                                        formatter={(value, name) => (
-                                            <div className="flex min-w-[150px] items-center text-xs text-muted-foreground">
-                                                <div
-                                                    className="h-2.5 w-1 shrink-0 rounded-[2px] bg-(--color-bg) mr-1"
-                                                    style={
-                                                        {
-                                                            '--color-bg': `var(--color-${name})`,
-                                                        } as React.CSSProperties
-                                                    }
-                                                />
-                                                {chartConfig[
-                                                    name as keyof typeof chartConfig
-                                                ]?.label || name}
-                                                <div className="ml-auto flex items-baseline gap-0.5 font-mono font-medium text-foreground tabular-nums">
-                                                    {Number(value) > 0
-                                                        ? `+${formatNumber(Number(value))}%`
-                                                        : `${formatNumber(Number(value))}%`}
+                                        formatter={(
+                                            value,
+                                            name,
+                                            item,
+                                            index,
+                                        ) => {
+                                            return (
+                                                <div className="flex min-w-[180px] flex-col items-start text-xs text-muted-foreground">
+                                                    {index === 0 && (
+                                                        <div className="text-foreground font-medium mb-1">
+                                                            {
+                                                                item.payload
+                                                                    .competence
+                                                            }
+                                                        </div>
+                                                    )}
+                                                    <div className="flex items-center justify-start gap-1 w-full p-0 m-0">
+                                                        <span
+                                                            className="h-2.5 w-1 shrink-0 rounded-[2px] bg-(--color-bg) mr-1"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    item.fill,
+                                                            }}
+                                                        ></span>
+                                                        <span>
+                                                            {chartConfig[
+                                                                name as keyof typeof chartConfig
+                                                            ]?.label || name}
+                                                        </span>
+                                                        <span className="ml-auto flex items-center justify-end gap-0.5 font-mono font-medium text-foreground">
+                                                            {Number(value) > 0
+                                                                ? `+${formatNumber(Number(value))}%`
+                                                                : `${formatNumber(Number(value))}%`}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        )}
+                                            );
+                                        }}
                                     />
                                 }
                             />
@@ -180,7 +224,6 @@ export function CompetenceDeltasBarChart({
                                     fill="var(--color-team)"
                                     radius={10}
                                 >
-                                    {/* <LabelList position="inside" dataKey="competence" fillOpacity={1} fontSize={13} className="fill-white" offset={8} /> */}
                                     <LabelList
                                         position="top"
                                         fillOpacity={1}
@@ -195,11 +238,7 @@ export function CompetenceDeltasBarChart({
                                     {data.map((item) => (
                                         <Cell
                                             key={item.competence}
-                                            fill={
-                                                item.team > 0
-                                                    ? 'var(--color-team)'
-                                                    : 'var(--color-team)'
-                                            }
+                                            fill={'var(--color-team)'}
                                             fillOpacity={0.6}
                                         />
                                     ))}
@@ -211,7 +250,6 @@ export function CompetenceDeltasBarChart({
                                     fill="var(--color-others)"
                                     radius={10}
                                 >
-                                    {/* <LabelList position="inside" dataKey="competence" fillOpacity={1} fontSize={13} className="fill-white" offset={8} /> */}
                                     <LabelList
                                         position="top"
                                         fillOpacity={1}
@@ -226,11 +264,7 @@ export function CompetenceDeltasBarChart({
                                     {data.map((item) => (
                                         <Cell
                                             key={item.competence}
-                                            fill={
-                                                item.others > 0
-                                                    ? 'var(--color-others)'
-                                                    : 'var(--color-others)'
-                                            }
+                                            fill={'var(--color-others)'}
                                             fillOpacity={0.6}
                                         />
                                     ))}

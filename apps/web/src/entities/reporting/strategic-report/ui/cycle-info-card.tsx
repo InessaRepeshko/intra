@@ -14,13 +14,13 @@ export function CycleInfoCard({ cycle }: { cycle: Cycle }) {
                 <h3 className="flex flex-wrap items-center justify-center sm:justify-start gap-x-1 text-lg">
                     <RefreshCcw className="w-3.5 h-3.5 shrink-0" />
                     <span className="font-medium text-foreground break-words">
-                        Cycle Overview
+                        Feedback 360° Cycle Overview
                     </span>
                 </h3>
 
                 {cycle.title && (
-                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 mt-0.5">
-                        <span className="font-semibold whitespace-pre-wrap max-w-full text-foreground border rounded-lg py-0.5 px-2 bg-lime-300/20 border-lime-500">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2">
+                        <span className="font-bold text-lg whitespace-pre-wrap max-w-full text-foreground bg-gradient-to-r from-pink-600 to-amber-600 bg-clip-text text-transparent">
                             {cycle.title}
                         </span>
                     </div>
@@ -49,9 +49,15 @@ export function CycleInfoCard({ cycle }: { cycle: Cycle }) {
                     <div className="flex items-center justify-center sm:justify-start gap-x-2 text-muted-foreground">
                         <HatGlasses className="w-3.5 h-3.5 shrink-0" />
                         <span className="text-sm text-lg whitespace-pre-wrap max-w-full flex flex-row gap-x-1">
-                            <span className="text-muted-foreground">Anonymity threshold:</span>
-                            <span className="text-foreground font-medium">{cycle.minRespondentsThreshold}</span>
-                            <span className="text-muted-foreground">answers</span>
+                            <span className="text-muted-foreground">
+                                Anonymity threshold:
+                            </span>
+                            <span className="text-foreground font-medium">
+                                {cycle.minRespondentsThreshold}
+                            </span>
+                            <span className="text-muted-foreground">
+                                answers
+                            </span>
                         </span>
                     </div>
                 )}

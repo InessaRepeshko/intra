@@ -32,7 +32,7 @@ export function IndividualReportCycleStatsCard({
                 {report.createdAt && (
                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-1 text-sm text-muted-foreground">
                         <Calendar className="h-3.5 w-3.5 shrink-0" />
-                        <span className="font-medium text-muted-foreground break-words">
+                        <span className="font-medium text-foreground break-words">
                             {format(report.createdAt, 'MMM dd, yyyy')}
                         </span>
                     </div>
