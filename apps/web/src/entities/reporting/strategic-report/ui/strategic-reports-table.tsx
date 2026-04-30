@@ -9,7 +9,7 @@ import {
     Eye,
     FileChartLine,
     FileQuestionMark,
-    FileText,
+    MessageCircle,
     UserRound,
     UserRoundPen,
     Users,
@@ -92,8 +92,6 @@ export function StrategicReportsTable({
     onSort,
     resetTrigger,
 }: StrategicReportsTableProps) {
-    const router = useRouter();
-
     const {
         columnOrder,
         handleDragStart,
@@ -245,6 +243,8 @@ export function StrategicReportsTable({
             </div>
         );
     };
+
+    const router = useRouter();
 
     const COLUMNS: Record<
         | 'id'
@@ -401,7 +401,7 @@ export function StrategicReportsTable({
                 'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => (
                 <div className="flex items-center justify-center gap-1.5">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <MessageCircle className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium text-foreground">
                         {report.answerCount ?? `—`}
                     </span>
@@ -805,7 +805,7 @@ export function StrategicReportsTable({
                                 </span>
 
                                 <span className="flex items-center gap-1 text-muted-foreground">
-                                    <FileText className="h-3.5 w-3.5" />
+                                    <MessageCircle className="h-3.5 w-3.5" />
                                     <span className="font-medium text-foreground">
                                         {report.answerCount ?? `—`}
                                     </span>

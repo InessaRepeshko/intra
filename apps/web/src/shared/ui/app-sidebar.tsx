@@ -16,16 +16,18 @@ import {
     Bookmark,
     Boxes,
     Building2,
-    Cat,
     ChevronDown,
     FileChartColumn,
     FileChartLine,
     FileQuestionMark,
-    FileText,
+    FileUser,
     Layers2,
     LayoutDashboard,
     LibraryBig,
     LogOut,
+    MessageCircle,
+    MessageSquareQuote,
+    NotebookTabs,
     Orbit,
     PanelLeft,
     RefreshCw,
@@ -88,8 +90,13 @@ const navItems: NavItem[] = [
             {
                 title: 'Reviews',
                 href: '/feedback360/reviews',
-                icon: FileText,
+                icon: NotebookTabs,
                 // icon: MessageSquareQuote,
+            },
+            {
+                title: 'Surveys',
+                href: '/feedback360/surveys',
+                icon: MessageCircle,
             },
         ],
     },
@@ -100,9 +107,14 @@ const navItems: NavItem[] = [
         roles: [IdentityRole.HR, IdentityRole.ADMIN],
         children: [
             {
+                title: 'Comments',
+                href: '/reporting/individual-reports/comments',
+                icon: MessageSquareQuote,
+            },
+            {
                 title: 'Individual Reports',
                 href: '/reporting/individual-reports',
-                icon: FileText,
+                icon: FileUser,
             },
             {
                 title: 'Strategic Reports',
@@ -161,11 +173,6 @@ const navItems: NavItem[] = [
                 roles: [IdentityRole.HR, IdentityRole.ADMIN],
             },
         ],
-    },
-    {
-        title: 'Profile',
-        href: '/profile',
-        icon: Cat,
     },
 ];
 
@@ -253,7 +260,7 @@ export function AppSidebar() {
     if (collapsed) {
         return (
             <aside className="flex h-screen w-18 flex-col border-r border-white/10 bg-sidebar-light">
-                <div className="flex h-16 items-center justify-center border-b border-white/10 px-4 transition-colors mx-auto">
+                <div className="flex h-16 shrink-0 items-center justify-center border-b border-white/10 px-4 transition-colors mx-auto">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-3 group">
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20 hover:bg-black transition-colors">
@@ -266,7 +273,7 @@ export function AppSidebar() {
                     </Link>
                 </div>
 
-                <ScrollArea className="flex-1 px-2 py-4">
+                <ScrollArea className="flex-1 min-h-0 px-2 py-1">
                     <nav className="flex flex-col items-center gap-2 px-2 py-2">
                         {filteredItems.map((item) => {
                             if (item.children) {
@@ -360,16 +367,16 @@ export function AppSidebar() {
                     </nav>
                 </ScrollArea>
 
-                <div className="border-t border-white/10 py-3 pl-5 pr-3">
+                <div className="shrink-0 py-3 pl-5 pr-3">
                     <div className="flex flex-col items-center gap-3 py-2">
-                        <Link href="/signout">
+                        {/* <Link href="/signout">
                             <button
                                 className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:text-accent-foreground transition-colors"
                                 aria-label="Log out"
                             >
                                 <LogOut className="h-6 w-6" />
                             </button>
-                        </Link>
+                        </Link> */}
                         <Avatar className="h-10 w-10">
                             <AvatarFallback className="bg-white/20 text-black text-xs font-medium border-2 border-black/10">
                                 {user.firstName[0]}
@@ -384,7 +391,7 @@ export function AppSidebar() {
 
     return (
         <aside className="flex h-screen w-64 flex-col border-r border-white/10 bg-sidebar-light">
-            <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
+            <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-4">
                 {/* Logo */}
                 <Link
                     href="/"
@@ -399,7 +406,7 @@ export function AppSidebar() {
                 </Link>
             </div>
 
-            <ScrollArea className="flex-1 px-2 py-4">
+            <ScrollArea className="flex-1 min-h-0 px-2 py-1">
                 <nav className="flex flex-col gap-2 px-2 py-2">
                     {filteredItems.map((item) => {
                         if (item.children) {
@@ -492,7 +499,7 @@ export function AppSidebar() {
                 </nav>
             </ScrollArea>
 
-            <div className="border-t border-white/10 p-3">
+            <div className="shrink-0 p-3">
                 <div className="flex items-center gap-3 px-2 py-2">
                     <Avatar className="h-10 w-10">
                         <AvatarFallback className="bg-white/20 text-black text-xs font-medium border-2 border-black/10">

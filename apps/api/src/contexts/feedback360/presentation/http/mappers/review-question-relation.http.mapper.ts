@@ -11,9 +11,11 @@ export class ReviewQuestionRelationHttpMapper {
         view.questionId = domain.questionId;
         view.questionTitle = domain.questionTitle;
         view.answerType = domain.answerType;
+        view.isForSelfassessment = domain.isForSelfassessment ?? null;
         view.competenceId = domain.competenceId;
         view.competenceTitle = domain.competenceTitle;
-        view.isForSelfassessment = domain.isForSelfassessment;
+        view.competenceCode = domain.competenceCode ?? null;
+        view.competenceDescription = domain.competenceDescription ?? null;
         view.createdAt = domain.createdAt!;
         return view;
     }

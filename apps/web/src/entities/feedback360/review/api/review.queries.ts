@@ -1,8 +1,8 @@
 import { fetchReviewAnswerCount } from '@entities/feedback360/answer/api/answer.api';
 import { fetchCycleTitleById } from '@entities/feedback360/cycle/api/cycle.api';
 import { fetchReviewRespondentCount } from '@entities/feedback360/respondent/api/respondent.api';
-import { fetchReviewQuestionCount } from '@entities/feedback360/review-qiestion-relation/api/review-question-relation.api';
 import { fetchReviewReviewerCount } from '@entities/feedback360/reviewer/api/reviewer.api';
+import { fetchReviewQuestionCount } from '@entities/feedback360/survey/api/review-question-relation.api';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { type Review, mapReviewDtoToModel } from '../model/mappers';
 import type { ReviewFilterQuery } from '../model/types';

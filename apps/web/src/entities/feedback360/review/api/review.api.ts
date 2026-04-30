@@ -94,3 +94,14 @@ export async function fetchReviewStageByReviewId(
     );
     return response.data?.stage;
 }
+
+export async function fetchReviewByReportId(
+    reportId: number,
+): Promise<ReviewResponseDto | null> {
+    const { data } = await apiClient.get<ReviewResponseDto[]>(REVIEWS_BASE, {
+        params: {
+            reportId,
+        },
+    });
+    return data.length > 0 ? data.sort((a, b) => a.id - b.id)[0] : null;
+}

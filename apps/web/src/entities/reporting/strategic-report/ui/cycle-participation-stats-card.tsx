@@ -3,7 +3,7 @@ import { formatNumber } from '@shared/lib/utils/format-number';
 import {
     ChartColumnStacked,
     Eye,
-    FileText,
+    MessageCircle,
     Percent,
     UserRound,
     UserRoundPen,
@@ -51,7 +51,7 @@ export function CycleParticipationStatsCard({
                         </span>
                     </div>
                     <div className="flex flex-wrap items-center justify-start gap-x-1 text-sm w-full">
-                        <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        <MessageCircle className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                         <span className="flex items-center gap-1 text-foreground">
                             <span className="font-medium">
                                 {report.answerCount}

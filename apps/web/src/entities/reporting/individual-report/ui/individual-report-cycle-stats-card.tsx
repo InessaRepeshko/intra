@@ -1,7 +1,7 @@
 import { CategoryBadge } from '@entities/feedback360/respondent/ui/category-badge';
 import { Card } from '@shared/components/ui/card';
 import { format } from 'date-fns';
-import { Calendar, FileText, RefreshCcw, Users } from 'lucide-react';
+import { Calendar, MessageCircle, RefreshCcw, Users } from 'lucide-react';
 import { Report } from '../model/mappers';
 
 interface IndividualReportCycleStatsCardProps {
@@ -58,7 +58,7 @@ export function IndividualReportCycleStatsCard({
 
                 {report.answerCount > 0 && (
                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-1 text-sm text-muted-foreground">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        <MessageCircle className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium text-foreground">
                             {report.answerCount}
                         </span>

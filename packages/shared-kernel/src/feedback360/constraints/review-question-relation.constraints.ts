@@ -13,4 +13,10 @@ export const REVIEW_QUESTION_RELATION_CONSTRAINTS = {
             MAX: GLOBAL_CONSTRAINTS.TITLE.LENGTH.MAX,
         },
     },
+    COMPETENCE_CODE: {
+        LENGTH: {
+            MIN: 1,
+            MAX: 100,
+        },
+    },
 };

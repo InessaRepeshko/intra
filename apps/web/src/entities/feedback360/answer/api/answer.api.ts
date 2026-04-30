@@ -1,6 +1,6 @@
 import type {
-    AnswerDto,
     AnswerFilterQuery,
+    AnswerResponseDto,
     CreateAnswerToReviewPayload,
 } from '@entities/feedback360/answer/model/types';
 import { apiClient } from '@shared/api/api-client';
@@ -11,8 +11,8 @@ const ANSWERS_BASE = (reviewId: number) =>
 export async function fetchReviewAnswers(
     reviewId: number,
     params?: AnswerFilterQuery,
-): Promise<AnswerDto[]> {
-    const { data } = await apiClient.get<AnswerDto[]>(
+): Promise<AnswerResponseDto[]> {
+    const { data } = await apiClient.get<AnswerResponseDto[]>(
         `${ANSWERS_BASE(reviewId)}`,
         {
             params,
@@ -34,8 +34,8 @@ export async function fetchReviewAnswerCount(
 export async function createAnswerToReview(
     reviewId: number,
     payload: CreateAnswerToReviewPayload,
-): Promise<AnswerDto> {
-    const { data } = await apiClient.post<AnswerDto>(
+): Promise<AnswerResponseDto> {
+    const { data } = await apiClient.post<AnswerResponseDto>(
         `${ANSWERS_BASE(reviewId)}`,
         payload,
     );

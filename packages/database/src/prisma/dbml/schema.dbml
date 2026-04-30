@@ -299,9 +299,11 @@ Table feedback360_review_question_relations {
   questionId Int [not null]
   questionTitle String [not null]
   answerType AnswerType [not null]
+  isForSelfassessment Boolean [default: false]
   competenceId Int [not null]
   competenceTitle String [not null]
-  isForSelfassessment Boolean [default: false]
+  competenceCode String
+  competenceDescription String
   createdAt DateTime [default: `now()`, not null]
   review feedback360_reviews [not null]
   question feedback360_questions [not null]

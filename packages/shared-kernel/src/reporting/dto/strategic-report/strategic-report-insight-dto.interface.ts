@@ -1,4 +1,4 @@
-import { InsightType } from '../../enums/insight.enum';
+import { InsightType } from '../../enums/insight-type.enum';
 
 export interface StrategicReportInsightBaseDto<TDate = Date> {
     id: number;

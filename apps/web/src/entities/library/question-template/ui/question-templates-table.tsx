@@ -129,21 +129,21 @@ export function QuestionTemplatesTable({
         resetOrder,
     } = useDraggableColumns<
         | 'title'
-        | 'isForSelfassessment'
-        | 'answerType'
         | 'competence'
+        | 'answerType'
+        | 'isForSelfassessment'
         | 'positions'
-        | 'date'
         | 'status'
+        | 'date'
         | 'actions'
     >('reviews-table', [
         'title',
-        'isForSelfassessment',
-        'answerType',
         'competence',
+        'answerType',
+        'isForSelfassessment',
         'positions',
-        'date',
         'status',
+        'date',
         'actions',
     ]);
 
@@ -238,7 +238,7 @@ export function QuestionTemplatesTable({
                 />
             ),
             headerClassName:
-                'min-w-[250px] w-[300px] whitespace-nowrap cursor-grab active:cursor-grabbing',
+                'min-w-[250px] w-[350px] whitespace-nowrap cursor-grab active:cursor-grabbing',
             cell: (questionTemplate) => (
                 <div className="flex items-center justify-start gap-1.5 w-full">
                     <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
@@ -247,6 +247,58 @@ export function QuestionTemplatesTable({
                 </div>
             ),
             cellClassName: 'whitespace-normal',
+        },
+        competence: {
+            header: (
+                <SortableHeader
+                    label="Competence"
+                    field="competence"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[150px] w-[150px] whitespace-nowrap cursor-grab active:cursor-grabbing',
+            cell: (questionTemplate) => (
+                <div className="flex items-center justify-start gap-1.5 w-full">
+                    <Bookmark className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
+                        {questionTemplate.competenceId ? (
+                            (competenceTitles[
+                                questionTemplate.competenceId
+                            ] ?? (
+                                <span className="text-muted-foreground">
+                                    None
+                                </span>
+                            ))
+                        ) : (
+                            <span className="text-muted-foreground">None</span>
+                        )}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-normal',
+        },
+        answerType: {
+            header: (
+                <SortableHeader
+                    label="Answer Type"
+                    field="answerType"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[150px] w-[150px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (questionTemplate) => (
+                <AnswerTypeBadge
+                    key={questionTemplate.id}
+                    answerType={questionTemplate.answerType}
+                />
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
         },
         isForSelfassessment: {
             header: (
@@ -272,58 +324,6 @@ export function QuestionTemplatesTable({
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
-        answerType: {
-            header: (
-                <SortableHeader
-                    label="Answer Type"
-                    field="answerType"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[150px] w-[150px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
-            cell: (questionTemplate) => (
-                <AnswerTypeBadge
-                    key={questionTemplate.id}
-                    answerType={questionTemplate.answerType}
-                />
-            ),
-            cellClassName: 'whitespace-nowrap text-center',
-        },
-        competence: {
-            header: (
-                <SortableHeader
-                    label="Competence"
-                    field="competence"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[150px] w-[200px] whitespace-nowrap cursor-grab active:cursor-grabbing',
-            cell: (questionTemplate) => (
-                <div className="flex items-center justify-start gap-1.5 w-full">
-                    <Bookmark className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                        {questionTemplate.competenceId ? (
-                            (competenceTitles[
-                                questionTemplate.competenceId
-                            ] ?? (
-                                <span className="text-muted-foreground">
-                                    None
-                                </span>
-                            ))
-                        ) : (
-                            <span className="text-muted-foreground">None</span>
-                        )}
-                    </span>
-                </div>
-            ),
-            cellClassName: 'whitespace-normal',
-        },
         positions: {
             header: (
                 <SortableHeader
@@ -342,6 +342,26 @@ export function QuestionTemplatesTable({
                 />
             ),
             cellClassName: 'text-center',
+        },
+        status: {
+            header: (
+                <SortableHeader
+                    label="Status"
+                    field="status"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[100px] w-[100px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (questionTemplate) => (
+                <StatusBadge
+                    key={questionTemplate.id}
+                    status={questionTemplate.status}
+                />
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
         },
         date: {
             header: (
@@ -363,26 +383,6 @@ export function QuestionTemplatesTable({
                 </div>
             ),
             cellClassName: 'whitespace-nowrap',
-        },
-        status: {
-            header: (
-                <SortableHeader
-                    label="Status"
-                    field="status"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[100px] w-[100px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
-            cell: (questionTemplate) => (
-                <StatusBadge
-                    key={questionTemplate.id}
-                    status={questionTemplate.status}
-                />
-            ),
-            cellClassName: 'whitespace-nowrap text-center',
         },
         actions: {
             header: <span className="text-muted-foreground">Actions</span>,

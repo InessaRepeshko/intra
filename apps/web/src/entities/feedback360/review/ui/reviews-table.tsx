@@ -6,7 +6,8 @@ import {
     Calendar,
     Eye,
     FileQuestionMark,
-    FileText,
+    FileUser,
+    MessageCircle,
     MoreHorizontal,
     Pencil,
     RefreshCcw,
@@ -89,7 +90,7 @@ function ReviewActionsMenu({
                                 )
                             }
                         >
-                            <FileText className="mr-2 h-4 w-4" />
+                            <FileUser className="mr-2 h-4 w-4" />
                             View Report
                         </Button>
                     </DropdownMenuItem>
@@ -147,24 +148,24 @@ export function ReviewsTable({
     } = useDraggableColumns<
         | 'id'
         | 'ratee'
-        | 'cycle'
-        | 'date'
-        | 'questions'
         | 'stage'
+        | 'cycle'
+        | 'questions'
         | 'respondents'
         | 'answers'
         | 'reviewers'
+        | 'date'
         | 'actions'
     >('reviews-table', [
         'id',
         'ratee',
-        'cycle',
-        'date',
-        'questions',
         'stage',
+        'cycle',
+        'questions',
         'respondents',
         'answers',
         'reviewers',
+        'date',
         'actions',
     ]);
 
@@ -174,16 +175,18 @@ export function ReviewsTable({
         }
     }, [resetTrigger, resetOrder]);
 
+    const router = useRouter();
+
     const COLUMNS: Record<
         | 'id'
         | 'ratee'
-        | 'cycle'
-        | 'date'
-        | 'questions'
         | 'stage'
+        | 'cycle'
+        | 'questions'
         | 'respondents'
         | 'answers'
         | 'reviewers'
+        | 'date'
         | 'actions',
         {
             header: React.ReactNode;
@@ -206,9 +209,18 @@ export function ReviewsTable({
                 'min-w-[75px] w-[75px] text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (review) => (
                 <div className="flex items-center justify-center gap-1.5">
-                    <span className="font-medium text-foreground">
-                        {review.id}
-                    </span>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground text-center cursor-pointer hover:underline"
+                        onClick={() =>
+                            router.push(`/feedback360/reviews/${review.id}`)
+                        }
+                    >
+                        <span className="font-medium text-foreground">
+                            {review.id}
+                        </span>
+                    </Button>
                 </div>
             ),
             cellClassName: 'whitespace-nowrap text-center',
@@ -249,6 +261,23 @@ export function ReviewsTable({
             ),
             cellClassName: 'min-w-[200px] whitespace-normal',
         },
+        stage: {
+            header: (
+                <SortableHeader
+                    label="Stage"
+                    field="stage"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[100px] w-[150px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (review) => (
+                <StageBadge key={review.id} stage={review.stage} />
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
         cycle: {
             header: (
                 <SortableHeader
@@ -272,27 +301,6 @@ export function ReviewsTable({
             ),
             cellClassName: 'whitespace-normal',
         },
-        date: {
-            header: (
-                <SortableHeader
-                    label="Creation Date"
-                    field="createdAt"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[150px] w-[150px] whitespace-nowrap cursor-grab active:cursor-grabbing',
-            cell: (review) => (
-                <div className="flex flex-col items-center justify-start gap-0.5 text-sm">
-                    <span className="text-foreground">
-                        {format(review.createdAt, 'MMM dd, yyyy')}
-                    </span>
-                </div>
-            ),
-            cellClassName: 'whitespace-nowrap',
-        },
         questions: {
             header: (
                 <SortableHeader
@@ -312,23 +320,6 @@ export function ReviewsTable({
                         {questionCounts[review.id] ?? `—`}
                     </span>
                 </div>
-            ),
-            cellClassName: 'whitespace-nowrap text-center',
-        },
-        stage: {
-            header: (
-                <SortableHeader
-                    label="Stage"
-                    field="stage"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[100px] w-[150px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
-            cell: (review) => (
-                <StageBadge key={review.id} stage={review.stage} />
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
@@ -368,7 +359,7 @@ export function ReviewsTable({
                 'min-w-[100px] w-[120px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
             cell: (review) => (
                 <div className="flex items-center justify-center gap-1.5">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <MessageCircle className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium text-foreground">
                         {answerCounts[review.id]?.toString() ?? `—`}
                     </span>
@@ -397,6 +388,27 @@ export function ReviewsTable({
                 </div>
             ),
             cellClassName: 'whitespace-nowrap text-center',
+        },
+        date: {
+            header: (
+                <SortableHeader
+                    label="Creation Date"
+                    field="createdAt"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[150px] w-[150px] whitespace-nowrap cursor-grab active:cursor-grabbing',
+            cell: (review) => (
+                <div className="flex flex-col items-center justify-start gap-0.5 text-sm">
+                    <span className="text-foreground">
+                        {format(review.createdAt, 'MMM dd, yyyy')}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap',
         },
         actions: {
             header: <span className="text-muted-foreground">Actions</span>,
@@ -515,7 +527,7 @@ export function ReviewsTable({
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">
-                                <FileText className="h-3.5 w-3.5" />
+                                <MessageCircle className="h-3.5 w-3.5" />
                                 <span className="font-medium text-foreground">
                                     {answerCounts[review.id] ?? `—`}
                                 </span>

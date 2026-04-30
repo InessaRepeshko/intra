@@ -181,9 +181,9 @@ export function useCycleTitleQuery(cycleId: number) {
 
 export function useCycleTitlesQuery(cycleIds: number[]) {
     const queries = useQueries({
-        queries: cycleIds.map((cycleId, index) => ({
+        queries: cycleIds.map((cycleId) => ({
             queryKey: reportKeys.cycleTitle(cycleId),
-            queryFn: () => fetchCycleTitleById(cycleId[index]),
+            queryFn: () => fetchCycleTitleById(cycleId),
         })),
     });
 
@@ -242,9 +242,9 @@ export function useReportAnalyticsQuery(analyticsId: number) {
 
 export function useAllReportAnalyticsQuery(analyticsIds: number[]) {
     const queries = useQueries({
-        queries: analyticsIds.map((analyticsId, index) => ({
+        queries: analyticsIds.map((analyticsId) => ({
             queryKey: reportKeys.reportAnalytics(analyticsId),
-            queryFn: () => fetchReportAnalyticsByReportId(analyticsIds[index]),
+            queryFn: () => fetchReportAnalyticsByReportId(analyticsId),
         })),
     });
 

@@ -6,6 +6,8 @@ export enum ReviewQuestionRelationSortField {
     ANSWER_TYPE = 'answerType',
     COMPETENCE_ID = 'competenceId',
     COMPETENCE_TITLE = 'competenceTitle',
+    COMPETENCE_CODE = 'competenceCode',
+    COMPETENCE_DESCRIPTION = 'competenceDescription',
     IS_FOR_SELFASSESSMENT = 'isForSelfassessment',
     CREATED_AT = 'createdAt',
 }

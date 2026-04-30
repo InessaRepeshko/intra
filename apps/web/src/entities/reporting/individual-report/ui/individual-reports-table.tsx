@@ -5,8 +5,9 @@ import {
     Award,
     BookmarkCheck,
     Calendar,
-    FileText,
+    FileUser,
     Flag,
+    MessageCircle,
     RefreshCcw,
     UserRoundPen,
     Users,
@@ -67,7 +68,7 @@ function IndividualReportActionsMenu({ report }: { report: Report }) {
                             )
                         }
                     >
-                        <FileText className=" h-4 w-4" />
+                        <FileUser className=" h-4 w-4" />
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top" sideOffset={6}>
@@ -254,7 +255,7 @@ export function IndividualReportsTable({
                 />
             ),
             headerClassName:
-                'min-w-[200px] w-[250px] whitespace-nowrap align-bottom cursor-grab active:cursor-grabbing',
+                'min-w-[200px] w-[300px] whitespace-nowrap align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => (
                 <div className="flex items-center justify-start gap-1.5 w-full">
                     <RefreshCcw className="shrink-0 h-4 w-4 text-muted-foreground" />
@@ -358,7 +359,7 @@ export function IndividualReportsTable({
             cell: (report) =>
                 report.answerCount ? (
                     <div className="flex items-center justify-center gap-1.5">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        <MessageCircle className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium text-foreground">
                             {report.answerCount}
                         </span>
@@ -607,7 +608,7 @@ export function IndividualReportsTable({
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="rounded-full bg-muted p-4">
-                    <FileText className="h-8 w-8 text-muted-foreground" />
+                    <FileUser className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
                     No reports found

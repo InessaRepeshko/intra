@@ -110,8 +110,8 @@ export function TeamTable({
         handleDragEnd,
         resetOrder,
     } = useDraggableColumns<
-        'title' | 'positions' | 'head' | 'users' | 'date' | 'actions'
-    >('team-table', ['title', 'positions', 'head', 'users', 'date', 'actions']);
+        'title' | 'head' | 'positions' | 'users' | 'date' | 'actions'
+    >('team-table', ['title', 'head', 'positions', 'users', 'date', 'actions']);
 
     useEffect(() => {
         if (resetTrigger && resetTrigger > 0) {
@@ -250,23 +250,6 @@ export function TeamTable({
             ),
             cellClassName: 'whitespace-normal',
         },
-        positions: {
-            header: (
-                <SortableHeader
-                    label="Positions"
-                    field="positions"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[200px] w-[250px] whitespace-nowrap text-start align-bottom cursor-grab active:cursor-grabbing',
-            cell: (team) => (
-                <ExpandablePositions positions={positions[team.id] || []} />
-            ),
-            cellClassName: 'text-center',
-        },
         head: {
             header: (
                 <SortableHeader
@@ -303,6 +286,23 @@ export function TeamTable({
             },
             cellClassName:
                 'whitespace-nowrap text-start justify-start items-start',
+        },
+        positions: {
+            header: (
+                <SortableHeader
+                    label="Positions"
+                    field="positions"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[200px] w-[250px] whitespace-nowrap text-start align-bottom cursor-grab active:cursor-grabbing',
+            cell: (team) => (
+                <ExpandablePositions positions={positions[team.id] || []} />
+            ),
+            cellClassName: 'text-center',
         },
         users: {
             header: (

@@ -446,7 +446,10 @@ export function UsersTable({
                                 {user.roles && (
                                     <p className="mt-0.5 flex flex-row gap-x-2 gap-y-2 text-sm text-muted-foreground flex-wrap">
                                         {user.roles.map((role) => (
-                                            <span className="flex items-center gap-1 break-words">
+                                            <span
+                                                key={`${user.id}-${role}`}
+                                                className="flex items-center gap-1 break-words"
+                                            >
                                                 <RoleBadge
                                                     key={role.toString()}
                                                     role={role}

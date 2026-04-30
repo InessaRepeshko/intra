@@ -465,15 +465,17 @@ model Question {
 }
 
 model ReviewQuestionRelation {
-  id                  Int        @id @default(autoincrement())
-  reviewId            Int        @map("review_id")
-  questionId          Int        @map("question_id")
-  questionTitle       String     @map("question_title") @db.Text
-  answerType          AnswerType @map("answer_type")
-  competenceId        Int        @map("competence_id")
-  competenceTitle     String     @map("competence_title") @db.Text
-  isForSelfassessment Boolean?   @default(false) @map("is_for_selfassessment")
-  createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+  id                    Int        @id @default(autoincrement())
+  reviewId              Int        @map("review_id")
+  questionId            Int        @map("question_id")
+  questionTitle         String     @map("question_title") @db.Text
+  answerType            AnswerType @map("answer_type")
+  isForSelfassessment   Boolean?   @default(false) @map("is_for_selfassessment")
+  competenceId          Int        @map("competence_id")
+  competenceTitle       String     @map("competence_title") @db.VarChar(255)
+  competenceCode        String?    @map("competence_code") @db.VarChar(100)
+  competenceDescription String?    @map("competence_description") @db.Text
+  createdAt             DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
 
   review     Review     @relation(fields: [reviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   question   Question   @relation(fields: [questionId], references: [id], onDelete: NoAction, onUpdate: NoAction)

@@ -1,6 +1,6 @@
 import {
     AnswerType,
-    QUESTION_CONSTRAINTS,
+    REVIEW_QUESTION_RELATION_CONSTRAINTS,
     ReviewQuestionRelationDto,
 } from '@intra/shared-kernel';
 import { ApiProperty } from '@nestjs/swagger';
@@ -39,8 +39,8 @@ export class ReviewQuestionRelationResponse implements ReviewQuestionRelationDto
         description: 'Question title',
         type: 'string',
         required: true,
-        minimum: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN,
-        maximum: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX,
+        minimum: REVIEW_QUESTION_RELATION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN,
+        maximum: REVIEW_QUESTION_RELATION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX,
     })
     @Expose()
     questionTitle!: string;
@@ -56,6 +56,16 @@ export class ReviewQuestionRelationResponse implements ReviewQuestionRelationDto
     answerType!: AnswerType;
 
     @ApiProperty({
+        example: false,
+        description: 'Is for selfassessment',
+        type: 'boolean',
+        required: false,
+        nullable: true,
+    })
+    @Expose()
+    isForSelfassessment?: boolean | null;
+
+    @ApiProperty({
         example: 3,
         description: 'Competence id',
         type: 'number',
@@ -69,20 +79,37 @@ export class ReviewQuestionRelationResponse implements ReviewQuestionRelationDto
         description: 'Competence title',
         type: 'string',
         required: true,
-        minimum: QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MIN,
-        maximum: QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MAX,
+        minimum:
+            REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MIN,
+        maximum:
+            REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MAX,
     })
     @Expose()
     competenceTitle!: string;
 
     @ApiProperty({
-        example: false,
-        description: 'Is for selfassessment',
-        type: 'boolean',
-        required: true,
+        example: 'COMM',
+        description: 'Competence code',
+        type: 'string',
+        required: false,
+        nullable: true,
+        minimum:
+            REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_CODE.LENGTH.MIN,
+        maximum:
+            REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_CODE.LENGTH.MAX,
     })
     @Expose()
-    isForSelfassessment!: boolean;
+    competenceCode?: string | null;
+
+    @ApiProperty({
+        example: 'Communication',
+        description: 'Competence description',
+        type: 'string',
+        required: false,
+        nullable: true,
+    })
+    @Expose()
+    competenceDescription?: string | null;
 
     @ApiProperty({
         example: '2025-01-01T00:00:00.000Z',

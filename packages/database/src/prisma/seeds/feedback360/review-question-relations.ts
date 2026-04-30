@@ -42,9 +42,11 @@ export default async function seedReviewQuestionRelations(
                     questionId: question.id,
                     questionTitle: question.title,
                     answerType: question.answerType,
+                    isForSelfassessment: question.isForSelfassessment,
                     competenceId: question.competence.id,
                     competenceTitle: question.competence.title,
-                    isForSelfassessment: question.isForSelfassessment,
+                    competenceCode: question.competence.code,
+                    competenceDescription: question.competence.description,
                 },
             });
         }

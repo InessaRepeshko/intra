@@ -1,7 +1,7 @@
 import type {
-    ReviewQuestionRelationDto,
     ReviewQuestionRelationFilterQuery,
-} from '@entities/feedback360/review-qiestion-relation/model/types';
+    ReviewQuestionRelationResponseDto,
+} from '@entities/feedback360/survey/model/types';
 import { apiClient } from '@shared/api/api-client';
 
 const QUESTIONS_BASE = (reviewId: number) =>
@@ -10,8 +10,8 @@ const QUESTIONS_BASE = (reviewId: number) =>
 export async function fetchReviewQuestions(
     reviewId: number,
     params?: ReviewQuestionRelationFilterQuery,
-): Promise<ReviewQuestionRelationDto[]> {
-    const { data } = await apiClient.get<ReviewQuestionRelationDto[]>(
+): Promise<ReviewQuestionRelationResponseDto[]> {
+    const { data } = await apiClient.get<ReviewQuestionRelationResponseDto[]>(
         `${QUESTIONS_BASE(reviewId)}`,
         { params },
     );

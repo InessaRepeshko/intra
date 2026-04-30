@@ -9,6 +9,8 @@ export type ReviewQuestionRelationSearchQuery = {
     answerType?: AnswerType;
     competenceId?: number;
     competenceTitle?: string;
+    competenceCode?: string;
+    competenceDescription?: string;
     isForSelfassessment?: boolean;
     sortBy?: ReviewQuestionRelationSortField;
     sortDirection?: SortDirection;

@@ -17,7 +17,7 @@ import {
     AlertCircle,
     ArrowRight,
     Clock,
-    FileText,
+    NotebookTabs,
     RefreshCw,
     TrendingUp,
     Users,
@@ -80,7 +80,7 @@ export function ProfileContent() {
                     <CardContent className="pt-6">
                         <div className="flex items-center gap-4">
                             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-2/10">
-                                <FileText className="h-6 w-6 text-chart-2" />
+                                <NotebookTabs className="h-6 w-6 text-chart-2" />
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">
@@ -271,7 +271,7 @@ export function ProfileContent() {
                             </Button>
                             <Button variant="outline" asChild>
                                 <Link href="/feedback360/reviews/new">
-                                    <FileText className="mr-2 h-4 w-4" />
+                                    <NotebookTabs className="mr-2 h-4 w-4" />
                                     Create Review
                                 </Link>
                             </Button>

@@ -8,7 +8,9 @@ export interface ReviewQuestionRelationBaseDto<TDate = Date> {
     answerType: AnswerType;
     competenceId: number;
     competenceTitle: string;
-    isForSelfassessment: boolean;
+    competenceCode?: string | null;
+    competenceDescription?: string | null;
+    isForSelfassessment?: boolean | null;
     createdAt: TDate;
 }
 

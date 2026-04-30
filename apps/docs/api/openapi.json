@@ -4783,6 +4783,16 @@
             }
           },
           {
+            "name": "isForSelfassessment",
+            "required": false,
+            "in": "query",
+            "description": "Is for selfassessment",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
             "name": "competenceId",
             "required": false,
             "in": "query",
@@ -4805,13 +4815,25 @@
             }
           },
           {
-            "name": "isForSelfassessment",
+            "name": "competenceCode",
             "required": false,
             "in": "query",
-            "description": "Is for selfassessment",
+            "description": "Competence code (contains, case-insensitive)",
             "schema": {
-              "example": true,
-              "type": "boolean"
+              "minimum": 1,
+              "maximum": 100,
+              "example": "COMM",
+              "type": "string"
+            }
+          },
+          {
+            "name": "competenceDescription",
+            "required": false,
+            "in": "query",
+            "description": "Competence description (contains, case-insensitive)",
+            "schema": {
+              "example": "Communication",
+              "type": "string"
             }
           },
           {
@@ -4831,6 +4853,8 @@
                 "answerType",
                 "competenceId",
                 "competenceTitle",
+                "competenceCode",
+                "competenceDescription",
                 "isForSelfassessment",
                 "createdAt"
               ]
@@ -4894,6 +4918,16 @@
             }
           },
           {
+            "description": "Is for selfassessment",
+            "required": false,
+            "name": "isForSelfassessment",
+            "in": "query",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
             "description": "Competence id",
             "required": false,
             "name": "competenceId",
@@ -4916,13 +4950,25 @@
             }
           },
           {
-            "description": "Is for selfassessment",
+            "description": "Competence code (contains, case-insensitive)",
             "required": false,
-            "name": "isForSelfassessment",
+            "name": "competenceCode",
             "in": "query",
             "schema": {
-              "example": true,
-              "type": "boolean"
+              "minimum": 1,
+              "maximum": 100,
+              "example": "COMM",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Competence description (contains, case-insensitive)",
+            "required": false,
+            "name": "competenceDescription",
+            "in": "query",
+            "schema": {
+              "example": "Communication",
+              "type": "string"
             }
           },
           {
@@ -11412,6 +11458,12 @@
             "example": "NUMERICAL_SCALE",
             "description": "Answer type"
           },
+          "isForSelfassessment": {
+            "type": "boolean",
+            "example": false,
+            "description": "Is for selfassessment",
+            "nullable": true
+          },
           "competenceId": {
             "type": "number",
             "example": 3,
@@ -11424,10 +11476,19 @@
             "minimum": 1,
             "maximum": 255
           },
-          "isForSelfassessment": {
-            "type": "boolean",
-            "example": false,
-            "description": "Is for selfassessment"
+          "competenceCode": {
+            "type": "string",
+            "example": "COMM",
+            "description": "Competence code",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "competenceDescription": {
+            "type": "string",
+            "example": "Communication",
+            "description": "Competence description",
+            "nullable": true
           },
           "createdAt": {
             "type": "string",
@@ -11444,7 +11505,6 @@
           "answerType",
           "competenceId",
           "competenceTitle",
-          "isForSelfassessment",
           "createdAt"
         ]
       },

@@ -12,7 +12,7 @@ import {
     Award,
     Bookmark,
     Building2,
-    FileText,
+    MessageCircle,
     UserRound,
     UsersRound,
 } from 'lucide-react';
@@ -56,7 +56,7 @@ export function CycleStatsCards({ report }: { report: StrategicReport }) {
                 <CycleStatsCard
                     title={'Answers'}
                     numericValue={formatNumber(report.answerCount, 0) ?? '-'}
-                    icon={FileText}
+                    icon={MessageCircle}
                     textColor="text-fuchsia-300"
                 />
                 <CycleStatsCard

@@ -416,6 +416,8 @@ export class ReviewService {
             answerType: questionTemplate.answerType,
             competenceId: questionTemplate.competenceId,
             competenceTitle: competence.title,
+            competenceCode: competence.code,
+            competenceDescription: competence.description,
             isForSelfassessment: questionTemplate.isForSelfassessment,
         });
 

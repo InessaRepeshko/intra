@@ -38,6 +38,8 @@ export class ReviewQuestionRelationRepository implements ReviewQuestionRelationR
                 answerType: prismaRelation.answerType,
                 competenceId: prismaRelation.competenceId,
                 competenceTitle: prismaRelation.competenceTitle,
+                competenceCode: prismaRelation.competenceCode,
+                competenceDescription: prismaRelation.competenceDescription,
                 isForSelfassessment: prismaRelation.isForSelfassessment,
             },
         });
@@ -80,6 +82,8 @@ export class ReviewQuestionRelationRepository implements ReviewQuestionRelationR
             answerType,
             competenceId,
             competenceTitle,
+            competenceCode,
+            competenceDescription,
             isForSelfassessment,
         } = query;
         return {
@@ -103,6 +107,22 @@ export class ReviewQuestionRelationRepository implements ReviewQuestionRelationR
                 ? {
                       competenceTitle: {
                           contains: competenceTitle,
+                          mode: 'insensitive',
+                      },
+                  }
+                : {}),
+            ...(competenceCode
+                ? {
+                      competenceCode: {
+                          contains: competenceCode,
+                          mode: 'insensitive',
+                      },
+                  }
+                : {}),
+            ...(competenceDescription
+                ? {
+                      competenceDescription: {
+                          contains: competenceDescription,
                           mode: 'insensitive',
                       },
                   }

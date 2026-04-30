@@ -262,7 +262,12 @@ export type {
     ReportAnalyticsResponseDto,
 } from './reporting/dto/analytics/report-analytics-dto.interface';
 export type { ReportAnalyticsSearchQuery } from './reporting/dto/analytics/report-analytics-search-query.type';
-export type { ReportCommentDto } from './reporting/dto/report/comment/report-comment-dto.interface';
+export type { CreateReportCommentPayload } from './reporting/dto/report-comments/create-report-comment-payload.type';
+export type {
+    ReportCommentDto,
+    ReportCommentResponseDto,
+} from './reporting/dto/report-comments/report-comment-dto.interface';
+export type { ReportTextAnswerDto } from './reporting/dto/report-text-answers/report-text-answer-dto.interface';
 export type { ReportCompetenceSummaryDto } from './reporting/dto/report/competence/report-competence-summary-dto.interface';
 export type { ReportQuestionSummaryDto } from './reporting/dto/report/question/report-question-summary-dto.interface';
 export type {
@@ -270,7 +275,6 @@ export type {
     ReportResponseDto,
 } from './reporting/dto/report/report-dto.interface';
 export type { ReportSearchQuery } from './reporting/dto/report/report-search-query.type';
-export type { ReportTextAnswerDto } from './reporting/dto/text-answer/report-text-answer-dto.interface';
 export {
     REPORT_SOFT_FIELDS,
     ReportSortField,
@@ -312,7 +316,10 @@ export type {
     StrategicReportInsightDto,
     StrategicReportInsightResponseDto,
 } from './reporting/dto/strategic-report/strategic-report-insight-dto.interface';
-export { INSIGHT_TYPES, InsightType } from './reporting/enums/insight.enum';
+export {
+    INSIGHT_TYPES,
+    InsightType,
+} from './reporting/enums/insight-type.enum';
 
 /* Auth */
 export type {

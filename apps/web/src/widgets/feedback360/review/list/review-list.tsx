@@ -53,23 +53,7 @@ export function ReviewsList() {
     );
     const [deleteReview, setDeleteReview] = useState<Review | null>(null);
 
-    // Build query params (exclude all sort params - sorting is client-side only)
-    const queryParams = useMemo(() => {
-        const params: Record<string, unknown> = {};
-
-        if (search.trim()) params.search = search.trim();
-        if (stages.length === 1) params.stage = stages[0];
-        if (cycles.length === 1 && cycles[0] !== 'None')
-            params.cycleTitle = cycles[0];
-
-        return params;
-    }, [search, stages, cycles]);
-
-    const {
-        data: reviews = [],
-        isLoading,
-        isError,
-    } = useReviewsQuery(queryParams);
+    const { data: reviews = [], isLoading, isError } = useReviewsQuery();
 
     const { data: allReviewsData = [] } = useReviewsQuery({});
 

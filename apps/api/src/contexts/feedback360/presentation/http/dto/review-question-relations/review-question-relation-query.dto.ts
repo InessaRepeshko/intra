@@ -1,6 +1,6 @@
 import {
     AnswerType,
-    QUESTION_CONSTRAINTS,
+    REVIEW_QUESTION_RELATION_CONSTRAINTS,
     ReviewQuestionRelationSortField,
     SortDirection,
 } from '@intra/shared-kernel';
@@ -46,17 +46,17 @@ export class ReviewQuestionRelationQueryDto {
         example: 'Listens actively before responding.',
         description: 'Question title (contains, case-insensitive)',
         type: 'string',
-        minimum: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN,
-        maximum: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX,
+        minimum: REVIEW_QUESTION_RELATION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN,
+        maximum: REVIEW_QUESTION_RELATION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX,
     })
     @ToOptionalTrimmedString({
-        min: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN,
-        max: QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX,
+        min: REVIEW_QUESTION_RELATION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN,
+        max: REVIEW_QUESTION_RELATION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX,
     })
     @IsOptional()
     @IsString()
-    @MinLength(QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN)
-    @MaxLength(QUESTION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX)
+    @MinLength(REVIEW_QUESTION_RELATION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MIN)
+    @MaxLength(REVIEW_QUESTION_RELATION_CONSTRAINTS.QUESTION_TITLE.LENGTH.MAX)
     questionTitle?: string;
 
     @ApiPropertyOptional({
@@ -68,6 +68,16 @@ export class ReviewQuestionRelationQueryDto {
     @IsOptional()
     @IsEnum(AnswerType)
     answerType?: AnswerType;
+
+    @ApiPropertyOptional({
+        example: true,
+        description: 'Is for selfassessment',
+        type: 'boolean',
+    })
+    @ToOptionalBool()
+    @IsOptional()
+    @IsBoolean()
+    isForSelfassessment?: boolean;
 
     @ApiPropertyOptional({
         example: 1,
@@ -83,28 +93,49 @@ export class ReviewQuestionRelationQueryDto {
         example: 'Communication',
         description: 'Competence title (contains, case-insensitive)',
         type: 'string',
-        minimum: QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MIN,
-        maximum: QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MAX,
+        minimum:
+            REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MIN,
+        maximum:
+            REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MAX,
     })
     @ToOptionalTrimmedString({
-        min: QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MIN,
-        max: QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MAX,
+        min: REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MIN,
+        max: REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MAX,
     })
     @IsOptional()
     @IsString()
-    @MinLength(QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MIN)
-    @MaxLength(QUESTION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MAX)
+    @MinLength(REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MIN)
+    @MaxLength(REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_TITLE.LENGTH.MAX)
     competenceTitle?: string;
 
     @ApiPropertyOptional({
-        example: true,
-        description: 'Is for selfassessment',
-        type: 'boolean',
+        example: 'COMM',
+        description: 'Competence code (contains, case-insensitive)',
+        type: 'string',
+        minimum:
+            REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_CODE.LENGTH.MIN,
+        maximum:
+            REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_CODE.LENGTH.MAX,
     })
-    @ToOptionalBool()
+    @ToOptionalTrimmedString({
+        min: REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_CODE.LENGTH.MIN,
+        max: REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_CODE.LENGTH.MAX,
+    })
     @IsOptional()
-    @IsBoolean()
-    isForSelfassessment?: boolean;
+    @IsString()
+    @MinLength(REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_CODE.LENGTH.MIN)
+    @MaxLength(REVIEW_QUESTION_RELATION_CONSTRAINTS.COMPETENCE_CODE.LENGTH.MAX)
+    competenceCode?: string;
+
+    @ApiPropertyOptional({
+        example: 'Communication',
+        description: 'Competence description (contains, case-insensitive)',
+        type: 'string',
+    })
+    @ToOptionalTrimmedString()
+    @IsOptional()
+    @IsString()
+    competenceDescription?: string;
 
     @ApiPropertyOptional({
         example: ReviewQuestionRelationSortField.QUESTION_TITLE,

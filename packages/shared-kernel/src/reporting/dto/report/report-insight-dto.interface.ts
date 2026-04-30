@@ -1,5 +1,5 @@
 import { EntityType } from '../../enums/entity-type.enum';
-import { InsightType } from '../../enums/insight.enum';
+import { InsightType } from '../../enums/insight-type.enum';
 
 export interface ReportInsightBaseDto<TDate = Date> {
     id: number;

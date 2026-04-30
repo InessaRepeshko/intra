@@ -102,17 +102,17 @@ export function ClusterTable({
         handleDragEnd,
         resetOrder,
     } = useDraggableColumns<
+        | 'competence'
         | 'title'
         | 'lowerBound'
         | 'upperBound'
-        | 'competence'
         | 'date'
         | 'actions'
     >('clusters-table', [
+        'competence',
         'title',
         'lowerBound',
         'upperBound',
-        'competence',
         'date',
         'actions',
     ]);
@@ -124,10 +124,10 @@ export function ClusterTable({
     }, [resetTrigger, resetOrder]);
 
     const COLUMNS: Record<
+        | 'competence'
         | 'title'
         | 'lowerBound'
         | 'upperBound'
-        | 'competence'
         | 'date'
         | 'actions',
         {
@@ -137,6 +137,36 @@ export function ClusterTable({
             cellClassName: string;
         }
     > = {
+        competence: {
+            header: (
+                <SortableHeader
+                    label="Competence"
+                    field="competenceTitle"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[200px] w-[200px] whitespace-nowrap text-start cursor-grab active:cursor-grabbing',
+            cell: (cluster) => (
+                <div className="flex items-center justify-start gap-1.5 w-full">
+                    <Bookmark className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
+                        {cluster.competenceId ? (
+                            (competenceTitles[cluster.competenceId] ?? (
+                                <span className="text-muted-foreground">
+                                    None
+                                </span>
+                            ))
+                        ) : (
+                            <span className="text-muted-foreground">None</span>
+                        )}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-normal',
+        },
         title: {
             header: (
                 <SortableHeader
@@ -207,36 +237,7 @@ export function ClusterTable({
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
-        competence: {
-            header: (
-                <SortableHeader
-                    label="Competence"
-                    field="competenceTitle"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[200px] w-[200px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
-            cell: (cluster) => (
-                <div className="flex items-center justify-center gap-1.5 w-full">
-                    <Bookmark className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
-                        {cluster.competenceId ? (
-                            (competenceTitles[cluster.competenceId] ?? (
-                                <span className="text-muted-foreground">
-                                    None
-                                </span>
-                            ))
-                        ) : (
-                            <span className="text-muted-foreground">None</span>
-                        )}
-                    </span>
-                </div>
-            ),
-            cellClassName: 'whitespace-normal',
-        },
+
         date: {
             header: (
                 <SortableHeader

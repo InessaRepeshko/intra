@@ -117,10 +117,9 @@ export function useStrategicReportAnalyticsQuery(analyticsId: number) {
 
 export function useAllReportAnalyticsQuery(analyticsIds: number[]) {
     const queries = useQueries({
-        queries: analyticsIds.map((analyticsId, index) => ({
+        queries: analyticsIds.map((analyticsId) => ({
             queryKey: strategicReportKeys.strategicReportAnalytics(analyticsId),
-            queryFn: () =>
-                fetchStrategicReportAnalyticsByReportId(analyticsIds[index]),
+            queryFn: () => fetchStrategicReportAnalyticsByReportId(analyticsId),
         })),
     });
 

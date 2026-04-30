@@ -32,6 +32,7 @@ import {
 } from '@shared/components/ui/table';
 import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { SortDirection } from '../model/types';
 import { StageBadge } from './stage-badge';
@@ -116,14 +117,14 @@ export function CyclesTable({
         handleDragEnd,
         resetOrder,
     } = useDraggableColumns<
-        'id' | 'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions'
+        'id' | 'name' | 'stage' | 'reviews' | 'anonymity' | 'dates' | 'actions'
     >('cycles-table', [
         'id',
         'name',
-        'dates',
-        'anonymity',
         'stage',
         'reviews',
+        'anonymity',
+        'dates',
         'actions',
     ]);
 
@@ -132,6 +133,8 @@ export function CyclesTable({
             resetOrder();
         }
     }, [resetTrigger, resetOrder]);
+
+    const router = useRouter();
 
     const COLUMNS: Record<
         'id' | 'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions',
@@ -156,9 +159,18 @@ export function CyclesTable({
                 'min-w-[75px] w-[75px] text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (cycle) => (
                 <div className="flex items-center justify-center gap-1.5">
-                    <span className="font-medium text-foreground">
-                        {cycle.id}
-                    </span>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground text-center cursor-pointer hover:underline"
+                        onClick={() =>
+                            router.push(`/feedback360/cycles/${cycle.id}`)
+                        }
+                    >
+                        <span className="font-medium text-foreground">
+                            {cycle.id}
+                        </span>
+                    </Button>
                 </div>
             ),
             cellClassName: 'whitespace-nowrap text-center',
@@ -188,52 +200,6 @@ export function CyclesTable({
                 </div>
             ),
             cellClassName: 'min-w-[100px] whitespace-normal',
-        },
-        dates: {
-            header: (
-                <SortableHeader
-                    label="Dates"
-                    field="startDate"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[80px] w-[100px] whitespace-nowrap cursor-grab active:cursor-grabbing',
-            cell: (cycle) => (
-                <div className="flex flex-col gap-0.5 text-sm">
-                    <span className="text-foreground">
-                        {format(cycle.startDate, 'MMM dd, yyyy')}
-                    </span>
-                    <span className="text-muted-foreground">
-                        {format(cycle.endDate, 'MMM dd, yyyy')}
-                    </span>
-                </div>
-            ),
-            cellClassName: 'whitespace-nowrap',
-        },
-        anonymity: {
-            header: (
-                <SortableHeader
-                    label="Anonymity Threshold"
-                    field="minRespondentsThreshold"
-                    currentField={sortField}
-                    currentDirection={sortDirection}
-                    onSort={onSort}
-                />
-            ),
-            headerClassName:
-                'min-w-[80px] w-[100px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
-            cell: (cycle) => (
-                <div className="flex items-center justify-center gap-1.5">
-                    <HatGlasses className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium text-foreground">
-                        {cycle.minRespondentsThreshold ?? `—`}
-                    </span>
-                </div>
-            ),
-            cellClassName: 'whitespace-nowrap text-center',
         },
         stage: {
             header: (
@@ -271,6 +237,52 @@ export function CyclesTable({
                 </div>
             ),
             cellClassName: 'whitespace-nowrap text-center',
+        },
+        anonymity: {
+            header: (
+                <SortableHeader
+                    label="Anonymity Threshold"
+                    field="minRespondentsThreshold"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[80px] w-[150px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
+            cell: (cycle) => (
+                <div className="flex items-center justify-center gap-1.5">
+                    <HatGlasses className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium text-foreground">
+                        {cycle.minRespondentsThreshold ?? `—`}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap text-center',
+        },
+        dates: {
+            header: (
+                <SortableHeader
+                    label="Dates"
+                    field="startDate"
+                    currentField={sortField}
+                    currentDirection={sortDirection}
+                    onSort={onSort}
+                />
+            ),
+            headerClassName:
+                'min-w-[80px] w-[100px] whitespace-nowrap cursor-grab active:cursor-grabbing',
+            cell: (cycle) => (
+                <div className="flex flex-col gap-0.5 text-sm">
+                    <span className="text-foreground">
+                        {format(cycle.startDate, 'MMM dd, yyyy')}
+                    </span>
+                    <span className="text-muted-foreground">
+                        {format(cycle.endDate, 'MMM dd, yyyy')}
+                    </span>
+                </div>
+            ),
+            cellClassName: 'whitespace-nowrap',
         },
         actions: {
             header: <span className="text-muted-foreground">Actions</span>,

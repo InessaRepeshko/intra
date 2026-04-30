@@ -19,6 +19,8 @@ export class ReviewQuestionRelationMapper {
             ),
             competenceId: relation.competenceId,
             competenceTitle: relation.competenceTitle,
+            competenceCode: relation.competenceCode ?? null,
+            competenceDescription: relation.competenceDescription ?? null,
             isForSelfassessment: relation.isForSelfassessment ?? false,
             createdAt: relation.createdAt,
         });
@@ -34,6 +36,8 @@ export class ReviewQuestionRelationMapper {
             answerType: QuestionMapper.toPrismaAnswerType(relation.answerType),
             competenceId: relation.competenceId,
             competenceTitle: relation.competenceTitle,
+            competenceCode: relation.competenceCode ?? null,
+            competenceDescription: relation.competenceDescription ?? null,
             isForSelfassessment: relation.isForSelfassessment,
         };
     }

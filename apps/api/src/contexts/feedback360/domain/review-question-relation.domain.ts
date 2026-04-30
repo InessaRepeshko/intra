@@ -8,6 +8,8 @@ export type ReviewQuestionRelationProps = {
     answerType: AnswerType;
     competenceId: number;
     competenceTitle: string;
+    competenceCode?: string | null;
+    competenceDescription?: string | null;
     isForSelfassessment?: boolean | null;
     createdAt?: Date;
 };
@@ -20,6 +22,8 @@ export class ReviewQuestionRelationDomain {
     readonly answerType: AnswerType;
     readonly competenceId: number;
     readonly competenceTitle: string;
+    readonly competenceCode?: string | null;
+    readonly competenceDescription?: string | null;
     readonly isForSelfassessment: boolean;
     readonly createdAt?: Date;
 
@@ -31,6 +35,8 @@ export class ReviewQuestionRelationDomain {
         this.answerType = props.answerType;
         this.competenceId = props.competenceId;
         this.competenceTitle = props.competenceTitle;
+        this.competenceCode = props.competenceCode ?? null;
+        this.competenceDescription = props.competenceDescription ?? null;
         this.isForSelfassessment = props.isForSelfassessment ?? false;
         this.createdAt = props.createdAt;
     }
