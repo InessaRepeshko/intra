@@ -7,6 +7,7 @@ import { Badge } from "@shared/components/ui/badge";
 import { Avatar, AvatarFallback } from "@shared/components/ui/avatar";
 import { ClipboardList, CheckCircle, Clock, User } from "lucide-react";
 import Link from "next/link";
+import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 
 const pendingSurveys = [
     { id: "s1", type: "peer" as const, subjectId: "u2", subjectName: "Michael Johnson", subjectRole: "Product Manager", dueDate: "2026-03-15" },
@@ -117,7 +118,7 @@ export default function SurveysPage() {
                                 <div className="flex items-center gap-4">
                                     <Avatar className="h-12 w-12 bg-accent">
                                         <AvatarFallback className="bg-accent text-accent-foreground">
-                                            {survey.subjectName.split(" ").map((n) => n[0]).join("")}
+                                            {getUserInitialsFromFullName(survey.subjectName)}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div>

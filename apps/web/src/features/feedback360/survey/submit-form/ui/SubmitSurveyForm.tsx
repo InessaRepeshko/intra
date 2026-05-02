@@ -49,6 +49,7 @@ import { useUserQuery } from '@entities/identity/user/api/user.queries';
 import { useSidebar } from '@shared/ui/app-sidebar';
 import { Progress } from '@shared/components/ui/progress';
 import { formatNumber } from '@shared/lib/utils/format-number';
+import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 
 interface SubmitSurveyFormProps {
     reviewId: number;
@@ -541,13 +542,7 @@ export function SubmitSurveyForm({
                                         alt={rateeQuery.data.fullName}
                                     />
                                     <AvatarFallback className="text-xl font-medium text-muted-foreground bg-neutral-100">
-                                        {rateeQuery.data.firstName && rateeQuery.data.lastName
-                                            ? (rateeQuery.data.firstName.charAt(0) + rateeQuery.data.lastName.charAt(0)).substring(0, 2)
-                                            : rateeQuery.data.fullName
-                                                .split(' ')
-                                                .map((n) => n[0])
-                                                .join('')
-                                                .toUpperCase().substring(0, 2)}
+                                        {getUserInitialsFromFullName(rateeQuery.data.fullName ?? `${rateeQuery.data.lastName} ${rateeQuery.data.firstName}`)}
                                     </AvatarFallback>
                                 </Avatar>
                             )}

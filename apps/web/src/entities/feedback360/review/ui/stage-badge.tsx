@@ -47,7 +47,7 @@ export const stageConfig: Record<
     },
     [ReviewStage.ARCHIVED]: {
         label: 'Archived',
-        className: 'bg-green-100 text-green-800 border-green-200',
+        className: 'bg-zinc-100 text-zinc-800 border-zinc-200',
     },
 };
 

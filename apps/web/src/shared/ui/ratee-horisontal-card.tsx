@@ -6,20 +6,12 @@ import {
 } from '@shared/components/ui/avatar';
 import { Card } from '@shared/components/ui/card';
 import { MailIcon } from 'lucide-react';
+import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 
 export function RateeHorisontalCard({ ratee }: { ratee: User }) {
     if (!ratee) {
         return <span className="text-muted-foreground">None</span>;
     }
-
-    const initials =
-        ratee.firstName && ratee.lastName
-            ? ratee.firstName.charAt(0) + ratee.lastName.charAt(0)
-            : ratee.fullName
-                  .split(' ')
-                  .map((n) => n[0])
-                  .join('')
-                  .toUpperCase();
 
     return (
         <Card className="flex flex-col sm:flex-row sm:flex-nowrap items-center text-center sm:text-left gap-4 p-4 w-full max-w-[500px]">
@@ -30,7 +22,7 @@ export function RateeHorisontalCard({ ratee }: { ratee: User }) {
                     alt={ratee.fullName}
                 />
                 <AvatarFallback className="text-6xl font-medium text-muted-foreground bg-neutral-100">
-                    {initials.substring(0, 2)}
+                    {getUserInitialsFromFullName(ratee.fullName ?? `${ratee.lastName} ${ratee.firstName}`)}
                 </AvatarFallback>
             </Avatar>
 

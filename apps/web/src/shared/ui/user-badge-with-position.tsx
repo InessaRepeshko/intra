@@ -3,6 +3,7 @@ import {
     AvatarFallback,
     AvatarImage,
 } from '@shared/components/ui/avatar';
+import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 
 export function UserBadgeWithPosition({
     user,
@@ -20,15 +21,6 @@ export function UserBadgeWithPosition({
         return <span className="text-muted-foreground">None</span>;
     }
 
-    const initials =
-        user.firstName && user.lastName
-            ? user.firstName.charAt(0) + user.lastName.charAt(0)
-            : user.fullName
-                  .split(' ')
-                  .map((n) => n[0])
-                  .join('')
-                  .toUpperCase();
-
     return (
         <div className="flex flex-col flex-wrap items-start justify-start gap-1">
             <div key={user.id} className="flex items-center gap-1">
@@ -39,7 +31,7 @@ export function UserBadgeWithPosition({
                         alt={user.fullName}
                     />
                     <AvatarFallback className="bg-white/20 text-black text-xs font-medium">
-                        {initials}
+                        {getUserInitialsFromFullName(user.fullName ?? `${user.lastName} ${user.firstName}`)}
                     </AvatarFallback>
                 </Avatar>
                 <span className="flex flex-col break-word">

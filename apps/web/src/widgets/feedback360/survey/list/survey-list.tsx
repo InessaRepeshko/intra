@@ -57,6 +57,8 @@ import {
 } from "@shared/components/ui/tabs"
 import { CategoryBadge } from '@entities/feedback360/respondent/ui/category-badge';
 import { useUsersByUserIdsQuery } from '@entities/identity/user/api/user.queries';
+import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
+
 const ITEMS_PER_PAGE = 6;
 
 export enum SurveyListTab {
@@ -468,12 +470,14 @@ export function SurveysList({ currentUserId }: { currentUserId: number }) {
 
     const currentUserPendingSurveys = useMemo(() => {
         return currentUserSurveysData.filter((c) =>
-            c.respondent?.responseStatus === ResponseStatus.PENDING || c.respondent?.responseStatus === ResponseStatus.IN_PROGRESS);
+            c.respondent?.responseStatus === ResponseStatus.PENDING || c.respondent?.responseStatus === ResponseStatus.IN_PROGRESS)
+            .sort((a, b) => a.review.id - b.review.id);
     }, [currentUserSurveysData]);
 
     const currentUserCompletedSurveys = useMemo(() => {
         return currentUserSurveysData.filter((c) =>
-            c.respondent?.responseStatus === ResponseStatus.COMPLETED);
+            c.respondent?.responseStatus === ResponseStatus.COMPLETED)
+            .sort((a, b) => a.review.id - b.review.id);
     }, [currentUserSurveysData]);
     return (
         <main className="min-h-screen">
@@ -485,7 +489,7 @@ export function SurveysList({ currentUserId }: { currentUserId: number }) {
                             My 360° Feedback Surveys
                         </h1>
                         <p className="mt-1 text-muted-foreground">
-                            Complete feedback surveys for your colleagues. You have {' '}
+                            Complete feedback surveys for your colleagues within the current cycle. You have {' '}
                             <span className="font-medium text-foreground">
                                 {currentUserPendingSurveys.length}
                             </span>{' '}active surveys to complete.
@@ -524,9 +528,9 @@ export function SurveysList({ currentUserId }: { currentUserId: number }) {
                 </div>
                 {/* Survey List Tabs */}
                 <Tabs defaultValue={SurveyListTab.PENDING} className="w-full overflow-hidden">
-                    <TabsList>
-                        <TabsTrigger value={SurveyListTab.PENDING}>Pending</TabsTrigger>
-                        <TabsTrigger value={SurveyListTab.COMPLETED}>Completed</TabsTrigger>
+                    <TabsList className="border rounded-xl">
+                        <TabsTrigger value={SurveyListTab.PENDING} className="border rounded-xl">Pending</TabsTrigger>
+                        <TabsTrigger value={SurveyListTab.COMPLETED} className="border rounded-xl">Completed</TabsTrigger>
                     </TabsList>
                     {/* Survey List */}
                     <TabsContent value={SurveyListTab.PENDING}>
@@ -536,7 +540,9 @@ export function SurveysList({ currentUserId }: { currentUserId: number }) {
                                     Pending Surveys
                                 </CardTitle>
                                 <CardDescription>
-                                    These surveys are awaiting your feedback
+                                    These {' '}
+                                    <span className="font-semibold text-foreground">{formatNumber(currentUserPendingSurveys.length)}</span> {' '}
+                                    {currentUserPendingSurveys.length !== 1 ? 'surveys are' : 'survey is'} awaiting your feedback.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -554,7 +560,7 @@ export function SurveysList({ currentUserId }: { currentUserId: number }) {
                                                         alt={survey.review.rateeFullName}
                                                     />
                                                     <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
-                                                        {survey.review.rateeFullName.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2)}
+                                                        {getUserInitialsFromFullName(survey.review.rateeFullName)}
                                                     </AvatarFallback>
                                                 </Avatar>
                                                 <div className="space-y-1 flex-1 min-w-0">
@@ -601,7 +607,9 @@ export function SurveysList({ currentUserId }: { currentUserId: number }) {
                                 <CardTitle className="text-foreground">Completed Surveys
                                 </CardTitle>
                                 <CardDescription>
-                                    Your submitted feedback surveys
+                                    Your submitted {' '}
+                                    <span className="font-semibold text-foreground">{formatNumber(currentUserCompletedSurveys.length)}</span> {' '}
+                                    {currentUserCompletedSurveys.length !== 1 ? 'feedback surveys' : 'feedback survey'}.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -619,7 +627,7 @@ export function SurveysList({ currentUserId }: { currentUserId: number }) {
                                                         alt={survey.review.rateeFullName}
                                                     />
                                                     <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
-                                                        {survey.review.rateeFullName.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2)}
+                                                        {getUserInitialsFromFullName(survey.review.rateeFullName)}
                                                     </AvatarFallback>
                                                 </Avatar>
                                                 <div className="space-y-1 flex-1 min-w-0">
