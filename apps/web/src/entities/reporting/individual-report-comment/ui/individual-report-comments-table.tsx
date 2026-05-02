@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 import {
     Award,
     Calendar,
-    FileUser,
     Flag,
     MessageCircle,
     MessageSquareQuote,
@@ -367,20 +366,28 @@ export function IndividualReportCommentsTable({
                 'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
             cell: (report) => {
                 const textAnswers = reportTextAnswers[report.id]?.filter(
-                    (answer) => answer.answerType === AnswerType.TEXT_FIELD);
-                const categories = [...new Set(textAnswers?.map((answer) => answer.respondentCategory))];
+                    (answer) => answer.answerType === AnswerType.TEXT_FIELD,
+                );
+                const categories = [
+                    ...new Set(
+                        textAnswers?.map((answer) => answer.respondentCategory),
+                    ),
+                ];
 
                 return (
                     <div className="flex flex-wrap items-center justify-center gap-1">
                         {categories && categories.length > 0 ? (
                             categories.map((category) => (
-                                <CategoryBadge key={category} category={category} />
+                                <CategoryBadge
+                                    key={category}
+                                    category={category}
+                                />
                             ))
                         ) : (
                             <span className="text-muted-foreground">None</span>
                         )}
                     </div>
-                )
+                );
             },
             cellClassName: 'whitespace-nowrap text-center',
         },
@@ -558,7 +565,7 @@ export function IndividualReportCommentsTable({
 
                                 <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
                                     <span className="flex items-center gap-1 text-muted-foreground flex-wrap">
-                                        <span className='flex items-center gap-1 whitespace-nowrap flex-row'>
+                                        <span className="flex items-center gap-1 whitespace-nowrap flex-row">
                                             <MessageSquareQuote className="h-3.5 w-3.5 shrink-0" />
                                             {reportCommentsCount ? (
                                                 <span className="font-medium text-foreground">
@@ -570,8 +577,8 @@ export function IndividualReportCommentsTable({
                                             {' report comments'}
                                         </span>
                                         {'based on '}
-                                        <span className='flex items-center gap-1 whitespace-nowrap flex-row'>
-                                        <TextInitial className="h-3.5 w-3.5 shrink-0" />
+                                        <span className="flex items-center gap-1 whitespace-nowrap flex-row">
+                                            <TextInitial className="h-3.5 w-3.5 shrink-0" />
                                             {textAnswerCount ? (
                                                 <span className="font-medium text-foreground">
                                                     {textAnswerCount}
@@ -582,8 +589,8 @@ export function IndividualReportCommentsTable({
                                             {' text answers'}
                                         </span>
                                         {'from '}
-                                        <span className='flex items-center gap-1 whitespace-nowrap flex-row'>
-                                        <UsersRound className="h-3.5 w-3.5 shrink-0" />
+                                        <span className="flex items-center gap-1 whitespace-nowrap flex-row">
+                                            <UsersRound className="h-3.5 w-3.5 shrink-0" />
                                             <span className="font-medium text-foreground">
                                                 {report.answerCount ?? `—`}
                                             </span>

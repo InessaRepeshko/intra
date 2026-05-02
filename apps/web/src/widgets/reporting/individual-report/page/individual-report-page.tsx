@@ -10,7 +10,7 @@ import { EntityType } from '@entities/reporting/individual-report/model/types';
 import { IndividualReportAnalyticsTable } from '@entities/reporting/individual-report/ui/individual-report-analytics-table';
 import { IndividualReportCycleStatsCard } from '@entities/reporting/individual-report/ui/individual-report-cycle-stats-card';
 import { IndividualReportStatsCard } from '@entities/reporting/individual-report/ui/individual-report-stats-card';
-import { RateeHorisontalCard } from '@entities/reporting/individual-report/ui/ratee-horisontal-card';
+import { RateeHorisontalCard } from '@shared/ui/ratee-horisontal-card';
 import {
     Card,
     CardContent,

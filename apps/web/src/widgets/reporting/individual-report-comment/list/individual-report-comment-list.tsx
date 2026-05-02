@@ -533,15 +533,16 @@ export function IndividualReportCommentList() {
                         />
 
                         {/* Loading State */}
-                        {((areReportsLoading ||
+                        {(areReportsLoading ||
                             areReviewsLoading ||
                             areCommentsLoading ||
                             areAnswersLoading ||
-                            areCycleTitlesLoading) && !allReportsData) && (
-                            <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
-                                <Spinner />
-                            </div>
-                        )}
+                            areCycleTitlesLoading) &&
+                            !allReportsData && (
+                                <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
+                                    <Spinner />
+                                </div>
+                            )}
 
                         {/* Error State */}
                         {(areReportsError || areReviewsError) && (

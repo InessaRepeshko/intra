@@ -1,9 +1,9 @@
 import {
-    type AddRespondentToReviewPayload,
-    type RespondentDto,
-    type RespondentFilterQuery,
-    type ResponseStatus,
-    type UpdateRespondentPayload,
+    AddRespondentToReviewPayload,
+    RespondentResponseDto,
+    RespondentFilterQuery,
+    ResponseStatus,
+    UpdateRespondentPayload,
 } from '@entities/feedback360/respondent/model/types';
 import { apiClient } from '@shared/api/api-client';
 
@@ -15,8 +15,8 @@ const RESPONDENT_RELATION_BASE = (relationId: number) =>
 export async function fetchReviewRespondents(
     reviewId: number,
     params?: RespondentFilterQuery,
-): Promise<RespondentDto[]> {
-    const { data } = await apiClient.get<RespondentDto[]>(
+): Promise<RespondentResponseDto[]> {
+    const { data } = await apiClient.get<RespondentResponseDto[]>(
         `${RESPONDENTS_BASE(reviewId)}`,
         {
             params,
@@ -28,7 +28,7 @@ export async function fetchReviewRespondents(
 export async function fetchReviewRespondentCount(
     reviewId: number,
 ): Promise<number> {
-    const { data } = await apiClient.get<RespondentDto[]>(
+    const { data } = await apiClient.get<RespondentResponseDto[]>(
         `${RESPONDENTS_BASE(reviewId)}`,
     );
     return data.length;
@@ -37,8 +37,8 @@ export async function fetchReviewRespondentCount(
 export async function addRespondentToReview(
     reviewId: number,
     payload: AddRespondentToReviewPayload,
-): Promise<RespondentDto> {
-    const { data } = await apiClient.post<RespondentDto>(
+): Promise<RespondentResponseDto> {
+    const { data } = await apiClient.post<RespondentResponseDto>(
         `${RESPONDENTS_BASE(reviewId)}`,
         payload,
     );
@@ -48,8 +48,8 @@ export async function addRespondentToReview(
 export async function updateReviewRespondent(
     relationId: number,
     payload: UpdateRespondentPayload,
-): Promise<RespondentDto> {
-    const { data } = await apiClient.patch<RespondentDto>(
+): Promise<RespondentResponseDto> {
+    const { data } = await apiClient.patch<RespondentResponseDto>(
         `${RESPONDENT_RELATION_BASE(relationId)}`,
         payload,
     );
@@ -59,8 +59,8 @@ export async function updateReviewRespondent(
 export async function updateReviewResponseStatus(
     relationId: number,
     status: ResponseStatus,
-): Promise<RespondentDto> {
-    const { data } = await apiClient.patch<RespondentDto>(
+): Promise<RespondentResponseDto> {
+    const { data } = await apiClient.patch<RespondentResponseDto>(
         `${RESPONDENT_RELATION_BASE(relationId)}`,
         { responseStatus: status },
     );

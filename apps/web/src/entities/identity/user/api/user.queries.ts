@@ -75,6 +75,32 @@ export function useUsersQuery(params?: UserSearchQuery) {
     });
 }
 
+export function useUsersByUserIdsQuery(ids: number[]) {
+    const queries = useQueries({
+        queries: ids.map((id) => ({
+            queryKey: userKeys.detail(id),
+            queryFn: async () => {
+                const dto = await fetchUserById(id);
+                const user = mapUserResponseDtoToModel(dto);
+                return enrichUserWithOrgData(user);
+            },
+        })),
+    });
+
+    const users: User[] = [];
+    ids.forEach((id, index) => {
+        const result = queries[index];
+        if (result.isSuccess && result.data !== undefined) {
+            users.push(result.data);
+        }
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+    const isError = queries.some((q) => q.isError);
+
+    return { data: users, isLoading, isError };
+}
+
 export function useUserQuery(id: number) {
     return useQuery<User>({
         queryKey: userKeys.detail(id),

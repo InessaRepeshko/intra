@@ -37,7 +37,7 @@ export function useReviewsQuery(params?: ReviewFilterQuery) {
         queryKey: reviewKeys.list(params),
         queryFn: async () => {
             const dtos = await fetchReviews(params);
-            return dtos.map(mapReviewDtoToModel);
+            return Array.isArray(dtos) ? dtos.map(mapReviewDtoToModel) : [];
         },
     });
 }

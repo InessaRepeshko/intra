@@ -12,6 +12,8 @@ import {
     ReviewQuestionRelationSortField,
     ReviewStage,
     SortDirection,
+    ResponseStatus,
+    RespondentCategory
 } from '@intra/shared-kernel';
 
 export type {
@@ -31,6 +33,8 @@ export {
     ReviewQuestionRelationSortField,
     ReviewStage,
     SortDirection,
+    ResponseStatus,
+    RespondentCategory
 };
 
 export enum ForSelfassessmentType {

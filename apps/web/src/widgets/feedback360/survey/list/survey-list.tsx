@@ -17,6 +17,8 @@ import {
     REVIEW_STAGE_ENUM_VALUES,
     ReviewStage,
     SortDirection,
+    ResponseStatus,
+    RespondentCategory
 } from '@entities/feedback360/survey/model/types';
 import { SurveysFilters } from '@entities/feedback360/survey/ui/surveys-filters';
 import { SurveysTable } from '@entities/feedback360/survey/ui/surveys-table';
@@ -29,10 +31,40 @@ import {
 } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';
-
+import { useCyclesQuery } from '@entities/feedback360/cycle/api/cycle.queries';
+import { Review } from '@entities/feedback360/review/model/mappers';
+import { useReviewRespondentsQuery, useAllReviewsRespondentsQuery } from '@entities/feedback360/respondent/api/respondent.queries';
+import { Respondent } from '@entities/feedback360/respondent/model/mappers';
+import { CycleStage } from '@entities/feedback360/cycle/model/types';
+import { StatisticsCard } from '@shared/ui/statistics-card';
+import { formatNumber } from '@shared/lib/utils/format-number';
+import { AlarmClock, Check, Hourglass, Pencil, SquareCheck, UserRound } from 'lucide-react';
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from '@shared/components/ui/avatar';
+import { Badge } from "@shared/components/ui/badge";
+import { Button } from "@shared/components/ui/button";
+import Link from "next/link";
+import { format } from 'date-fns';
+import { ClipboardList, CheckCircle, Clock, User } from "lucide-react";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@shared/components/ui/tabs"
+import { CategoryBadge } from '@entities/feedback360/respondent/ui/category-badge';
+import { useUsersByUserIdsQuery } from '@entities/identity/user/api/user.queries';
 const ITEMS_PER_PAGE = 6;
 
-export function SurveysList() {
+export enum SurveyListTab {
+    PENDING = 'pending',
+    COMPLETED = 'completed',
+}
+
+export function SurveysList({ currentUserId }: { currentUserId: number }) {
     const [search, setSearch] = useState('');
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
         undefined,
@@ -47,12 +79,9 @@ export function SurveysList() {
     );
     const [currentPage, setCurrentPage] = useState(1);
     const [resetTrigger, setResetTrigger] = useState(0);
+    const [activeTab, setActiveTab] = useState<SurveyListTab>(SurveyListTab.PENDING);
 
-    // Feature dialogs state
-    const [deleteSurvey, setDeleteSurvey] = useState<SurveyQuestion[] | null>(
-        null,
-    );
-
+    // fetch all data for survey table
     const {
         data: initialAllReviewsData = [],
         isLoading: isReviewsLoading,
@@ -84,6 +113,72 @@ export function SurveysList() {
         isLoading: isAllCycleTitlesLoading,
         isError: isAllCycleTitlesError,
     } = useSurveyCycleTitlesQuery(cycleIds);
+
+    // fetch all data for survey dashboard
+    const {
+        data: activeCyclesData = [],
+        isLoading: isActiveCyclesLoading,
+        isError: isActiveCyclesError,
+    } = useCyclesQuery({ stage: CycleStage.ACTIVE, isActive: true });
+
+    const activeCycleIds = activeCyclesData.map((c) => c.id);
+
+    const activeReviewsData = useMemo(() => {
+        return activeCycleIds.map(cycleId => ({
+            cycleId,
+            reviews: initialAllReviewsData.filter(r => r.cycleId === cycleId)
+        }));
+    }, [activeCycleIds, initialAllReviewsData]);
+
+    const activeReviewIds = useMemo(() => {
+        return [...new Set(activeReviewsData.flatMap(d => d.reviews.map(r => r.id)))];
+    }, [activeReviewsData]);
+
+    // Fetch respondents for all active reviews in one go (using useQueries internally)
+    const {
+        data: reviewRespondentsData,
+        isLoading: isReviewRespondentsLoading
+    } = useAllReviewsRespondentsQuery(activeReviewIds);
+
+    const rateeIds = useMemo(() => {
+        return activeReviewsData.flatMap((d) => d.reviews.map((r) => r.rateeId));
+    }, [activeReviewsData]);
+
+    const { data: reviewRatees } = useUsersByUserIdsQuery(rateeIds);
+
+    // const currentUserSurveysData = useMemo(() => {
+    //     return reviewRespondentsData.map((r) =>
+    //         r.respondents.some((re) => re.respondentId === currentUserId) ?
+    //             r.respondents.filter((re) => re.respondentId === currentUserId)
+    //             : []
+    //     )
+    //         .flat();
+    // }, [reviewRespondentsData, currentUserId]);
+
+    let surveysData = useMemo(() => {
+        return reviewRespondentsData.map((r) =>
+            r.respondents.some((re) => re.respondentId === currentUserId) ? r : undefined)
+            .filter((r) => r);
+    }, [reviewRespondentsData, currentUserId]);
+
+
+    const currentUserSurveysData = useMemo(() => {
+        return surveysData.map((r) => {
+            const respondent = r?.respondents.filter((re) => re.respondentId === currentUserId)[0];
+            const review = activeReviewsData.flatMap((re) => re.reviews.filter(r => r.id === respondent?.reviewId))[0];
+            const cycle = activeCyclesData?.find((c) => c.id === review?.cycleId);
+            const ratee = reviewRatees?.find((re) => re.id === review?.rateeId);
+            return { cycle, review, respondent, ratee }
+        });
+    }, [surveysData, activeCyclesData, activeReviewsData, currentUserId]);
+
+
+    console.log("currentUserId", currentUserId);
+    console.log("activeCyclesData", activeCyclesData);
+    console.log("activeReviewsData", activeReviewsData);
+    console.log("reviewRespondentsData", reviewRespondentsData);
+    console.log("currentUserSurveysData", currentUserSurveysData);
+
 
     // Filter unique teams, positions and cycle titles
     const teamOptions = useMemo(() => {
@@ -293,11 +388,11 @@ export function SurveysList() {
                 case 'ratee':
                     return sortDirection === SortDirection.ASC
                         ? (a.rateeFullName ?? '').localeCompare(
-                              b.rateeFullName ?? '',
-                          )
+                            b.rateeFullName ?? '',
+                        )
                         : (b.rateeFullName ?? '').localeCompare(
-                              a.rateeFullName ?? '',
-                          );
+                            a.rateeFullName ?? '',
+                        );
                 case 'stage': {
                     const indexA = REVIEW_STAGE_ENUM_VALUES.indexOf(a.stage);
                     const indexB = REVIEW_STAGE_ENUM_VALUES.indexOf(b.stage);
@@ -371,11 +466,205 @@ export function SurveysList() {
     ).length;
     const totalReviews = allReviewsData.length;
 
+    const currentUserPendingSurveys = useMemo(() => {
+        return currentUserSurveysData.filter((c) =>
+            c.respondent?.responseStatus === ResponseStatus.PENDING || c.respondent?.responseStatus === ResponseStatus.IN_PROGRESS);
+    }, [currentUserSurveysData]);
+
+    const currentUserCompletedSurveys = useMemo(() => {
+        return currentUserSurveysData.filter((c) =>
+            c.respondent?.responseStatus === ResponseStatus.COMPLETED);
+    }, [currentUserSurveysData]);
     return (
         <main className="min-h-screen">
-            <div className="mx-auto max-w-8xl">
+            <div className="mx-auto max-w-8xl gap-8 flex flex-col">
                 {/* Page Header */}
-                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
+                            My 360° Feedback Surveys
+                        </h1>
+                        <p className="mt-1 text-muted-foreground">
+                            Complete feedback surveys for your colleagues. You have {' '}
+                            <span className="font-medium text-foreground">
+                                {currentUserPendingSurveys.length}
+                            </span>{' '}active surveys to complete.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Survey stats */}
+
+                <div className="flex flex-row flex-wrap flex-1 min-w-[95px] w-full overflow-hidden gap-6 justify-around items-center">
+                    <StatisticsCard
+                        title={`Pending Surveys`}
+                        value={formatNumber(currentUserPendingSurveys.length) ?? '-'}
+                        icon={Hourglass}
+                        textColor="text-indigo-300"
+                        width={300}
+                    />
+                    <StatisticsCard
+                        title={`Completed Surveys`}
+                        value={
+                            formatNumber(currentUserCompletedSurveys.length) ?? '-'}
+                        icon={SquareCheck}
+                        textColor="text-lime-300"
+                        width={300}
+                    />
+                    <StatisticsCard
+                        title={`Self-Assessment Surveys`}
+                        value={
+                            formatNumber(currentUserSurveysData.filter((c) =>
+                                c.respondent?.category === RespondentCategory.SELF_ASSESSMENT).length) ?? '-'
+                        }
+                        icon={UserRound}
+                        textColor="text-yellow-300"
+                        width={300}
+                    />
+                </div>
+                {/* Survey List Tabs */}
+                <Tabs defaultValue={SurveyListTab.PENDING} className="w-full overflow-hidden">
+                    <TabsList>
+                        <TabsTrigger value={SurveyListTab.PENDING}>Pending</TabsTrigger>
+                        <TabsTrigger value={SurveyListTab.COMPLETED}>Completed</TabsTrigger>
+                    </TabsList>
+                    {/* Survey List */}
+                    <TabsContent value={SurveyListTab.PENDING}>
+                        <Card className="bg-card border-border">
+                            <CardHeader>
+                                <CardTitle className="text-foreground">
+                                    Pending Surveys
+                                </CardTitle>
+                                <CardDescription>
+                                    These surveys are awaiting your feedback
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-6">
+                                    {currentUserPendingSurveys.map((survey) => (
+                                        <div
+                                            key={survey.review.id}
+                                            className="flex flex-row flex-wrap items-center justify-between gap-6 p-4 rounded-xl border border-border shadow-xs w-full overflow-hidden"
+                                        >
+                                            <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left flex-1 min-w-[400px]">
+                                                <Avatar className="h-20 w-20 border bg-muted shrink-0">
+                                                    <AvatarImage
+                                                        className="object-cover"
+                                                        src={survey.ratee?.avatarUrl || ''}
+                                                        alt={survey.review.rateeFullName}
+                                                    />
+                                                    <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
+                                                        {survey.review.rateeFullName.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2)}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <div className="space-y-1 flex-1 min-w-0">
+                                                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                                        <p className="font-medium text-lg text-foreground break-words">{survey.review.rateeFullName}</p>
+                                                        <CategoryBadge category={survey.respondent?.category || RespondentCategory.TEAM} />
+                                                    </div>
+                                                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-muted-foreground text-base">
+                                                        <span className="break-words">{survey.review.rateePositionTitle}</span>
+                                                        {survey.review.teamTitle && (
+                                                            <>
+                                                                <span className="sm:inline">•</span>
+                                                                <span className="break-words">{survey.review.teamTitle}</span>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 shrink-0 w-full md:w-auto">
+                                                <div className="flex items-center gap-x-2 text-base flex-wrap justify-center md:justify-end">
+                                                    <AlarmClock className="shrink-0 h-4 w-4 text-muted-foreground" />
+                                                    <span className="text-muted-foreground whitespace-nowrap">Due</span>
+                                                    <span className="font-medium text-foreground whitespace-nowrap">
+                                                        {format(survey.cycle?.responseDeadline || survey.cycle?.reviewDeadline || survey.cycle?.endDate || '', 'MMM dd, yyyy')}
+                                                    </span>
+                                                </div>
+                                                <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full sm:w-auto">
+                                                    <Link href={`/feedback360/surveys/${survey.review.id}`}>
+                                                        <Pencil className="h-4 w-4" />
+                                                        Review
+                                                    </Link>
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value={SurveyListTab.COMPLETED}>
+                        <Card className="bg-card border-border">
+                            <CardHeader>
+                                <CardTitle className="text-foreground">Completed Surveys
+                                </CardTitle>
+                                <CardDescription>
+                                    Your submitted feedback surveys
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-6">
+                                    {currentUserCompletedSurveys.map((survey) => (
+                                        <div
+                                            key={survey.review.id}
+                                            className="flex flex-row flex-wrap items-center justify-between gap-6 p-4 rounded-xl border border-border shadow-xs w-full overflow-hidden"
+                                        >
+                                            <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left flex-1 min-w-[400px]">
+                                                <Avatar className="h-20 w-20 border bg-muted shrink-0">
+                                                    <AvatarImage
+                                                        className="object-cover"
+                                                        src={survey.ratee?.avatarUrl || ''}
+                                                        alt={survey.review.rateeFullName}
+                                                    />
+                                                    <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
+                                                        {survey.review.rateeFullName.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2)}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <div className="space-y-1 flex-1 min-w-0">
+                                                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                                        <p className="font-medium text-lg text-foreground break-words">{survey.review.rateeFullName}</p>
+                                                        <CategoryBadge category={survey.respondent?.category || RespondentCategory.TEAM} />
+                                                    </div>
+                                                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-muted-foreground text-base">
+                                                        <span className="break-words">{survey.review.rateePositionTitle}</span>
+                                                        {survey.review.teamTitle && (
+                                                            <>
+                                                                <span className="sm:inline">•</span>
+                                                                <span className="break-words">{survey.review.teamTitle}</span>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 shrink-0 w-full md:w-auto">
+                                                <div className="flex items-center gap-x-2 text-base flex-wrap justify-center md:justify-end">
+                                                    <CheckCircle className="text-muted-foreground h-4 w-4 shrink-0" />
+                                                    <span className="text-muted-foreground whitespace-nowrap">Completed</span>
+                                                    <span className="text-foreground whitespace-nowrap">{format(survey.respondent?.respondedAt ?? '', 'MMM dd, yyyy')}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
+
+
+
+
+
+
+
+
+
+
+                {/* Page Header */}
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
                             360° Feedback Surveys
@@ -454,10 +743,10 @@ export function SurveysList() {
                         {(isReviewsLoading ||
                             isAllSurveyQuestionsLoading ||
                             isAllCycleTitlesLoading) && (
-                            <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
-                                <Spinner />
-                            </div>
-                        )}
+                                <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
+                                    <Spinner />
+                                </div>
+                            )}
 
                         {/* Error State */}
                         {isReviewsError ||
@@ -484,7 +773,6 @@ export function SurveysList() {
                                         sortField={sortField}
                                         sortDirection={sortDirection}
                                         onSort={handleSort}
-                                        onDelete={setDeleteSurvey}
                                         resetTrigger={resetTrigger}
                                     />
 

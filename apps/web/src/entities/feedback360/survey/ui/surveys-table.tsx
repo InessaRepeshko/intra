@@ -45,7 +45,6 @@ interface SurveysTableProps {
     sortField: string;
     sortDirection: SortDirection;
     onSort: (field: string) => void;
-    onDelete?: (reviewQuestions: SurveyQuestion[]) => void;
     resetTrigger?: number;
 }
 
@@ -73,14 +72,6 @@ function SurveysActionsMenu({
                     <Eye className="mr-2 h-4 w-4" />
                     View Details
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                    className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                    onClick={() => onDelete?.(surveyQuestions)}
-                >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );
@@ -92,7 +83,6 @@ export function SurveysTable({
     sortField,
     sortDirection,
     onSort,
-    onDelete,
     resetTrigger,
 }: SurveysTableProps) {
     const {
@@ -375,7 +365,6 @@ export function SurveysTable({
             cell: (survey) => (
                 <SurveysActionsMenu
                     surveyQuestions={surveyQuestions[survey.reviewId] ?? []}
-                    onDelete={onDelete}
                 />
             ),
             cellClassName: 'whitespace-nowrap text-center',
@@ -389,11 +378,10 @@ export function SurveysTable({
                     <FileQuestionMark className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
-                    No question templates found
+                    No surveys found
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                    Try adjusting your filters or create a new question
-                    template.
+                    Try adjusting your filters or create a new survey.
                 </p>
             </div>
         );
@@ -445,7 +433,6 @@ export function SurveysTable({
                                 surveyQuestions={
                                     surveyQuestions[survey.reviewId] ?? []
                                 }
-                                onDelete={onDelete}
                             />
                         </div>
 
@@ -477,14 +464,14 @@ export function SurveysTable({
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground flex-wrap">
-                                <span className='flex items-center gap-1 whitespace-nowrap flex-row'>
+                                <span className="flex items-center gap-1 whitespace-nowrap flex-row">
                                     <FileQuestionMark className="h-3.5 w-3.5 shrink-0" />
                                     <span className="font-medium text-foreground">
                                         {survey.questionCount ?? `—`}
                                     </span>
                                     {' total questions: '}
                                 </span>
-                                <span className='flex items-center gap-1 whitespace-nowrap flex-row'>
+                                <span className="flex items-center gap-1 whitespace-nowrap flex-row">
                                     <Sigma className="h-3.5 w-3.5 shrink-0" />
                                     <span className="font-medium text-foreground">
                                         {survey.numericalQuestionCount ?? `—`}
@@ -492,7 +479,7 @@ export function SurveysTable({
                                     {' numerical'}
                                 </span>
                                 {'and'}
-                                <span className='flex items-center gap-1 whitespace-nowrap flex-row'>
+                                <span className="flex items-center gap-1 whitespace-nowrap flex-row">
                                     <TextInitial className="h-3.5 w-3.5 shrink-0" />
                                     <span className="font-medium text-foreground">
                                         {survey.textQuestionCount ?? `—`}

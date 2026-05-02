@@ -1,15 +1,6 @@
 import { Card } from '@shared/components/ui/card';
 import { Percent } from 'lucide-react';
 
-interface CompetenceInsightCardProps {
-    num: number | null | undefined;
-    id: number | null | undefined;
-    title: string | null | undefined;
-    averageRating: number;
-    averageDelta: number;
-    averagePercentage: number;
-}
-
 export function CompetenceInsightCard({
     competenceTitle,
     competenceRating,
@@ -29,7 +20,7 @@ export function CompetenceInsightCard({
 
     return (
         <Card className="flex flex-row flex-wrap items-start text-center sm:text-left justify-center gap-3 p-4 w-full max-w-[350px] overflow-hidden">
-            <div className="flex h-20 w-20 p-0 m-0 bg-neutral-400/5 border-1 border-foreground-500/10 rounded-xl items-center justify-center">
+            <div className="flex h-20 w-20 p-0 m-0 bg-neutral-400/5 border-1 border-foreground/10 rounded-xl items-center justify-center">
                 {Icon && (
                     <Icon
                         className={`shrink-0 h-1/2 w-1/2 ${textColor ?? 'text-muted-foreground'}`}
