@@ -89,15 +89,15 @@ export function ReviewsPage({ currentUser }: { currentUser: AuthContextType }) {
 
     return (
         <main className="min-h-screen">
-            <div className="mx-auto max-w-8xl gap-8 flex flex-col">
+            <div className="mx-auto max-w-8xl gap-6 sm:gap-8 flex flex-col">
                 <Tabs defaultValue={allTabs[0].value} className="w-full">
-                    <TabsList variant="default" className="rounded-full w-fit gap-2 mx-auto shadow-sm flex flex-col sm:flex-row">
+                    <TabsList variant="default" className="rounded-2xl sm:rounded-full w-fit gap-2 mx-auto shadow-sm flex flex flex-wrap  p-1 overflow-x-auto">
                         {allTabs.map((tab) => (
                             <TabsTrigger
                                 key={tab.value}
                                 value={tab.value}
                                 onClick={() => setActiveTab(tab.value)}
-                                className="rounded-full mx-auto"
+                                className="rounded-full w-full sm:w-auto mx-auto text-base"
                             >
                                 {tab.label}
                             </TabsTrigger>

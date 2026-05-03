@@ -353,11 +353,11 @@ export function ReviewList({ currentUser }: { currentUser: AuthContextType }) {
                 case 'title':
                     return sortDirection === SortDirection.ASC
                         ? (a.rateeFullName ?? '').localeCompare(
-                              b.rateeFullName ?? '',
-                          )
+                            b.rateeFullName ?? '',
+                        )
                         : (b.rateeFullName ?? '').localeCompare(
-                              a.rateeFullName ?? '',
-                          );
+                            a.rateeFullName ?? '',
+                        );
                 case 'cycleTitle': {
                     const titleA = a.cycleId
                         ? (cycleTitles[a.cycleId] ?? '')
@@ -441,12 +441,12 @@ export function ReviewList({ currentUser }: { currentUser: AuthContextType }) {
     const totalReviews = reviews.length;
 
     return (
-            <div className="mx-auto max-w-8xl gap-8 flex flex-col">
-
-                {/* Table Header */}
+        <div className="mx-auto max-w-8xl gap-8 flex flex-col">
+            {/* Table Header */}
+            <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
+                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
                             360° Feedback Reviews Table
                         </h1>
                         <p className="mt-1 text-muted-foreground">
@@ -461,125 +461,109 @@ export function ReviewList({ currentUser }: { currentUser: AuthContextType }) {
                             total reviews.
                         </p>
                     </div>
-                    {/* <CreateReviewForm
-                        trigger={
-                            <Button size="lg" className="shrink-0">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Create New Review
-                            </Button>
-                        }
-                    /> */}
                 </div>
+                {/* Table Content */}
+                <CardContent className="flex flex-col gap-6 m-0 p-0">
+                    {/* Filters */}
+                    <ReviewsFilters
+                        search={search}
+                        onSearchChange={(val) => {
+                            setSearch(val);
+                            setCurrentPage(1);
+                        }}
+                        stages={stages}
+                        onStagesChange={(val) => {
+                            setStages(val);
+                            setCurrentPage(1);
+                        }}
+                        dateRange={dateRange}
+                        onDateRangeChange={(range) => {
+                            setDateRange(range);
+                            setCurrentPage(1);
+                        }}
+                        cycles={cycles}
+                        onCyclesChange={(val) => {
+                            setCycles(val);
+                            setCurrentPage(1);
+                        }}
+                        teams={teams}
+                        onTeamsChange={(val) => {
+                            setTeams(val);
+                            setCurrentPage(1);
+                        }}
+                        positions={positions}
+                        onPositionsChange={(val) => {
+                            setPositions(val);
+                            setCurrentPage(1);
+                        }}
+                        stageOptions={stageOptions}
+                        cycleOptions={cycleOptions}
+                        teamOptions={teamOptions}
+                        positionOptions={positionOptions}
+                        onReset={handleReset}
+                    />
 
-                {/* Table */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg">All Reviews</CardTitle>
-                        <CardDescription>
-                            Search, filter, and manage reviews.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-6">
-                        {/* Filters */}
-                        <ReviewsFilters
-                            search={search}
-                            onSearchChange={(val) => {
-                                setSearch(val);
-                                setCurrentPage(1);
-                            }}
-                            stages={stages}
-                            onStagesChange={(val) => {
-                                setStages(val);
-                                setCurrentPage(1);
-                            }}
-                            dateRange={dateRange}
-                            onDateRangeChange={(range) => {
-                                setDateRange(range);
-                                setCurrentPage(1);
-                            }}
-                            cycles={cycles}
-                            onCyclesChange={(val) => {
-                                setCycles(val);
-                                setCurrentPage(1);
-                            }}
-                            teams={teams}
-                            onTeamsChange={(val) => {
-                                setTeams(val);
-                                setCurrentPage(1);
-                            }}
-                            positions={positions}
-                            onPositionsChange={(val) => {
-                                setPositions(val);
-                                setCurrentPage(1);
-                            }}
-                            stageOptions={stageOptions}
-                            cycleOptions={cycleOptions}
-                            teamOptions={teamOptions}
-                            positionOptions={positionOptions}
-                            onReset={handleReset}
-                        />
-
-                        {/* Loading State */}
-                        {(isLoading ||
-                            isQuestionCountsLoading ||
-                            isAnswerCountsLoading ||
-                            isRespondentCountsLoading ||
-                            isReviewerCountsLoading ||
-                            isCycleTitlesLoading) && (
+                    {/* Loading State */}
+                    {(isLoading ||
+                        isQuestionCountsLoading ||
+                        isAnswerCountsLoading ||
+                        isRespondentCountsLoading ||
+                        isReviewerCountsLoading ||
+                        isCycleTitlesLoading) && (
                             <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
                                 <Spinner />
                             </div>
                         )}
 
-                        {/* Error State */}
-                        {isError && (
-                            <div className="flex flex-col items-center justify-center py-16 text-center">
-                                <h3 className="text-lg font-semibold text-destructive">
-                                    Failed to load reviews
-                                </h3>
-                                <p className="mt-1 text-sm text-muted-foreground">
-                                    Please try refreshing the page.
-                                </p>
-                            </div>
+                    {/* Error State */}
+                    {isError && (
+                        <div className="flex flex-col items-center justify-center py-16 text-center">
+                            <h3 className="text-lg font-semibold text-destructive">
+                                Failed to load reviews
+                            </h3>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                Please try refreshing the page.
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Table */}
+                    {!isLoading &&
+                        !isError &&
+                        !isQuestionCountsLoading &&
+                        !isAnswerCountsLoading &&
+                        !isRespondentCountsLoading &&
+                        !isReviewerCountsLoading &&
+                        !isCycleTitlesLoading && (
+                            <>
+                                <ReviewsTable
+                                    reviews={paginatedReviews}
+                                    cycleTitles={cycleTitles}
+                                    questionCounts={questionCounts}
+                                    answerCounts={answerCounts}
+                                    respondentCounts={respondentCounts}
+                                    reviewerCounts={reviewerCounts}
+                                    sortField={sortField}
+                                    sortDirection={sortDirection}
+                                    onSort={handleSort}
+                                    onForceFinish={setForceFinishReview}
+                                    onDelete={setDeleteReview}
+                                    resetTrigger={resetTrigger}
+                                />
+
+                                {/* Pagination */}
+                                <TablePagination
+                                    entityName="reviews"
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    totalItems={filteredReviews.length}
+                                    limit={ITEMS_PER_PAGE}
+                                    onPageChange={setCurrentPage}
+                                />
+                            </>
                         )}
-
-                        {/* Table */}
-                        {!isLoading &&
-                            !isError &&
-                            !isQuestionCountsLoading &&
-                            !isAnswerCountsLoading &&
-                            !isRespondentCountsLoading &&
-                            !isReviewerCountsLoading &&
-                            !isCycleTitlesLoading && (
-                                <>
-                                    <ReviewsTable
-                                        reviews={paginatedReviews}
-                                        cycleTitles={cycleTitles}
-                                        questionCounts={questionCounts}
-                                        answerCounts={answerCounts}
-                                        respondentCounts={respondentCounts}
-                                        reviewerCounts={reviewerCounts}
-                                        sortField={sortField}
-                                        sortDirection={sortDirection}
-                                        onSort={handleSort}
-                                        onForceFinish={setForceFinishReview}
-                                        onDelete={setDeleteReview}
-                                        resetTrigger={resetTrigger}
-                                    />
-
-                                    {/* Pagination */}
-                                    <TablePagination
-                                        entityName="reviews"
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        totalItems={filteredReviews.length}
-                                        limit={ITEMS_PER_PAGE}
-                                        onPageChange={setCurrentPage}
-                                    />
-                                </>
-                            )}
-                    </CardContent>
-                </Card>
-            </div>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

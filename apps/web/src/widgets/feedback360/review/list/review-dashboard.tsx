@@ -151,12 +151,12 @@ export function ReviewDashboard({
 
     const dataExist = Object.values(reviewsByStage).some((reviews) => reviews.length > 0);
 
-    return dataExist && (
-        <Card className="mx-auto gap-8 flex flex-col w-full h-full border-border p-8">
+    return (
+        <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
             {/* Reviews Dashboard Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
+                    <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
                         {isMyReviews
                             ? 'My Reviews Dashboard'
                             : isTeamReviews
@@ -176,7 +176,7 @@ export function ReviewDashboard({
             </div>
 
             {/* Review stats */}
-            <div className="flex flex-row flex-wrap flex-1 min-w-[100px] w-full overflow-hidden gap-6 justify-around items-center">
+            <div className="flex flex-row flex-wrap w-full gap-3 sm:gap-4 md:gap-6 justify-around">
                 <StatisticsCard
                     title={`New`}
                     value={
@@ -258,12 +258,12 @@ export function ReviewDashboard({
                 onValueChange={(v) => setActiveTab(v as ReviewStage)}
                 className="w-full overflow-hidden"
             >
-                <TabsList className="flex flex-wrap h-auto justify-start gap-1 overflow-x-auto rounded-xl" variant="default">
+                <TabsList className="flex flex-wrap h-auto justify-start gap-1 overflow-x-auto rounded-xl p-1" variant="default">
                     {REVIEW_STAGE_ENUM_VALUES.map((stage) => (
                         <TabsTrigger
                             key={stage}
                             value={stage}
-                            className="rounded-xl"
+                            className="rounded-xl text-sm whitespace-nowrap text-center"
                         >
                             {stageConfig[stage].label}
                         </TabsTrigger>
@@ -273,11 +273,11 @@ export function ReviewDashboard({
                 {REVIEW_STAGE_ENUM_VALUES.map((stage) => (
                     <TabsContent key={stage} value={stage}>
                         <Card className="border-[0px]">
-                            <CardHeader>
-                                <CardTitle className="text-foreground">
+                            <CardHeader className="px-2">
+                                <CardTitle className="text-foreground text-lg break-words">
                                     {stageConfig[stage].label} Reviews
                                 </CardTitle>
-                                <CardDescription>
+                                <CardDescription className="text-base">
                                     A total of{' '}
                                     <span className="font-semibold text-foreground">
                                         {reviewsByStage[stage].length}
@@ -289,7 +289,7 @@ export function ReviewDashboard({
                                     stage.
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="px-2 sm:px-6">
                                 <div className="space-y-6">
                                     {reviewsByStage[stage].length === 0 ? (
                                         <div className="py-12 text-center text-muted-foreground">
@@ -306,9 +306,9 @@ export function ReviewDashboard({
                                             return (
                                                 <div
                                                     key={review.id}
-                                                    className="flex flex-row flex-wrap items-center justify-center sm:justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
+                                                    className="flex flex-col lg:flex-row !flex-wrap items-stretch lg:items-center justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
                                                 >
-                                                    <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left flex-1 min-w-[200px]">
+                                                    <div className="flex flex-col sm:flex-row  items-center gap-4 text-center min-w-[100px] w-full">
                                                         <Avatar className="h-20 w-20 border bg-muted shrink-0">
                                                             <AvatarImage
                                                                 className="object-cover"
@@ -326,7 +326,7 @@ export function ReviewDashboard({
                                                                 )}
                                                             </AvatarFallback>
                                                         </Avatar>
-                                                        <div className="space-y-1 flex-1 min-w-0">
+                                                        <div className="space-y-1 flex-1 min-w-0 w-full">
                                                             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                                                                 <p className="font-medium text-lg text-foreground break-words">
                                                                     {
@@ -347,7 +347,7 @@ export function ReviewDashboard({
                                                                 </span>
                                                                 {review.teamTitle && (
                                                                     <>
-                                                                        <span className="sm:inline">
+                                                                        <span className="hidden sm:inline">
                                                                             •
                                                                         </span>
                                                                         <span className="break-words">
@@ -361,39 +361,35 @@ export function ReviewDashboard({
                                                         </div>
                                                     </div>
 
-                                                    <Progress
-                                                        value={
-                                                            ((answerCounts[
-                                                                review.id
-                                                            ] ?? 0) /
-                                                                (respondentCounts[
+                                                    <div className="flex flex-row items-center gap-4 w-full flex-wrap justify-center !md:justify-end">
+                                                        <Progress
+                                                            value={
+                                                                ((answerCounts[
                                                                     review.id
-                                                                ] ?? 0)) *
-                                                            100
-                                                        }
-                                                        className="w-[200px] rounded-full"
-                                                    />
-
-                                                    <div className="flex flex-col lg:flex-row items-center gap-4 sm:gap-6 shrink-0 w-full md:w-auto flex-wrap">
-                                                        <div className="flex items-center gap-x-1 text-base flex-wrap justify-center lg:justify-end">
+                                                                ] ?? 0) /
+                                                                    (respondentCounts[
+                                                                        review.id
+                                                                    ] ?? 0)) *
+                                                                100
+                                                            }
+                                                            className="w-full w-[250px] max-w-full min-w-max rounded-full self-center"
+                                                        />
+                                                        <div className="flex flex-row items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
                                                             <MessageCircle className="shrink-0 h-4 w-4 text-muted-foreground" />
-                                                            <span className="font-medium text-foreground whitespace-nowrap gap-1 flex">
-                                                                {answerCounts[
-                                                                    review.id
-                                                                ] ?? 0}
-                                                                <span className="text-muted-foreground">
-                                                                    /
-                                                                </span>
-                                                                {respondentCounts[
-                                                                    review.id
-                                                                ] ?? 0}
+                                                            {answerCounts[
+                                                                review.id
+                                                            ] ?? 0}
+                                                            <span className="text-muted-foreground">
+                                                                /
                                                             </span>
+                                                            {respondentCounts[
+                                                                review.id
+                                                            ] ?? 0}
                                                             <span className="text-muted-foreground whitespace-nowrap">
-                                                                collected
                                                                 answers
                                                             </span>
                                                         </div>
-                                                        <div className="flex items-center gap-x-2 text-base flex-wrap justify-center lg:justify-end">
+                                                        <div className="flex items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
                                                             <AlarmClock className="shrink-0 h-4 w-4 text-muted-foreground" />
                                                             <span className="text-muted-foreground whitespace-nowrap">
                                                                 Due
@@ -410,7 +406,7 @@ export function ReviewDashboard({
                                                         </div>
                                                         <Button
                                                             asChild
-                                                            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full sm:w-auto"
+                                                            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
                                                         >
                                                             <Link
                                                                 href={`/feedback360/reviews/${review.id}`}

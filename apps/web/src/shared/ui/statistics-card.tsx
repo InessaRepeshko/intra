@@ -23,8 +23,8 @@ export function StatisticsCard({
             className="flex flex-row flex-wrap items-center text-center sm:text-left justify-center gap-3 p-4 w-full overflow-hidden"
             style={{ maxWidth: width ? `${width}px` : '300px' }}
         >
-            <div className="flex flex-wrap flex-col flex-1 gap-1 min-w-0 justify-start items-start sm:gap-2 m-auto">
-                <span className="break-words text-muted-foreground text-sm">
+            <div className="flex flex-wrap flex-col flex-1 gap-1 min-w-fit justify-start items-start sm:gap-2 m-auto">
+                <span className="break-all text-muted-foreground text-sm">
                     {title}
                 </span>
                 <span className="font-medium text-4xl text-foreground">

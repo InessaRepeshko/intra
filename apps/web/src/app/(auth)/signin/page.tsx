@@ -166,7 +166,7 @@ export default function LoginPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     disabled={isLoading}
-                                    className="text-center h-11 border-border/60 bg-background transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                    className="text-center h-11 border-border/60 rounded-xl bg-background transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                                 />
                             </div>
 
