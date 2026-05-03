@@ -115,8 +115,8 @@ export function CycleDashboard({
                         '-'
                     }
                     icon={FilePlus2}
-                    textColor="text-blue-300"
-                    width={200}
+                    color="text-blue-300"
+                    width={300}
                 />
                 <StatisticsCard
                     title={`Active`}
@@ -125,8 +125,8 @@ export function CycleDashboard({
                         '-'
                     }
                     icon={Hourglass}
-                    textColor="text-amber-300"
-                    width={200}
+                    color="text-amber-300"
+                    width={300}
                 />
                 <StatisticsCard
                     title={`Finished`}
@@ -139,8 +139,8 @@ export function CycleDashboard({
                         ) ?? '-'
                     }
                     icon={FileChartLine}
-                    textColor="text-green-300"
-                    width={200}
+                    color="text-green-300"
+                    width={300}
                 />
                 <StatisticsCard
                     title={`Archived`}
@@ -151,8 +151,8 @@ export function CycleDashboard({
                         ) ?? '-'
                     }
                     icon={Archive}
-                    textColor="text-zinc-300"
-                    width={200}
+                    color="text-zinc-300"
+                    width={300}
                 />
             </div>
 
@@ -266,18 +266,20 @@ export function CycleDashboard({
                                                         </div>
                                                     </div>
 
-                                                    <div className="flex flex-row items-center gap-2 flex-wrap justify-center lg:justify-end">
-                                                        <Progress
-                                                            value={
-                                                                totalReviewsInCycle >
-                                                                0
-                                                                    ? (completedReviewsInCycleCount /
-                                                                          totalReviewsInCycle) *
-                                                                      100
-                                                                    : 0
-                                                            }
-                                                            className="w-[200px] max-w-full rounded-full self-center"
-                                                        />
+                                                    <div className="flex flex-row items-center gap-y-2 gap-x-8 w-full sm:w-auto flex-wrap justify-center lg:justify-end">
+                                                        {stage === CycleStage.ACTIVE && (
+                                                            <Progress
+                                                                value={
+                                                                    totalReviewsInCycle >
+                                                                        0
+                                                                        ? (completedReviewsInCycleCount /
+                                                                            totalReviewsInCycle) *
+                                                                        100
+                                                                        : 0
+                                                                }
+                                                                className="w-[200px] max-w-full rounded-full self-center"
+                                                            />
+                                                        )}
                                                         <div className="flex flex-row items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
                                                             <NotebookTabs className="shrink-0 h-4 w-4 text-muted-foreground" />
                                                             <span className="font-medium text-foreground whitespace-nowrap flex gap-1">
@@ -292,7 +294,7 @@ export function CycleDashboard({
                                                                 ] ?? 0}
                                                             </span>
                                                             <span className="text-muted-foreground whitespace-nowrap">
-                                                                total reviews
+                                                                reviews
                                                             </span>
                                                         </div>
                                                         <Button

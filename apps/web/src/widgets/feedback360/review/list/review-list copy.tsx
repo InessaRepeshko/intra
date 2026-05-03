@@ -472,7 +472,7 @@ export function ReviewsList({ currentUser }: { currentUser: AuthContextType }) {
                             ) ?? '-'
                         }
                         icon={FilePlus2}
-                        textColor="text-blue-300"
+                        color="blue"
                         width={235}
                     />
                     <StatisticsCard
@@ -484,7 +484,7 @@ export function ReviewsList({ currentUser }: { currentUser: AuthContextType }) {
                             ) ?? '-'
                         }
                         icon={UserRound}
-                        textColor="text-teal-300"
+                        color="teal"
                         width={235}
                     />
                     <StatisticsCard
@@ -498,7 +498,7 @@ export function ReviewsList({ currentUser }: { currentUser: AuthContextType }) {
                             ) ?? '-'
                         }
                         icon={Hourglass}
-                        textColor="text-amber-300"
+                        color="amber"
                         width={235}
                     />
                     <StatisticsCard
@@ -513,7 +513,7 @@ export function ReviewsList({ currentUser }: { currentUser: AuthContextType }) {
                             ) ?? '-'
                         }
                         icon={SquareCheck}
-                        textColor="text-purple-300"
+                        color="purple"
                         width={235}
                     />
                     <StatisticsCard
@@ -525,7 +525,7 @@ export function ReviewsList({ currentUser }: { currentUser: AuthContextType }) {
                             ) ?? '-'
                         }
                         icon={FileUser}
-                        textColor="text-lime-300"
+                        color="lime"
                         width={235}
                     />
                     <StatisticsCard
@@ -537,7 +537,7 @@ export function ReviewsList({ currentUser }: { currentUser: AuthContextType }) {
                             ) ?? '-'
                         }
                         icon={Archive}
-                        textColor="text-zinc-300"
+                        color="zinc"
                         width={235}
                     />
                 </div>

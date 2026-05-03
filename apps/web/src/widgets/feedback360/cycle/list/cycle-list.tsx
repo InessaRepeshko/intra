@@ -20,20 +20,13 @@ import { CreateCycleForm } from '@features/feedback360/cycle/create/ui/CreateCyc
 import { DeleteCycleDialog } from '@features/feedback360/cycle/delete/ui/DeleteCycleDialog';
 import { ForceFinishCycleDialog } from '@features/feedback360/cycle/force-finish/ui/ForceFinishCycleDialog';
 import { Button } from '@shared/components/ui/button';
-import {
-    Card,
-    CardContent,
-} from '@shared/components/ui/card';
+import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';
 
 const ITEMS_PER_PAGE = 6;
 
-export function CycleList({
-    currentUser,
-}: {
-    currentUser: AuthContextType;
-}) {
+export function CycleList({ currentUser }: { currentUser: AuthContextType }) {
     const [search, setSearch] = useState('');
     const [stages, setStages] = useState<string[]>([]);
     const [dateRange, setDateRange] = useState<DateRange | undefined>(

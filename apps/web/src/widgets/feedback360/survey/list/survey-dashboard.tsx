@@ -204,22 +204,22 @@ export function SurveyDashboard({
                     title={`Pending Surveys`}
                     value={formatNumber(pendingSurveys.length) ?? '-'}
                     icon={Hourglass}
-                    textColor="text-yellow-300"
-                    width={200}
+                    color="text-yellow-300"
+                    width={300}
                 />
                 <StatisticsCard
                     title={`Completed Surveys`}
                     value={formatNumber(completedSurveys.length) ?? '-'}
                     icon={SquareCheck}
-                    textColor="text-lime-300"
-                    width={250}
+                    color="text-lime-300"
+                    width={300}
                 />
                 <StatisticsCard
                     title={`Self-Assessment Surveys`}
                     value={formatNumber(selfAssessmentSurveysCount) ?? '-'}
                     icon={UserRound}
-                    textColor="text-indigo-300"
-                    width={250}
+                    color="text-indigo-300"
+                    width={300}
                 />
             </div>
 
@@ -256,9 +256,7 @@ export function SurveyDashboard({
                             <CardDescription className="text-base">
                                 These{' '}
                                 <span className="font-semibold text-foreground">
-                                    {formatNumber(
-                                        pendingSurveys.length,
-                                    )}
+                                    {formatNumber(pendingSurveys.length)}
                                 </span>{' '}
                                 {pendingSurveys.length !== 1
                                     ? 'surveys are'
@@ -280,7 +278,7 @@ export function SurveyDashboard({
                                         return (
                                             <div
                                                 key={survey.review?.id}
-                                                className="flex flex-col lg:flex-row !flex-wrap items-stretch lg:items-center justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
+                                                className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
                                             >
                                                 <div className="flex flex-col sm:flex-row items-center gap-4 text-center min-w-[100px] w-full">
                                                     <Avatar className="h-20 w-20 border bg-muted shrink-0">
@@ -349,7 +347,7 @@ export function SurveyDashboard({
                                                     </div>
                                                 </div>
 
-                                                <div className="flex flex-row items-center gap-2 w-full flex-wrap justify-center sm:justify-end">
+                                                <div className="flex flex-row items-center gap-x-8 gap-y-2 w-full flex-wrap justify-center sm:justify-end">
                                                     <div className="flex items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
                                                         <AlarmClock className="shrink-0 h-4 w-4 text-muted-foreground" />
                                                         <span className="text-muted-foreground whitespace-nowrap">
@@ -359,11 +357,9 @@ export function SurveyDashboard({
                                                             {format(
                                                                 survey.cycle
                                                                     ?.responseDeadline ||
-                                                                    survey
-                                                                        .cycle
+                                                                    survey.cycle
                                                                         ?.reviewDeadline ||
-                                                                    survey
-                                                                        .cycle
+                                                                    survey.cycle
                                                                         ?.endDate ||
                                                                     '',
                                                                 'MMM dd, yyyy',
@@ -407,9 +403,7 @@ export function SurveyDashboard({
                             <CardDescription className="text-base">
                                 Your submitted{' '}
                                 <span className="font-semibold text-foreground">
-                                    {formatNumber(
-                                        completedSurveys.length,
-                                    )}
+                                    {formatNumber(completedSurveys.length)}
                                 </span>{' '}
                                 {completedSurveys.length !== 1
                                     ? 'feedback surveys'
@@ -424,99 +418,94 @@ export function SurveyDashboard({
                                         No completed surveys yet
                                     </div>
                                 ) : (
-                                    completedSurveys.map(
-                                        (survey) => (
-                                            <div
-                                                key={`${survey.review?.id}-${survey.respondent?.id}`}
-                                                className="flex flex-col lg:flex-row !flex-wrap items-stretch lg:items-center justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
-                                            >
-                                                <div className="flex flex-col sm:flex-row items-center gap-4 text-center min-w-[100px] w-full">
-                                                    <Avatar className="h-20 w-20 border bg-muted shrink-0">
-                                                        <AvatarImage
-                                                            className="object-cover"
-                                                            src={
-                                                                survey.ratee
-                                                                    ?.avatarUrl ||
-                                                                ''
-                                                            }
-                                                            alt={
+                                    completedSurveys.map((survey) => (
+                                        <div
+                                            key={`${survey.review?.id}-${survey.respondent?.id}`}
+                                            className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
+                                        >
+                                            <div className="flex flex-col sm:flex-row items-center gap-4 text-center min-w-[100px] w-full">
+                                                <Avatar className="h-20 w-20 border bg-muted shrink-0">
+                                                    <AvatarImage
+                                                        className="object-cover"
+                                                        src={
+                                                            survey.ratee
+                                                                ?.avatarUrl ||
+                                                            ''
+                                                        }
+                                                        alt={
+                                                            survey.review
+                                                                ?.rateeFullName
+                                                        }
+                                                    />
+                                                    <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
+                                                        {getUserInitialsFromFullName(
+                                                            survey.review
+                                                                ?.rateeFullName ??
+                                                                '',
+                                                        )}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <div className="space-y-1 flex-1 min-w-0 w-full">
+                                                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                                        <p className="font-medium text-lg text-foreground break-words">
+                                                            {
                                                                 survey.review
                                                                     ?.rateeFullName
                                                             }
-                                                        />
-                                                        <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
-                                                            {getUserInitialsFromFullName(
-                                                                survey.review
-                                                                    ?.rateeFullName ??
-                                                                    '',
-                                                            )}
-                                                        </AvatarFallback>
-                                                    </Avatar>
-                                                    <div className="space-y-1 flex-1 min-w-0 w-full">
-                                                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                                                            <p className="font-medium text-lg text-foreground break-words">
-                                                                {
-                                                                    survey
-                                                                        .review
-                                                                        ?.rateeFullName
-                                                                }
-                                                            </p>
-                                                            <CategoryBadge
-                                                                category={
-                                                                    survey
-                                                                        .respondent
-                                                                        ?.category ||
-                                                                    RespondentCategory.TEAM
-                                                                }
-                                                            />
-                                                        </div>
-                                                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-muted-foreground text-base">
-                                                            <span className="break-words">
-                                                                {
-                                                                    survey
-                                                                        .review
-                                                                        ?.rateePositionTitle
-                                                                }
-                                                            </span>
-                                                            {survey.review
-                                                                ?.teamTitle && (
-                                                                <>
-                                                                    <span className="hidden sm:inline">
-                                                                        •
-                                                                    </span>
-                                                                    <span className="break-words">
-                                                                        {
-                                                                            survey
-                                                                                .review
-                                                                                .teamTitle
-                                                                        }
-                                                                    </span>
-                                                                </>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex flex-row items-center gap-2 w-full flex-wrap justify-center sm:justify-end">
-                                                    <div className="flex items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
-                                                        <CheckCircle className="text-muted-foreground h-4 w-4 shrink-0" />
-                                                        <span className="text-muted-foreground whitespace-nowrap">
-                                                            Completed
-                                                        </span>
-                                                        <span className="text-foreground whitespace-nowrap">
-                                                            {format(
+                                                        </p>
+                                                        <CategoryBadge
+                                                            category={
                                                                 survey
                                                                     .respondent
-                                                                    ?.respondedAt ??
-                                                                    '',
-                                                                'MMM dd, yyyy',
-                                                            )}
+                                                                    ?.category ||
+                                                                RespondentCategory.TEAM
+                                                            }
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-muted-foreground text-base">
+                                                        <span className="break-words">
+                                                            {
+                                                                survey.review
+                                                                    ?.rateePositionTitle
+                                                            }
                                                         </span>
+                                                        {survey.review
+                                                            ?.teamTitle && (
+                                                            <>
+                                                                <span className="hidden sm:inline">
+                                                                    •
+                                                                </span>
+                                                                <span className="break-words">
+                                                                    {
+                                                                        survey
+                                                                            .review
+                                                                            .teamTitle
+                                                                    }
+                                                                </span>
+                                                            </>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
-                                        ),
-                                    )
+
+                                            <div className="flex flex-row items-center gap-2 w-full flex-wrap justify-center sm:justify-end">
+                                                <div className="flex items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
+                                                    <CheckCircle className="text-muted-foreground h-4 w-4 shrink-0" />
+                                                    <span className="text-muted-foreground whitespace-nowrap">
+                                                        Completed
+                                                    </span>
+                                                    <span className="text-foreground whitespace-nowrap">
+                                                        {format(
+                                                            survey.respondent
+                                                                ?.respondedAt ??
+                                                                '',
+                                                            'MMM dd, yyyy',
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
                                 )}
                             </div>
                         </CardContent>

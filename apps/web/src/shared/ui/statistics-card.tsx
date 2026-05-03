@@ -6,13 +6,13 @@ export function StatisticsCard({
     value,
     icon: Icon,
     width,
-    textColor,
+    color,
 }: {
     title: string;
     value: string | null | undefined;
     icon?: React.ElementType;
     width?: number;
-    textColor?: string;
+    color?: string;
 }) {
     if (!title || title === null) {
         return <span className="text-muted-foreground">None</span>;
@@ -36,7 +36,7 @@ export function StatisticsCard({
                     <Icon
                         className={cn(
                             'shrink-0 h-1/2 w-1/2',
-                            textColor ?? 'text-muted-foreground',
+                            color ? color : 'text-muted-foreground',
                         )}
                     />
                 )}

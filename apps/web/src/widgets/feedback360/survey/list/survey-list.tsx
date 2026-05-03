@@ -18,20 +18,13 @@ import {
 import { SurveysFilters } from '@entities/feedback360/survey/ui/surveys-filters';
 import { SurveysTable } from '@entities/feedback360/survey/ui/surveys-table';
 import { type AuthContextType } from '@entities/identity/user/model/types';
-import {
-    Card,
-    CardContent,
-} from '@shared/components/ui/card';
+import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';
 
 const ITEMS_PER_PAGE = 6;
 
-export function SurveyList({
-    currentUser,
-}: {
-    currentUser: AuthContextType;
-}) {
+export function SurveyList({ currentUser }: { currentUser: AuthContextType }) {
     void currentUser;
 
     const [search, setSearch] = useState('');

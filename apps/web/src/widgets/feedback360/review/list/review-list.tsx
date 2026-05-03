@@ -1,22 +1,7 @@
 'use client';
 
-import { format } from 'date-fns';
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
-
-import {
-    AlarmClock,
-    Archive,
-    Eye,
-    FilePlus2,
-    FileUser,
-    Hourglass,
-    MessageCircle,
-    Pencil,
-    SquareCheck,
-    UserRound,
-} from 'lucide-react';
-import Link from 'next/link';
 
 import { useCyclesQuery } from '@entities/feedback360/cycle/api/cycle.queries';
 import { CycleStage } from '@entities/feedback360/cycle/model/types';
@@ -36,38 +21,11 @@ import {
 } from '@entities/feedback360/review/model/types';
 import { ReviewsFilters } from '@entities/feedback360/review/ui/reviews-filters';
 import { ReviewsTable } from '@entities/feedback360/review/ui/reviews-table';
-import {
-    StageBadge,
-    stageConfig,
-} from '@entities/feedback360/review/ui/stage-badge';
 import { useUsersByUserIdsQuery } from '@entities/identity/user/api/user.queries';
 import { type AuthContextType } from '@entities/identity/user/model/types';
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-} from '@shared/components/ui/avatar';
-import { Button } from '@shared/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@shared/components/ui/card';
-import { Progress } from '@shared/components/ui/progress';
+import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from '@shared/components/ui/tabs';
-import { formatNumber } from '@shared/lib/utils/format-number';
-import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
-import { StatisticsCard } from '@shared/ui/statistics-card';
 import { TablePagination } from '@shared/ui/table-pagination';
-import { ReviewDashboard } from './review-dashboard';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -353,11 +311,11 @@ export function ReviewList({ currentUser }: { currentUser: AuthContextType }) {
                 case 'title':
                     return sortDirection === SortDirection.ASC
                         ? (a.rateeFullName ?? '').localeCompare(
-                            b.rateeFullName ?? '',
-                        )
+                              b.rateeFullName ?? '',
+                          )
                         : (b.rateeFullName ?? '').localeCompare(
-                            a.rateeFullName ?? '',
-                        );
+                              a.rateeFullName ?? '',
+                          );
                 case 'cycleTitle': {
                     const titleA = a.cycleId
                         ? (cycleTitles[a.cycleId] ?? '')
@@ -510,10 +468,10 @@ export function ReviewList({ currentUser }: { currentUser: AuthContextType }) {
                         isRespondentCountsLoading ||
                         isReviewerCountsLoading ||
                         isCycleTitlesLoading) && (
-                            <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
-                                <Spinner />
-                            </div>
-                        )}
+                        <div className="flex flex-col text-center items-center justify-center py-16 h-8 w-8 animate-spin text-muted-foreground">
+                            <Spinner />
+                        </div>
+                    )}
 
                     {/* Error State */}
                     {isError && (

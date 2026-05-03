@@ -2,7 +2,6 @@
 
 import { format } from 'date-fns';
 import { useMemo, useState } from 'react';
-import type { DateRange } from 'react-day-picker';
 
 import {
     AlarmClock,
@@ -22,17 +21,13 @@ import { useCyclesQuery } from '@entities/feedback360/cycle/api/cycle.queries';
 import { CycleStage } from '@entities/feedback360/cycle/model/types';
 import {
     useReviewAnswersCountsQuery,
-    useReviewCycleTitlesQuery,
-    useReviewQuestionCountsQuery,
     useReviewRespondentCountsQuery,
-    useReviewReviewerCountsQuery,
     useReviewsQuery,
 } from '@entities/feedback360/review/api/review.queries';
 import type { Review } from '@entities/feedback360/review/model/mappers';
 import {
     REVIEW_STAGE_ENUM_VALUES,
     ReviewStage,
-    SortDirection,
 } from '@entities/feedback360/review/model/types';
 import {
     StageBadge,
@@ -149,7 +144,9 @@ export function ReviewDashboard({
         return buckets;
     }, [allReviewsData, currentCycleIds]);
 
-    const dataExist = Object.values(reviewsByStage).some((reviews) => reviews.length > 0);
+    const dataExist = Object.values(reviewsByStage).some(
+        (reviews) => reviews.length > 0,
+    );
 
     return (
         <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
@@ -160,8 +157,8 @@ export function ReviewDashboard({
                         {isMyReviews
                             ? 'My Reviews Dashboard'
                             : isTeamReviews
-                                ? 'My Team Reviews Dashboard'
-                                : 'All Reviews Dashboard'}
+                              ? 'My Team Reviews Dashboard'
+                              : 'All Reviews Dashboard'}
                     </h1>
                     <p className="mt-1 text-muted-foreground">
                         Overview of reviews across all stages. You have{' '}
@@ -184,7 +181,7 @@ export function ReviewDashboard({
                         '-'
                     }
                     icon={FilePlus2}
-                    textColor="text-blue-300"
+                    color="text-blue-300"
                     width={200}
                 />
                 <StatisticsCard
@@ -195,7 +192,7 @@ export function ReviewDashboard({
                         ) ?? '-'
                     }
                     icon={UserRound}
-                    textColor="text-teal-300"
+                    color="text-teal-300"
                     width={250}
                 />
                 <StatisticsCard
@@ -204,11 +201,11 @@ export function ReviewDashboard({
                         formatNumber(
                             reviewsByStage[ReviewStage.WAITING_TO_START]
                                 .length +
-                            reviewsByStage[ReviewStage.IN_PROGRESS].length,
+                                reviewsByStage[ReviewStage.IN_PROGRESS].length,
                         ) ?? '-'
                     }
                     icon={Hourglass}
-                    textColor="text-amber-300"
+                    color="text-amber-300"
                     width={200}
                 />
                 <StatisticsCard
@@ -216,14 +213,14 @@ export function ReviewDashboard({
                     value={
                         formatNumber(
                             reviewsByStage[ReviewStage.FINISHED].length +
-                            reviewsByStage[ReviewStage.PREPARING_REPORT]
-                                .length +
-                            reviewsByStage[ReviewStage.PROCESSING_BY_HR]
-                                .length,
+                                reviewsByStage[ReviewStage.PREPARING_REPORT]
+                                    .length +
+                                reviewsByStage[ReviewStage.PROCESSING_BY_HR]
+                                    .length,
                         ) ?? '-'
                     }
                     icon={SquareCheck}
-                    textColor="text-purple-300"
+                    color="text-purple-300"
                     width={200}
                 />
                 <StatisticsCard
@@ -231,11 +228,11 @@ export function ReviewDashboard({
                     value={
                         formatNumber(
                             reviewsByStage[ReviewStage.PUBLISHED].length +
-                            reviewsByStage[ReviewStage.ANALYSIS].length,
+                                reviewsByStage[ReviewStage.ANALYSIS].length,
                         ) ?? '-'
                     }
                     icon={FileUser}
-                    textColor="text-lime-300"
+                    color="text-lime-300"
                     width={200}
                 />
                 <StatisticsCard
@@ -243,11 +240,11 @@ export function ReviewDashboard({
                     value={
                         formatNumber(
                             reviewsByStage[ReviewStage.ARCHIVED].length +
-                            reviewsByStage[ReviewStage.CANCELED].length,
+                                reviewsByStage[ReviewStage.CANCELED].length,
                         ) ?? '-'
                     }
                     icon={Archive}
-                    textColor="text-zinc-300"
+                    color="text-zinc-300"
                     width={200}
                 />
             </div>
@@ -258,7 +255,10 @@ export function ReviewDashboard({
                 onValueChange={(v) => setActiveTab(v as ReviewStage)}
                 className="w-full overflow-hidden"
             >
-                <TabsList className="flex flex-wrap h-auto justify-start gap-1 overflow-x-auto rounded-xl p-1" variant="default">
+                <TabsList
+                    className="flex flex-wrap h-auto justify-start gap-1 overflow-x-auto rounded-xl p-1"
+                    variant="default"
+                >
                     {REVIEW_STAGE_ENUM_VALUES.map((stage) => (
                         <TabsTrigger
                             key={stage}
@@ -306,7 +306,7 @@ export function ReviewDashboard({
                                             return (
                                                 <div
                                                     key={review.id}
-                                                    className="flex flex-col lg:flex-row !flex-wrap items-stretch lg:items-center justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
+                                                    className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
                                                 >
                                                     <div className="flex flex-col sm:flex-row items-center gap-2 text-center min-w-[100px] w-full">
                                                         <Avatar className="h-20 w-20 border bg-muted shrink-0">
@@ -361,31 +361,33 @@ export function ReviewDashboard({
                                                         </div>
                                                     </div>
 
-                                                    <div className="flex flex-row items-center gap-2 w-full flex-wrap justify-between lg:justify-end">
+                                                    <div className="flex flex-row items-center gap-x-8 gap-y-2 w-full flex-wrap justify-between lg:justify-end">
+                                                        {stage === ReviewStage.IN_PROGRESS && (
                                                         <Progress
                                                             value={
                                                                 ((answerCounts[
                                                                     review.id
                                                                 ] ?? 0) /
                                                                     (respondentCounts[
-                                                                        review.id
+                                                                        review
+                                                                            .id
                                                                     ] ?? 0)) *
                                                                 100
                                                             }
                                                             className="w-[200px] max-w-full rounded-full self-center"
-                                                        />
+                                                        />)}
                                                         <div className="flex flex-row items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
                                                             <MessageCircle className="shrink-0 h-4 w-4 text-muted-foreground" />
                                                             <span className="font-medium text-foreground whitespace-nowrap flex gap-1">
-                                                            {answerCounts[
-                                                                review.id
-                                                            ] ?? 0}
-                                                            <span className="text-muted-foreground">
-                                                                /
-                                                            </span>
-                                                            {respondentCounts[
-                                                                review.id
-                                                            ] ?? 0}
+                                                                {answerCounts[
+                                                                    review.id
+                                                                ] ?? 0}
+                                                                <span className="text-muted-foreground">
+                                                                    /
+                                                                </span>
+                                                                {respondentCounts[
+                                                                    review.id
+                                                                ] ?? 0}
                                                             </span>
                                                             <span className="text-muted-foreground whitespace-nowrap">
                                                                 answers
@@ -399,9 +401,9 @@ export function ReviewDashboard({
                                                             <span className="font-medium text-foreground whitespace-nowrap">
                                                                 {format(
                                                                     cycle?.responseDeadline ||
-                                                                    cycle?.reviewDeadline ||
-                                                                    cycle?.endDate ||
-                                                                    '',
+                                                                        cycle?.reviewDeadline ||
+                                                                        cycle?.endDate ||
+                                                                        '',
                                                                     'MMM dd, yyyy',
                                                                 )}
                                                             </span>
@@ -414,13 +416,13 @@ export function ReviewDashboard({
                                                                 href={`/feedback360/reviews/${review.id}`}
                                                             >
                                                                 {currentUser.isAdmin ||
-                                                                    currentUser.isHR ? (
+                                                                currentUser.isHR ? (
                                                                     <Pencil className="h-4 w-4" />
                                                                 ) : (
                                                                     <Eye className="h-4 w-4" />
                                                                 )}
                                                                 {currentUser.isAdmin ||
-                                                                    currentUser.isHR
+                                                                currentUser.isHR
                                                                     ? 'Edit'
                                                                     : 'View'}
                                                             </Link>

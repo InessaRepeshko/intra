@@ -3,11 +3,7 @@
 import { useState } from 'react';
 
 import { type AuthContextType } from '@entities/identity/user/model/types';
-import {
-    Tabs,
-    TabsList,
-    TabsTrigger,
-} from '@shared/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@shared/components/ui/tabs';
 
 import { CycleDashboard } from './cycle-dashboard';
 import { CycleList } from './cycle-list';

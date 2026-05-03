@@ -3,20 +3,12 @@
 import { useState } from 'react';
 
 import { type AuthContextType } from '@entities/identity/user/model/types';
-import {
-    Tabs,
-    TabsList,
-    TabsTrigger,
-} from '@shared/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@shared/components/ui/tabs';
 
 import { SurveyDashboard } from './survey-dashboard';
 import { SurveyList } from './survey-list';
 
-export function SurveysPage({
-    currentUser,
-}: {
-    currentUser: AuthContextType;
-}) {
+export function SurveysPage({ currentUser }: { currentUser: AuthContextType }) {
     const allTabs = [{ label: 'My Surveys', value: 'my_surveys' }];
 
     if (currentUser.isManager) {
@@ -62,14 +54,13 @@ export function SurveysPage({
                 )}
 
                 {/* My Team Surveys Dashboard (Manager only) */}
-                {currentUser.isManager &&
-                    activeTab === 'my_team_surveys' && (
-                        <SurveyDashboard
-                            currentUser={currentUser}
-                            isMySurveys={false}
-                            isMyTeamSurveys={true}
-                        />
-                    )}
+                {currentUser.isManager && activeTab === 'my_team_surveys' && (
+                    <SurveyDashboard
+                        currentUser={currentUser}
+                        isMySurveys={false}
+                        isMyTeamSurveys={true}
+                    />
+                )}
 
                 {/* All Surveys Table (Admin and HR only) */}
                 {(currentUser.isAdmin || currentUser.isHR) &&
