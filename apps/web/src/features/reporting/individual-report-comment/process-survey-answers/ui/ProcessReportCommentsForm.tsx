@@ -1,7 +1,11 @@
 'use client';
 
-import { AnswerType } from '@entities/feedback360/answer/model/types';
 import type { Answer } from '@entities/feedback360/answer/model/mappers';
+import {
+    AnswerType,
+    type RespondentCategory,
+} from '@entities/feedback360/answer/model/types';
+import { CategoryBadge } from '@entities/feedback360/respondent/ui/category-badge';
 import { useSurveyQuestionsQuery } from '@entities/feedback360/survey/api/review-question-relation.queries';
 import { useUserQuery } from '@entities/identity/user/api/user.queries';
 import {
@@ -24,21 +28,21 @@ import {
     CardHeader,
     CardTitle,
 } from '@shared/components/ui/card';
+import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
-import { Progress } from '@shared/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@shared/components/ui/radio-group';
 import { Skeleton } from '@shared/components/ui/skeleton';
 import { Textarea } from '@shared/components/ui/textarea';
 import { cn } from '@shared/lib/utils/cn';
 import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 import { useSidebar } from '@shared/ui/app-sidebar';
-import { MessageSquare, PanelLeft, RotateCcw, Send, X } from 'lucide-react';
+import { PanelLeft, Plus, RotateCcw, Send, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef } from 'react';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
-import { CategoryBadge } from '@entities/feedback360/respondent/ui/category-badge';
+
 import { useProcessReportCommentsMutation } from '../api/process-report-comments';
 import {
     processReportCommentsSchema,
@@ -53,6 +57,7 @@ interface QuestionGroup {
     questionId: number;
     questionTitle: string;
     answers: Answer[];
+    respondentCategories: RespondentCategory[];
 }
 
 const SENTIMENT_OPTIONS: Array<{
@@ -134,6 +139,9 @@ export function ProcessReportCommentsForm({
             const existing = groups.get(answer.questionId);
             if (existing) {
                 existing.answers.push(answer);
+                if (!existing.respondentCategories.includes(answer.respondentCategory)) {
+                    existing.respondentCategories.push(answer.respondentCategory);
+                }
                 continue;
             }
             groups.set(answer.questionId, {
@@ -142,26 +150,23 @@ export function ProcessReportCommentsForm({
                     questionTitleMap.get(answer.questionId) ??
                     `Question #${answer.questionId}`,
                 answers: [answer],
+                respondentCategories: [answer.respondentCategory],
             });
         }
         return Array.from(groups.values());
     }, [textAnswers, questionTitleMap]);
 
-    const orderedAnswers = useMemo<Answer[]>(() => {
-        return questionGroups.flatMap((group) => group.answers);
+    const respondentCategoriesByQuestion = useMemo(() => {
+        const map = new Map<number, RespondentCategory[]>();
+        for (const group of questionGroups) {
+            map.set(group.questionId, group.respondentCategories);
+        }
+        return map;
     }, [questionGroups]);
 
-    const indexByAnswerId = useMemo(() => {
-        const map = new Map<number, number>();
-        orderedAnswers.forEach((answer, index) => {
-            map.set(answer.id, index);
-        });
-        return map;
-    }, [orderedAnswers]);
-
-    const entriesShapeKey = useMemo(() => {
-        return `${reportId}:${orderedAnswers.map((a) => a.id).join(',')}`;
-    }, [reportId, orderedAnswers]);
+    const questionsShapeKey = useMemo(() => {
+        return `${reportId}:${questionGroups.map((g) => g.questionId).join(',')}`;
+    }, [reportId, questionGroups]);
 
     const form = useForm<ProcessReportCommentsValues>({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -171,33 +176,20 @@ export function ProcessReportCommentsForm({
     });
 
     const { reset, control, clearErrors } = form;
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: 'entries',
+    });
+
     const lastShapeKeyRef = useRef<string | null>(null);
 
     useEffect(() => {
-        if (entriesShapeKey === lastShapeKeyRef.current) {
+        if (questionsShapeKey === lastShapeKeyRef.current) {
             return;
         }
-        lastShapeKeyRef.current = entriesShapeKey;
-
-        if (orderedAnswers.length === 0) {
-            reset({ entries: [] });
-            return;
-        }
-
-        reset({
-            entries: orderedAnswers.map((answer) => ({
-                questionId: answer.questionId,
-                answerId: answer.id,
-                questionTitle:
-                    questionTitleMap.get(answer.questionId) ??
-                    `Question #${answer.questionId}`,
-                respondentCategory: answer.respondentCategory,
-                comment: '',
-                commentSentiment:
-                    undefined as unknown as CommentSentiment,
-            })),
-        });
-    }, [entriesShapeKey, orderedAnswers, questionTitleMap, reset]);
+        lastShapeKeyRef.current = questionsShapeKey;
+        reset({ entries: [] });
+    }, [questionsShapeKey, reset]);
 
     const watchedEntries =
         useWatch({ control, name: 'entries', defaultValue: [] }) ?? [];
@@ -211,15 +203,15 @@ export function ProcessReportCommentsForm({
             const hasSentiment =
                 entry.commentSentiment === CommentSentiment.POSITIVE ||
                 entry.commentSentiment === CommentSentiment.NEGATIVE;
-            return hasComment && hasSentiment ? acc + 1 : acc;
+            const hasMentions =
+                typeof entry.numberOfMentions === 'number' &&
+                Number.isInteger(entry.numberOfMentions) &&
+                entry.numberOfMentions >= 1;
+            return hasComment && hasSentiment && hasMentions ? acc + 1 : acc;
         }, 0);
     }, [watchedEntries]);
 
-    const totalEntries = orderedAnswers.length;
-    const progress =
-        totalEntries > 0
-            ? Math.round((completedCount / totalEntries) * 100)
-            : 0;
+    const totalEntries = watchedEntries.length;
     const isComplete = totalEntries > 0 && completedCount === totalEntries;
 
     const isInitialLoading =
@@ -230,7 +222,7 @@ export function ProcessReportCommentsForm({
 
     const onSubmit = (values: ProcessReportCommentsValues) => {
         submitMutation.mutate(
-            { reportId, values },
+            { reportId, values, respondentCategoriesByQuestion },
             {
                 onSuccess: () => {
                     router.push(`/reporting/individual-reports/${reportId}`);
@@ -240,22 +232,20 @@ export function ProcessReportCommentsForm({
     };
 
     const handleClearForm = () => {
-        if (orderedAnswers.length === 0) return;
-        reset({
-            entries: orderedAnswers.map((answer) => ({
-                questionId: answer.questionId,
-                answerId: answer.id,
-                questionTitle:
-                    questionTitleMap.get(answer.questionId) ??
-                    `Question #${answer.questionId}`,
-                respondentCategory: answer.respondentCategory,
-                comment: '',
-                commentSentiment:
-                    undefined as unknown as CommentSentiment,
-            })),
-        });
+        reset({ entries: [] });
         clearErrors();
         toast.success('All comments cleared');
+    };
+
+    const handleAddComment = (group: QuestionGroup) => {
+        append({
+            questionId: group.questionId,
+            questionTitle: group.questionTitle,
+            comment: '',
+            commentSentiment:
+                undefined as unknown as CommentSentiment,
+            numberOfMentions: 1,
+        });
     };
 
     if (isInitialLoading) {
@@ -292,6 +282,7 @@ export function ProcessReportCommentsForm({
     }
 
     const review = reviewQuery.data;
+    const hasQuestions = questionGroups.length > 0;
 
     return (
         <div className="flex flex-col my-2 mx-2 rounded-xl shadow-md min-w-[400px] w-full">
@@ -311,10 +302,7 @@ export function ProcessReportCommentsForm({
                         </button>
                         <div className="h-6 w-px bg-border" />
                         <div className="text-xl font-semibold tracking-tight text-foreground gap-2 flex items-center whitespace-wrap">
-                            <span className="hidden md:flex">
-                                Report Comments
-                            </span>
-                            <span>{`Report #${reportId}`}</span>
+                            <span className="line-clamp-1">{`Individual Report #${reportId} Comments`}</span>
                         </div>
                     </div>
                     <div className="hidden md:flex items-center justify-center gap-4 flex-1">
@@ -354,22 +342,19 @@ export function ProcessReportCommentsForm({
                     </div>
 
                     <div
-                        className={`flex items-center justify-end gap-3 overflow-hidden grow-0 m-auto ${totalEntries === 0 ? 'invisible' : ''}`}
+                        className={`flex items-center justify-end gap-3 overflow-hidden grow-0 m-auto ${!hasQuestions ? 'invisible' : ''}`}
                     >
                         <div className="hidden md:flex items-center justify-end gap-2">
-                            <Progress
-                                value={progress}
-                                id={String(reportId)}
-                                indicatorClassName="bg-primary"
-                                className="h-2 w-[100px]"
-                                aria-label={`Progress ${progress}%`}
-                            />
-                            <span className="text-sm text-muted-foreground flex whitespace-nowrap justify-center w-[100px] gap-1">
+                            <span className="text-sm text-muted-foreground flex whitespace-nowrap justify-center gap-1">
                                 <span>
                                     {completedCount}/{totalEntries}
                                 </span>
                                 <span>·</span>
-                                <span>{progress}%</span>
+                                <span>
+                                    {totalEntries === 1
+                                        ? 'comment'
+                                        : 'comments'}
+                                </span>
                             </span>
                         </div>
                         <Button
@@ -386,7 +371,7 @@ export function ProcessReportCommentsForm({
                 </header>
 
                 <div className="mx-auto min-w-[350px] w-full max-w-4xl p-8">
-                    {totalEntries === 0 ? (
+                    {!hasQuestions ? (
                         <div className="border-border bg-card py-12 text-center">
                             <h3 className="text-lg font-semibold text-foreground">
                                 No text responses to process
@@ -398,178 +383,291 @@ export function ProcessReportCommentsForm({
                         </div>
                     ) : (
                         <>
-                            {questionGroups.map((group, groupIndex) => (
-                                <Card
-                                    key={group.questionId}
-                                    className="mb-6 border-border bg-card min-w-[350px] w-full overflow-hidden"
-                                >
-                                    <CardHeader>
-                                        <div className="flex items-center gap-3">
-                                            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-lg font-semibold text-primary">
-                                                {groupIndex + 1}
-                                            </span>
-                                            <div>
-                                                <CardTitle className="flex items-center gap-2 text-lg text-foreground">
-                                                    {group.questionTitle}
-                                                </CardTitle>
-                                                <CardDescription>
-                                                    {group.answers.length}{' '}
-                                                    {group.answers.length === 1
-                                                        ? 'response'
-                                                        : 'responses'}
-                                                </CardDescription>
+                            {questionGroups.map((group, groupIndex) => {
+                                const groupEntryIndices: number[] = [];
+                                fields.forEach((field, idx) => {
+                                    if (field.questionId === group.questionId) {
+                                        groupEntryIndices.push(idx);
+                                    }
+                                });
+
+                                return (
+                                    <Card
+                                        key={group.questionId}
+                                        className="mb-6 border-border bg-card min-w-[350px] w-full overflow-hidden"
+                                    >
+                                        <CardHeader>
+                                            <div className="flex items-center gap-3">
+                                                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-lg font-semibold text-primary">
+                                                    {groupIndex + 1}
+                                                </span>
+                                                <div>
+                                                    <CardTitle className="flex items-center gap-2 text-lg text-foreground">
+                                                        {group.questionTitle}
+                                                    </CardTitle>
+                                                    <CardDescription>
+                                                        {group.answers.length}{' '}
+                                                        {group.answers.length === 1
+                                                            ? 'response'
+                                                            : 'responses'}
+                                                    </CardDescription>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className="space-y-6">
-                                        {group.answers.map((answer, answerIdx) => {
-                                            const formIndex =
-                                                indexByAnswerId.get(answer.id);
-                                            if (formIndex === undefined) {
-                                                return null;
-                                            }
-                                            const fieldError =
-                                                form.formState.errors
-                                                    .entries?.[formIndex];
-                                            return (
-                                                <div
-                                                    key={answer.id}
-                                                    className="space-y-3 rounded-xl border border-border bg-secondary/20 p-4"
-                                                >
-                                                    <div className="flex items-center justify-start gap-2 flex-wrap">
-                                                        <span className="text-sm text-foreground">
-                                                            #{answerIdx + 1}
-                                                        </span>
-                                                        <span className="text-sm text-muted-foreground">
-                                                            {' '}answer in category
-                                                        </span>
-                                                        <CategoryBadge category={answer.respondentCategory} />
-                                                    </div>
-                                                    <p className="text-foreground whitespace-pre-wrap text-sm p-3 bg-slate-100 border-l-4 border-l-slate-300">
-                                                        {answer.textValue}
-                                                    </p>
-
-                                                    <div className="space-y-3 border-border pt-5">
-                                                        <Label
-                                                            htmlFor={`comment-${answer.id}`}
-                                                            className="text-foreground"
+                                        </CardHeader>
+                                        <CardContent className="space-y-6">
+                                            <div className="space-y-3">
+                                                {group.answers.map(
+                                                    (answer, answerIdx) => (
+                                                        <div
+                                                            key={answer.id}
+                                                            className="space-y-2 rounded-xl border border-border bg-secondary/20 p-4"
                                                         >
-                                                            Analyst comment
-                                                        </Label>
-                                                        <Textarea
-                                                            id={`comment-${answer.id}`}
-                                                            placeholder="Enter analyst comment..."
-                                                            className="min-h-32 resize-none border-border bg-background text-foreground placeholder:text-muted-foreground"
-                                                            {...form.register(
-                                                                `entries.${formIndex}.comment`,
-                                                            )}
-                                                        />
-                                                        {fieldError &&
-                                                            'comment' in
-                                                                fieldError && (
-                                                                <p className="text-sm text-destructive">
-                                                                    {fieldError
-                                                                        .comment
-                                                                        ?.message ??
-                                                                        'Please provide a comment'}
-                                                                </p>
-                                                            )}
+                                                            <div className="flex items-center justify-start gap-2 flex-wrap">
+                                                                <span className="text-sm text-foreground">
+                                                                    #{answerIdx + 1}
+                                                                </span>
+                                                                <span className="text-sm text-muted-foreground">
+                                                                    {' '}answer in category
+                                                                </span>
+                                                                <CategoryBadge
+                                                                    category={
+                                                                        answer.respondentCategory
+                                                                    }
+                                                                />
+                                                            </div>
+                                                            <p className="text-foreground whitespace-pre-wrap text-sm p-3 bg-slate-100 border-l-4 border-l-slate-300">
+                                                                {answer.textValue}
+                                                            </p>
+                                                        </div>
+                                                    ),
+                                                )}
+                                            </div>
 
-                                                        <Label className="text-foreground">
-                                                            Sentiment
-                                                        </Label>
-                                                        <Controller
-                                                            control={
-                                                                form.control
-                                                            }
-                                                            name={`entries.${formIndex}.commentSentiment`}
-                                                            render={({
-                                                                field,
-                                                            }) => {
-                                                                const currentValue =
-                                                                    field.value ??
-                                                                    '';
-                                                                return (
-                                                                    <RadioGroup
-                                                                        value={
-                                                                            currentValue
+                                            <div className="space-y-4 border-t border-border pt-5">
+                                                <div className="flex items-center justify-between gap-2 flex-wrap">
+                                                    <h4 className="text-sm font-semibold text-foreground">
+                                                        Analyst comments
+                                                    </h4>
+                                                    <span className="text-xs text-muted-foreground">
+                                                        {groupEntryIndices.length}{' '}
+                                                        added
+                                                    </span>
+                                                </div>
+
+                                                {groupEntryIndices.length === 0 ? (
+                                                    <p className="text-sm text-muted-foreground">
+                                                        No comments yet. Click
+                                                        "Add comment" below to
+                                                        create one.
+                                                    </p>
+                                                ) : (
+                                                    groupEntryIndices.map(
+                                                        (
+                                                            entryIndex,
+                                                            localIdx,
+                                                        ) => {
+                                                            const fieldId =
+                                                                fields[
+                                                                    entryIndex
+                                                                ]?.id ??
+                                                                `${group.questionId}-${localIdx}`;
+                                                            const fieldError =
+                                                                form.formState
+                                                                    .errors
+                                                                    .entries?.[
+                                                                    entryIndex
+                                                                ];
+                                                            return (
+                                                                <div
+                                                                    key={fieldId}
+                                                                    className="space-y-3 rounded-xl border border-border bg-background p-4"
+                                                                >
+                                                                    <div className="flex items-center justify-between gap-2">
+                                                                        <Label
+                                                                            htmlFor={`comment-${fieldId}`}
+                                                                            className="text-foreground"
+                                                                        >
+                                                                            Comment #
+                                                                            {localIdx +
+                                                                                1}
+                                                                        </Label>
+                                                                        <Button
+                                                                            type="button"
+                                                                            variant="ghost"
+                                                                            size="sm"
+                                                                            className="text-muted-foreground hover:text-destructive"
+                                                                            onClick={() =>
+                                                                                remove(
+                                                                                    entryIndex,
+                                                                                )
+                                                                            }
+                                                                            aria-label="Remove comment"
+                                                                        >
+                                                                            <Trash2 className="h-4 w-4" />
+                                                                        </Button>
+                                                                    </div>
+                                                                    <Textarea
+                                                                        id={`comment-${fieldId}`}
+                                                                        placeholder="Enter analyst comment..."
+                                                                        className="min-h-32 resize-none border-border bg-secondary/30 text-foreground placeholder:text-muted-foreground"
+                                                                        {...form.register(
+                                                                            `entries.${entryIndex}.comment`,
+                                                                        )}
+                                                                    />
+                                                                    {fieldError &&
+                                                                        'comment' in
+                                                                            fieldError && (
+                                                                            <p className="text-sm text-destructive">
+                                                                                {fieldError
+                                                                                    .comment
+                                                                                    ?.message ??
+                                                                                    'Please provide a comment'}
+                                                                            </p>
+                                                                        )}
+
+                                                                    <Label className="text-foreground">
+                                                                        Sentiment
+                                                                    </Label>
+                                                                    <Controller
+                                                                        control={
+                                                                            form.control
                                                                         }
-                                                                        onValueChange={(
-                                                                            value,
-                                                                        ) =>
-                                                                            field.onChange(
-                                                                                value as CommentSentiment,
-                                                                            )
-                                                                        }
-                                                                        className="flex gap-2"
+                                                                        name={`entries.${entryIndex}.commentSentiment`}
+                                                                        render={({
+                                                                            field,
+                                                                        }) => {
+                                                                            const currentValue =
+                                                                                field.value ??
+                                                                                '';
+                                                                            return (
+                                                                                <RadioGroup
+                                                                                    value={
+                                                                                        currentValue
+                                                                                    }
+                                                                                    onValueChange={(
+                                                                                        value,
+                                                                                    ) =>
+                                                                                        field.onChange(
+                                                                                            value as CommentSentiment,
+                                                                                        )
+                                                                                    }
+                                                                                    className="flex gap-2"
+                                                                                >
+                                                                                    {SENTIMENT_OPTIONS.map(
+                                                                                        (
+                                                                                            option,
+                                                                                        ) => {
+                                                                                            const inputId = `${fieldId}-${option.value}`;
+                                                                                            const isSelected =
+                                                                                                currentValue ===
+                                                                                                option.value;
+                                                                                            return (
+                                                                                                <div
+                                                                                                    key={
+                                                                                                        option.value
+                                                                                                    }
+                                                                                                    className="relative flex-1"
+                                                                                                >
+                                                                                                    <RadioGroupItem
+                                                                                                        value={
+                                                                                                            option.value
+                                                                                                        }
+                                                                                                        id={
+                                                                                                            inputId
+                                                                                                        }
+                                                                                                        className={cn(
+                                                                                                            'peer absolute inset-0 z-10 h-full w-full cursor-pointer',
+                                                                                                            'border-0 bg-transparent opacity-0',
+                                                                                                            'focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                                                                                                        )}
+                                                                                                    />
+                                                                                                    <div
+                                                                                                        className={cn(
+                                                                                                            'pointer-events-none flex h-12 flex-col items-center justify-center rounded-xl border text-sm font-medium transition-all',
+                                                                                                            'peer-focus-visible:border-ring peer-focus-visible:ring-2 peer-focus-visible:ring-ring/25',
+                                                                                                            isSelected
+                                                                                                                ? 'border-primary bg-white/15 text-primary shadow-sm ring-1 ring-primary/25'
+                                                                                                                : 'border-border bg-secondary/30 text-muted-foreground',
+                                                                                                        )}
+                                                                                                        aria-hidden
+                                                                                                    >
+                                                                                                        {
+                                                                                                            option.label
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            );
+                                                                                        },
+                                                                                    )}
+                                                                                </RadioGroup>
+                                                                            );
+                                                                        }}
+                                                                    />
+                                                                    {fieldError &&
+                                                                        'commentSentiment' in
+                                                                            fieldError && (
+                                                                            <p className="text-sm text-destructive">
+                                                                                {fieldError
+                                                                                    .commentSentiment
+                                                                                    ?.message ??
+                                                                                    'Please select sentiment'}
+                                                                            </p>
+                                                                        )}
+
+                                                                    <Label
+                                                                        htmlFor={`mentions-${fieldId}`}
+                                                                        className="text-foreground"
                                                                     >
-                                                                        {SENTIMENT_OPTIONS.map(
-                                                                            (
-                                                                                option,
-                                                                            ) => {
-                                                                                const inputId = `${answer.id}-${option.value}`;
-                                                                                const isSelected =
-                                                                                    currentValue ===
-                                                                                    option.value;
-                                                                                return (
-                                                                                    <div
-                                                                                        key={
-                                                                                            option.value
-                                                                                        }
-                                                                                        className="relative flex-1"
-                                                                                    >
-                                                                                        <RadioGroupItem
-                                                                                            value={
-                                                                                                option.value
-                                                                                            }
-                                                                                            id={
-                                                                                                inputId
-                                                                                            }
-                                                                                            className={cn(
-                                                                                                'peer absolute inset-0 z-10 h-full w-full cursor-pointer',
-                                                                                                'border-0 bg-transparent opacity-0',
-                                                                                                'focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-                                                                                            )}
-                                                                                        />
-                                                                                        <div
-                                                                                            className={cn(
-                                                                                                'pointer-events-none flex h-12 flex-col items-center justify-center rounded-xl border text-sm font-medium transition-all',
-                                                                                                'peer-focus-visible:border-ring peer-focus-visible:ring-2 peer-focus-visible:ring-ring/25',
-                                                                                                isSelected
-                                                                                                    ? 'border-primary bg-white/15 text-primary shadow-sm ring-1 ring-primary/25'
-                                                                                                    : 'border-border bg-secondary/30 text-muted-foreground',
-                                                                                            )}
-                                                                                            aria-hidden
-                                                                                        >
-                                                                                            {
-                                                                                                option.label
-                                                                                            }
-                                                                                        </div>
-                                                                                    </div>
-                                                                                );
+                                                                        Number of mentions
+                                                                    </Label>
+                                                                    <Input
+                                                                        id={`mentions-${fieldId}`}
+                                                                        type="number"
+                                                                        min={1}
+                                                                        step={1}
+                                                                        inputMode="numeric"
+                                                                        defaultValue={1}
+                                                                        className="w-32 border-border bg-secondary/30 text-foreground placeholder:text-muted-foreground"
+                                                                        {...form.register(
+                                                                            `entries.${entryIndex}.numberOfMentions`,
+                                                                            {
+                                                                                valueAsNumber:
+                                                                                    true,
                                                                             },
                                                                         )}
-                                                                    </RadioGroup>
-                                                                );
-                                                            }}
-                                                        />
-                                                        {fieldError &&
-                                                            'commentSentiment' in
-                                                                fieldError && (
-                                                                <p className="text-sm text-destructive">
-                                                                    {fieldError
-                                                                        .commentSentiment
-                                                                        ?.message ??
-                                                                        'Please select sentiment'}
-                                                                </p>
-                                                            )}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </CardContent>
-                                </Card>
-                            ))}
+                                                                    />
+                                                                    {fieldError &&
+                                                                        'numberOfMentions' in
+                                                                            fieldError && (
+                                                                            <p className="text-sm text-destructive">
+                                                                                {fieldError
+                                                                                    .numberOfMentions
+                                                                                    ?.message ??
+                                                                                    'Please enter a valid number of mentions'}
+                                                                            </p>
+                                                                        )}
+                                                                </div>
+                                                            );
+                                                        },
+                                                    )
+                                                )}
+
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    className="w-full border-dashed border-border text-foreground hover:bg-secondary rounded-xl"
+                                                    onClick={() =>
+                                                        handleAddComment(group)
+                                                    }
+                                                >
+                                                    <Plus className="mr-2 h-4 w-4" />
+                                                    Add comment
+                                                </Button>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                );
+                            })}
 
                             <div className="flex flex-wrap justify-end gap-4 pb-8">
                                 <Button
@@ -588,7 +686,7 @@ export function ProcessReportCommentsForm({
                                     className="border-border text-foreground hover:bg-secondary rounded-xl"
                                     onClick={() =>
                                         router.push(
-                                            `/reporting/individual-reports/${reportId}`,
+                                            `/reporting/individual-reports/comments`,
                                         )
                                     }
                                 >

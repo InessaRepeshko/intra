@@ -32,6 +32,19 @@ export function IndividualReportAnalyticsTable({
         })
         .map((a, index) => ({ ...a, num: index + 1 }));
 
+    if (sortedAnalytics.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="rounded-full bg-muted p-4">
+                    <Users className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="mt-4 text-lg font-semibold text-foreground">
+                    No report analytics found
+                </h3>
+            </div>
+        );
+    }
+
     sortedAnalytics.push({
         num: -1,
         id: -1,
@@ -314,18 +327,7 @@ export function IndividualReportAnalyticsTable({
 
     const columns = Object.keys(COLUMNS);
 
-    if (sortedAnalytics.length === 0) {
-        return (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="rounded-full bg-muted p-4">
-                    <Users className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <h3 className="mt-4 text-lg font-semibold text-foreground">
-                    No report analytics found
-                </h3>
-            </div>
-        );
-    }
+
 
     return (
         <>

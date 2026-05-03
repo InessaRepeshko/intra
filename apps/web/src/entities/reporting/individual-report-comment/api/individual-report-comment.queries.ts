@@ -54,7 +54,7 @@ export function useAllReportCommentsQuery(reportIds: number[]) {
     const reportComments: Record<number, ReportComment[]> = {};
     reportIds.forEach((reportId, index) => {
         const result = queries[index];
-        if (result.isSuccess && result.data !== undefined) {
+        if (result.isSuccess && Array.isArray(result.data)) {
             reportComments[reportId] = result.data.map(
                 mapReportCommentDtoToModel,
             );
@@ -190,7 +190,7 @@ export function useAllReportAnswersQuery(reviewIds: number[]) {
     const answers: Record<number, Answer[]> = {};
     reviewIds.forEach((reportId, index) => {
         const result = queries[index];
-        if (result.isSuccess && result.data !== undefined) {
+        if (result.isSuccess && Array.isArray(result.data)) {
             answers[reportId] = result.data.map(mapAnswerDtoToModel);
         }
     });

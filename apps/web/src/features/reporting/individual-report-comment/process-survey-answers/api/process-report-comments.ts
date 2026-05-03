@@ -1,3 +1,4 @@
+import type { RespondentCategory } from '@entities/feedback360/answer/model/types';
 import { createReportComment } from '@entities/reporting/individual-report-comment/api/individual-report-comment.api';
 import { commentKeys } from '@entities/reporting/individual-report-comment/api/individual-report-comment.queries';
 import type { CreateReportCommentPayload } from '@entities/reporting/individual-report-comment/model/types';
@@ -9,20 +10,23 @@ import type { ProcessReportCommentsValues } from '../model/process-comments-sche
 interface ProcessReportCommentsVariables {
     reportId: number;
     values: ProcessReportCommentsValues;
+    respondentCategoriesByQuestion: Map<number, RespondentCategory[]>;
 }
 
 function buildReportCommentPayloads(
     reportId: number,
     values: ProcessReportCommentsValues,
+    respondentCategoriesByQuestion: Map<number, RespondentCategory[]>,
 ): CreateReportCommentPayload[] {
     return values.entries.map((entry) => ({
         reportId,
         questionId: entry.questionId,
         questionTitle: entry.questionTitle,
         comment: entry.comment.trim(),
-        respondentCategories: [entry.respondentCategory],
+        respondentCategories:
+            respondentCategoriesByQuestion.get(entry.questionId) ?? [],
         commentSentiment: entry.commentSentiment,
-        numberOfMentions: 1,
+        numberOfMentions: entry.numberOfMentions,
     }));
 }
 
@@ -33,8 +37,13 @@ export function useProcessReportCommentsMutation() {
         mutationFn: async ({
             reportId,
             values,
+            respondentCategoriesByQuestion,
         }: ProcessReportCommentsVariables) => {
-            const payloads = buildReportCommentPayloads(reportId, values);
+            const payloads = buildReportCommentPayloads(
+                reportId,
+                values,
+                respondentCategoriesByQuestion,
+            );
 
             await Promise.all(
                 payloads.map((payload) =>

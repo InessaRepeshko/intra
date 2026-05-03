@@ -1,4 +1,3 @@
-import { RespondentCategory } from '@entities/feedback360/answer/model/types';
 import {
     CommentSentiment,
     REPORT_COMMENT_CONSTRAINTS,
@@ -7,9 +6,7 @@ import { z } from 'zod';
 
 const reportCommentEntrySchema = z.object({
     questionId: z.coerce.number().int().positive(),
-    answerId: z.coerce.number().int().positive(),
     questionTitle: z.string().min(1),
-    respondentCategory: z.nativeEnum(RespondentCategory),
     comment: z
         .string()
         .trim()
@@ -24,10 +21,14 @@ const reportCommentEntrySchema = z.object({
     commentSentiment: z.nativeEnum(CommentSentiment, {
         message: 'Please select sentiment',
     }),
+    numberOfMentions: z.coerce
+        .number({ message: 'Please enter a number' })
+        .int('Mentions must be an integer')
+        .min(1, 'Mentions must be at least 1'),
 });
 
 export const processReportCommentsSchema = z.object({
-    entries: z.array(reportCommentEntrySchema),
+    entries: z.array(reportCommentEntrySchema).min(1, 'Add at least one comment'),
 });
 
 export type ProcessReportCommentsValues = z.infer<
