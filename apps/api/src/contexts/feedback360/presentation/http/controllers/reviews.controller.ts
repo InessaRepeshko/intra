@@ -78,6 +78,12 @@ export class ReviewController {
     }
 
     @Get()
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'List Reviews' })
     @ApiQuery({ type: ReviewQueryDto })
     @ApiResponse({
@@ -87,8 +93,11 @@ export class ReviewController {
         description: 'Default sort by ascending id',
     })
     @ApiListReadErrorResponses()
-    async search(@Query() query: ReviewQueryDto): Promise<ReviewResponse[]> {
-        const items = await this.reviews.search(query);
+    async search(
+        @Query() query: ReviewQueryDto,
+        @CurrentUser() actor: UserDomain,
+    ): Promise<ReviewResponse[]> {
+        const items = await this.reviews.search(query, actor);
         return items.map(ReviewHttpMapper.toResponse);
     }
 
@@ -318,6 +327,12 @@ export class ReviewController {
     }
 
     @Get(':id/respondents')
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'List respondents to Review' })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
     @ApiQuery({ type: RespondentQueryDto })
@@ -331,8 +346,13 @@ export class ReviewController {
     async listRespondents(
         @Param('id') id: string,
         @Query() query: RespondentQueryDto,
+        @CurrentUser() actor: UserDomain,
     ): Promise<RespondentResponse[]> {
-        const relations = await this.reviews.listRespondents(Number(id), query);
+        const relations = await this.reviews.listRespondents(
+            Number(id),
+            query,
+            actor,
+        );
         return relations.map(RespondentHttpMapper.toResponse);
     }
 

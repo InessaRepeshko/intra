@@ -20,12 +20,15 @@ export function ApiReadErrorResponses() {
     return applyDecorators(
         ApiNotFoundResponse({ description: 'Not found' }),
         ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+        ApiForbiddenResponse({ description: 'Forbidden' }),
     );
 }
 
 export function ApiListReadErrorResponses() {
     return applyDecorators(
+        ApiNotFoundResponse({ description: 'Not found' }),
         ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+        ApiForbiddenResponse({ description: 'Forbidden' }),
     );
 }
 

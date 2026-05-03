@@ -37,3 +37,12 @@ export interface AuthUser {
     positionTitle?: string;
     teamTitle?: string;
 }
+
+export interface AuthContextType {
+    user: AuthUser;
+    hasRole: (...roles: IdentityRole[]) => boolean;
+    isAdmin: boolean;
+    isHR: boolean;
+    isManager: boolean;
+    isEmployee: boolean;
+}

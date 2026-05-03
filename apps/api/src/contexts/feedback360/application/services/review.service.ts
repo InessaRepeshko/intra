@@ -140,8 +140,25 @@ export class ReviewService {
         return this.getById(created.id!);
     }
 
-    async search(query: ReviewSearchQuery): Promise<ReviewDomain[]> {
-        return this.reviews.search(query);
+    async search(
+        query: ReviewSearchQuery,
+        actor?: UserDomain,
+    ): Promise<ReviewDomain[]> {
+        const reviews = await this.reviews.search(query);
+
+        const filteredReviews = (
+            await Promise.all(
+                reviews.map(async (review) => {
+                    const hasAccessToReview = await this.hasAccessToReadReview(
+                        review,
+                        actor,
+                    );
+                    return hasAccessToReview ? review : undefined;
+                }),
+            )
+        ).filter((review) => review !== undefined);
+
+        return filteredReviews;
     }
 
     async getById(id: number, actor?: UserDomain): Promise<ReviewDomain> {
@@ -186,6 +203,32 @@ export class ReviewService {
         throw new ForbiddenException(
             'You do not have permission to view this review',
         );
+    }
+
+    private async hasAccessToReadReview(
+        review: ReviewDomain,
+        actor?: UserDomain,
+    ): Promise<boolean> {
+        if (!actor) return false;
+
+        const isAdminOrHr =
+            actor?.roles?.includes(IdentityRole.ADMIN) ||
+            actor?.roles?.includes(IdentityRole.HR);
+
+        if (isAdminOrHr) return true;
+
+        const isManagerOfReview = review.managerId === actor.id;
+        const isRateeOfReview = review.rateeId === actor.id;
+
+        if (isManagerOfReview || isRateeOfReview) return true;
+
+        const reviewers = await this.reviewers.listByReview(review.id!, {
+            reviewerId: actor.id,
+        });
+
+        if (reviewers.length > 0) return true;
+
+        return false;
     }
 
     /**
@@ -653,8 +696,16 @@ export class ReviewService {
     async listRespondents(
         reviewId: number,
         query: RespondentSearchQuery,
+        actor?: UserDomain,
     ): Promise<RespondentDomain[]> {
-        await this.getById(reviewId);
+        const review = await this.getById(reviewId);
+
+        if (!this.hasAccessToReadReview(review, actor)) {
+            throw new ForbiddenException(
+                'You do not have permission to view this review',
+            );
+        }
+
         return this.respondents.listByReview(reviewId, query);
     }
 

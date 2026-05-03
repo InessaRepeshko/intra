@@ -61,6 +61,12 @@ export class CyclesController {
     }
 
     @Get()
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'List 360-Feedback cycles' })
     @ApiQuery({ type: CycleQueryDto })
     @ApiResponse({
@@ -76,6 +82,12 @@ export class CyclesController {
     }
 
     @Get(':id')
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'Get 360-Feedback cycle by id' })
     @ApiParam({ name: 'id', description: 'Cycle id', type: 'number' })
     @ApiResponse({ status: HttpStatus.OK, type: CycleResponse })

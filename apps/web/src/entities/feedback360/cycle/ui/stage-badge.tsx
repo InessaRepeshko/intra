@@ -27,7 +27,7 @@ export const stageConfig: Record<
     },
     [CycleStage.ARCHIVED]: {
         label: 'Archived',
-        className: 'bg-gray-100 text-gray-600 border-gray-200',
+        className: 'bg-zinc-100 text-zinc-800 border-zinc-300',
     },
     [CycleStage.CANCELED]: {
         label: 'Canceled',

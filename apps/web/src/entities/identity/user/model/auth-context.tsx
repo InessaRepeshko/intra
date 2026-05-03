@@ -3,19 +3,11 @@
 import { useMeQuery } from '@entities/identity/user/api/user.queries';
 import {
     IdentityRole,
+    type AuthContextType,
     type AuthUser,
 } from '@entities/identity/user/model/types';
 import { useRouter } from 'next/navigation';
 import { createContext, useContext, useEffect, type ReactNode } from 'react';
-
-interface AuthContextType {
-    user: AuthUser;
-    hasRole: (...roles: IdentityRole[]) => boolean;
-    isAdmin: boolean;
-    isHR: boolean;
-    isManager: boolean;
-    isEmployee: boolean;
-}
 
 const AuthContext = createContext<AuthContextType | null>(null);
 

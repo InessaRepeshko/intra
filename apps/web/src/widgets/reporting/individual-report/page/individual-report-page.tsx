@@ -10,7 +10,6 @@ import { EntityType } from '@entities/reporting/individual-report/model/types';
 import { IndividualReportAnalyticsTable } from '@entities/reporting/individual-report/ui/individual-report-analytics-table';
 import { IndividualReportCycleStatsCard } from '@entities/reporting/individual-report/ui/individual-report-cycle-stats-card';
 import { IndividualReportStatsCard } from '@entities/reporting/individual-report/ui/individual-report-stats-card';
-import { RateeHorisontalCard } from '@shared/ui/ratee-horisontal-card';
 import {
     Card,
     CardContent,
@@ -25,6 +24,7 @@ import { CompetenceRadarChart } from '@shared/ui/competence-radar-chart';
 import { CompetenceRadialChart } from '@shared/ui/competencies-radial-chart';
 import { CompetenciesRadialChartsGroup } from '@shared/ui/competencies-radial-charts-group';
 import { EntityInsightCards } from '@shared/ui/entity-insight-cards';
+import { RateeHorisontalCard } from '@shared/ui/ratee-horisontal-card';
 import { notFound } from 'next/navigation';
 
 export function IndividualReportPage({ reportId }: { reportId: number }) {

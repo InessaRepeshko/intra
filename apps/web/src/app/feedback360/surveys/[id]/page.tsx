@@ -2,10 +2,8 @@
 
 import { RespondentCategory } from '@entities/feedback360/answer/model/types';
 import { SubmitSurveyForm } from '@features/feedback360/survey/submit-form/ui/SubmitSurveyForm';
-import { useSearchParams } from 'next/navigation';
+import { notFound, useSearchParams } from 'next/navigation';
 import { use } from 'react';
-import { notFound } from 'next/navigation';
-import { PageHeader } from '@shared/ui/app-sidebar';
 
 function resolveRespondentCategory(rawType: string | null): RespondentCategory {
     switch (rawType?.toLowerCase()) {

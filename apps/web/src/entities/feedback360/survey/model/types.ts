@@ -5,6 +5,8 @@ import {
     QuestionResponseDto,
     QuestionSortField,
     QuestionSearchQuery as QuestionTemplateFilterQuery,
+    RespondentCategory,
+    ResponseStatus,
     REVIEW_STAGES as REVIEW_STAGE_ENUM_VALUES,
     ReviewQuestionRelationDto,
     ReviewQuestionRelationSearchQuery as ReviewQuestionRelationFilterQuery,
@@ -12,8 +14,6 @@ import {
     ReviewQuestionRelationSortField,
     ReviewStage,
     SortDirection,
-    ResponseStatus,
-    RespondentCategory
 } from '@intra/shared-kernel';
 
 export type {
@@ -29,12 +29,12 @@ export {
     ANSWER_TYPE_ENUM_VALUES,
     AnswerType,
     QuestionSortField,
+    RespondentCategory,
+    ResponseStatus,
     REVIEW_STAGE_ENUM_VALUES,
     ReviewQuestionRelationSortField,
     ReviewStage,
     SortDirection,
-    ResponseStatus,
-    RespondentCategory
 };
 
 export enum ForSelfassessmentType {

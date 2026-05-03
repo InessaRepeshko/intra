@@ -1,7 +1,7 @@
 import {
     AddRespondentToReviewPayload,
-    RespondentResponseDto,
     RespondentFilterQuery,
+    RespondentResponseDto,
     ResponseStatus,
     UpdateRespondentPayload,
 } from '@entities/feedback360/respondent/model/types';

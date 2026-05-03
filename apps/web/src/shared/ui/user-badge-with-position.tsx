@@ -31,7 +31,10 @@ export function UserBadgeWithPosition({
                         alt={user.fullName}
                     />
                     <AvatarFallback className="bg-white/20 text-black text-xs font-medium">
-                        {getUserInitialsFromFullName(user.fullName ?? `${user.lastName} ${user.firstName}`)}
+                        {getUserInitialsFromFullName(
+                            user.fullName ??
+                                `${user.lastName} ${user.firstName}`,
+                        )}
                     </AvatarFallback>
                 </Avatar>
                 <span className="flex flex-col break-word">

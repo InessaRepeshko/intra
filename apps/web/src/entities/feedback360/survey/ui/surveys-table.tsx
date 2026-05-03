@@ -11,7 +11,6 @@ import {
     RefreshCcw,
     Sigma,
     TextInitial,
-    Trash2,
     Users,
 } from 'lucide-react';
 
@@ -21,7 +20,6 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@shared/components/ui/dropdown-menu';
 import {

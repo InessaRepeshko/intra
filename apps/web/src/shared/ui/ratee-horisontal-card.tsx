@@ -5,8 +5,8 @@ import {
     AvatarImage,
 } from '@shared/components/ui/avatar';
 import { Card } from '@shared/components/ui/card';
-import { MailIcon } from 'lucide-react';
 import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
+import { MailIcon } from 'lucide-react';
 
 export function RateeHorisontalCard({ ratee }: { ratee: User }) {
     if (!ratee) {
@@ -22,7 +22,10 @@ export function RateeHorisontalCard({ ratee }: { ratee: User }) {
                     alt={ratee.fullName}
                 />
                 <AvatarFallback className="text-6xl font-medium text-muted-foreground bg-neutral-100">
-                    {getUserInitialsFromFullName(ratee.fullName ?? `${ratee.lastName} ${ratee.firstName}`)}
+                    {getUserInitialsFromFullName(
+                        ratee.fullName ??
+                            `${ratee.lastName} ${ratee.firstName}`,
+                    )}
                 </AvatarFallback>
             </Avatar>
 

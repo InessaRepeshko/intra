@@ -19,7 +19,7 @@ export function StatisticsCard({
     }
 
     return (
-        <Card 
+        <Card
             className="flex flex-row flex-wrap items-center text-center sm:text-left justify-center gap-3 p-4 w-full overflow-hidden"
             style={{ maxWidth: width ? `${width}px` : '300px' }}
         >
@@ -34,7 +34,10 @@ export function StatisticsCard({
             <div className="flex h-20 w-20 p-0 m-0 bg-neutral-400/5 border-1 border-foreground/10 rounded-xl items-center justify-center">
                 {Icon && (
                     <Icon
-                        className={cn("shrink-0 h-1/2 w-1/2", textColor ?? "text-muted-foreground")}
+                        className={cn(
+                            'shrink-0 h-1/2 w-1/2',
+                            textColor ?? 'text-muted-foreground',
+                        )}
                     />
                 )}
             </div>

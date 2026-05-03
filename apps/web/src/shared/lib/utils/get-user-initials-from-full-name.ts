@@ -3,6 +3,6 @@ export function getUserInitialsFromFullName(fullName: string) {
     return initials.length >= 2
         ? `${initials[1]}${initials[0]}`.toUpperCase()
         : initials.length == 1
-        ? `${initials[0]}`.toUpperCase()
-        : '';
+          ? `${initials[0]}`.toUpperCase()
+          : '';
 }

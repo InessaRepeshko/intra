@@ -1,27 +1,20 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, Check, CheckCircle, Megaphone, PanelLeft, RotateCcw, Send, Trash, X } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Controller, useForm, useWatch } from 'react-hook-form';
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-} from '@shared/components/ui/avatar';
 import {
     AnswerType,
     RespondentCategory,
 } from '@entities/feedback360/answer/model/types';
-import { StageBadge } from '@entities/feedback360/review/ui/stage-badge';
-import { CategoryBadge } from '@entities/feedback360/respondent/ui/category-badge';
 import {
     useSurveyQuestionsQuery,
     useSurveyReviewQuery,
 } from '@entities/feedback360/survey/api/review-question-relation.queries';
 import type { SurveyQuestion } from '@entities/feedback360/survey/model/mappers';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from '@shared/components/ui/avatar';
 import { Button } from '@shared/components/ui/button';
 import {
     Card,
@@ -31,25 +24,26 @@ import {
     CardTitle,
 } from '@shared/components/ui/card';
 import { Label } from '@shared/components/ui/label';
-import {
-    RadioGroup,
-    RadioGroupItem,
-} from '@shared/components/ui/radio-group';
+import { RadioGroup, RadioGroupItem } from '@shared/components/ui/radio-group';
 import { Skeleton } from '@shared/components/ui/skeleton';
 import { Textarea } from '@shared/components/ui/textarea';
 import { cn } from '@shared/lib/utils/cn';
+import { Megaphone, PanelLeft, RotateCcw, Send, X } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { useUserQuery } from '@entities/identity/user/api/user.queries';
+import { Progress } from '@shared/components/ui/progress';
+import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
+import { useSidebar } from '@shared/ui/app-sidebar';
 import { useSubmitSurveyMutation } from '../api/submit-survey-form';
 import {
     submitSurveySchema,
     type SubmitSurveyFormValues,
 } from '../model/submit-survey-schema';
-import { useUserQuery } from '@entities/identity/user/api/user.queries';
-import { useSidebar } from '@shared/ui/app-sidebar';
-import { Progress } from '@shared/components/ui/progress';
-import { formatNumber } from '@shared/lib/utils/format-number';
-import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 
 interface SubmitSurveyFormProps {
     reviewId: number;
@@ -79,15 +73,15 @@ function buildEmptyAnswersFromSurveyQuestions(
     return ordered.map((question) =>
         question.answerType === AnswerType.NUMERICAL_SCALE
             ? {
-                questionId: question.questionId,
-                answerType: AnswerType.NUMERICAL_SCALE,
-                numericalValue: undefined as unknown as number,
-            }
+                  questionId: question.questionId,
+                  answerType: AnswerType.NUMERICAL_SCALE,
+                  numericalValue: undefined as unknown as number,
+              }
             : {
-                questionId: question.questionId,
-                answerType: AnswerType.TEXT_FIELD,
-                textValue: '',
-            },
+                  questionId: question.questionId,
+                  answerType: AnswerType.TEXT_FIELD,
+                  textValue: '',
+              },
     );
 }
 
@@ -144,13 +138,13 @@ const likertScale: Array<{
     label: string;
     description: string;
 }> = [
-        { value: 0, label: 'N/A', description: 'No info' },
-        { value: 1, label: '1', description: 'Never' },
-        { value: 2, label: '2', description: 'Rarely' },
-        { value: 3, label: '3', description: 'Often' },
-        { value: 4, label: '4', description: 'Usually' },
-        { value: 5, label: '5', description: 'Always' },
-    ];
+    { value: 0, label: 'N/A', description: 'No info' },
+    { value: 1, label: '1', description: 'Never' },
+    { value: 2, label: '2', description: 'Rarely' },
+    { value: 3, label: '3', description: 'Often' },
+    { value: 4, label: '4', description: 'Usually' },
+    { value: 5, label: '5', description: 'Always' },
+];
 
 function groupByCompetence(questions: SurveyQuestion[]): CompetenceGroup[] {
     const map = new Map<number, CompetenceGroup>();
@@ -334,10 +328,7 @@ export function SubmitSurveyForm({
         const merged =
             typeof window === 'undefined'
                 ? next
-                : mergeDraftIntoAnswers(
-                    next,
-                    localStorage.getItem(draftKey),
-                );
+                : mergeDraftIntoAnswers(next, localStorage.getItem(draftKey));
 
         reset({ answers: merged });
     }, [
@@ -377,10 +368,7 @@ export function SubmitSurveyForm({
         }
         draftSaveTimerRef.current = setTimeout(() => {
             try {
-                localStorage.setItem(
-                    draftKey,
-                    JSON.stringify(watchedAnswers),
-                );
+                localStorage.setItem(draftKey, JSON.stringify(watchedAnswers));
             } catch {
                 /* ignore quota / private mode */
             }
@@ -423,17 +411,13 @@ export function SubmitSurveyForm({
         totalQuestions > 0
             ? Math.round((completedCount / totalQuestions) * 100)
             : 0;
-    const isComplete =
-        totalQuestions > 0 && completedCount === totalQuestions;
+    const isComplete = totalQuestions > 0 && completedCount === totalQuestions;
 
     const onSubmit = (values: SubmitSurveyFormValues) => {
         if (typeof window !== 'undefined') {
             try {
                 localStorage.removeItem(
-                    surveyDraftStorageKey(
-                        answersShapeKey,
-                        respondentCategory,
-                    ),
+                    surveyDraftStorageKey(answersShapeKey, respondentCategory),
                 );
             } catch {
                 /* ignore */
@@ -461,10 +445,7 @@ export function SubmitSurveyForm({
         if (typeof window !== 'undefined') {
             try {
                 localStorage.removeItem(
-                    surveyDraftStorageKey(
-                        answersShapeKey,
-                        respondentCategory,
-                    ),
+                    surveyDraftStorageKey(answersShapeKey, respondentCategory),
                 );
             } catch {
                 /* ignore */
@@ -527,9 +508,7 @@ export function SubmitSurveyForm({
                             <span className="hidden md:flex">
                                 {`360° Feedback`}
                             </span>
-                            <span>
-                                {`Review #${review.id}`}
-                            </span>
+                            <span>{`Review #${review.id}`}</span>
                         </div>
                     </div>
                     <div className="hidden md:flex items-center justify-center gap-4 flex-1">
@@ -542,7 +521,10 @@ export function SubmitSurveyForm({
                                         alt={rateeQuery.data.fullName}
                                     />
                                     <AvatarFallback className="text-xl font-medium text-muted-foreground bg-neutral-100">
-                                        {getUserInitialsFromFullName(rateeQuery.data.fullName ?? `${rateeQuery.data.lastName} ${rateeQuery.data.firstName}`)}
+                                        {getUserInitialsFromFullName(
+                                            rateeQuery.data.fullName ??
+                                                `${rateeQuery.data.lastName} ${rateeQuery.data.firstName}`,
+                                        )}
                                     </AvatarFallback>
                                 </Avatar>
                             )}
@@ -553,9 +535,7 @@ export function SubmitSurveyForm({
                             </p>
                             <p className="text-sm text-muted-foreground gap-1 flex">
                                 {review.rateePositionTitle && (
-                                    <>
-                                        {review.rateePositionTitle}
-                                    </>
+                                    <>{review.rateePositionTitle}</>
                                 )}
                                 {review.teamTitle && (
                                     <>
@@ -567,7 +547,9 @@ export function SubmitSurveyForm({
                         </div>
                     </div>
 
-                    <div className={`flex items-center justify-end gap-3 overflow-hidden grow-0 m-auto ${totalQuestions === 0 ? 'invisible' : ''}`}>
+                    <div
+                        className={`flex items-center justify-end gap-3 overflow-hidden grow-0 m-auto ${totalQuestions === 0 ? 'invisible' : ''}`}
+                    >
                         <div className="hidden md:flex items-center justify-end gap-2">
                             <Progress
                                 value={progress}
@@ -577,7 +559,9 @@ export function SubmitSurveyForm({
                                 aria-label={`Progress ${progress}%`}
                             />
                             <span className="text-sm text-muted-foreground flex whitespace-nowrap flex justify-center w-[100px] gap-1">
-                                <span>{completedCount}/{totalQuestions}</span>
+                                <span>
+                                    {completedCount}/{totalQuestions}
+                                </span>
                                 <span>·</span>
                                 <span>{progress}%</span>
                             </span>
@@ -603,8 +587,11 @@ export function SubmitSurveyForm({
                             </h3>
                             <p className="mt-1 text-sm text-muted-foreground">
                                 This review does not have any questions
-                                {isSelfAssessment ? ' for self-assessment' : ''}{' '}
-                                yet or you have already answered all the questions.
+                                {isSelfAssessment
+                                    ? ' for self-assessment'
+                                    : ''}{' '}
+                                yet or you have already answered all the
+                                questions.
                             </p>
                         </div>
                     ) : (
@@ -647,7 +634,7 @@ export function SubmitSurveyForm({
                                                 ) + 1;
                                             const fieldError =
                                                 form.formState.errors.answers?.[
-                                                formIndex
+                                                    formIndex
                                                 ];
                                             return (
                                                 <div
@@ -666,17 +653,17 @@ export function SubmitSurveyForm({
                                                         render={({ field }) => {
                                                             const currentValue =
                                                                 typeof field.value ===
-                                                                    'number'
+                                                                'number'
                                                                     ? field.value
                                                                     : undefined;
                                                             return (
                                                                 <RadioGroup
                                                                     value={
                                                                         currentValue !==
-                                                                            undefined
+                                                                        undefined
                                                                             ? String(
-                                                                                currentValue,
-                                                                            )
+                                                                                  currentValue,
+                                                                              )
                                                                             : ''
                                                                     }
                                                                     onValueChange={(
@@ -691,7 +678,9 @@ export function SubmitSurveyForm({
                                                                     className="flex gap-2"
                                                                 >
                                                                     {likertScale.map(
-                                                                        (option) => {
+                                                                        (
+                                                                            option,
+                                                                        ) => {
                                                                             const inputId = `${question.questionId}-${option.value}`;
                                                                             const isSelected =
                                                                                 currentValue ===
@@ -742,13 +731,24 @@ export function SubmitSurveyForm({
                                                         }}
                                                     />
                                                     <div className="flex justify-around gap-3 text-xs text-muted-foreground">
-                                                        {likertScale.map((option) => (
-                                                            <span className="truncate" key={option.value}>{option.description}</span>
-                                                        ))}
+                                                        {likertScale.map(
+                                                            (option) => (
+                                                                <span
+                                                                    className="truncate"
+                                                                    key={
+                                                                        option.value
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        option.description
+                                                                    }
+                                                                </span>
+                                                            ),
+                                                        )}
                                                     </div>
                                                     {fieldError &&
                                                         'numericalValue' in
-                                                        fieldError && (
+                                                            fieldError && (
                                                             <p className="text-sm text-destructive">
                                                                 {fieldError
                                                                     .numericalValue
@@ -791,7 +791,7 @@ export function SubmitSurveyForm({
                                                 return null;
                                             const fieldError =
                                                 form.formState.errors.answers?.[
-                                                formIndex
+                                                    formIndex
                                                 ];
                                             const numericalIndex =
                                                 textQuestions.findIndex(
@@ -827,7 +827,7 @@ export function SubmitSurveyForm({
                                                     />
                                                     {fieldError &&
                                                         'textValue' in
-                                                        fieldError && (
+                                                            fieldError && (
                                                             <p className="text-sm text-destructive">
                                                                 {fieldError
                                                                     .textValue

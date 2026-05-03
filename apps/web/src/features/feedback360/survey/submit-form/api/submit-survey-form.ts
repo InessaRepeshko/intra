@@ -4,8 +4,8 @@ import {
     type CreateAnswerToReviewPayload,
     type RespondentCategory,
 } from '@entities/feedback360/answer/model/types';
-import { commentKeys } from '@entities/reporting/individual-report-comment/api/individual-report-comment.queries';
 import { reviewKeys } from '@entities/feedback360/review/api/review.queries';
+import { commentKeys } from '@entities/reporting/individual-report-comment/api/individual-report-comment.queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 

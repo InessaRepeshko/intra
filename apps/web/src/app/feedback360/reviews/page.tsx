@@ -1,14 +1,20 @@
 'use client';
 
+import { useAuth } from '@entities/identity/user/model/auth-context';
 import { PageHeader } from '@shared/ui/app-sidebar';
-import { ReviewsList } from '@widgets/feedback360/review/list/review-list';
+import { ReviewsPage } from '@widgets/feedback360/review/list/reviews-page';
+import { notFound } from 'next/navigation';
 
-export default function ReviewsPage() {
+export default function Page() {
+    const auth = useAuth();
+
+    if (!auth.user) return notFound();
+
     return (
         <div className="flex flex-col my-2 mx-2 rounded-xl shadow-md bg-background">
             <PageHeader title="Reviews" />
             <div className="flex flex-col gap-6 p-4 sm:p-6 md:p-10 lg:p-10">
-                <ReviewsList />
+                <ReviewsPage currentUser={auth} />
             </div>
         </div>
     );

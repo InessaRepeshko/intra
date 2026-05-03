@@ -1,9 +1,7 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { type Respondent, mapRespondentDtoToModel } from '../model/mappers';
 import { RespondentFilterQuery } from '../model/types';
-import {
-    fetchReviewRespondents,
-} from './respondent.api';
+import { fetchReviewRespondents } from './respondent.api';
 
 export const respondentKeys = {
     all: ['respondents'] as const,
@@ -14,7 +12,10 @@ export const respondentKeys = {
     detail: (id: number) => [...respondentKeys.details(), id] as const,
 };
 
-export function useReviewRespondentsQuery(reviewId: number, params?: RespondentFilterQuery) {
+export function useReviewRespondentsQuery(
+    reviewId: number,
+    params?: RespondentFilterQuery,
+) {
     return useQuery<Respondent[]>({
         queryKey: respondentKeys.list(reviewId, params),
         queryFn: async () => {
@@ -36,8 +37,8 @@ export function useAllReviewsRespondentsQuery(reviewIds: number[]) {
             enabled: reviewId > 0,
         })),
     });
-    
-    const respondents: { reviewId: number, respondents: Respondent[] }[] = [];
+
+    const respondents: { reviewId: number; respondents: Respondent[] }[] = [];
     reviewIds.forEach((reviewId, index) => {
         const result = queries[index];
         if (result.isSuccess && result.data !== undefined) {
@@ -48,5 +49,5 @@ export function useAllReviewsRespondentsQuery(reviewIds: number[]) {
     const isLoading = queries.some((q) => q.isLoading);
     const isError = queries.some((q) => q.isError);
 
-    return { data:respondents, isLoading, isError };
+    return { data: respondents, isLoading, isError };
 }

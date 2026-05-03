@@ -1,7 +1,7 @@
 import type {
     AddReviewerToReviewPayload,
-    ReviewerDto,
     ReviewerFilterQuery,
+    ReviewerResponseDto,
 } from '@entities/feedback360/reviewer/model/types';
 import { apiClient } from '@shared/api/api-client';
 
@@ -13,8 +13,8 @@ const REVIEWER_RELATION_BASE = (relationId: number) =>
 export async function fetchReviewReviewers(
     reviewId: number,
     params?: ReviewerFilterQuery,
-): Promise<ReviewerDto[]> {
-    const { data } = await apiClient.get<ReviewerDto[]>(
+): Promise<ReviewerResponseDto[]> {
+    const { data } = await apiClient.get<ReviewerResponseDto[]>(
         `${REVIEWERS_BASE(reviewId)}`,
         {
             params,
@@ -26,7 +26,7 @@ export async function fetchReviewReviewers(
 export async function fetchReviewReviewerCount(
     reviewId: number,
 ): Promise<number> {
-    const { data } = await apiClient.get<ReviewerDto[]>(
+    const { data } = await apiClient.get<ReviewerResponseDto[]>(
         `${REVIEWERS_BASE(reviewId)}`,
     );
     return data.length;
@@ -35,8 +35,8 @@ export async function fetchReviewReviewerCount(
 export async function addReviewerToReview(
     reviewId: number,
     payload: AddReviewerToReviewPayload,
-): Promise<ReviewerDto> {
-    const { data } = await apiClient.post<ReviewerDto>(
+): Promise<ReviewerResponseDto> {
+    const { data } = await apiClient.post<ReviewerResponseDto>(
         `${REVIEWERS_BASE(reviewId)}`,
         payload,
     );
