@@ -264,7 +264,7 @@ export function SurveyDashboard({
                                 awaiting your feedback.
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="px-2 sm:px-6">
+                        <CardContent className="p-0">
                             <div className="space-y-6">
                                 {pendingSurveys.length === 0 ? (
                                     <div className="py-12 text-center text-muted-foreground">

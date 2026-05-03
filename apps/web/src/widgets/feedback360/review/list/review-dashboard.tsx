@@ -289,7 +289,7 @@ export function ReviewDashboard({
                                     stage.
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent className="px-2 sm:px-6">
+                            <CardContent className="p-0">
                                 <div className="space-y-6">
                                     {reviewsByStage[stage].length === 0 ? (
                                         <div className="py-12 text-center text-muted-foreground">

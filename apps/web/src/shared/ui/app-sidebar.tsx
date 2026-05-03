@@ -60,11 +60,13 @@ interface NavItem {
     href: string;
     icon: React.ComponentType<{ className?: string }>;
     roles?: IdentityRole[];
+    excludePaths?: string[];
     children?: {
         title: string;
         href: string;
         icon: React.ComponentType<{ className?: string }>;
         roles?: IdentityRole[];
+        excludePaths?: string[];
     }[];
 }
 
@@ -115,6 +117,7 @@ const navItems: NavItem[] = [
                 title: 'Individual Reports',
                 href: '/reporting/individual-reports',
                 icon: FileUser,
+                excludePaths: ['/reporting/individual-reports/comments'],
             },
             {
                 title: 'Strategic Reports',
@@ -248,9 +251,11 @@ export function AppSidebar() {
         return openItems[title] ?? defaultOpen;
     };
 
-    const isActive = (href: string) => {
+    const isActive = (href: string, excludePaths?: string[]) => {
         if (href === '/') return pathname === '/';
-        return pathname?.startsWith(href);
+        if (excludePaths?.some((p) => pathname?.startsWith(p))) return false;
+        if (pathname === href) return true;
+        return pathname?.startsWith(href + '/');
     };
 
     const filteredItems = navItems.filter(
@@ -286,7 +291,7 @@ export function AppSidebar() {
                                 );
                                 if (visibleChildren.length === 0) return null;
 
-                                const itemActive = isActive(item.href);
+                                const itemActive = isActive(item.href, item.excludePaths);
                                 const openState = isItemOpen(
                                     item.title,
                                     itemActive,
@@ -332,6 +337,7 @@ export function AppSidebar() {
                                                                 'flex h-8 w-8 items-center justify-center rounded-lg transition-colors mx-auto',
                                                                 isActive(
                                                                     child.href,
+                                                                    child.excludePaths
                                                                 )
                                                                     ? 'text-white bg-gradient-to-br from-stone-900 to-stone-900/80 shadow-md shadow-primary/20 hover:bg-black hover:text-white'
                                                                     : 'text-black/70 hover:bg-white/10 hover:text-black',
@@ -354,7 +360,7 @@ export function AppSidebar() {
                                     href={item.href}
                                     className={cn(
                                         'flex h-10 w-10 items-center justify-center rounded-xl px-0 text-sm font-medium transition-colors whitespace-nowrap',
-                                        isActive(item.href)
+                                        isActive(item.href, item.excludePaths)
                                             ? 'text-white bg-gradient-to-br from-stone-900 to-stone-900/80 shadow-lg/80 shadow-primary/20 hover:bg-black hover:text-white'
                                             : 'text-black/70 hover:bg-white/10 hover:text-black',
                                     )}
@@ -417,7 +423,7 @@ export function AppSidebar() {
                             );
                             if (visibleChildren.length === 0) return null;
 
-                            const itemActive = isActive(item.href);
+                            const itemActive = isActive(item.href, item.excludePaths);
                             const openState = isItemOpen(
                                 item.title,
                                 itemActive,
@@ -462,7 +468,7 @@ export function AppSidebar() {
                                                     href={child.href}
                                                     className={cn(
                                                         'flex h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors items-center justify-start',
-                                                        isActive(child.href)
+                                                        isActive(child.href, child.excludePaths)
                                                             ? 'text-white bg-gradient-to-br from-stone-900 to-stone-900/80 shadow-lg/80 shadow-primary/20 hover:bg-black hover:text-white'
                                                             : 'text-black/70 hover:bg-white/10 hover:text-black',
                                                     )}
@@ -486,7 +492,7 @@ export function AppSidebar() {
                                 href={item.href}
                                 className={cn(
                                     'flex h-10 items-center gap-3 rounded-xl py-2.5 px-2.5 text-sm font-medium transition-colors whitespace-nowrap',
-                                    isActive(item.href)
+                                    isActive(item.href, item.excludePaths)
                                         ? 'text-white bg-gradient-to-br from-stone-900 to-stone-900/80 shadow-lg/80 shadow-primary/20 hover:bg-black hover:text-white'
                                         : 'text-black/70 hover:bg-white/10 hover:text-black',
                                 )}
