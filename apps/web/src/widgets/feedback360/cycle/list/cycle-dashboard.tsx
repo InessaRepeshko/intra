@@ -267,14 +267,15 @@ export function CycleDashboard({
                                                     </div>
 
                                                     <div className="flex flex-row items-center gap-y-2 gap-x-8 w-full sm:w-auto flex-wrap justify-center lg:justify-end">
-                                                        {stage === CycleStage.ACTIVE && (
+                                                        {stage ===
+                                                            CycleStage.ACTIVE && (
                                                             <Progress
                                                                 value={
                                                                     totalReviewsInCycle >
-                                                                        0
+                                                                    0
                                                                         ? (completedReviewsInCycleCount /
-                                                                            totalReviewsInCycle) *
-                                                                        100
+                                                                              totalReviewsInCycle) *
+                                                                          100
                                                                         : 0
                                                                 }
                                                                 className="w-[200px] max-w-full rounded-full self-center"

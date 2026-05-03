@@ -102,7 +102,7 @@ export function useAllCommentReportsQuery(reportsIds: number[]) {
 
 export function useCommentReviewQuery(reportId: number) {
     return useQuery<Review | null>({
-        queryKey: commentKeys.report(reportId),
+        queryKey: commentKeys.review(reportId),
         queryFn: async () => {
             const dto = await fetchReviewByReportId(reportId);
             if (!dto) return null;
@@ -115,7 +115,7 @@ export function useCommentReviewQuery(reportId: number) {
 export function useAllCommentReviewsQuery(reportsIds: number[]) {
     const queries = useQueries({
         queries: reportsIds.map((reportId) => ({
-            queryKey: commentKeys.report(reportId),
+            queryKey: commentKeys.review(reportId),
             queryFn: () => fetchReviewByReportId(reportId),
         })),
     });

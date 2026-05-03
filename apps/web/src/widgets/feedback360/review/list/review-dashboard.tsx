@@ -362,20 +362,24 @@ export function ReviewDashboard({
                                                     </div>
 
                                                     <div className="flex flex-row items-center gap-x-8 gap-y-2 w-full flex-wrap justify-between lg:justify-end">
-                                                        {stage === ReviewStage.IN_PROGRESS && (
-                                                        <Progress
-                                                            value={
-                                                                ((answerCounts[
-                                                                    review.id
-                                                                ] ?? 0) /
-                                                                    (respondentCounts[
+                                                        {stage ===
+                                                            ReviewStage.IN_PROGRESS && (
+                                                            <Progress
+                                                                value={
+                                                                    ((answerCounts[
                                                                         review
                                                                             .id
-                                                                    ] ?? 0)) *
-                                                                100
-                                                            }
-                                                            className="w-[200px] max-w-full rounded-full self-center"
-                                                        />)}
+                                                                    ] ?? 0) /
+                                                                        (respondentCounts[
+                                                                            review
+                                                                                .id
+                                                                        ] ??
+                                                                            0)) *
+                                                                    100
+                                                                }
+                                                                className="w-[200px] max-w-full rounded-full self-center"
+                                                            />
+                                                        )}
                                                         <div className="flex flex-row items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
                                                             <MessageCircle className="shrink-0 h-4 w-4 text-muted-foreground" />
                                                             <span className="font-medium text-foreground whitespace-nowrap flex gap-1">

@@ -114,13 +114,17 @@ const navItems: NavItem[] = [
                 title: 'Comments',
                 href: '/reporting/individual-reports/comments',
                 icon: MessageSquareQuote,
-                matchPaths: [/^\/reporting\/individual-reports(\/\d+)?\/comments/],
+                matchPaths: [
+                    /^\/reporting\/individual-reports(\/\d+)?\/comments/,
+                ],
             },
             {
                 title: 'Individual Reports',
                 href: '/reporting/individual-reports',
                 icon: FileUser,
-                excludePaths: [/^\/reporting\/individual-reports(\/\d+)?\/comments/],
+                excludePaths: [
+                    /^\/reporting\/individual-reports(\/\d+)?\/comments/,
+                ],
             },
             {
                 title: 'Strategic Reports',
@@ -254,10 +258,16 @@ export function AppSidebar() {
         return openItems[title] ?? defaultOpen;
     };
 
-    const isActive = (href: string, excludePaths?: RegExp[], matchPaths?: RegExp[]) => {
+    const isActive = (
+        href: string,
+        excludePaths?: RegExp[],
+        matchPaths?: RegExp[],
+    ) => {
         if (href === '/') return pathname === '/';
-        if (excludePaths?.some((regex) => regex.test(pathname ?? ''))) return false;
-        if (matchPaths?.some((regex) => regex.test(pathname ?? ''))) return true;
+        if (excludePaths?.some((regex) => regex.test(pathname ?? '')))
+            return false;
+        if (matchPaths?.some((regex) => regex.test(pathname ?? '')))
+            return true;
         if (pathname === href) return true;
         return pathname?.startsWith(href + '/');
     };
@@ -295,7 +305,11 @@ export function AppSidebar() {
                                 );
                                 if (visibleChildren.length === 0) return null;
 
-                                const itemActive = isActive(item.href, item.excludePaths, item.matchPaths);
+                                const itemActive = isActive(
+                                    item.href,
+                                    item.excludePaths,
+                                    item.matchPaths,
+                                );
                                 const openState = isItemOpen(
                                     item.title,
                                     itemActive,
@@ -342,7 +356,7 @@ export function AppSidebar() {
                                                                 isActive(
                                                                     child.href,
                                                                     child.excludePaths,
-                                                                    child.matchPaths
+                                                                    child.matchPaths,
                                                                 )
                                                                     ? 'text-white bg-gradient-to-br from-stone-900 to-stone-900/80 shadow-md shadow-primary/20 hover:bg-black hover:text-white'
                                                                     : 'text-black/70 hover:bg-white/10 hover:text-black',
@@ -365,7 +379,11 @@ export function AppSidebar() {
                                     href={item.href}
                                     className={cn(
                                         'flex h-10 w-10 items-center justify-center rounded-xl px-0 text-sm font-medium transition-colors whitespace-nowrap',
-                                        isActive(item.href, item.excludePaths, item.matchPaths)
+                                        isActive(
+                                            item.href,
+                                            item.excludePaths,
+                                            item.matchPaths,
+                                        )
                                             ? 'text-white bg-gradient-to-br from-stone-900 to-stone-900/80 shadow-lg/80 shadow-primary/20 hover:bg-black hover:text-white'
                                             : 'text-black/70 hover:bg-white/10 hover:text-black',
                                     )}
@@ -428,7 +446,11 @@ export function AppSidebar() {
                             );
                             if (visibleChildren.length === 0) return null;
 
-                            const itemActive = isActive(item.href, item.excludePaths, item.matchPaths);
+                            const itemActive = isActive(
+                                item.href,
+                                item.excludePaths,
+                                item.matchPaths,
+                            );
                             const openState = isItemOpen(
                                 item.title,
                                 itemActive,
@@ -473,7 +495,11 @@ export function AppSidebar() {
                                                     href={child.href}
                                                     className={cn(
                                                         'flex h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors items-center justify-start',
-                                                        isActive(child.href, child.excludePaths, child.matchPaths)
+                                                        isActive(
+                                                            child.href,
+                                                            child.excludePaths,
+                                                            child.matchPaths,
+                                                        )
                                                             ? 'text-white bg-gradient-to-br from-stone-900 to-stone-900/80 shadow-lg/80 shadow-primary/20 hover:bg-black hover:text-white'
                                                             : 'text-black/70 hover:bg-white/10 hover:text-black',
                                                     )}
@@ -497,7 +523,11 @@ export function AppSidebar() {
                                 href={item.href}
                                 className={cn(
                                     'flex h-10 items-center gap-3 rounded-xl py-2.5 px-2.5 text-sm font-medium transition-colors whitespace-nowrap',
-                                    isActive(item.href, item.excludePaths, item.matchPaths)
+                                    isActive(
+                                        item.href,
+                                        item.excludePaths,
+                                        item.matchPaths,
+                                    )
                                         ? 'text-white bg-gradient-to-br from-stone-900 to-stone-900/80 shadow-lg/80 shadow-primary/20 hover:bg-black hover:text-white'
                                         : 'text-black/70 hover:bg-white/10 hover:text-black',
                                 )}

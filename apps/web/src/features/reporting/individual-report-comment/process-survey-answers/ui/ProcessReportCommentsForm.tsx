@@ -139,8 +139,14 @@ export function ProcessReportCommentsForm({
             const existing = groups.get(answer.questionId);
             if (existing) {
                 existing.answers.push(answer);
-                if (!existing.respondentCategories.includes(answer.respondentCategory)) {
-                    existing.respondentCategories.push(answer.respondentCategory);
+                if (
+                    !existing.respondentCategories.includes(
+                        answer.respondentCategory,
+                    )
+                ) {
+                    existing.respondentCategories.push(
+                        answer.respondentCategory,
+                    );
                 }
                 continue;
             }
@@ -217,15 +223,14 @@ export function ProcessReportCommentsForm({
     const isInitialLoading =
         reportQuery.isLoading ||
         reviewQuery.isLoading ||
-        (reviewId > 0 &&
-            (answersQuery.isLoading || questionsQuery.isLoading));
+        (reviewId > 0 && (answersQuery.isLoading || questionsQuery.isLoading));
 
     const onSubmit = (values: ProcessReportCommentsValues) => {
         submitMutation.mutate(
             { reportId, values, respondentCategoriesByQuestion },
             {
                 onSuccess: () => {
-                    router.push(`/reporting/individual-reports/${reportId}`);
+                    router.push(`/reporting/individual-reports/comments`);
                 },
             },
         );
@@ -242,8 +247,7 @@ export function ProcessReportCommentsForm({
             questionId: group.questionId,
             questionTitle: group.questionTitle,
             comment: '',
-            commentSentiment:
-                undefined as unknown as CommentSentiment,
+            commentSentiment: undefined as unknown as CommentSentiment,
             numberOfMentions: 1,
         });
     };
@@ -266,15 +270,15 @@ export function ProcessReportCommentsForm({
         return (
             <div className="flex min-h-full flex-col items-center justify-center gap-4 bg-background p-8 text-center">
                 <h1 className="text-2xl font-semibold text-foreground">
-                    Report not found
+                    Report Comments not found
                 </h1>
                 <p className="text-muted-foreground">
                     We could not load this report. It may have been deleted or
                     you do not have access.
                 </p>
                 <Button asChild>
-                    <Link href="/reporting/individual-reports">
-                        Back to reports
+                    <Link href="/reporting/individual-reports/comments">
+                        Back to report comments
                     </Link>
                 </Button>
             </div>
@@ -363,9 +367,7 @@ export function ProcessReportCommentsForm({
                             disabled={!isComplete || submitMutation.isPending}
                         >
                             <Send className="mr-2 h-4 w-4" />
-                            {submitMutation.isPending
-                                ? 'Saving...'
-                                : 'Submit'}
+                            {submitMutation.isPending ? 'Saving...' : 'Submit'}
                         </Button>
                     </div>
                 </header>
@@ -377,8 +379,8 @@ export function ProcessReportCommentsForm({
                                 No text responses to process
                             </h3>
                             <p className="mt-1 text-sm text-muted-foreground">
-                                This report does not have any text-field
-                                answers yet.
+                                This report does not have any text-field answers
+                                yet.
                             </p>
                         </div>
                     ) : (
@@ -407,7 +409,8 @@ export function ProcessReportCommentsForm({
                                                     </CardTitle>
                                                     <CardDescription>
                                                         {group.answers.length}{' '}
-                                                        {group.answers.length === 1
+                                                        {group.answers
+                                                            .length === 1
                                                             ? 'response'
                                                             : 'responses'}
                                                     </CardDescription>
@@ -424,10 +427,14 @@ export function ProcessReportCommentsForm({
                                                         >
                                                             <div className="flex items-center justify-start gap-2 flex-wrap">
                                                                 <span className="text-sm text-foreground">
-                                                                    #{answerIdx + 1}
+                                                                    #
+                                                                    {answerIdx +
+                                                                        1}
                                                                 </span>
                                                                 <span className="text-sm text-muted-foreground">
-                                                                    {' '}answer in category
+                                                                    {' '}
+                                                                    answer in
+                                                                    category
                                                                 </span>
                                                                 <CategoryBadge
                                                                     category={
@@ -436,7 +443,9 @@ export function ProcessReportCommentsForm({
                                                                 />
                                                             </div>
                                                             <p className="text-foreground whitespace-pre-wrap text-sm p-3 bg-slate-100 border-l-4 border-l-slate-300">
-                                                                {answer.textValue}
+                                                                {
+                                                                    answer.textValue
+                                                                }
                                                             </p>
                                                         </div>
                                                     ),
@@ -449,12 +458,15 @@ export function ProcessReportCommentsForm({
                                                         Analyst comments
                                                     </h4>
                                                     <span className="text-xs text-muted-foreground">
-                                                        {groupEntryIndices.length}{' '}
+                                                        {
+                                                            groupEntryIndices.length
+                                                        }{' '}
                                                         added
                                                     </span>
                                                 </div>
 
-                                                {groupEntryIndices.length === 0 ? (
+                                                {groupEntryIndices.length ===
+                                                0 ? (
                                                     <p className="text-sm text-muted-foreground">
                                                         No comments yet. Click
                                                         "Add comment" below to
@@ -479,7 +491,9 @@ export function ProcessReportCommentsForm({
                                                                 ];
                                                             return (
                                                                 <div
-                                                                    key={fieldId}
+                                                                    key={
+                                                                        fieldId
+                                                                    }
                                                                     className="space-y-3 rounded-xl border border-border bg-background p-4"
                                                                 >
                                                                     <div className="flex items-center justify-between gap-2">
@@ -487,7 +501,8 @@ export function ProcessReportCommentsForm({
                                                                             htmlFor={`comment-${fieldId}`}
                                                                             className="text-foreground"
                                                                         >
-                                                                            Comment #
+                                                                            Comment
+                                                                            #
                                                                             {localIdx +
                                                                                 1}
                                                                         </Label>
@@ -618,7 +633,9 @@ export function ProcessReportCommentsForm({
                                                                         htmlFor={`mentions-${fieldId}`}
                                                                         className="text-foreground"
                                                                     >
-                                                                        Number of mentions
+                                                                        Number
+                                                                        of
+                                                                        mentions
                                                                     </Label>
                                                                     <Input
                                                                         id={`mentions-${fieldId}`}
@@ -626,13 +643,14 @@ export function ProcessReportCommentsForm({
                                                                         min={1}
                                                                         step={1}
                                                                         inputMode="numeric"
-                                                                        defaultValue={1}
+                                                                        defaultValue={
+                                                                            1
+                                                                        }
                                                                         className="w-32 border-border bg-secondary/30 text-foreground placeholder:text-muted-foreground"
                                                                         {...form.register(
                                                                             `entries.${entryIndex}.numberOfMentions`,
                                                                             {
-                                                                                valueAsNumber:
-                                                                                    true,
+                                                                                valueAsNumber: true,
                                                                             },
                                                                         )}
                                                                     />
@@ -697,8 +715,7 @@ export function ProcessReportCommentsForm({
                                     type="submit"
                                     className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
                                     disabled={
-                                        !isComplete ||
-                                        submitMutation.isPending
+                                        !isComplete || submitMutation.isPending
                                     }
                                 >
                                     <Send className="mr-2 h-4 w-4" />

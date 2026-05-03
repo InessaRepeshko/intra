@@ -327,8 +327,6 @@ export function IndividualReportAnalyticsTable({
 
     const columns = Object.keys(COLUMNS);
 
-
-
     return (
         <>
             {/* Mobile card layout (hidden on md+) */}

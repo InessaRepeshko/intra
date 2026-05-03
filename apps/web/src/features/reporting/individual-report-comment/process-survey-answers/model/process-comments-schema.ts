@@ -28,7 +28,9 @@ const reportCommentEntrySchema = z.object({
 });
 
 export const processReportCommentsSchema = z.object({
-    entries: z.array(reportCommentEntrySchema).min(1, 'Add at least one comment'),
+    entries: z
+        .array(reportCommentEntrySchema)
+        .min(1, 'Add at least one comment'),
 });
 
 export type ProcessReportCommentsValues = z.infer<
