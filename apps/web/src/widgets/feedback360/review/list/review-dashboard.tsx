@@ -308,7 +308,7 @@ export function ReviewDashboard({
                                                     key={review.id}
                                                     className="flex flex-col lg:flex-row !flex-wrap items-stretch lg:items-center justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
                                                 >
-                                                    <div className="flex flex-col sm:flex-row  items-center gap-4 text-center min-w-[100px] w-full">
+                                                    <div className="flex flex-col sm:flex-row items-center gap-2 text-center min-w-[100px] w-full">
                                                         <Avatar className="h-20 w-20 border bg-muted shrink-0">
                                                             <AvatarImage
                                                                 className="object-cover"
@@ -361,7 +361,7 @@ export function ReviewDashboard({
                                                         </div>
                                                     </div>
 
-                                                    <div className="flex flex-row items-center gap-4 w-full flex-wrap justify-center !md:justify-end">
+                                                    <div className="flex flex-row items-center gap-2 w-full flex-wrap justify-between lg:justify-end">
                                                         <Progress
                                                             value={
                                                                 ((answerCounts[
@@ -372,10 +372,11 @@ export function ReviewDashboard({
                                                                     ] ?? 0)) *
                                                                 100
                                                             }
-                                                            className="w-full w-[250px] max-w-full min-w-max rounded-full self-center"
+                                                            className="w-[200px] max-w-full rounded-full self-center"
                                                         />
                                                         <div className="flex flex-row items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
                                                             <MessageCircle className="shrink-0 h-4 w-4 text-muted-foreground" />
+                                                            <span className="font-medium text-foreground whitespace-nowrap flex gap-1">
                                                             {answerCounts[
                                                                 review.id
                                                             ] ?? 0}
@@ -385,11 +386,12 @@ export function ReviewDashboard({
                                                             {respondentCounts[
                                                                 review.id
                                                             ] ?? 0}
+                                                            </span>
                                                             <span className="text-muted-foreground whitespace-nowrap">
                                                                 answers
                                                             </span>
                                                         </div>
-                                                        <div className="flex items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
+                                                        <div className="flex flex-row items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
                                                             <AlarmClock className="shrink-0 h-4 w-4 text-muted-foreground" />
                                                             <span className="text-muted-foreground whitespace-nowrap">
                                                                 Due
