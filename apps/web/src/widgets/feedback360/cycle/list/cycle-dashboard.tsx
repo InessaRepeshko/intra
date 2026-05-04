@@ -69,9 +69,11 @@ export function CycleDashboard({
         const buckets = Object.fromEntries(
             CYCLE_STAGE_ENUM_VALUES.map((s) => [s, [] as Cycle[]]),
         ) as Record<CycleStage, Cycle[]>;
-        allCyclesData.forEach((c) => {
-            if (c.stage && buckets[c.stage]) buckets[c.stage].push(c);
-        });
+        allCyclesData
+            .sort((a, b) => b.id - a.id)
+            .forEach((c) => {
+                if (c.stage && buckets[c.stage]) buckets[c.stage].push(c);
+            });
         return buckets;
     }, [allCyclesData]);
 
@@ -116,7 +118,7 @@ export function CycleDashboard({
                     }
                     icon={FilePlus2}
                     color="text-blue-300"
-                    width={300}
+                    width={200}
                 />
                 <StatisticsCard
                     title={`Active`}
@@ -126,7 +128,7 @@ export function CycleDashboard({
                     }
                     icon={Hourglass}
                     color="text-amber-300"
-                    width={300}
+                    width={200}
                 />
                 <StatisticsCard
                     title={`Finished`}
@@ -140,7 +142,7 @@ export function CycleDashboard({
                     }
                     icon={FileChartLine}
                     color="text-green-300"
-                    width={300}
+                    width={200}
                 />
                 <StatisticsCard
                     title={`Archived`}
@@ -152,7 +154,7 @@ export function CycleDashboard({
                     }
                     icon={Archive}
                     color="text-zinc-300"
-                    width={300}
+                    width={200}
                 />
             </div>
 

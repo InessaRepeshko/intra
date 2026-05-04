@@ -30,7 +30,7 @@ export function IndividualReportsPage({ currentUser }: { currentUser: AuthContex
 
     return (
         <main className="min-h-screen">
-            <div className="mx-auto max-w-8xl gap-6 sm:gap-8 flex flex-col">
+            <div className="mx-auto max-w-8xl gap-6 sm:gap-8 flex flex-col w-full min-w-0">
                 <Tabs defaultValue={allTabs[0].value} className="w-full">
                     <TabsList
                         variant="default"

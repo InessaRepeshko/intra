@@ -832,8 +832,8 @@ export function IndividualReportsTable({
                 ))}
             </div>
 
-            {/* Desktop table layout (visible on md+) */}
-            <div className="hidden overflow-x-auto lg:block">
+            {/* Desktop table layout (visible on lg+) */}
+            <div className="hidden overflow-x-auto lg:block w-full min-w-0">
                 <Table className="w-full table-fixed">
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">

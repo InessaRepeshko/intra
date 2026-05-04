@@ -404,9 +404,9 @@ export function IndividualReportList() {
     const totalReports = allReportsData.length;
 
     return (
-        <div className="mx-auto max-w-8xl gap-8 flex flex-col">
+        <div className="mx-auto max-w-8xl gap-8 flex flex-col w-full min-w-0">
             <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap min-w-0">
                     {/* Table Header */}
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
@@ -427,7 +427,7 @@ export function IndividualReportList() {
                 </div>
 
                 {/* Table Content */}
-                <CardContent className="flex flex-col gap-6 m-0 p-0">
+                <CardContent className="flex flex-col gap-6 m-0 p-0 min-w-0 w-full">
                     {/* Filters */}
                     <IndividualReportsFilters
                         search={search}
