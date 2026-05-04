@@ -9,6 +9,10 @@ import { CycleDashboard } from './cycle-dashboard';
 import { CycleList } from './cycle-list';
 
 export function CyclesPage({ currentUser }: { currentUser: AuthContextType }) {
+    if (!currentUser.isAdmin && !currentUser.isHR) {
+        return null;
+    }
+
     const allTabs = [
         { label: 'Cycle Dashboard', value: 'cycle_dashboard' },
         { label: 'Cycle Table', value: 'cycle_table' },
@@ -17,10 +21,6 @@ export function CyclesPage({ currentUser }: { currentUser: AuthContextType }) {
     const [activeTab, setActiveTab] = useState<
         (typeof allTabs)[number]['value']
     >(allTabs[0].value);
-
-    if (!currentUser.isAdmin && !currentUser.isHR) {
-        return null;
-    }
 
     return (
         <main className="min-h-screen">

@@ -1,7 +1,6 @@
 'use client';
 
 import { useAuth } from '@entities/identity/user/model/auth-context';
-import { IdentityRole } from '@entities/identity/user/model/types';
 import { PageHeader } from '@shared/ui/app-sidebar';
 import { CyclesPage } from '@widgets/feedback360/cycle/list/cycles-page';
 import { forbidden, unauthorized } from 'next/navigation';
@@ -11,7 +10,7 @@ export default function Page() {
 
     if (!auth.user) return unauthorized();
 
-    if (!auth.hasRole(IdentityRole.ADMIN, IdentityRole.HR)) return forbidden();
+    if (!auth.isAdmin && !auth.isHR) return forbidden();
 
     return (
         <div className="flex flex-col my-2 mx-2 rounded-xl shadow-md bg-background">

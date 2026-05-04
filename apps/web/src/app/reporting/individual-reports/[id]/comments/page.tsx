@@ -1,8 +1,9 @@
 'use client';
 
 import { ProcessReportCommentsForm } from '@features/reporting/individual-report-comment/process-survey-answers/ui/ProcessReportCommentsForm';
+import { useAuth } from '@entities/identity/user/model/auth-context';
 import { parseParamToPositiveNumber } from '@shared/lib/utils/parse-param-to-positive-number';
-import { notFound } from 'next/navigation';
+import { forbidden, notFound, unauthorized } from 'next/navigation';
 import { use } from 'react';
 
 interface PageProps {
@@ -12,6 +13,12 @@ interface PageProps {
 }
 
 export default function ProcessReportCommentsPage({ params }: PageProps) {
+    const auth = useAuth();
+
+    if (!auth.user) return unauthorized();
+
+    if (!auth.isAdmin && !auth.isHR) return forbidden();
+
     const unwrappedParams = use(params);
     const reportId = parseParamToPositiveNumber(unwrappedParams.id);
     if (!reportId) {

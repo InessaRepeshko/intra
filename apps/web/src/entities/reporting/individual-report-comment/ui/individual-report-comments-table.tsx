@@ -7,6 +7,7 @@ import {
     Flag,
     MessageCircle,
     MessageSquareQuote,
+    Pencil,
     RefreshCcw,
     TextInitial,
     Users,
@@ -35,7 +36,7 @@ import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { useEffect } from 'react';
 import { Answer, Report, ReportComment, Review } from '../model/mappers';
-import { AnswerType, SortDirection } from '../model/types';
+import { AnswerType, ReviewStage, SortDirection } from '../model/types';
 
 interface IndividualReportCommentsTableProps {
     reports: Report[];
@@ -49,10 +50,11 @@ interface IndividualReportCommentsTableProps {
     resetTrigger?: number;
 }
 
-function IndividualReportCommentActionsMenu({ report }: { report: Report }) {
+function IndividualReportCommentActionsMenu({ report, review }: { report: Report, review: Review }) {
     const router = useRouter();
+    const isProcessingByHR = review.stage === ReviewStage.PROCESSING_BY_HR;
 
-    return (
+    return isProcessingByHR ? (
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
@@ -66,15 +68,16 @@ function IndividualReportCommentActionsMenu({ report }: { report: Report }) {
                             )
                         }
                     >
-                        <MessageSquareQuote className=" h-4 w-4" />
+
+                        <Pencil className=" h-4 w-4" />
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top" sideOffset={6}>
-                    <p>View Comments</p>
+                    <p>Process Comments</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
-    );
+    ) : <span className="text-muted-foreground">Done</span>;
 }
 
 export function IndividualReportCommentsTable({
@@ -423,11 +426,11 @@ export function IndividualReportCommentsTable({
             cellClassName: 'whitespace-nowrap',
         },
         actions: {
-            header: <span className="text-muted-foreground">Comments</span>,
+            header: <span className="text-muted-foreground">Procesing</span>,
             headerClassName:
                 'min-w-[80px] w-[100px] whitespace-nowrap text-center align-bottom pb-2',
             cell: (report) => (
-                <IndividualReportCommentActionsMenu report={report} />
+                <IndividualReportCommentActionsMenu report={report} review={reportReviews[report.id]}/>
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
@@ -535,6 +538,7 @@ export function IndividualReportCommentsTable({
                                 </div>
                                 <IndividualReportCommentActionsMenu
                                     report={report}
+                                    review={reportReviews[report.id]}
                                 />
                             </div>
 

@@ -25,9 +25,12 @@ import { CompetenceRadialChart } from '@shared/ui/competencies-radial-chart';
 import { CompetenciesRadialChartsGroup } from '@shared/ui/competencies-radial-charts-group';
 import { EntityInsightCards } from '@shared/ui/entity-insight-cards';
 import { RateeHorisontalCard } from '@shared/ui/ratee-horisontal-card';
-import { notFound } from 'next/navigation';
+import { forbidden, notFound } from 'next/navigation';
+import type { AuthContextType } from '@entities/identity/user/model/types';
+import { useReviewRespondentsQuery } from '@entities/feedback360/respondent/api/respondent.queries';
+import { useReviewReviewersQuery } from '@entities/feedback360/reviewer/api/reviewer.queries';
 
-export function IndividualReportPage({ reportId }: { reportId: number }) {
+export function IndividualReportPage({ reportId, currentUser }: { reportId: number, currentUser: AuthContextType }) {
     const {
         data: reportData,
         isLoading: isReportLoading,
@@ -35,6 +38,9 @@ export function IndividualReportPage({ reportId }: { reportId: number }) {
     } = useReportQuery(reportId);
 
     const reviewId = Number(reportData?.reviewId);
+
+    const { data: reviewers, isPending: isLoadingReviewers, error: reviewersError } = useReviewReviewersQuery(reviewId);
+
     const {
         data: reviewData,
         isLoading: isReviewLoading,
@@ -76,7 +82,8 @@ export function IndividualReportPage({ reportId }: { reportId: number }) {
         isReportLoading ||
         isReviewLoading ||
         isRateeLoading ||
-        isCycleTitleLoading
+        isCycleTitleLoading ||
+        isLoadingReviewers
     ) {
         return (
             <div className="flex flex-col items-center justify-center py-16">
@@ -90,9 +97,15 @@ export function IndividualReportPage({ reportId }: { reportId: number }) {
         isReviewError ||
         isRateeError ||
         isCycleTitleError ||
+        reviewersError ||
         !reportData
     ) {
         return notFound();
+    }
+
+    if (!currentUser.isAdmin && !currentUser.isHR
+        && reviewers?.find((r) => r.reviewerId === currentUser.user.id) === undefined) {
+        return forbidden();
     }
 
     return (

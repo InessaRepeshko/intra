@@ -9,30 +9,18 @@ import {
     useAllReportAnswersQuery,
     useAllReportCommentsQuery,
 } from '@entities/reporting/individual-report-comment/api/individual-report-comment.queries';
+import type { Answer } from '@entities/reporting/individual-report-comment/model/mappers';
 import {
     AnswerType,
-    RESPONDENT_CATEGORIES_ENUM_VALUES,
-} from '@entities/reporting/individual-report-comment/model/types';
-import { useReportsQuery } from '@entities/reporting/individual-report/api/individual-report.queries';
-
-import type {
-    Answer,
-    Report,
-} from '@entities/reporting/individual-report-comment/model/mappers';
-import {
     REVIEW_STAGE_ENUM_VALUES,
+    RESPONDENT_CATEGORIES_ENUM_VALUES,
     ReviewStage,
     SortDirection,
 } from '@entities/reporting/individual-report-comment/model/types';
 import { IndividualReportCommentsFilters } from '@entities/reporting/individual-report-comment/ui/individual-report-comments-filters';
 import { IndividualReportCommentsTable } from '@entities/reporting/individual-report-comment/ui/individual-report-comments-table';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@shared/components/ui/card';
+import { useReportsQuery } from '@entities/reporting/individual-report/api/individual-report.queries';
+import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { compareNumberArrays } from '@shared/lib/utils/compare-arrays';
 import { TablePagination } from '@shared/ui/table-pagination';
@@ -55,16 +43,19 @@ export function IndividualReportCommentList() {
     const [currentPage, setCurrentPage] = useState(1);
     const [resetTrigger, setResetTrigger] = useState(0);
 
-    // Feature dialogs state
-    const [deleteReport, setDeleteReport] = useState<Report | null>(null);
-
     const {
         data: allReportsData = [],
         isLoading: areReportsLoading,
         isError: areReportsError,
     } = useReportsQuery();
-    const allReportIds = allReportsData.map((r) => r.id);
-    const allReviewIds = allReportsData.map((r) => r.reviewId);
+    const allReportIds = useMemo(
+        () => allReportsData.map((r) => r.id),
+        [allReportsData],
+    );
+    const allReviewIds = useMemo(
+        () => allReportsData.map((r) => r.reviewId),
+        [allReportsData],
+    );
 
     const {
         reviews: allReviewsData = {},
@@ -72,12 +63,10 @@ export function IndividualReportCommentList() {
         isError: areReviewsError,
     } = useAllCommentReviewsQuery(allReportIds);
 
-    const {
-        reportComments: allCommentsData = {},
-        isLoading: areCommentsLoading,
-    } = useAllReportCommentsQuery(allReportIds);
+    const { reportComments: allCommentsData = {} } =
+        useAllReportCommentsQuery(allReportIds);
 
-    const { answers: allAnswersByReviewId = {}, isLoading: areAnswersLoading } =
+    const { answers: allAnswersByReviewId = {} } =
         useAllReportAnswersQuery(allReviewIds);
 
     // Map answers back to report IDs for the table
@@ -202,7 +191,7 @@ export function IndividualReportCommentList() {
         );
     }, [allReviewsData, cycleTitles]);
 
-    // Fetch review stages for all reports
+    // Review stages by reportId
     const reviewStages = useMemo(() => {
         const map: Record<number, ReviewStage> = {};
         allReportsData.forEach((r) => {
@@ -225,7 +214,7 @@ export function IndividualReportCommentList() {
             return (
                 REVIEW_STAGE_ENUM_VALUES.indexOf(a) -
                 REVIEW_STAGE_ENUM_VALUES.indexOf(b)
-            ); // ascending order
+            );
         });
 
         return sortedStages;
@@ -258,7 +247,7 @@ export function IndividualReportCommentList() {
         setResetTrigger((prev) => prev + 1);
     };
 
-    // Client-side filtering for date range and cycle title
+    // Client-side filtering
     const filteredReports = useMemo(() => {
         let result = allReportsData;
 
@@ -321,6 +310,10 @@ export function IndividualReportCommentList() {
         return result;
     }, [
         allReportsData,
+        rateeFullNames,
+        rateeTeamTitles,
+        rateePositionTitles,
+        reviewStages,
         search,
         dateRange,
         stages,
@@ -330,7 +323,7 @@ export function IndividualReportCommentList() {
         positions,
     ]);
 
-    // Client-side sorting for all fields
+    // Client-side sorting
     const sortedReports = useMemo(() => {
         return [...filteredReports].sort((a, b) => {
             switch (sortField) {
@@ -368,23 +361,23 @@ export function IndividualReportCommentList() {
                         ? titleA.localeCompare(titleB)
                         : titleB.localeCompare(titleA);
                 }
-                case 'createdAt':
+                case 'createdAt': {
                     const dateA = allCommentsData[a.id]
                         ?.sort(
-                            (a, b) =>
-                                b.createdAt.getTime() - a.createdAt.getTime(),
+                            (x, y) =>
+                                y.createdAt.getTime() - x.createdAt.getTime(),
                         )[0]
                         ?.createdAt.getTime();
                     const dateB = allCommentsData[b.id]
                         ?.sort(
-                            (a, b) =>
-                                b.createdAt.getTime() - a.createdAt.getTime(),
+                            (x, y) =>
+                                y.createdAt.getTime() - x.createdAt.getTime(),
                         )[0]
                         ?.createdAt.getTime();
                     return sortDirection === SortDirection.ASC
                         ? dateA - dateB
                         : dateB - dateA;
-
+                }
                 case 'textAnswerCount': {
                     const countA = reportTextAnswers[a.id]?.length ?? 0;
                     const countB = reportTextAnswers[b.id]?.length ?? 0;
@@ -406,7 +399,6 @@ export function IndividualReportCommentList() {
                         ? countA - countB
                         : countB - countA;
                 }
-
                 case 'respondentCategories': {
                     const indicesA = a.respondentCategories?.map((cat) =>
                         RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(cat),
@@ -435,10 +427,10 @@ export function IndividualReportCommentList() {
         sortField,
         sortDirection,
         rateeFullNames,
-        rateePositionTitles,
-        rateeTeamTitles,
         cycleTitles,
         reviewStages,
+        allCommentsData,
+        reportTextAnswers,
     ]);
 
     const totalPages = Math.ceil(sortedReports.length / ITEMS_PER_PAGE);
@@ -458,13 +450,13 @@ export function IndividualReportCommentList() {
     const totalReports = allReportsData.length;
 
     return (
-        <main className="min-h-screen">
-            <div className="mx-auto max-w-8xl">
-                {/* Page Header */}
-                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+        <div className="mx-auto max-w-8xl gap-8 flex flex-col w-full min-w-0">
+            <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap min-w-0">
+                    {/* Table Header */}
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
-                            360° Feedback Individual Report Comments
+                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
+                            360° Feedback Individual Report Comments Table
                         </h1>
                         <p className="mt-1 text-muted-foreground">
                             Monitor individual report comments across your
@@ -481,122 +473,98 @@ export function IndividualReportCommentList() {
                     </div>
                 </div>
 
-                {/* Main Card */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg">
-                            All Individual Report Comments
-                        </CardTitle>
-                        <CardDescription>
-                            Search, filter, and monitor individual report
-                            comments.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-6">
-                        {/* Filters */}
-                        <IndividualReportCommentsFilters
-                            search={search}
-                            onSearchChange={(val) => {
-                                setSearch(val);
-                                setCurrentPage(1);
-                            }}
-                            stages={stages}
-                            onStagesChange={(val) => {
-                                setStages(val);
-                                setCurrentPage(1);
-                            }}
-                            dateRange={dateRange}
-                            onDateRangeChange={(range) => {
-                                setDateRange(range);
-                                setCurrentPage(1);
-                            }}
-                            cycles={cycles}
-                            onCyclesChange={(val) => {
-                                setCycles(val);
-                                setCurrentPage(1);
-                            }}
-                            teams={teams}
-                            onTeamsChange={(val) => {
-                                setTeams(val);
-                                setCurrentPage(1);
-                            }}
-                            positions={positions}
-                            onPositionsChange={(val) => {
-                                setPositions(val);
-                                setCurrentPage(1);
-                            }}
-                            stageOptions={stageOptions}
-                            cycleOptions={cycleOptions}
-                            teamOptions={teamOptions}
-                            positionOptions={positionOptions}
-                            onReset={handleReset}
-                        />
+                {/* Table Content */}
+                <CardContent className="flex flex-col gap-6 m-0 p-0 min-w-0 w-full">
+                    {/* Filters */}
+                    <IndividualReportCommentsFilters
+                        search={search}
+                        onSearchChange={(val) => {
+                            setSearch(val);
+                            setCurrentPage(1);
+                        }}
+                        stages={stages}
+                        onStagesChange={(val) => {
+                            setStages(val);
+                            setCurrentPage(1);
+                        }}
+                        dateRange={dateRange}
+                        onDateRangeChange={(range) => {
+                            setDateRange(range);
+                            setCurrentPage(1);
+                        }}
+                        cycles={cycles}
+                        onCyclesChange={(val) => {
+                            setCycles(val);
+                            setCurrentPage(1);
+                        }}
+                        teams={teams}
+                        onTeamsChange={(val) => {
+                            setTeams(val);
+                            setCurrentPage(1);
+                        }}
+                        positions={positions}
+                        onPositionsChange={(val) => {
+                            setPositions(val);
+                            setCurrentPage(1);
+                        }}
+                        stageOptions={stageOptions}
+                        cycleOptions={cycleOptions}
+                        teamOptions={teamOptions}
+                        positionOptions={positionOptions}
+                        onReset={handleReset}
+                    />
 
-                        {/* Loading State */}
-                        {(areReportsLoading ||
-                            areReviewsLoading ||
-                            areCommentsLoading ||
-                            areAnswersLoading ||
-                            areCycleTitlesLoading) &&
-                            !allReportsData && (
-                                <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
-                                    <Spinner />
-                                </div>
-                            )}
+                    {/* Loading State */}
+                    {(areReportsLoading ||
+                        areReviewsLoading ||
+                        areCycleTitlesLoading) && (
+                        <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
+                            <Spinner />
+                        </div>
+                    )}
 
-                        {/* Error State */}
-                        {(areReportsError || areReviewsError) && (
-                            <div className="flex flex-col items-center justify-center py-16 text-center">
-                                <h3 className="text-lg font-semibold text-destructive">
-                                    Failed to load report comments
-                                </h3>
-                                <p className="mt-1 text-sm text-muted-foreground">
-                                    Please try refreshing the page.
-                                </p>
-                            </div>
+                    {/* Error State */}
+                    {(areReportsError || areReviewsError) && (
+                        <div className="flex flex-col items-center justify-center py-16 text-center">
+                            <h3 className="text-lg font-semibold text-destructive">
+                                Failed to load report comments
+                            </h3>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                Please try refreshing the page.
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Table */}
+                    {!areReportsLoading &&
+                        !areReportsError &&
+                        !areReviewsLoading && (
+                            <>
+                                <IndividualReportCommentsTable
+                                    reports={paginatedReports}
+                                    reportTextAnswers={reportTextAnswers}
+                                    reportComments={allCommentsData}
+                                    reportReviews={allReviewsData}
+                                    cycleTitles={cycleTitles}
+                                    sortField={sortField}
+                                    sortDirection={sortDirection}
+                                    onSort={handleSort}
+                                    resetTrigger={resetTrigger}
+                                />
+
+                                {/* Pagination */}
+                                <TablePagination
+                                    entityName="reports"
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    totalItems={filteredReports.length}
+                                    limit={ITEMS_PER_PAGE}
+                                    onPageChange={setCurrentPage}
+                                />
+                            </>
                         )}
-
-                        {/* Table */}
-                        {!areReportsLoading &&
-                            !areReportsError &&
-                            !areReviewsLoading && (
-                                <>
-                                    <IndividualReportCommentsTable
-                                        reports={paginatedReports}
-                                        reportTextAnswers={reportTextAnswers}
-                                        reportComments={allCommentsData}
-                                        reportReviews={allReviewsData}
-                                        cycleTitles={cycleTitles}
-                                        sortField={sortField}
-                                        sortDirection={sortDirection}
-                                        onSort={handleSort}
-                                        resetTrigger={resetTrigger}
-                                    />
-
-                                    {/* Pagination */}
-                                    <TablePagination
-                                        entityName="reports"
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        totalItems={filteredReports.length}
-                                        limit={ITEMS_PER_PAGE}
-                                        onPageChange={setCurrentPage}
-                                    />
-                                </>
-                            )}
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Feature Dialogs */}
-            {/* <ForceFinishCycleDialog
-                cycle={forceFinishCycle}
-                onClose={() => setForceFinishCycle(null)}
-            />
-            <DeleteCycleDialog
-                cycle={deleteCycle}
-                onClose={() => setDeleteCycle(null)}
-            /> */}
-        </main>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

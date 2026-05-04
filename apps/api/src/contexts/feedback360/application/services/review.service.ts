@@ -278,9 +278,12 @@ export class ReviewService {
     ): Promise<ReviewDomain> {
         const review = await this.getById(id);
 
-        if (review.stage !== ReviewStage.NEW) {
+        if (
+            review.stage !== ReviewStage.NEW &&
+            review.stage !== ReviewStage.PROCESSING_BY_HR
+        ) {
             throw new BadRequestException(
-                'Review must be new to be updated. Current stage: ' +
+                'Review must be new or processing by HR to be updated. Current stage: ' +
                     review.stage,
             );
         }

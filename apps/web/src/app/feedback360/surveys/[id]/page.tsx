@@ -2,8 +2,9 @@
 
 import { RespondentCategory } from '@entities/feedback360/answer/model/types';
 import { SubmitSurveyForm } from '@features/feedback360/survey/submit-form/ui/SubmitSurveyForm';
-import { notFound, useSearchParams } from 'next/navigation';
+import { notFound, useSearchParams, unauthorized } from 'next/navigation';
 import { use } from 'react';
+import { useAuth, useCurrentUser } from '@entities/identity/user/model/auth-context';
 
 function resolveRespondentCategory(rawType: string | null): RespondentCategory {
     switch (rawType?.toLowerCase()) {
@@ -24,6 +25,10 @@ export default function SurveyFormPage({
 }: {
     params: Promise<{ id: string }>;
 }) {
+    const auth = useAuth();
+
+    if (!auth.user) return unauthorized();
+
     const resolvedParams = use(params);
     const reviewId = Number(resolvedParams.id);
     const searchParams = useSearchParams();
@@ -39,6 +44,7 @@ export default function SurveyFormPage({
         <SubmitSurveyForm
             reviewId={reviewId}
             respondentCategory={respondentCategory}
+            currentUser={auth}
         />
     );
 }

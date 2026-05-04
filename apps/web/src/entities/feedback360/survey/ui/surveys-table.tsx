@@ -6,6 +6,7 @@ import {
     Bookmark,
     Calendar,
     Eye,
+    File,
     FileQuestionMark,
     MoreHorizontal,
     RefreshCcw,
@@ -36,6 +37,12 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { SurveyData, SurveyQuestion } from '../model/mappers';
 import { SortDirection } from '../model/types';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@shared/components/ui/tooltip';
 
 interface SurveysTableProps {
     surveyQuestions: Record<number, SurveyQuestion[]>;
@@ -47,31 +54,32 @@ interface SurveysTableProps {
 }
 
 function SurveysActionsMenu({
-    surveyQuestions,
-    onDelete,
+    reviewId,
 }: {
-    surveyQuestions: SurveyQuestion[];
-    onDelete?: (surveyQuestions: SurveyQuestion[]) => void;
+    reviewId: number;
 }) {
+    const router = useRouter();
+
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground"
-                >
-                    <MoreHorizontal className="h-4 w-4" />
-                    <span className="sr-only">Open actions</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Details
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground text-center cursor-pointer"
+                        onClick={() =>
+                            router.push(`/feedback360/surveys/${reviewId}`)
+                        }
+                    >
+                        <File className=" h-4 w-4" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top" sideOffset={6}>
+                    <p>View Survey</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
     );
 }
 
@@ -362,7 +370,7 @@ export function SurveysTable({
                 'min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1',
             cell: (survey) => (
                 <SurveysActionsMenu
-                    surveyQuestions={surveyQuestions[survey.reviewId] ?? []}
+                    reviewId={survey.reviewId}
                 />
             ),
             cellClassName: 'whitespace-nowrap text-center',
@@ -428,9 +436,7 @@ export function SurveysTable({
                                 )}
                             </div>
                             <SurveysActionsMenu
-                                surveyQuestions={
-                                    surveyQuestions[survey.reviewId] ?? []
-                                }
+                                reviewId={survey.reviewId}
                             />
                         </div>
 
@@ -491,7 +497,7 @@ export function SurveysTable({
             </div>
 
             {/* Desktop table layout (visible on md+) */}
-            <div className="hidden overflow-x-auto lg:block">
+            <div className="hidden overflow-x-auto lg:block w-full min-w-0">
                 <Table className="w-full table-fixed">
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">

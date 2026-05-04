@@ -8,6 +8,7 @@ import {
 import { CategoryBadge } from '@entities/feedback360/respondent/ui/category-badge';
 import { useSurveyQuestionsQuery } from '@entities/feedback360/survey/api/review-question-relation.queries';
 import { useUserQuery } from '@entities/identity/user/api/user.queries';
+import { ReviewStage } from '@entities/feedback360/review/model/types';
 import {
     useCommentReportQuery,
     useCommentReviewQuery,
@@ -36,13 +37,14 @@ import { Textarea } from '@shared/components/ui/textarea';
 import { cn } from '@shared/lib/utils/cn';
 import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 import { useSidebar } from '@shared/ui/app-sidebar';
-import { PanelLeft, Plus, RotateCcw, Send, Trash2, X } from 'lucide-react';
+import { PanelLeft, Plus, RotateCcw, Send, Trash2, X, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
-
+import { Spinner } from '@shared/components/ui/spinner';
+import { usePublishReviewMutation } from '@features/feedback360/review/publish/api/publish-review.mutation';
 import { useProcessReportCommentsMutation } from '../api/process-report-comments';
 import {
     processReportCommentsSchema,
@@ -118,6 +120,8 @@ export function ProcessReportCommentsForm({
     const questionsQuery = useSurveyQuestionsQuery(reviewId);
     const rateeQuery = useUserQuery(reviewQuery.data?.rateeId!);
     const submitMutation = useProcessReportCommentsMutation();
+    const publishMutation = usePublishReviewMutation();
+    const [publishingId, setPublishingId] = useState<number | null>(null);
 
     const questionTitleMap = useMemo(() => {
         const map = new Map<number, string>();
@@ -236,6 +240,29 @@ export function ProcessReportCommentsForm({
         );
     };
 
+    const onPublish = (values: ProcessReportCommentsValues) => {
+        setPublishingId(reviewId);
+        submitMutation.mutate(
+            { reportId, values, respondentCategoriesByQuestion },
+            {
+                onSuccess: () => {
+                    publishMutation.mutate(
+                        { id: reviewId, reportId },
+                        {
+                            onSettled: () => {
+                                setPublishingId(null);
+                                router.push(`/reporting/individual-reports/comments`);
+                            },
+                        }
+                    );
+                },
+                onError: () => {
+                    setPublishingId(null);
+                },
+            },
+        );
+    };
+
     const handleClearForm = () => {
         reset({ entries: [] });
         clearErrors();
@@ -291,7 +318,7 @@ export function ProcessReportCommentsForm({
     return (
         <div className="flex flex-col my-2 mx-2 rounded-xl shadow-md min-w-[400px] w-full">
             <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={form.handleSubmit(onPublish)}
                 className="flex min-h-full flex-col bg-background rounded-xl"
             >
                 <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background rounded-t-xl px-4 py-4 flex-wrap">
@@ -361,14 +388,21 @@ export function ProcessReportCommentsForm({
                                 </span>
                             </span>
                         </div>
-                        <Button
-                            type="submit"
-                            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
-                            disabled={!isComplete || submitMutation.isPending}
-                        >
-                            <Send className="mr-2 h-4 w-4" />
-                            {submitMutation.isPending ? 'Saving...' : 'Submit'}
-                        </Button>
+                            <Button
+                                type="button"
+                                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
+                                disabled={!isComplete || publishingId === reviewId || submitMutation.isPending || publishMutation.isPending}
+                                onClick={form.handleSubmit(onPublish)}
+                            >
+                                {publishingId === reviewId || publishMutation.isPending ? (
+                                    <Spinner className="h-4 w-4 text-primary-foreground" />
+                                ) : (
+                                    <ShieldCheck className="h-4 w-4" />
+                                )}
+                                {publishMutation.isPending || submitMutation.isPending
+                                    ? 'Saving...'
+                                    : 'Submit & Publish'}
+                            </Button>
                     </div>
                 </header>
 
@@ -711,7 +745,22 @@ export function ProcessReportCommentsForm({
                                     <X className="mr-2 h-4 w-4" />
                                     Cancel
                                 </Button>
-                                <Button
+                                        <Button
+                                            type="button"
+                                            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
+                                            disabled={!isComplete || publishingId === reviewId || submitMutation.isPending || publishMutation.isPending}
+                                            onClick={form.handleSubmit(onPublish)}
+                                        >
+                                            {publishingId === reviewId || publishMutation.isPending ? (
+                                                <Spinner className="h-4 w-4 text-primary-foreground" />
+                                            ) : (
+                                                <ShieldCheck className="h-4 w-4" />
+                                            )}
+                                            {publishMutation.isPending || submitMutation.isPending
+                                                ? 'Saving...'
+                                                : 'Submit & Publish'}
+                                        </Button>
+                                {/* <Button
                                     type="submit"
                                     className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
                                     disabled={
@@ -722,7 +771,7 @@ export function ProcessReportCommentsForm({
                                     {submitMutation.isPending
                                         ? 'Saving...'
                                         : 'Submit'}
-                                </Button>
+                                </Button> */}
                             </div>
                         </>
                     )}

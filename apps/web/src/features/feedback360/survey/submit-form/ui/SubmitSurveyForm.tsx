@@ -30,7 +30,7 @@ import { Textarea } from '@shared/components/ui/textarea';
 import { cn } from '@shared/lib/utils/cn';
 import { Megaphone, PanelLeft, RotateCcw, Send, X } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { forbidden, notFound, unauthorized, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -39,15 +39,19 @@ import { useUserQuery } from '@entities/identity/user/api/user.queries';
 import { Progress } from '@shared/components/ui/progress';
 import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 import { useSidebar } from '@shared/ui/app-sidebar';
-import { useSubmitSurveyMutation } from '../api/submit-survey-form';
+import { useSubmitSurveyMutation } from '../api/submit-survey-form.mutation';
 import {
     submitSurveySchema,
     type SubmitSurveyFormValues,
 } from '../model/submit-survey-schema';
+import type { AuthContextType } from '@entities/identity/user/model/types';
+import { useReviewRespondentsQuery } from '@entities/feedback360/respondent/api/respondent.queries';
+import { useReviewReviewersQuery } from '@entities/feedback360/reviewer/api/reviewer.queries';
 
 interface SubmitSurveyFormProps {
     reviewId: number;
     respondentCategory: RespondentCategory;
+    currentUser: AuthContextType;
 }
 
 interface CompetenceGroup {
@@ -208,7 +212,13 @@ function SurveyContentSkeleton() {
 export function SubmitSurveyForm({
     reviewId,
     respondentCategory,
+    currentUser
 }: SubmitSurveyFormProps) {
+    const { data: respondents, isPending: isLoadingRespondents, error: respondentsError } = useReviewRespondentsQuery(reviewId);
+    const { data: reviewers, isPending: isLoadingReviewers, error: reviewersError } = useReviewReviewersQuery(reviewId);
+
+
+
     const router = useRouter();
     const { toggle } = useSidebar();
     const isSelfAssessment =
@@ -460,7 +470,7 @@ export function SubmitSurveyForm({
         respondentCategory,
     ]);
 
-    if (reviewQuery.isLoading || questionsQuery.isLoading) {
+    if (reviewQuery.isLoading || questionsQuery.isLoading || isLoadingRespondents || isLoadingReviewers) {
         return (
             <div className="flex min-h-full flex-col bg-background">
                 <SurveyHeaderSkeleton />
@@ -469,21 +479,15 @@ export function SubmitSurveyForm({
         );
     }
 
-    if (reviewQuery.isError || !reviewQuery.data) {
-        return (
-            <div className="flex min-h-full flex-col items-center justify-center gap-4 bg-background p-8 text-center">
-                <h1 className="text-2xl font-semibold text-foreground">
-                    Survey not found
-                </h1>
-                <p className="text-muted-foreground">
-                    We could not load this review. It may have been deleted or
-                    you do not have access.
-                </p>
-                <Button asChild>
-                    <Link href="/feedback360/surveys">Back to surveys</Link>
-                </Button>
-            </div>
-        );
+    if (reviewQuery.isError || !reviewQuery.data || respondentsError || reviewersError) {
+        return notFound();
+    }
+
+    if (!currentUser.isAdmin && !currentUser.isHR
+        && (respondents?.find((r) => r.respondentId === currentUser.user.id) === undefined
+            && reviewers?.find((r) => r.reviewerId === currentUser.user.id) === undefined)
+    ) {
+        return forbidden();
     }
 
     const review = reviewQuery.data;
