@@ -65,7 +65,7 @@ export function SurveysPage({ currentUser }: { currentUser: AuthContextType }) {
                 {/* All Surveys Table (Admin and HR only) */}
                 {(currentUser.isAdmin || currentUser.isHR) &&
                     activeTab === 'all_surveys' && (
-                        <SurveyList currentUser={currentUser} />
+                        <SurveyList />
                     )}
             </div>
         </main>

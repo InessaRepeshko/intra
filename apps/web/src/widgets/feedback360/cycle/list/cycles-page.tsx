@@ -47,7 +47,7 @@ export function CyclesPage({ currentUser }: { currentUser: AuthContextType }) {
                     <CycleDashboard currentUser={currentUser} />
                 )}
                 {activeTab === 'cycle_table' && (
-                    <CycleList currentUser={currentUser} />
+                    <CycleList/>
                 )}
             </div>
         </main>

@@ -398,7 +398,7 @@ export function AppSidebar() {
 
                 <div className="shrink-0 py-3 pl-5 pr-3">
                     <div className="flex flex-col items-center gap-3 py-2">
-                        {/* <Link href="/signout">
+                        {/* <Link href="/">
                             <button
                                 className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:text-accent-foreground transition-colors"
                                 aria-label="Log out"
@@ -556,7 +556,7 @@ export function AppSidebar() {
                             {user.positionTitle}
                         </p>
                     </div>
-                    <Link href="/signout">
+                    <Link href="/">
                         <button
                             className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:text-accent-foreground transition-colors"
                             aria-label="Log out"

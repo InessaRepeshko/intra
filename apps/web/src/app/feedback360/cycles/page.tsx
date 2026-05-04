@@ -4,12 +4,12 @@ import { useAuth } from '@entities/identity/user/model/auth-context';
 import { IdentityRole } from '@entities/identity/user/model/types';
 import { PageHeader } from '@shared/ui/app-sidebar';
 import { CyclesPage } from '@widgets/feedback360/cycle/list/cycles-page';
-import { forbidden, notFound } from 'next/navigation';
+import { forbidden, unauthorized } from 'next/navigation';
 
 export default function Page() {
     const auth = useAuth();
 
-    if (!auth.user) return notFound();
+    if (!auth.user) return unauthorized();
 
     if (!auth.hasRole(IdentityRole.ADMIN, IdentityRole.HR)) return forbidden();
 

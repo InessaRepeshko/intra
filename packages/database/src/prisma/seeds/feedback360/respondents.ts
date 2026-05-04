@@ -43,6 +43,7 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
         respondentEmails: [
             'viktoria.moroz@intra.com',
             'dmytro.kovalenko@intra.com',
+            'mariia.pavlenko@intra.com',
         ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
@@ -73,6 +74,7 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
         respondentEmails: [
             'viktoria.moroz@intra.com',
             'olga.ivanchuk@intra.com',
+            'mariia.pavlenko@intra.com',
         ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
@@ -102,6 +104,7 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
         respondentEmails: [
             'serhii.oliinyk@intra.com',
             'pavlo.lytvyn@intra.com',
+            'mariia.pavlenko@intra.com',
         ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
@@ -129,6 +132,7 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
             'pavlo.lytvyn@intra.com',
             'taras.rudenko@intra.com',
             'oksana.savchenko@intra.com',
+            'mariia.pavlenko@intra.com',
         ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
@@ -155,7 +159,10 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'natalya.tkachenko@intra.com',
         cycleTitle: 'Mid-Year Performance Review 2025',
-        respondentEmails: ['iryna.shevchenko@intra.com'],
+        respondentEmails: [
+            'iryna.shevchenko@intra.com',
+            'mariia.pavlenko@intra.com'
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -215,6 +222,7 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
         respondentEmails: [
             'oksana.savchenko@intra.com',
             'olga.ivanchuk@intra.com',
+            'mariia.pavlenko@intra.com',
         ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
@@ -245,6 +253,7 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
         respondentEmails: [
             'tetiana.bondar@intra.com',
             'kateryna.romanchuk@intra.com',
+            'mariia.pavlenko@intra.com',
         ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
@@ -272,7 +281,10 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'ivan.sydorenko@intra.com',
         cycleTitle: 'Annual Performance Review 2025',
-        respondentEmails: ['oksana.savchenko@intra.com'],
+        respondentEmails: [
+            'oksana.savchenko@intra.com',
+            'mariia.pavlenko@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
     },
@@ -393,6 +405,7 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
         respondentEmails: [
             'oksana.savchenko@intra.com',
             'olga.ivanchuk@intra.com',
+            'mariia.pavlenko@intra.com',
         ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,
@@ -423,6 +436,7 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
         respondentEmails: [
             'tetiana.bondar@intra.com',
             'kateryna.romanchuk@intra.com',
+            'mariia.pavlenko@intra.com',
         ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.IN_PROGRESS,
@@ -450,7 +464,10 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
     {
         rateeEmail: 'ivan.sydorenko@intra.com',
         cycleTitle: 'Annual Performance Review 2026',
-        respondentEmails: ['oksana.savchenko@intra.com'],
+        respondentEmails: [
+            'oksana.savchenko@intra.com',
+            'mariia.pavlenko@intra.com',
+        ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.PENDING,
     },

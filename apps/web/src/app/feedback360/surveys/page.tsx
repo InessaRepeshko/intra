@@ -3,12 +3,12 @@
 import { useAuth } from '@entities/identity/user/model/auth-context';
 import { PageHeader } from '@shared/ui/app-sidebar';
 import { SurveysPage } from '@widgets/feedback360/survey/list/surveys-page';
-import { notFound } from 'next/navigation';
+import { unauthorized } from 'next/navigation';
 
 export default function Page() {
     const auth = useAuth();
 
-    if (!auth.user) return notFound();
+    if (!auth.user) return unauthorized();
 
     return (
         <div className="flex flex-col my-2 mx-2 rounded-xl shadow-md bg-background">

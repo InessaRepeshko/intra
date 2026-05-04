@@ -59,6 +59,11 @@ import { formatNumber } from '@shared/lib/utils/format-number';
 import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 import { StatisticsCard } from '@shared/ui/statistics-card';
 
+type CycleTabType = {
+    value: number;
+    label: string;
+};
+
 export function ReviewDashboard({
     currentUser,
     isMyReviews = false,
@@ -68,12 +73,28 @@ export function ReviewDashboard({
     isMyReviews?: boolean;
     isTeamReviews?: boolean;
 }) {
-    const [activeTab, setActiveTab] = useState<ReviewStage>(
-        ReviewStage.IN_PROGRESS,
-    );
+    const [activeReviewStageTab, setActiveReviewStageTab] = useState<ReviewStage | 'ALL'>('ALL');
+    const reviewStageOptions = ['ALL', ...REVIEW_STAGE_ENUM_VALUES];
 
     const { data: allReviewsData = [] } = useReviewsQuery();
     const { data: allCycles = [] } = useCyclesQuery();
+
+    const cycleOptions: CycleTabType[] = useMemo(() => {
+        return [
+            {
+                value: -1,
+                label: 'All cycles',
+            },
+            ...allCycles.map((cycle) => ({
+                value: cycle.id,
+                label: cycle.title,
+            })),
+        ];
+    }, [allCycles]);
+
+    const [activeCycleTab, setActiveCycleTab] = useState<
+        CycleTabType
+    >(cycleOptions[0]);
 
     // Fetch question, answer, respondent and reviewer counts for all reviews
     const reviewIds = useMemo(
@@ -109,8 +130,8 @@ export function ReviewDashboard({
     const reviewsByStage = useMemo(() => {
         const buckets = Object.fromEntries(
             REVIEW_STAGE_ENUM_VALUES.map((s) => [s, [] as Review[]]),
-        ) as Record<ReviewStage, Review[]>;
-        allReviewsData
+        ) as Record<ReviewStage | 'ALL', Review[]>;
+        const filteredReviews = allReviewsData
             .filter((r) => currentCycleIds.includes(r.cycleId || -1))
             .filter((r) => {
                 if (currentUser.isAdmin || currentUser.isHR) {
@@ -137,16 +158,14 @@ export function ReviewDashboard({
                 return r;
             })
             .filter((r): r is Review => r !== null)
-            .sort((a, b) => a.id - b.id)
-            .forEach((r) => {
-                if (r.stage && buckets[r.stage]) buckets[r.stage].push(r);
-            });
+            .sort((a, b) => a.id - b.id);
+        buckets['ALL'] = filteredReviews;
+
+        filteredReviews.forEach((r) => {
+            if (r.stage && buckets[r.stage]) buckets[r.stage].push(r);
+        });
         return buckets;
     }, [allReviewsData, currentCycleIds]);
-
-    const dataExist = Object.values(reviewsByStage).some(
-        (reviews) => reviews.length > 0,
-    );
 
     return (
         <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
@@ -249,54 +268,87 @@ export function ReviewDashboard({
                 />
             </div>
 
-            {/* Review List Tabs */}
+            {/* Cycles Tabs */}
             <Tabs
-                value={activeTab}
-                onValueChange={(v) => setActiveTab(v as ReviewStage)}
+                value={activeCycleTab.label}
+                onValueChange={(v) =>
+                    setActiveCycleTab(cycleOptions.find((c) => c.label === v) as CycleTabType)
+                }
                 className="w-full overflow-hidden"
             >
                 <TabsList
                     className="flex flex-wrap h-auto justify-start gap-1 overflow-x-auto rounded-xl p-1"
                     variant="default"
                 >
-                    {REVIEW_STAGE_ENUM_VALUES.map((stage) => (
+                    {cycleOptions.map((cycle) => (
+                        <TabsTrigger
+                            key={cycle.value}
+                            value={cycle.label}
+                            className="rounded-xl text-sm whitespace-nowrap text-center"
+                        >
+                            {cycle.label}
+                        </TabsTrigger>
+                    ))}
+                </TabsList>
+            </Tabs>
+            {/* Review Stages Tabs */}
+            <Tabs
+                value={activeReviewStageTab}
+                onValueChange={(v) => setActiveReviewStageTab(v as ReviewStage | 'ALL')}
+                className="w-full overflow-hidden"
+            >
+                <TabsList
+                    className="flex flex-wrap h-auto justify-start gap-1 overflow-x-auto rounded-xl p-1"
+                    variant="default"
+                >
+                    {reviewStageOptions.map((stage) => (
                         <TabsTrigger
                             key={stage}
                             value={stage}
                             className="rounded-xl text-sm whitespace-nowrap text-center"
                         >
-                            {stageConfig[stage].label}
+                            {stage === 'ALL' ? 'All Stages' : stageConfig[stage].label}
                         </TabsTrigger>
                     ))}
                 </TabsList>
 
-                {REVIEW_STAGE_ENUM_VALUES.map((stage) => (
+                {reviewStageOptions.map((stage) => {
+                    const reviews = reviewsByStage[stage]
+                        .filter((r) =>
+                            activeReviewStageTab === 'ALL' ? r : r.stage === activeReviewStageTab
+                        )
+                        .filter((r) =>
+                            activeCycleTab.value === -1 ? r : r.cycleId === activeCycleTab.value ? r : null
+                        )
+                        .filter((r): r is Review => r !== null);
+
+                    return (
                     <TabsContent key={stage} value={stage}>
                         <Card className="border-[0px]">
                             <CardHeader className="px-2">
                                 <CardTitle className="text-foreground text-lg break-words">
-                                    {stageConfig[stage].label} Reviews
+                                        {stage === 'ALL' ? 'All Stages' : stageConfig[stage as ReviewStage].label} Reviews
                                 </CardTitle>
                                 <CardDescription className="text-base">
                                     A total of{' '}
                                     <span className="font-semibold text-foreground">
-                                        {reviewsByStage[stage].length}
+                                            {reviews.length}
                                     </span>{' '}
-                                    {reviewsByStage[stage].length !== 1
+                                        {reviews.length !== 1
                                         ? 'reviews are'
                                         : 'review is'}{' '}
-                                    currently at the {stageConfig[stage].label}{' '}
-                                    stage.
+                                    currently at the {stage === 'ALL' ? 'All stages' : stageConfig[stage as ReviewStage].label}{" "}
+                                    {stage === 'ALL' ? '' : 'stage'} for the {activeCycleTab.label}.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="p-0">
                                 <div className="space-y-6">
-                                    {reviewsByStage[stage].length === 0 ? (
+                                        {reviews.length === 0 ? (
                                         <div className="py-12 text-center text-muted-foreground">
                                             No reviews in this stage
                                         </div>
                                     ) : (
-                                        reviewsByStage[stage].map((review) => {
+                                        reviews.map((review) => {
                                             const ratee = rateeUserById.get(
                                                 review.rateeId,
                                             );
@@ -329,6 +381,7 @@ export function ReviewDashboard({
                                                         <div className="space-y-1 flex-1 min-w-0 w-full">
                                                             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                                                                 <p className="font-medium text-lg text-foreground break-words">
+                                                                    <span className="text-muted-foreground border border-border rounded-xl px-1 bg-neutral-100">#{review.id}</span>{" "}
                                                                     {
                                                                         review.rateeFullName
                                                                     }
@@ -358,11 +411,21 @@ export function ReviewDashboard({
                                                                     </>
                                                                 )}
                                                             </div>
+                                                            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-muted-foreground text-base">
+                                                                {review.cycleId && (
+                                                                    <>
+
+                                                                        <span className="break-words">
+                                                                            {allCycles.find((c) => c.id === review.cycleId)?.title}
+                                                                        </span>
+                                                                    </>
+                                                                )}
+                                                            </div>
                                                         </div>
                                                     </div>
 
                                                     <div className="flex flex-row items-center gap-x-8 gap-y-2 w-full flex-wrap justify-between lg:justify-end">
-                                                        {stage ===
+                                                        {review.stage ===
                                                             ReviewStage.IN_PROGRESS && (
                                                             <Progress
                                                                 value={
@@ -419,14 +482,16 @@ export function ReviewDashboard({
                                                             <Link
                                                                 href={`/feedback360/reviews/${review.id}`}
                                                             >
-                                                                {currentUser.isAdmin ||
-                                                                currentUser.isHR ? (
+                                                                {(currentUser.isAdmin ||
+                                                                    currentUser.isHR) &&
+                                                                    review.stage === ReviewStage.NEW ? (
                                                                     <Pencil className="h-4 w-4" />
                                                                 ) : (
                                                                     <Eye className="h-4 w-4" />
                                                                 )}
-                                                                {currentUser.isAdmin ||
-                                                                currentUser.isHR
+                                                                {(currentUser.isAdmin ||
+                                                                currentUser.isHR) &&
+                                                                review.stage === ReviewStage.NEW
                                                                     ? 'Edit'
                                                                     : 'View'}
                                                             </Link>
@@ -440,7 +505,7 @@ export function ReviewDashboard({
                             </CardContent>
                         </Card>
                     </TabsContent>
-                ))}
+                )})}
             </Tabs>
         </Card>
     );

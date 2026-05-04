@@ -12,7 +12,6 @@ import {
     useReportsQuery,
     useReviewStagesQuery,
 } from '@entities/reporting/individual-report/api/individual-report.queries';
-import type { Report } from '@entities/reporting/individual-report/model/mappers';
 import {
     REVIEW_STAGE_ENUM_VALUES,
     ReviewStage,
@@ -20,13 +19,7 @@ import {
 } from '@entities/reporting/individual-report/model/types';
 import { IndividualReportsFilters } from '@entities/reporting/individual-report/ui/individual-reports-filters';
 import { IndividualReportsTable } from '@entities/reporting/individual-report/ui/individual-reports-table';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@shared/components/ui/card';
+import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { compareNumberArrays } from '@shared/lib/utils/compare-arrays';
 import { TablePagination } from '@shared/ui/table-pagination';
@@ -49,15 +42,15 @@ export function IndividualReportList() {
     const [currentPage, setCurrentPage] = useState(1);
     const [resetTrigger, setResetTrigger] = useState(0);
 
-    // Feature dialogs state
-    const [deleteReport, setDeleteReport] = useState<Report | null>(null);
-
     const {
         data: allReportsData = [],
         isLoading,
         isError,
     } = useReportsQuery({});
-    const allReviewIds = allReportsData.map((r) => r.reviewId);
+    const allReviewIds = useMemo(
+        () => allReportsData.map((r) => r.reviewId),
+        [allReportsData],
+    );
 
     // Fetch ratee full names, team and position titles for all reports
     const { rateeFullNames } = useRateeFullNamesQuery(allReviewIds);
@@ -98,9 +91,13 @@ export function IndividualReportList() {
     }, [allReportsData, rateePositionTitles]);
 
     // Fetch cycle titles for all reports
-    const allCycleIds = allReportsData
-        .map((r) => r.cycleId)
-        .filter((id) => id !== null && id !== undefined);
+    const allCycleIds = useMemo(
+        () =>
+            allReportsData
+                .map((r) => r.cycleId)
+                .filter((id): id is number => id !== null && id !== undefined),
+        [allReportsData],
+    );
     const { cycleTitles } = useCycleTitlesQuery(allCycleIds);
 
     const cycleOptions = useMemo(() => {
@@ -138,7 +135,7 @@ export function IndividualReportList() {
             return (
                 REVIEW_STAGE_ENUM_VALUES.indexOf(a) -
                 REVIEW_STAGE_ENUM_VALUES.indexOf(b)
-            ); // ascending order
+            );
         });
 
         return sortedStages;
@@ -235,6 +232,10 @@ export function IndividualReportList() {
         return result;
     }, [
         allReportsData,
+        rateeFullNames,
+        rateeTeamTitles,
+        rateePositionTitles,
+        reviewStages,
         search,
         dateRange,
         stages,
@@ -382,8 +383,6 @@ export function IndividualReportList() {
         sortField,
         sortDirection,
         rateeFullNames,
-        rateePositionTitles,
-        rateeTeamTitles,
         cycleTitles,
         reviewStages,
     ]);
@@ -405,13 +404,13 @@ export function IndividualReportList() {
     const totalReports = allReportsData.length;
 
     return (
-        <main className="min-h-screen">
-            <div className="mx-auto max-w-8xl">
-                {/* Page Header */}
-                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+        <div className="mx-auto max-w-8xl gap-8 flex flex-col">
+            <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+                    {/* Table Header */}
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
-                            360° Feedback Individual Reports
+                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
+                            360° Feedback Individual Reports Table
                         </h1>
                         <p className="mt-1 text-muted-foreground">
                             Monitor individual reports across your organization.{' '}
@@ -427,116 +426,95 @@ export function IndividualReportList() {
                     </div>
                 </div>
 
-                {/* Main Card */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg">
-                            All Individual Reports
-                        </CardTitle>
-                        <CardDescription>
-                            Search, filter, and monitor individual reports.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-6">
-                        {/* Filters */}
-                        <IndividualReportsFilters
-                            search={search}
-                            onSearchChange={(val) => {
-                                setSearch(val);
-                                setCurrentPage(1);
-                            }}
-                            stages={stages}
-                            onStagesChange={(val) => {
-                                setStages(val);
-                                setCurrentPage(1);
-                            }}
-                            dateRange={dateRange}
-                            onDateRangeChange={(range) => {
-                                setDateRange(range);
-                                setCurrentPage(1);
-                            }}
-                            cycles={cycles}
-                            onCyclesChange={(val) => {
-                                setCycles(val);
-                                setCurrentPage(1);
-                            }}
-                            teams={teams}
-                            onTeamsChange={(val) => {
-                                setTeams(val);
-                                setCurrentPage(1);
-                            }}
-                            positions={positions}
-                            onPositionsChange={(val) => {
-                                setPositions(val);
-                                setCurrentPage(1);
-                            }}
-                            stageOptions={stageOptions}
-                            cycleOptions={cycleOptions}
-                            teamOptions={teamOptions}
-                            positionOptions={positionOptions}
-                            onReset={handleReset}
-                        />
+                {/* Table Content */}
+                <CardContent className="flex flex-col gap-6 m-0 p-0">
+                    {/* Filters */}
+                    <IndividualReportsFilters
+                        search={search}
+                        onSearchChange={(val) => {
+                            setSearch(val);
+                            setCurrentPage(1);
+                        }}
+                        stages={stages}
+                        onStagesChange={(val) => {
+                            setStages(val);
+                            setCurrentPage(1);
+                        }}
+                        dateRange={dateRange}
+                        onDateRangeChange={(range) => {
+                            setDateRange(range);
+                            setCurrentPage(1);
+                        }}
+                        cycles={cycles}
+                        onCyclesChange={(val) => {
+                            setCycles(val);
+                            setCurrentPage(1);
+                        }}
+                        teams={teams}
+                        onTeamsChange={(val) => {
+                            setTeams(val);
+                            setCurrentPage(1);
+                        }}
+                        positions={positions}
+                        onPositionsChange={(val) => {
+                            setPositions(val);
+                            setCurrentPage(1);
+                        }}
+                        stageOptions={stageOptions}
+                        cycleOptions={cycleOptions}
+                        teamOptions={teamOptions}
+                        positionOptions={positionOptions}
+                        onReset={handleReset}
+                    />
 
-                        {/* Loading State */}
-                        {(isLoading || isReviewStagesLoading) && (
-                            <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
-                                <Spinner />
-                            </div>
-                        )}
+                    {/* Loading State */}
+                    {(isLoading || isReviewStagesLoading) && (
+                        <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
+                            <Spinner />
+                        </div>
+                    )}
 
-                        {/* Error State */}
-                        {isError && (
-                            <div className="flex flex-col items-center justify-center py-16 text-center">
-                                <h3 className="text-lg font-semibold text-destructive">
-                                    Failed to load reports
-                                </h3>
-                                <p className="mt-1 text-sm text-muted-foreground">
-                                    Please try refreshing the page.
-                                </p>
-                            </div>
-                        )}
+                    {/* Error State */}
+                    {isError && (
+                        <div className="flex flex-col items-center justify-center py-16 text-center">
+                            <h3 className="text-lg font-semibold text-destructive">
+                                Failed to load reports
+                            </h3>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                Please try refreshing the page.
+                            </p>
+                        </div>
+                    )}
 
-                        {/* Table */}
-                        {!isLoading && !isError && !isReviewStagesLoading && (
-                            <>
-                                <IndividualReportsTable
-                                    reports={paginatedReports}
-                                    rateeFullNames={rateeFullNames}
-                                    rateePositionTitles={rateePositionTitles}
-                                    rateeTeamTitles={rateeTeamTitles}
-                                    cycleTitles={cycleTitles}
-                                    reviewStages={reviewStages}
-                                    sortField={sortField}
-                                    sortDirection={sortDirection}
-                                    onSort={handleSort}
-                                    resetTrigger={resetTrigger}
-                                    // onDelete={setDeleteReport}
-                                />
+                    {/* Table */}
+                    {!isLoading && !isError && !isReviewStagesLoading && (
+                        <>
+                            <IndividualReportsTable
+                                reports={paginatedReports}
+                                rateeFullNames={rateeFullNames}
+                                rateePositionTitles={rateePositionTitles}
+                                rateeTeamTitles={rateeTeamTitles}
+                                cycleTitles={cycleTitles}
+                                reviewStages={reviewStages}
+                                sortField={sortField}
+                                sortDirection={sortDirection}
+                                onSort={handleSort}
+                                resetTrigger={resetTrigger}
+                            />
 
-                                {/* Pagination */}
-                                <TablePagination
-                                    entityName="reports"
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    totalItems={filteredReports.length}
-                                    limit={ITEMS_PER_PAGE}
-                                    onPageChange={setCurrentPage}
-                                />
-                            </>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Feature Dialogs */}
-            {/* <ForceFinishCycleDialog
-                cycle={forceFinishCycle}
-                onClose={() => setForceFinishCycle(null)}
-            />
-            <DeleteCycleDialog
-                cycle={deleteCycle}
-                onClose={() => setDeleteCycle(null)}
-            /> */}
-        </main>
+                            {/* Pagination */}
+                            <TablePagination
+                                entityName="reports"
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                totalItems={filteredReports.length}
+                                limit={ITEMS_PER_PAGE}
+                                onPageChange={setCurrentPage}
+                            />
+                        </>
+                    )}
+                </CardContent>
+            </Card>
+        </div>
     );
 }

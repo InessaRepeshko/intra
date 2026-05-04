@@ -205,3 +205,30 @@ export function useReviewCycleTitlesQuery(
 
     return { cycleTitles, isLoading };
 }
+
+export function useReviewsByIdsQuery(reviewIds: number[]) {
+    const uniqueReviewIds = Array.from(new Set(reviewIds));
+    
+    const queries = useQueries({
+        queries: uniqueReviewIds.map((reviewId) => ({
+            queryKey: reviewKeys.detail(reviewId),
+            queryFn: async () => {
+                const review = await fetchReviewById(reviewId);
+                return mapReviewDtoToModel(review);
+            },
+        })),
+    });
+
+    const reviews: Record<number, Review> = {};
+    uniqueReviewIds.forEach((reviewId, index) => {
+        const result = queries[index];
+        if (result.isSuccess && result.data !== undefined) {
+            reviews[reviewId] = result.data;
+        }
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+    const isError = queries.some((q) => q.isError);
+
+    return { reviews, isLoading, isError };
+}

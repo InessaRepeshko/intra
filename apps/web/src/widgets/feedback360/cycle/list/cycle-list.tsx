@@ -15,7 +15,6 @@ import {
 } from '@entities/feedback360/cycle/model/types';
 import { CyclesFilters } from '@entities/feedback360/cycle/ui/cycles-filters';
 import { CyclesTable } from '@entities/feedback360/cycle/ui/cycles-table';
-import { type AuthContextType } from '@entities/identity/user/model/types';
 import { CreateCycleForm } from '@features/feedback360/cycle/create/ui/CreateCycleForm';
 import { DeleteCycleDialog } from '@features/feedback360/cycle/delete/ui/DeleteCycleDialog';
 import { ForceFinishCycleDialog } from '@features/feedback360/cycle/force-finish/ui/ForceFinishCycleDialog';
@@ -26,7 +25,7 @@ import { TablePagination } from '@shared/ui/table-pagination';
 
 const ITEMS_PER_PAGE = 6;
 
-export function CycleList({ currentUser }: { currentUser: AuthContextType }) {
+export function CycleList() {
     const [search, setSearch] = useState('');
     const [stages, setStages] = useState<string[]>([]);
     const [dateRange, setDateRange] = useState<DateRange | undefined>(

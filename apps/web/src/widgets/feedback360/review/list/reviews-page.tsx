@@ -42,7 +42,7 @@ export function ReviewsPage({ currentUser }: { currentUser: AuthContextType }) {
                         ))}
                     </TabsList>
                 </Tabs>
-                {/* My Reviews Dashboard (Employee only) */}
+                {/* My Reviews Dashboard (for Employee) */}
                 {activeTab === allTabs[0].value && (
                     <ReviewDashboard
                         currentUser={currentUser}
@@ -65,7 +65,7 @@ export function ReviewsPage({ currentUser }: { currentUser: AuthContextType }) {
                 {/* All Reviews Table (Admin and HR only) */}
                 {(currentUser.isAdmin || currentUser.isHR) &&
                     activeTab === allTabs[allTabs.length - 1].value && (
-                        <ReviewList currentUser={currentUser} />
+                        <ReviewList/>
                     )}
             </div>
         </main>

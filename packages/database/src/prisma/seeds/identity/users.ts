@@ -120,7 +120,7 @@ export const USER_SEED_DATA: UserSeed[] = [
         email: 'pavlo.lytvyn@intra.com',
         position: 'Tech Lead',
         team: 'SE Team',
-        roles: [IdentityRole.MANAGER],
+        roles: [IdentityRole.MANAGER, IdentityRole.ADMIN],
         managerEmail: 'serhii.oliinyk@intra.com',
     },
     {

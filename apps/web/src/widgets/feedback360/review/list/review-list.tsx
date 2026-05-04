@@ -22,14 +22,13 @@ import {
 import { ReviewsFilters } from '@entities/feedback360/review/ui/reviews-filters';
 import { ReviewsTable } from '@entities/feedback360/review/ui/reviews-table';
 import { useUsersByUserIdsQuery } from '@entities/identity/user/api/user.queries';
-import { type AuthContextType } from '@entities/identity/user/model/types';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';
 
 const ITEMS_PER_PAGE = 6;
 
-export function ReviewList({ currentUser }: { currentUser: AuthContextType }) {
+export function ReviewList() {
     const [search, setSearch] = useState('');
     const [stages, setStages] = useState<string[]>([]);
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
@@ -44,9 +43,6 @@ export function ReviewList({ currentUser }: { currentUser: AuthContextType }) {
     );
     const [currentPage, setCurrentPage] = useState(1);
     const [resetTrigger, setResetTrigger] = useState(0);
-    const [activeTab, setActiveTab] = useState<ReviewStage>(
-        ReviewStage.IN_PROGRESS,
-    );
 
     // Feature dialogs state
     const [forceFinishReview, setForceFinishReview] = useState<Review | null>(
@@ -56,7 +52,6 @@ export function ReviewList({ currentUser }: { currentUser: AuthContextType }) {
 
     const { data: reviews = [], isLoading, isError } = useReviewsQuery();
     const { data: allReviewsData = [] } = useReviewsQuery();
-    const { data: allCycles = [] } = useCyclesQuery();
 
     // Filter unique teams and positions
     const teamOptions = useMemo(() => {
@@ -122,59 +117,6 @@ export function ReviewList({ currentUser }: { currentUser: AuthContextType }) {
         useReviewReviewerCountsQuery(reviewIds);
     const { cycleTitles, isLoading: isCycleTitlesLoading } =
         useReviewCycleTitlesQuery(reviewIds, cycleIds);
-
-    // Ratee users for dashboard cards
-    const rateeIds = useMemo(
-        () => Array.from(new Set(allReviewsData.map((r) => r.rateeId))),
-        [allReviewsData],
-    );
-    const { data: rateeUsers = [] } = useUsersByUserIdsQuery(rateeIds);
-    const rateeUserById = useMemo(
-        () => new Map(rateeUsers.map((u) => [u.id, u])),
-        [rateeUsers],
-    );
-
-    const currentCycles = useMemo(() => {
-        return allCycles.filter((c) => c.stage === CycleStage.ACTIVE);
-    }, [allCycles]);
-
-    const currentCycleIds = useMemo(() => {
-        return currentCycles.map((c) => c.id);
-    }, [currentCycles]);
-
-    // Bucket all reviews by stage for the dashboard
-    const reviewsByStage = useMemo(() => {
-        const buckets = Object.fromEntries(
-            REVIEW_STAGE_ENUM_VALUES.map((s) => [s, [] as Review[]]),
-        ) as Record<ReviewStage, Review[]>;
-        allReviewsData
-            .filter((r) => currentCycleIds.includes(r.cycleId || -1))
-            .filter((r) => {
-                if (currentUser.isAdmin || currentUser.isHR) {
-                    return r;
-                }
-                if (currentUser.isManager) {
-                    return r.managerId === currentUser.user.id ||
-                        r.rateeId === currentUser.user.id
-                        ? r
-                        : null;
-                }
-                if (currentUser.isEmployee) {
-                    return r.rateeId === currentUser.user.id ? r : null;
-                }
-                return null;
-            })
-            .filter((r): r is Review => r !== null)
-            .sort((a, b) => a.id - b.id)
-            .forEach((r) => {
-                if (r.stage && buckets[r.stage]) buckets[r.stage].push(r);
-            });
-        return buckets;
-    }, [allReviewsData, currentCycleIds]);
-
-    console.log('allReviewsData', allReviewsData);
-    console.log('currentCycles', currentCycles);
-    console.log('reviewsByStage', reviewsByStage);
 
     const cycleOptions = useMemo(() => {
         const titles = new Set(
@@ -400,9 +342,9 @@ export function ReviewList({ currentUser }: { currentUser: AuthContextType }) {
 
     return (
         <div className="mx-auto max-w-8xl gap-8 flex flex-col">
-            {/* Table Header */}
             <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+                    {/* Table Header */}
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
                             360° Feedback Reviews Table

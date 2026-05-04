@@ -34,20 +34,25 @@ export function useSurveyQuestionsQuery(reviewId: number) {
 }
 
 export function useAllSurveyQuestionsQuery(reviewIds: number[]) {
+    const uniqueReviewIds = Array.from(new Set(reviewIds));
+    
     const queries = useQueries({
-        queries: reviewIds.map((reviewId) => ({
+        queries: uniqueReviewIds.map((reviewId) => ({
             queryKey: reviewQuestionKeys.list(reviewId),
-            queryFn: () => fetchReviewQuestions(reviewId),
+            queryFn: async () => {
+                const dtos = await fetchReviewQuestions(reviewId);
+                return dtos.map(mapSurveyQuestionDtoToModel);
+            },
         })),
     });
 
     const surveyQuestions: Record<number, SurveyQuestion[]> = {};
-    reviewIds.forEach((reviewId, index) => {
+    uniqueReviewIds.forEach((reviewId, index) => {
         const result = queries[index];
         if (result.isSuccess && result.data !== undefined) {
-            surveyQuestions[reviewId] = result.data.map(
-                mapSurveyQuestionDtoToModel,
-            );
+            surveyQuestions[reviewId] = Array.isArray(result.data)
+                ? result.data
+                : [];
         }
     });
 
