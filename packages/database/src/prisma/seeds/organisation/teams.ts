@@ -37,7 +37,7 @@ export const TEAM_SEED_DATA: TeamSeed[] = [
     {
         title: 'Sales Team',
         description: 'Sales and business development',
-        headEmail: 'mykhailo.kozak@intra.com',
+        headEmail: 'marina.kozak@intra.com',
     },
     {
         title: 'Marketing Team',
@@ -47,7 +47,7 @@ export const TEAM_SEED_DATA: TeamSeed[] = [
     {
         title: 'Support Team',
         description: 'Customer support',
-        headEmail: 'volodymyr.gavrylyuk@intra.com',
+        headEmail: 'vasilysa.gavrylyuk@intra.com',
     },
     {
         title: 'Finance Team',

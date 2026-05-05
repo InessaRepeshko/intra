@@ -82,20 +82,17 @@ const navItems: NavItem[] = [
         title: '360° Feedback',
         href: '/feedback360',
         icon: Orbit,
-        // icon: Rotate3d,
         children: [
             {
                 title: 'Cycles',
                 href: '/feedback360/cycles',
                 icon: RefreshCw,
-                // icon: CalendarSync,
                 roles: [IdentityRole.HR, IdentityRole.ADMIN],
             },
             {
                 title: 'Reviews',
                 href: '/feedback360/reviews',
                 icon: NotebookTabs,
-                // icon: MessageSquareQuote,
             },
             {
                 title: 'Surveys',
@@ -108,7 +105,6 @@ const navItems: NavItem[] = [
         title: 'Reporting',
         href: '/reporting',
         icon: FileChartColumn,
-        roles: [IdentityRole.HR, IdentityRole.ADMIN],
         children: [
             {
                 title: 'Comments',
@@ -117,6 +113,7 @@ const navItems: NavItem[] = [
                 matchPaths: [
                     /^\/reporting\/individual-reports(\/\d+)?\/comments/,
                 ],
+                roles: [IdentityRole.HR, IdentityRole.ADMIN],
             },
             {
                 title: 'Individual Reports',
@@ -130,11 +127,13 @@ const navItems: NavItem[] = [
                 title: 'Strategic Reports',
                 href: '/reporting/strategic-reports',
                 icon: FileChartLine,
+                roles: [IdentityRole.HR, IdentityRole.ADMIN],
             },
             {
                 title: 'Cluster Score Analytics',
                 href: '/reporting/cluster-score-analytics',
                 icon: Boxes,
+                roles: [IdentityRole.HR, IdentityRole.ADMIN],
             },
         ],
     },
@@ -175,6 +174,7 @@ const navItems: NavItem[] = [
                 title: 'Positions',
                 href: '/organisation/positions',
                 icon: Award,
+                roles: [IdentityRole.HR, IdentityRole.ADMIN],
             },
             {
                 title: 'Users',

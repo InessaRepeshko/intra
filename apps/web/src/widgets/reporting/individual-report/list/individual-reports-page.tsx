@@ -28,9 +28,12 @@ export function IndividualReportsPage({ currentUser }: { currentUser: AuthContex
         (typeof allTabs)[number]['value']
     >(allTabs[0].value);
 
+    const isEmployee = !currentUser.isManager && !currentUser.isAdmin && !currentUser.isHR;
+
     return (
         <main className="min-h-screen">
             <div className="mx-auto max-w-8xl gap-6 sm:gap-8 flex flex-col w-full min-w-0">
+                {!isEmployee && (
                 <Tabs defaultValue={allTabs[0].value} className="w-full">
                     <TabsList
                         variant="default"
@@ -48,6 +51,7 @@ export function IndividualReportsPage({ currentUser }: { currentUser: AuthContex
                         ))}
                     </TabsList>
                 </Tabs>
+                )}
 
                 {/* My Reports Dashboard (for Employee) */}
                 {activeTab === allTabs[0].value && (
