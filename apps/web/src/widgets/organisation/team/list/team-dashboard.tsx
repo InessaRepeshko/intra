@@ -2,8 +2,10 @@
 
 import { format } from 'date-fns';
 import {
+    Award,
     Briefcase,
     Calendar,
+    Mail,
     Pencil,
     Target,
     UserRound,
@@ -12,6 +14,12 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo } from 'react';
+
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from '@shared/components/ui/avatar';
 
 import { type AuthContextType } from '@entities/identity/user/model/types';
 import {
@@ -31,7 +39,7 @@ import { formatNumber } from '@shared/lib/utils/format-number';
 import { StatisticsCard } from '@shared/ui/statistics-card';
 import { UserBadgeWithPosition } from '@shared/ui/user-badge-with-position';
 import { useUsersByTeamIdsQuery } from '@entities/identity/user/api/user.queries';
-import { currentUser } from '@intra/web';
+import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 
 export function TeamDashboard({
     currentUser: _currentUser,
@@ -105,14 +113,14 @@ export function TeamDashboard({
                 <StatisticsCard
                     title={`Members`}
                     value={formatNumber(totalMembers) ?? '-'}
-                    icon={Users}
+                    icon={UserRound}
                     color="text-amber-300"
                     width={250}
                 />
                 <StatisticsCard
                     title={`Positions`}
                     value={formatNumber(totalPositions) ?? '-'}
-                    icon={Briefcase}
+                    icon={Award}
                     color="text-green-300"
                     width={250}
                 />
@@ -147,63 +155,80 @@ export function TeamDashboard({
                                         className="flex flex-col lg:flex-row !flex-wrap items-stretch lg:items-center justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
                                     >
                                         <div className="flex flex-col items-start gap-2 text-left flex-1 min-w-[100px] w-full">
-                                            <div className="flex flex-row flex-wrap items-center gap-1">
-                                                <UsersRound className='h-4 w-4' />
-                                                <p className="font-medium text-lg text-foreground break-words">
-                                                    {team.title}
-                                                </p>
+                                            <div className="flex flex-row justify-between w-full">
+                                                <div className="flex flex-col items-start text-base text-muted-foreground">
+                                                    
+                                                <div className="flex flex-row flex-wrap items-center gap-1">
+                                                    <UsersRound className='h-4 w-4' />
+                                                    <p className="font-medium text-lg text-foreground break-words">
+                                                        {team.title}
+                                                    </p>
+                                                </div>
+                                                <div className="mb-4">{team.description && (
+                                                    <p className="text-muted-foreground text-base break-words">
+                                                        {team.description}
+                                                    </p>
+                                                )}
+                                                </div>
+                                                </div>
+                                                {(_currentUser.isAdmin || _currentUser.isManager) && (
+                                                    <div className="flex flex-row items-start gap-y-2 gap-x-8 w-full sm:w-auto flex-wrap justify-center lg:justify-end">
+                                                        <Button
+                                                            asChild
+                                                            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
+                                                        >
+                                                            <Link
+                                                                href={`/organisation/teams/${team.id}`}
+                                                            >
+                                                                <Pencil className="h-4 w-4" />
+                                                                Edit
+                                                            </Link>
+                                                        </Button>
+                                                    </div>
+                                                )}
                                             </div>
-                                            {team.description && (
-                                                <p className="text-muted-foreground text-base break-words">
-                                                    {team.description}
-                                                </p>
-                                            )}
-                                            <div className='w-full flex flex-col flex-wrap items-start gap-x-2 gap-y-2'>
+                                            <div className='w-full flex flex-col flex-wrap items-start gap-5'>
                                                 {allTeamUsers.filter((t) => t.teamId === team.id).map((team) => {
-                                                    const usersData = team.users.map((user) => {
-                                                        return {
-                                                            id: user.id,
-                                                            fullName: user?.fullName,
-                                                            positionTitle: user.positionTitle || '',
-                                                            avatarUrl: user?.avatarUrl || '',
-                                                            firstName: user?.firstName,
-                                                            lastName: user?.lastName,
-                                                            email: user?.email,
-                                                        }
-                                                    }
-                                                    );
                                                     return (
-                                                        usersData.map((userData) => {
+                                                        team.users.map((user) => {
                                                             return (
-                                                                <UserBadgeWithPosition
-                                                                    key={`${team.teamId}-${userData.id}`}
-                                                                    user={userData}
-                                                                    imageClassName="h-25 w-25"
-                                                                    textClassName='text-lg'
-                                                                    withEmail={true}
-                                                                />
+                                                                <div className="flex flex-col sm:flex-row items-center gap-2 text-center min-w-[100px] w-full">
+                                                                    <Avatar className="h-20 w-20 border bg-muted shrink-0">
+                                                                        <AvatarImage
+                                                                            className="object-cover"
+                                                                            src={user.avatarUrl || ''}
+                                                                            alt={user.fullName}
+                                                                        />
+                                                                        <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
+                                                                            {getUserInitialsFromFullName(user.fullName)}
+                                                                        </AvatarFallback>
+                                                                    </Avatar>
+                                                                    <div className="space-y-1 flex-1 min-w-0 w-full">
+                                                                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                                                            <p className="font-medium text-lg text-foreground break-words">
+                                                                                {user.fullName}
+                                                                            </p>
+                                                                        </div>
+                                                                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-muted-foreground text-base">
+                                                                            <Award className='h-4 w-4' />
+                                                                            <span className="break-words">
+                                                                                {user.positionTitle}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-muted-foreground text-base">
+                                                                            <Mail className='h-4 w-4' />
+                                                                            <span className="break-words">
+                                                                                {user.email}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             );
                                                         })
                                                     );
                                                 })}
                                             </div>
                                         </div>
-
-                                        {(_currentUser.isAdmin || _currentUser.isManager) && (
-                                            <div className="flex flex-row items-center gap-y-2 gap-x-8 w-full sm:w-auto flex-wrap justify-center lg:justify-end">
-                                                <Button
-                                                    asChild
-                                                    className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
-                                                >
-                                                <Link
-                                                    href={`/organisation/teams/${team.id}`}
-                                                >
-                                                    <Pencil className="h-4 w-4" />
-                                                    Edit
-                                                </Link>
-                                            </Button>
-                                        </div>
-                                        )}
                                     </div>
                                 );
                             })
