@@ -1,6 +1,5 @@
 'use client';
 
-import { Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
@@ -15,17 +14,20 @@ import {
 } from '@entities/feedback360/cycle/model/types';
 import { CyclesFilters } from '@entities/feedback360/cycle/ui/cycles-filters';
 import { CyclesTable } from '@entities/feedback360/cycle/ui/cycles-table';
-import { CreateCycleForm } from '@features/feedback360/cycle/create/ui/CreateCycleForm';
 import { DeleteCycleDialog } from '@features/feedback360/cycle/delete/ui/DeleteCycleDialog';
 import { ForceFinishCycleDialog } from '@features/feedback360/cycle/force-finish/ui/ForceFinishCycleDialog';
-import { Button } from '@shared/components/ui/button';
+import { CycleFormDialog } from '@features/feedback360/cycle/form/ui/CycleFormDialog';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';
+import { Button } from '@shared/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@shared/components/ui/tabs';
+import { Plus } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 6;
 
 export function CycleList() {
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [search, setSearch] = useState('');
     const [stages, setStages] = useState<string[]>([]);
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
@@ -43,6 +45,8 @@ export function CycleList() {
         null,
     );
     const [deleteCycle, setDeleteCycle] = useState<Cycle | null>(null);
+    const [viewingCycle, setViewingCycle] = useState<Cycle | null>(null);
+    const [editingCycle, setEditingCycle] = useState<Cycle | null>(null);
 
     // Build query params (exclude all sort params - sorting is client-side only)
     const queryParams = useMemo(() => {
@@ -187,14 +191,14 @@ export function CycleList() {
                             total cycles.
                         </p>
                     </div>
-                    <CreateCycleForm
-                        trigger={
-                            <Button size="lg" className="shrink-0">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Create New Cycle
-                            </Button>
-                        }
-                    />
+                    <Button
+                        size="lg"
+                        className="shrink-0 rounded-xl"
+                        onClick={() => setIsCreateOpen(true)}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create New Cycle
+                    </Button>
                 </div>
 
                 {/* Table Content */}
@@ -249,6 +253,8 @@ export function CycleList() {
                                 onSort={handleSort}
                                 onForceFinish={setForceFinishCycle}
                                 onDelete={setDeleteCycle}
+                                onView={setViewingCycle}
+                                onEdit={setEditingCycle}
                                 resetTrigger={resetTrigger}
                             />
 
@@ -274,6 +280,21 @@ export function CycleList() {
             <DeleteCycleDialog
                 cycle={deleteCycle}
                 onClose={() => setDeleteCycle(null)}
+            />
+            <CycleFormDialog
+                mode="view"
+                cycle={viewingCycle}
+                onClose={() => setViewingCycle(null)}
+            />
+            <CycleFormDialog
+                mode="edit"
+                cycle={editingCycle}
+                onClose={() => setEditingCycle(null)}
+            />
+            <CycleFormDialog
+                mode="create"
+                open={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
             />
         </div>
     );

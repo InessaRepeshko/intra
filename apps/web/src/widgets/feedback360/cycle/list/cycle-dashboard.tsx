@@ -10,7 +10,6 @@ import {
     NotebookTabs,
     Pencil,
 } from 'lucide-react';
-import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
 import {
@@ -30,6 +29,7 @@ import { useReviewsQuery } from '@entities/feedback360/review/api/review.queries
 import { Review } from '@entities/feedback360/review/model/mappers';
 import { ReviewStage } from '@entities/feedback360/review/model/types';
 import { type AuthContextType } from '@entities/identity/user/model/types';
+import { CycleFormDialog } from '@features/feedback360/cycle/form/ui/CycleFormDialog';
 import { Button } from '@shared/components/ui/button';
 import {
     Card,
@@ -47,6 +47,7 @@ import {
 } from '@shared/components/ui/tabs';
 import { formatNumber } from '@shared/lib/utils/format-number';
 import { StatisticsCard } from '@shared/ui/statistics-card';
+import { Plus } from 'lucide-react';
 
 export function CycleDashboard({
     currentUser,
@@ -54,6 +55,8 @@ export function CycleDashboard({
     currentUser: AuthContextType;
 }) {
     const [activeTab, setActiveTab] = useState<CycleStage>(CycleStage.ACTIVE);
+    const [editingCycle, setEditingCycle] = useState<Cycle | null>(null);
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
 
     const { data: allCyclesData = [] } = useCyclesQuery({});
 
@@ -93,7 +96,7 @@ export function CycleDashboard({
     return (
         <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
             {/* Cycles Dashboard Header */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between flex-wrap">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
                         360° Feedback Cycles Dashboard
@@ -106,6 +109,14 @@ export function CycleDashboard({
                         active cycles.
                     </p>
                 </div>
+                <Button
+                        size="lg"
+                        className="shrink-0 rounded-xl"
+                        onClick={() => setIsCreateOpen(true)}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create New Cycle
+                    </Button>
             </div>
 
             {/* Cycle stats */}
@@ -301,15 +312,16 @@ export function CycleDashboard({
                                                             </span>
                                                         </div>
                                                         <Button
-                                                            asChild
+                                                            type="button"
                                                             className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
+                                                            onClick={() =>
+                                                                setEditingCycle(
+                                                                    cycle,
+                                                                )
+                                                            }
                                                         >
-                                                            <Link
-                                                                href={`/feedback360/cycles/${cycle.id}`}
-                                                            >
-                                                                <Pencil className="h-4 w-4" />
-                                                                Edit
-                                                            </Link>
+                                                            <Pencil className="h-4 w-4" />
+                                                            Edit
                                                         </Button>
                                                     </div>
                                                 </div>
@@ -322,6 +334,17 @@ export function CycleDashboard({
                     </TabsContent>
                 ))}
             </Tabs>
+
+            <CycleFormDialog
+                mode="edit"
+                cycle={editingCycle}
+                onClose={() => setEditingCycle(null)}
+            />
+            <CycleFormDialog
+                mode="create"
+                open={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
+            />
         </Card>
     );
 }

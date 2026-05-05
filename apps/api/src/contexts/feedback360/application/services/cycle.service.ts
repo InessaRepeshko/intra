@@ -138,7 +138,8 @@ export class CycleService {
     }
 
     async delete(id: number): Promise<void> {
-        await this.getById(id);
+        const cycle = await this.getById(id);
+        
         await this.cycles.deleteById(id);
     }
 

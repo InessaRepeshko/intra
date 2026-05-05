@@ -45,6 +45,8 @@ interface CyclesTableProps {
     onSort: (field: string) => void;
     onForceFinish?: (cycle: Cycle) => void;
     onDelete?: (cycle: Cycle) => void;
+    onView?: (cycle: Cycle) => void;
+    onEdit?: (cycle: Cycle) => void;
     resetTrigger?: number;
 }
 
@@ -52,10 +54,14 @@ function CycleActionsMenu({
     cycle,
     onForceFinish,
     onDelete,
+    onView,
+    onEdit,
 }: {
     cycle: Cycle;
     onForceFinish?: (cycle: Cycle) => void;
     onDelete?: (cycle: Cycle) => void;
+    onView?: (cycle: Cycle) => void;
+    onEdit?: (cycle: Cycle) => void;
 }) {
     return (
         <DropdownMenu>
@@ -70,11 +76,11 @@ function CycleActionsMenu({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onView?.(cycle)}>
                     <Eye className="mr-2 h-4 w-4" />
                     View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit?.(cycle)}>
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
                 </DropdownMenuItem>
@@ -108,6 +114,8 @@ export function CyclesTable({
     onSort,
     onForceFinish,
     onDelete,
+    onView,
+    onEdit,
     resetTrigger,
 }: CyclesTableProps) {
     const {
@@ -163,9 +171,7 @@ export function CyclesTable({
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-muted-foreground text-center cursor-pointer hover:underline"
-                        onClick={() =>
-                            router.push(`/feedback360/cycles/${cycle.id}`)
-                        }
+                        onClick={() => onView?.(cycle)}
                     >
                         <span className="font-medium text-foreground">
                             {cycle.id}
@@ -293,6 +299,8 @@ export function CyclesTable({
                     cycle={cycle}
                     onForceFinish={onForceFinish}
                     onDelete={onDelete}
+                    onView={onView}
+                    onEdit={onEdit}
                 />
             ),
             cellClassName: 'whitespace-nowrap text-center',
@@ -350,6 +358,8 @@ export function CyclesTable({
                                 cycle={cycle}
                                 onForceFinish={onForceFinish}
                                 onDelete={onDelete}
+                                onView={onView}
+                                onEdit={onEdit}
                             />
                         </div>
 

@@ -17,18 +17,23 @@ import { useForceFinishCycleMutation } from '../api/force-finish-cycle.mutation'
 interface ForceFinishCycleDialogProps {
     cycle: Cycle | null;
     onClose: () => void;
+    onSuccess?: () => void;
 }
 
 export function ForceFinishCycleDialog({
     cycle,
     onClose,
+    onSuccess,
 }: ForceFinishCycleDialogProps) {
     const mutation = useForceFinishCycleMutation();
 
     const handleForceFinish = () => {
         if (!cycle) return;
         mutation.mutate(cycle.id, {
-            onSuccess: () => onClose(),
+            onSuccess: () => {
+                onClose();
+                onSuccess?.();
+            },
         });
     };
 

@@ -17,15 +17,23 @@ import { useDeleteCycleMutation } from '../api/delete-cycle.mutation';
 interface DeleteCycleDialogProps {
     cycle: Cycle | null;
     onClose: () => void;
+    onSuccess?: () => void;
 }
 
-export function DeleteCycleDialog({ cycle, onClose }: DeleteCycleDialogProps) {
+export function DeleteCycleDialog({
+    cycle,
+    onClose,
+    onSuccess,
+}: DeleteCycleDialogProps) {
     const mutation = useDeleteCycleMutation();
 
     const handleDelete = () => {
         if (!cycle) return;
         mutation.mutate(cycle.id, {
-            onSuccess: () => onClose(),
+            onSuccess: () => {
+                onClose();
+                onSuccess?.();
+            },
         });
     };
 

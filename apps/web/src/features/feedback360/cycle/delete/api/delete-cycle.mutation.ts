@@ -13,8 +13,8 @@ export function useDeleteCycleMutation() {
             queryClient.invalidateQueries({ queryKey: cycleKeys.lists() });
             toast.success('Cycle deleted successfully');
         },
-        onError: () => {
-            toast.error('Failed to delete cycle');
+        onError: (error: Error) => {
+            toast.error(`Failed to delete cycle: ${error.message}`);
         },
     });
 }
