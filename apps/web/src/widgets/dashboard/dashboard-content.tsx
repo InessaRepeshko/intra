@@ -328,7 +328,7 @@ export function DashboardContent({
                     title={`Active Cycles`}
                     value={formatNumber(activeCycles.length) ?? '-'}
                     icon={RefreshCw}
-                    color="text-amber-300"
+                    color="text-sky-300"
                     width={250}
                 />
                 <StatisticsCard
@@ -349,7 +349,7 @@ export function DashboardContent({
                         ) ?? '-'
                     }
                     icon={NotebookTabs}
-                    color="text-blue-300"
+                    color="text-yellow-300"
                     width={250}
                 />
                 <StatisticsCard

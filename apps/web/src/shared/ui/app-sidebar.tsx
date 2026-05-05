@@ -402,21 +402,21 @@ export function AppSidebar() {
 
                 <div className="shrink-0 py-3 pl-5 pr-3">
                     <Link href="/profile">
-                    <div className="flex flex-col items-center gap-3 py-2">
-                        <Avatar className="h-14 w-14 border bg-muted shrink-0">
-                            <AvatarImage
-                                className="object-cover"
-                                src={user.avatarUrl || ''}
-                                alt={user.fullName}
-                            />
-                            <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
-                                {getUserInitialsFromFullName(
-                                    user.fullName ??
-                                        `${user.lastName} ${user.firstName}`,
-                                )}
-                            </AvatarFallback>
-                        </Avatar>
-                    </div>
+                        <div className="flex flex-col items-center gap-3 py-2">
+                            <Avatar className="h-14 w-14 border bg-muted shrink-0">
+                                <AvatarImage
+                                    className="object-cover"
+                                    src={user.avatarUrl || ''}
+                                    alt={user.fullName}
+                                />
+                                <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
+                                    {getUserInitialsFromFullName(
+                                        user.fullName ??
+                                            `${user.lastName} ${user.firstName}`,
+                                    )}
+                                </AvatarFallback>
+                            </Avatar>
+                        </div>
                     </Link>
                 </div>
             </aside>
@@ -547,29 +547,29 @@ export function AppSidebar() {
 
             <div className="shrink-0 p-3">
                 <Link href="/profile">
-                <div className="flex items-center gap-3 px-2 py-2">
-                    <Avatar className="h-14 w-14 border bg-muted shrink-0">
-                        <AvatarImage
-                            className="object-cover"
-                            src={user.avatarUrl || ''}
-                            alt={user.fullName}
-                        />
-                        <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
-                            {getUserInitialsFromFullName(
-                                user.fullName ??
-                                    `${user.lastName} ${user.firstName}`,
-                            )}
-                        </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-base font-medium text-black break-words">
-                            {user.firstName + ' ' + user.lastName}
-                        </p>
-                        <p className="text-sm text-black/70 break-words">
-                            {user.positionTitle}
-                        </p>
+                    <div className="flex items-center gap-3 px-2 py-2">
+                        <Avatar className="h-14 w-14 border bg-muted shrink-0">
+                            <AvatarImage
+                                className="object-cover"
+                                src={user.avatarUrl || ''}
+                                alt={user.fullName}
+                            />
+                            <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
+                                {getUserInitialsFromFullName(
+                                    user.fullName ??
+                                        `${user.lastName} ${user.firstName}`,
+                                )}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-base font-medium text-black break-words">
+                                {user.firstName + ' ' + user.lastName}
+                            </p>
+                            <p className="text-sm text-black/70 break-words">
+                                {user.positionTitle}
+                            </p>
+                        </div>
                     </div>
-                </div>
                 </Link>
             </div>
         </aside>
