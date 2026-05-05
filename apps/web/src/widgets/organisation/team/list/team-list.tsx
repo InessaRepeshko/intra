@@ -10,16 +10,9 @@ import {
     useTeamAllUsersQuery,
     useTeamsQuery,
 } from '@entities/organisation/team/api/team.queries';
-import { Team } from '@entities/organisation/team/model/mappers';
 import { TeamFilters } from '@entities/organisation/team/ui/team-filters';
 import { TeamTable } from '@entities/organisation/team/ui/team-table';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@shared/components/ui/card';
+import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { compareStringArrays } from '@shared/lib/utils/compare-arrays';
 import { TablePagination } from '@shared/ui/table-pagination';
@@ -40,35 +33,27 @@ export function TeamList() {
     const [currentPage, setCurrentPage] = useState(1);
     const [resetTrigger, setResetTrigger] = useState(0);
 
-    // Feature dialogs state
-    const [deleteTeam, setDeleteTeam] = useState<Team | null>(null);
-
-    // Build query params (client-side only)
-    const queryParams = useMemo(() => {
-        const params: Record<string, unknown> = {};
-
-        if (search.trim()) params.search = search.trim();
-        if (positions.length === 1) params.positionId = positions[0];
-
-        return params;
-    }, [search, positions]);
-
     const { data: allTeamsData = [], isLoading, isError } = useTeamsQuery();
-    const allTeamIds = allTeamsData.map((p) => p.id);
+    const allTeamIds = useMemo(
+        () => allTeamsData.map((p) => p.id),
+        [allTeamsData],
+    );
 
-    // Fetch position titles and users for all positions
-    const { users: allUsers, isLoading: isAllUsersLoading } =
+    const { users: allUsers = [], isLoading: isAllUsersLoading } =
         useTeamAllUsersQuery(allTeamIds);
 
-    const allPositionIds = allUsers.map((members) => {
-        return {
-            teamId: members.teamId,
-            positionIds: members.users?.map((u) => u.user?.positionId) || [],
-        };
-    });
+    const allPositionIds = useMemo(
+        () =>
+            allUsers.map((members) => ({
+                teamId: members.teamId,
+                positionIds:
+                    members.users?.map((u) => u.user?.positionId) || [],
+            })),
+        [allUsers],
+    );
 
     const {
-        positionTitles: allPositionTitles,
+        positionTitles: allPositionTitles = {},
         isLoading: isPositionTitlesLoading,
     } = useTeamAllPositionTitlesQuery(allPositionIds);
 
@@ -85,8 +70,8 @@ export function TeamList() {
                 uniquePositions.add('None');
             }
             p.positionIds?.forEach((positionId) => {
-                const positions = allPositionTitles[p.teamId] || [];
-                const position = positions.find((p) => p.id === positionId);
+                const titles = allPositionTitles[p.teamId] || [];
+                const position = titles.find((p) => p.id === positionId);
                 const title = position?.title;
                 if (title === null || title === undefined) {
                     uniquePositions.add('None');
@@ -97,21 +82,17 @@ export function TeamList() {
             });
         });
 
-        let positionOptions = Array.from(uniquePositions)
+        let opts = Array.from(uniquePositions)
             .sort((a, b) => a.localeCompare(b))
             .map((title) => ({ id: title, title }));
 
-        if (positionOptions.some((c) => c.title === 'None')) {
-            const noneOption = positionOptions.find((c) => c.title === 'None')!;
-            const filteredPositionOptions = positionOptions.filter(
-                (c) => c.title !== 'None',
-            );
-            positionOptions = noneOption
-                ? [noneOption, ...filteredPositionOptions]
-                : positionOptions;
+        if (opts.some((c) => c.title === 'None')) {
+            const noneOption = opts.find((c) => c.title === 'None')!;
+            const filtered = opts.filter((c) => c.title !== 'None');
+            opts = noneOption ? [noneOption, ...filtered] : opts;
         }
-        return positionOptions;
-    }, [allPositionIds, allPositionTitles, allUsers]);
+        return opts;
+    }, [allPositionIds, allPositionTitles]);
 
     const handleSort = (field: string) => {
         if (sortField === field) {
@@ -138,7 +119,7 @@ export function TeamList() {
         setResetTrigger((prev) => prev + 1);
     };
 
-    // Client-side filtering for date range, title, position titles
+    // Client-side filtering
     const filteredTeams = useMemo(() => {
         let result = allTeamsData;
 
@@ -171,7 +152,6 @@ export function TeamList() {
                     !teamPositions || teamPositions.length === 0;
 
                 const matchesNone = hasNoneFilter && hasNoPositions;
-
                 const matchesRegularPositions =
                     regularPositions.length > 0 &&
                     teamPositions.some((position) =>
@@ -188,16 +168,9 @@ export function TeamList() {
             });
         }
         return result;
-    }, [
-        positions,
-        search,
-        dateRange,
-        allPositionTitles,
-        positions,
-        allTeamsData,
-    ]);
+    }, [allTeamsData, search, dateRange, positions, allPositionTitles]);
 
-    // Client-side sorting for all fields
+    // Client-side sorting
     const sortedTeams = useMemo(() => {
         return [...filteredTeams].sort((a, b) => {
             switch (sortField) {
@@ -245,15 +218,7 @@ export function TeamList() {
                     return 0;
             }
         });
-    }, [
-        filteredTeams,
-        sortField,
-        sortDirection,
-        allPositionTitles,
-        users,
-        positions,
-        allUsers,
-    ]);
+    }, [filteredTeams, sortField, sortDirection, allPositionTitles, allUsers]);
 
     const totalPages = Math.ceil(sortedTeams.length / ITEMS_PER_PAGE);
     const paginatedTeams = sortedTeams.slice(
@@ -261,17 +226,16 @@ export function TeamList() {
         currentPage * ITEMS_PER_PAGE,
     );
 
-    // Summary stats
     const totalTeams = allTeamsData.length;
 
     return (
-        <main className="min-h-screen">
-            <div className="mx-auto max-w-8xl">
-                {/* Page Header */}
-                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+        <div className="mx-auto max-w-8xl gap-8 flex flex-col w-full min-w-0">
+            <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap min-w-0">
+                    {/* Table Header */}
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
-                            Organisational Teams
+                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
+                            Organisational Teams Table
                         </h1>
                         <p className="mt-1 text-muted-foreground">
                             Manage teams across your organization.{' '}
@@ -281,104 +245,81 @@ export function TeamList() {
                             total teams.
                         </p>
                     </div>
-                    {/* <CreateCompetenceForm
-                        trigger={
-                            <Button size="lg" className="shrink-0">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Create New Competence
-                            </Button>
-                        }
-                    /> */}
                 </div>
 
-                {/* Main Card */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg">All Teams</CardTitle>
-                        <CardDescription>
-                            Search, filter, and manage teams.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-6">
-                        {/* Filters */}
-                        <TeamFilters
-                            search={search}
-                            onSearchChange={(val) => {
-                                setSearch(val);
-                                setCurrentPage(1);
-                            }}
-                            dateRange={dateRange}
-                            onDateRangeChange={(range) => {
-                                setDateRange(range);
-                                setCurrentPage(1);
-                            }}
-                            positions={positions}
-                            onPositionsChange={(val) => {
-                                setPositions(val);
-                                setCurrentPage(1);
-                            }}
-                            positionOptions={positionOptions}
-                            onReset={handleReset}
-                        />
+                {/* Table Content */}
+                <CardContent className="flex flex-col gap-6 m-0 p-0 min-w-0 w-full">
+                    {/* Filters */}
+                    <TeamFilters
+                        search={search}
+                        onSearchChange={(val) => {
+                            setSearch(val);
+                            setCurrentPage(1);
+                        }}
+                        dateRange={dateRange}
+                        onDateRangeChange={(range) => {
+                            setDateRange(range);
+                            setCurrentPage(1);
+                        }}
+                        positions={positions}
+                        onPositionsChange={(val) => {
+                            setPositions(val);
+                            setCurrentPage(1);
+                        }}
+                        positionOptions={positionOptions}
+                        onReset={handleReset}
+                    />
 
-                        {/* Loading State */}
-                        {(isLoading ||
-                            isAllUsersLoading ||
-                            isPositionTitlesLoading) && (
-                            <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
-                                <Spinner />
-                            </div>
+                    {/* Loading State */}
+                    {(isLoading ||
+                        isAllUsersLoading ||
+                        isPositionTitlesLoading) && (
+                        <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
+                            <Spinner />
+                        </div>
+                    )}
+
+                    {/* Error State */}
+                    {isError && (
+                        <div className="flex flex-col items-center justify-center py-16 text-center">
+                            <h3 className="text-lg font-semibold text-destructive">
+                                Failed to load teams
+                            </h3>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                Please try refreshing the page.
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Table */}
+                    {!isLoading &&
+                        !isError &&
+                        !isAllUsersLoading &&
+                        !isPositionTitlesLoading && (
+                            <>
+                                <TeamTable
+                                    teams={paginatedTeams}
+                                    positions={allPositionTitles}
+                                    users={allUsers}
+                                    sortField={sortField}
+                                    sortDirection={sortDirection}
+                                    onSort={handleSort}
+                                    resetTrigger={resetTrigger}
+                                />
+
+                                {/* Pagination */}
+                                <TablePagination
+                                    entityName="teams"
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    totalItems={filteredTeams.length}
+                                    limit={ITEMS_PER_PAGE}
+                                    onPageChange={setCurrentPage}
+                                />
+                            </>
                         )}
-
-                        {/* Error State */}
-                        {isError && (
-                            <div className="flex flex-col items-center justify-center py-16 text-center">
-                                <h3 className="text-lg font-semibold text-destructive">
-                                    Failed to load teams
-                                </h3>
-                                <p className="mt-1 text-sm text-muted-foreground">
-                                    Please try refreshing the page.
-                                </p>
-                            </div>
-                        )}
-
-                        {/* Table */}
-                        {!isLoading &&
-                            !isError &&
-                            !isAllUsersLoading &&
-                            !isPositionTitlesLoading && (
-                                <>
-                                    <TeamTable
-                                        teams={paginatedTeams}
-                                        positions={allPositionTitles}
-                                        users={allUsers}
-                                        sortField={sortField}
-                                        sortDirection={sortDirection}
-                                        onSort={handleSort}
-                                        resetTrigger={resetTrigger}
-                                        // onDelete={setDeleteCompetence}
-                                    />
-
-                                    {/* Pagination */}
-                                    <TablePagination
-                                        entityName="teams"
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        totalItems={filteredTeams.length}
-                                        limit={ITEMS_PER_PAGE}
-                                        onPageChange={setCurrentPage}
-                                    />
-                                </>
-                            )}
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Feature Dialogs */}
-            {/* <DeleteCycleDialog
-                cycle={deleteCycle}
-                onClose={() => setDeleteCycle(null)}
-            /> */}
-        </main>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

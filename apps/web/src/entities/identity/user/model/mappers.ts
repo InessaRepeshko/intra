@@ -18,7 +18,6 @@ export interface User extends Omit<
 const getFullAvatarUrl = (avatarUrl?: string | null): string | null => {
     if (!avatarUrl) return null;
     if (avatarUrl.startsWith('http') || avatarUrl.startsWith('/')) return avatarUrl;
-    // В Next.js файли з папки public доступні від кореня (/)
     return `/user-avatars/${avatarUrl}`;
 };
 

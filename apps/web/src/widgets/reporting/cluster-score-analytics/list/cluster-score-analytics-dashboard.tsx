@@ -298,7 +298,7 @@ export function ClusterScoreAnalyticsDashboard({
                             key={cycle.value}
                             value={String(cycle.value)}
                         >
-                            <Card className="border-[0px]">
+                            <Card className="border-[0px] shadow-none">
                                 <CardHeader className="px-2">
                                     <CardTitle className="text-foreground text-lg break-words">
                                         {cycleTitle}

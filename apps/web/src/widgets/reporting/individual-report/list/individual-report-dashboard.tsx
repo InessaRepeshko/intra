@@ -314,7 +314,7 @@ export function IndividualReportDashboard({
 
                     return (
                         <TabsContent key={stage} value={stage}>
-                            <Card className="border-[0px]">
+                            <Card className="border-[0px] shadow-none">
                                 <CardHeader className="px-2">
                                     <CardTitle className="text-foreground text-lg break-words">
                                         {stageLabel} Reports

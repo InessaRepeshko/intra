@@ -305,7 +305,7 @@ export function SurveyDashboard({
 
                     return (
                         <TabsContent value={status} key={status}>
-                            <Card className="border-[0px]">
+                            <Card className="border-[0px] shadow-none">
                                 <CardHeader className="px-2">
                                     <CardTitle className="text-foreground text-lg break-words">
                                         {statusLabel} Surveys

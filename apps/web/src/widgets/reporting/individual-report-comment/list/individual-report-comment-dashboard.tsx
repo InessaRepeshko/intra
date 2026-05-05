@@ -285,7 +285,7 @@ export function IndividualReportCommentDashboard({
 
                         return (
                             <TabsContent key={cycle.value} value={cycle.label}>
-                                <Card className="border-[0px]">
+                                <Card className="border-[0px] shadow-none">
                                     <CardHeader className="px-2">
                                         <CardTitle className="text-foreground text-lg break-words">
                                             {cycle.label} Individual Report Comments

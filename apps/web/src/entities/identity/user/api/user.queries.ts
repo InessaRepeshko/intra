@@ -75,6 +75,35 @@ export function useUsersQuery(params?: UserSearchQuery) {
     });
 }
 
+export function useUsersByTeamIdsQuery(teamIds: number[]) {
+    const queries = useQueries({
+        queries: teamIds.map((teamId) => ({
+            queryKey: userKeys.list({ teamId }),
+            queryFn: async () => {
+                const dtos = await fetchUsers({ teamId });
+                const users = dtos.map(mapUserResponseDtoToModel);
+                const usersWithOrgData = await Promise.all(
+                    users.map(enrichUserWithOrgData),
+                );
+                return usersWithOrgData;
+            },
+            enabled: teamId > 0,
+        })),
+    });
+
+    const usersByTeam: Array<{ teamId: number; users: User[] }> = [];
+    teamIds.forEach((teamId, index) => {
+        const result = queries[index];
+        if (result.isSuccess && result.data !== undefined) {
+            usersByTeam.push({ teamId, users: result.data });
+        }
+    });
+
+    const isLoading = queries.some((q) => q.isLoading);
+
+    return { usersByTeam, isLoading };
+}
+
 export function useUsersByUserIdsQuery(ids: number[]) {
     const queries = useQueries({
         queries: ids.map((id) => ({
