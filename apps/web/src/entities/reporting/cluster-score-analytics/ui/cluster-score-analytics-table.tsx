@@ -310,7 +310,7 @@ export function ClusterScoreAnalyticsTable({
                 <div className="flex items-center justify-start gap-1.5">
                     <TrendingDown className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium text-foreground">
-                        {clusterScoreAnalytics.minScore ?? `—`}
+                        {formatNumber(clusterScoreAnalytics.minScore ?? 0, 2)}
                     </span>
                 </div>
             ),
@@ -332,7 +332,7 @@ export function ClusterScoreAnalyticsTable({
                 <div className="flex items-center justify-start gap-1.5">
                     <TrendingUp className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium text-foreground">
-                        {clusterScoreAnalytics.maxScore ?? `—`}
+                        {formatNumber(clusterScoreAnalytics.maxScore ?? 0, 2)}
                     </span>
                 </div>
             ),
@@ -354,7 +354,7 @@ export function ClusterScoreAnalyticsTable({
                 <div className="flex items-center justify-start gap-1.5">
                     <SeparatorHorizontal className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium text-foreground">
-                        {clusterScoreAnalytics.averageScore ?? `—`}
+                        {formatNumber(clusterScoreAnalytics.averageScore ?? 0, 2)}
                     </span>
                 </div>
             ),

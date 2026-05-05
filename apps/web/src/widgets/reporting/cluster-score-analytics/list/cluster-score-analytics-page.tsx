@@ -5,10 +5,10 @@ import { useState } from 'react';
 import { type AuthContextType } from '@entities/identity/user/model/types';
 import { Tabs, TabsList, TabsTrigger } from '@shared/components/ui/tabs';
 
-import { StrategicReportDashboard } from './strategic-report-dashboard';
-import { StrategicReportList } from './strategic-report-list';
+import { ClusterScoreAnalyticsDashboard } from './cluster-score-analytics-dashboard';
+import { ClusterScoreAnalyticsList } from './cluster-score-analytics-list';
 
-export function StrategicReportsPage({
+export function ClusterScoreAnalyticsPage({
     currentUser,
 }: {
     currentUser: AuthContextType;
@@ -18,8 +18,8 @@ export function StrategicReportsPage({
     }
 
     const allTabs = [
-        { label: 'Report Dashboard', value: 'report_dashboard' },
-        { label: 'Report Table', value: 'report_table' },
+        { label: 'Analytics Dashboard', value: 'analytics_dashboard' },
+        { label: 'Analytics Table', value: 'analytics_table' },
     ];
 
     const [activeTab, setActiveTab] = useState<
@@ -47,10 +47,14 @@ export function StrategicReportsPage({
                     </TabsList>
                 </Tabs>
 
-                {activeTab === 'report_dashboard' && (
-                    <StrategicReportDashboard currentUser={currentUser} />
+                {activeTab === 'analytics_dashboard' && (
+                    <ClusterScoreAnalyticsDashboard
+                        currentUser={currentUser}
+                    />
                 )}
-                {activeTab === 'report_table' && <StrategicReportList />}
+                {activeTab === 'analytics_table' && (
+                    <ClusterScoreAnalyticsList />
+                )}
             </div>
         </main>
     );

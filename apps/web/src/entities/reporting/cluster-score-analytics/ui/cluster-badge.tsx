@@ -8,12 +8,12 @@ const colorClasses = [
     'bg-purple-100 text-purple-800 border-purple-200',
 ];
 
-const predefinedColors: Record<string, string> = {
-    beginner: 'bg-rose-100 text-rose-800 border-rose-200',
-    novice: 'bg-orange-100 text-orange-800 border-orange-200',
-    intermediate: 'bg-green-100 text-green-800 border-green-200',
-    advanced: 'bg-cyan-100 text-cyan-800 border-cyan-200',
-    expert: 'bg-purple-100 text-purple-800 border-purple-200',
+export const predefinedColors: Record<string, string> = {
+    beginner: 'bg-rose-100 border-rose-200 text-rose-800',
+    novice: 'bg-orange-100 border-orange-200 text-orange-800',
+    intermediate: 'bg-green-100 border-green-200 text-green-800',
+    advanced: 'bg-cyan-100 border-cyan-200 text-cyan-800',
+    expert: 'bg-purple-100 border-purple-200 text-purple-800',
 };
 
 export function getColorForLabel(str: string): string {

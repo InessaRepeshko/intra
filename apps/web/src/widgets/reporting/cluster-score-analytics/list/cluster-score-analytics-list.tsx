@@ -9,17 +9,10 @@ import {
     useClusterScoreAnalyticsCycleTitlesQuery,
     useClusterScoresAnalyticsQuery,
 } from '@entities/reporting/cluster-score-analytics/api/cluster-score-analytics.queries';
-import type { ClusterScoreAnalytics } from '@entities/reporting/cluster-score-analytics/model/mappers';
 import { SortDirection } from '@entities/reporting/cluster-score-analytics/model/types';
 import { ClusterScoreAnalyticsFilters } from '@entities/reporting/cluster-score-analytics/ui/cluster-score-analytics-filters';
 import { ClusterScoreAnalyticsTable } from '@entities/reporting/cluster-score-analytics/ui/cluster-score-analytics-table';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@shared/components/ui/card';
+import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';
 
@@ -42,24 +35,22 @@ export function ClusterScoreAnalyticsList() {
     const [currentPage, setCurrentPage] = useState(1);
     const [resetTrigger, setResetTrigger] = useState(0);
 
-    // Feature dialogs state
-    const [deleteClusterScoreAnalytics, setDeleteClusterScoreAnalytics] =
-        useState<ClusterScoreAnalytics | null>(null);
-
-    // Always fetch all clusters - filtering is done client-side
     const {
         data: allClusterScoreAnalytics = [],
         isLoading,
         isError,
     } = useClusterScoresAnalyticsQuery({});
 
-    // Use allClusterScoreAnalytics for both display and filter options
-    const allClusterIds = Array.from(
-        new Set(
-            allClusterScoreAnalytics
-                .map((c) => c.clusterId)
-                .filter((id) => id !== undefined && id !== null),
-        ),
+    const allClusterIds = useMemo(
+        () =>
+            Array.from(
+                new Set(
+                    allClusterScoreAnalytics
+                        .map((c) => c.clusterId)
+                        .filter((id) => id !== undefined && id !== null),
+                ),
+            ),
+        [allClusterScoreAnalytics],
     );
 
     const {
@@ -67,19 +58,25 @@ export function ClusterScoreAnalyticsList() {
         isLoading: isClusterScoreTitlesLoading,
     } = useClusterScoreAnalyticsClusterScoreTitlesQuery(allClusterIds);
 
-    const competenceIds = Object.values(clusterScoreTitles).map(
-        (c) => c.competenceId,
+    const competenceIds = useMemo(
+        () =>
+            Object.values(clusterScoreTitles).map((c) => c.competenceId),
+        [clusterScoreTitles],
     );
 
-    const { competenceTitles, isLoading: isCompetenceTitlesLoading } =
+    const { competenceTitles } =
         useClusterScoreAnalyticsCompetenceTitlesQuery(competenceIds);
 
-    const allCycleIds = Array.from(
-        new Set(
-            allClusterScoreAnalytics
-                .map((c) => c.cycleId)
-                .filter((id) => id !== undefined && id !== null),
-        ),
+    const allCycleIds = useMemo(
+        () =>
+            Array.from(
+                new Set(
+                    allClusterScoreAnalytics
+                        .map((c) => c.cycleId)
+                        .filter((id) => id !== undefined && id !== null),
+                ),
+            ),
+        [allClusterScoreAnalytics],
     );
 
     const { cycleTitles, isLoading: isCycleTitlesLoading } =
@@ -124,7 +121,7 @@ export function ClusterScoreAnalyticsList() {
         return Array.from(uniqueCompetenceTitles).sort((a, b) =>
             a.localeCompare(b),
         );
-    }, [allClusterScoreAnalytics, competenceTitles]);
+    }, [allClusterScoreAnalytics, clusterScoreTitles, competenceTitles]);
 
     const cycleTitlesOptions = useMemo(() => {
         const uniqueCycleTitles = new Set<string>();
@@ -203,31 +200,20 @@ export function ClusterScoreAnalyticsList() {
 
         if (search.trim()) {
             const lowerSearch = search.toLowerCase();
-            result = result.filter(
-                (c) =>
-                    (competenceTitles[
-                        clusterScoreTitles[c.clusterId].competenceId
-                    ] &&
-                        competenceTitles[
-                            clusterScoreTitles[c.clusterId].competenceId
-                        ].title &&
-                        competenceTitles[
-                            clusterScoreTitles[c.clusterId].competenceId
-                        ].title
-                            .toLowerCase()
-                            .includes(lowerSearch)) ||
-                    (competenceTitles[
-                        clusterScoreTitles[c.clusterId].competenceId
-                    ] &&
-                        competenceTitles[
-                            clusterScoreTitles[c.clusterId].competenceId
-                        ].description &&
-                        competenceTitles[
-                            clusterScoreTitles[c.clusterId].competenceId
-                        ].description
-                            ?.toLowerCase()
-                            .includes(lowerSearch)),
-            );
+            result = result.filter((c) => {
+                const competence =
+                    competenceTitles[
+                        clusterScoreTitles[c.clusterId]?.competenceId
+                    ];
+                return (
+                    competence?.title
+                        ?.toLowerCase()
+                        .includes(lowerSearch) ||
+                    competence?.description
+                        ?.toLowerCase()
+                        .includes(lowerSearch)
+                );
+            });
         }
 
         if (dateRange?.from) {
@@ -243,7 +229,6 @@ export function ClusterScoreAnalyticsList() {
             result = result.filter(
                 (c) =>
                     clusterScoreTitles[c.clusterId] &&
-                    clusterScoreTitles[c.clusterId] !== null &&
                     clusterScores.includes(
                         clusterScoreTitles[c.clusterId].title ?? '',
                     ),
@@ -251,27 +236,19 @@ export function ClusterScoreAnalyticsList() {
         }
 
         if (competences.length > 0) {
-            result = result.filter(
-                (c) =>
+            result = result.filter((c) => {
+                const title =
                     competenceTitles[
-                        clusterScoreTitles[c.clusterId].competenceId
-                    ] &&
-                    competenceTitles[
-                        clusterScoreTitles[c.clusterId].competenceId
-                    ] !== null &&
-                    competences.includes(
-                        competenceTitles[
-                            clusterScoreTitles[c.clusterId].competenceId
-                        ].title ?? '',
-                    ),
-            );
+                        clusterScoreTitles[c.clusterId]?.competenceId
+                    ]?.title;
+                return title ? competences.includes(title) : false;
+            });
         }
 
         if (cycles.length > 0) {
             result = result.filter(
                 (c) =>
                     cycleTitles[c.cycleId] &&
-                    cycleTitles[c.cycleId] !== null &&
                     cycles.includes(cycleTitles[c.cycleId] ?? ''),
             );
         }
@@ -297,13 +274,13 @@ export function ClusterScoreAnalyticsList() {
         search,
         dateRange,
         clusterScoreTitles,
+        competenceTitles,
         cycleTitles,
-        clusterScoreTitlesOptions,
-        cycleTitlesOptions,
+        clusterScores,
+        competences,
+        cycles,
         lowerBounds,
         upperBounds,
-        lowerBoundOptions,
-        upperBoundOptions,
     ]);
 
     // Client-side sorting for all fields
@@ -392,9 +369,8 @@ export function ClusterScoreAnalyticsList() {
         sortField,
         sortDirection,
         clusterScoreTitles,
+        competenceTitles,
         cycleTitles,
-        lowerBounds,
-        upperBounds,
     ]);
 
     const totalPages = Math.ceil(
@@ -405,17 +381,16 @@ export function ClusterScoreAnalyticsList() {
         currentPage * ITEMS_PER_PAGE,
     );
 
-    // Summary stats
     const totalClusterScoreAnalytics = allClusterScoreAnalytics.length;
 
     return (
-        <main className="min-h-screen">
-            <div className="mx-auto max-w-8xl">
-                {/* Page Header */}
-                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+        <div className="mx-auto max-w-8xl gap-8 flex flex-col w-full min-w-0">
+            <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap min-w-0">
+                    {/* Table Header */}
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
-                            360° Feedback Cluster Score Analytics
+                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
+                            360° Feedback Cluster Score Analytics Table
                         </h1>
                         <p className="mt-1 text-muted-foreground">
                             Manage cluster score analytics across your
@@ -428,122 +403,105 @@ export function ClusterScoreAnalyticsList() {
                     </div>
                 </div>
 
-                {/* Main Card */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg">
-                            All Cluster Score Analytics
-                        </CardTitle>
-                        <CardDescription>
-                            Search, filter, and manage cluster score analytics.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-6">
-                        {/* Filters */}
-                        <ClusterScoreAnalyticsFilters
-                            search={search}
-                            onSearchChange={(val) => {
-                                setSearch(val);
-                                setCurrentPage(1);
-                            }}
-                            dateRange={dateRange}
-                            onDateRangeChange={(range) => {
-                                setDateRange(range);
-                                setCurrentPage(1);
-                            }}
-                            clusterScores={clusterScores}
-                            onClusterScoresChange={(val) => {
-                                setClusterScores(val);
-                                setCurrentPage(1);
-                            }}
-                            clusterScoreOptions={clusterScoreTitlesOptions}
-                            competences={competences}
-                            onCompetencesChange={(val) => {
-                                setCompetences(val);
-                                setCurrentPage(1);
-                            }}
-                            competenceOptions={competenceTitlesOptions}
-                            cycles={cycles}
-                            onCyclesChange={(val) => {
-                                setCycles(val);
-                                setCurrentPage(1);
-                            }}
-                            cycleOptions={cycleTitlesOptions}
-                            lowerBounds={lowerBounds}
-                            onLowerBoundsChange={(val) => {
-                                setLowerBounds(val);
-                                setCurrentPage(1);
-                            }}
-                            lowerBoundOptions={lowerBoundOptions}
-                            upperBounds={upperBounds}
-                            onUpperBoundsChange={(val) => {
-                                setUpperBounds(val);
-                                setCurrentPage(1);
-                            }}
-                            upperBoundOptions={upperBoundOptions}
-                            onReset={handleReset}
-                        />
+                {/* Table Content */}
+                <CardContent className="flex flex-col gap-6 m-0 p-0 min-w-0 w-full">
+                    {/* Filters */}
+                    <ClusterScoreAnalyticsFilters
+                        search={search}
+                        onSearchChange={(val) => {
+                            setSearch(val);
+                            setCurrentPage(1);
+                        }}
+                        dateRange={dateRange}
+                        onDateRangeChange={(range) => {
+                            setDateRange(range);
+                            setCurrentPage(1);
+                        }}
+                        clusterScores={clusterScores}
+                        onClusterScoresChange={(val) => {
+                            setClusterScores(val);
+                            setCurrentPage(1);
+                        }}
+                        clusterScoreOptions={clusterScoreTitlesOptions}
+                        competences={competences}
+                        onCompetencesChange={(val) => {
+                            setCompetences(val);
+                            setCurrentPage(1);
+                        }}
+                        competenceOptions={competenceTitlesOptions}
+                        cycles={cycles}
+                        onCyclesChange={(val) => {
+                            setCycles(val);
+                            setCurrentPage(1);
+                        }}
+                        cycleOptions={cycleTitlesOptions}
+                        lowerBounds={lowerBounds}
+                        onLowerBoundsChange={(val) => {
+                            setLowerBounds(val);
+                            setCurrentPage(1);
+                        }}
+                        lowerBoundOptions={lowerBoundOptions}
+                        upperBounds={upperBounds}
+                        onUpperBoundsChange={(val) => {
+                            setUpperBounds(val);
+                            setCurrentPage(1);
+                        }}
+                        upperBoundOptions={upperBoundOptions}
+                        onReset={handleReset}
+                    />
 
-                        {/* Loading State */}
-                        {(isLoading ||
-                            isClusterScoreTitlesLoading ||
-                            isCycleTitlesLoading) && (
-                            <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
-                                <Spinner />
-                            </div>
-                        )}
+                    {/* Loading State */}
+                    {(isLoading ||
+                        isClusterScoreTitlesLoading ||
+                        isCycleTitlesLoading) && (
+                        <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
+                            <Spinner />
+                        </div>
+                    )}
 
-                        {/* Error State */}
-                        {isError && (
-                            <div className="flex flex-col items-center justify-center py-16 text-center">
-                                <h3 className="text-lg font-semibold text-destructive">
-                                    Failed to load cluster score analytics
-                                </h3>
-                                <p className="mt-1 text-sm text-muted-foreground">
-                                    Please try refreshing the page.
-                                </p>
-                            </div>
-                        )}
+                    {/* Error State */}
+                    {isError && (
+                        <div className="flex flex-col items-center justify-center py-16 text-center">
+                            <h3 className="text-lg font-semibold text-destructive">
+                                Failed to load cluster score analytics
+                            </h3>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                Please try refreshing the page.
+                            </p>
+                        </div>
+                    )}
 
-                        {/* Table */}
-                        {!isLoading && !isError && (
-                            <>
-                                <ClusterScoreAnalyticsTable
-                                    clusterScoreAnalytics={
-                                        paginatedClusterScoreAnalytics
-                                    }
-                                    competenceTitles={competenceTitles}
-                                    clusterScoreTitles={clusterScoreTitles}
-                                    cycleTitles={cycleTitles}
-                                    sortField={sortField}
-                                    sortDirection={sortDirection}
-                                    onSort={handleSort}
-                                    resetTrigger={resetTrigger}
-                                    // onDelete={setDeleteClusterScoreAnalytics}
-                                />
+                    {/* Table */}
+                    {!isLoading && !isError && (
+                        <>
+                            <ClusterScoreAnalyticsTable
+                                clusterScoreAnalytics={
+                                    paginatedClusterScoreAnalytics
+                                }
+                                competenceTitles={competenceTitles}
+                                clusterScoreTitles={clusterScoreTitles}
+                                cycleTitles={cycleTitles}
+                                sortField={sortField}
+                                sortDirection={sortDirection}
+                                onSort={handleSort}
+                                resetTrigger={resetTrigger}
+                            />
 
-                                {/* Pagination */}
-                                <TablePagination
-                                    entityName="cluster score analytics"
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    totalItems={
-                                        filteredClusterScoreAnalytics.length
-                                    }
-                                    limit={ITEMS_PER_PAGE}
-                                    onPageChange={setCurrentPage}
-                                />
-                            </>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Feature Dialogs */}
-            {/* <DeleteClusterScoreAnalyticsDialog
-                clusterScoreAnalytics={deleteClusterScoreAnalytics}
-                onClose={() => setDeleteClusterScoreAnalytics(null)}
-            /> */}
-        </main>
+                            {/* Pagination */}
+                            <TablePagination
+                                entityName="cluster score analytics"
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                totalItems={
+                                    filteredClusterScoreAnalytics.length
+                                }
+                                limit={ITEMS_PER_PAGE}
+                                onPageChange={setCurrentPage}
+                            />
+                        </>
+                    )}
+                </CardContent>
+            </Card>
+        </div>
     );
 }
