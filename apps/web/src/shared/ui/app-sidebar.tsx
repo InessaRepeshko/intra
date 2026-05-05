@@ -401,15 +401,8 @@ export function AppSidebar() {
                 </ScrollArea>
 
                 <div className="shrink-0 py-3 pl-5 pr-3">
+                    <Link href="/profile">
                     <div className="flex flex-col items-center gap-3 py-2">
-                        {/* <Link href="/">
-                            <button
-                                className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:text-accent-foreground transition-colors"
-                                aria-label="Log out"
-                            >
-                                <LogOut className="h-6 w-6" />
-                            </button>
-                        </Link> */}
                         <Avatar className="h-14 w-14 border bg-muted shrink-0">
                             <AvatarImage
                                 className="object-cover"
@@ -423,13 +416,8 @@ export function AppSidebar() {
                                 )}
                             </AvatarFallback>
                         </Avatar>
-                        {/* <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-white/20 text-black text-xs font-medium border-2 border-black/10">
-                                {user.firstName[0]}
-                                {user.lastName[0]}
-                            </AvatarFallback>
-                        </Avatar> */}
                     </div>
+                    </Link>
                 </div>
             </aside>
         );
@@ -558,6 +546,7 @@ export function AppSidebar() {
             </ScrollArea>
 
             <div className="shrink-0 p-3">
+                <Link href="/profile">
                 <div className="flex items-center gap-3 px-2 py-2">
                     <Avatar className="h-14 w-14 border bg-muted shrink-0">
                         <AvatarImage
@@ -572,12 +561,6 @@ export function AppSidebar() {
                             )}
                         </AvatarFallback>
                     </Avatar>
-                    {/* <Avatar className="h-10 w-10">
-                        <AvatarFallback className="bg-white/20 text-black text-xs font-medium border-2 border-black/10">
-                            {user.firstName[0]}
-                            {user.lastName[0]}
-                        </AvatarFallback>
-                    </Avatar> */}
                     <div className="flex-1 min-w-0">
                         <p className="text-base font-medium text-black break-words">
                             {user.firstName + ' ' + user.lastName}
@@ -586,15 +569,8 @@ export function AppSidebar() {
                             {user.positionTitle}
                         </p>
                     </div>
-                    {/* <Link href="/">
-                        <button
-                            className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:text-accent-foreground transition-colors"
-                            aria-label="Log out"
-                        >
-                            <LogOut className="h-6 w-6" />
-                        </button>
-                    </Link> */}
                 </div>
+                </Link>
             </div>
         </aside>
     );
