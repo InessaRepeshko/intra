@@ -3,7 +3,11 @@
 import { useAuth } from '@entities/identity/user/model/auth-context';
 import { IdentityRole } from '@entities/identity/user/model/types';
 import logo from '@public/logo.png';
-import { Avatar, AvatarFallback } from '@shared/components/ui/avatar';
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from '@shared/components/ui/avatar';
 import {
     Collapsible,
     CollapsibleContent,
@@ -11,6 +15,7 @@ import {
 } from '@shared/components/ui/collapsible';
 import { ScrollArea } from '@shared/components/ui/scroll-area';
 import { cn } from '@shared/lib/utils/cn';
+import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 import {
     Award,
     Bookmark,
@@ -24,7 +29,6 @@ import {
     Layers2,
     LayoutDashboard,
     LibraryBig,
-    LogOut,
     MessageCircle,
     MessageSquareQuote,
     NotebookTabs,
@@ -406,12 +410,25 @@ export function AppSidebar() {
                                 <LogOut className="h-6 w-6" />
                             </button>
                         </Link> */}
-                        <Avatar className="h-10 w-10">
+                        <Avatar className="h-14 w-14 border bg-muted shrink-0">
+                            <AvatarImage
+                                className="object-cover"
+                                src={user.avatarUrl || ''}
+                                alt={user.fullName}
+                            />
+                            <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
+                                {getUserInitialsFromFullName(
+                                    user.fullName ??
+                                        `${user.lastName} ${user.firstName}`,
+                                )}
+                            </AvatarFallback>
+                        </Avatar>
+                        {/* <Avatar className="h-10 w-10">
                             <AvatarFallback className="bg-white/20 text-black text-xs font-medium border-2 border-black/10">
                                 {user.firstName[0]}
                                 {user.lastName[0]}
                             </AvatarFallback>
-                        </Avatar>
+                        </Avatar> */}
                     </div>
                 </div>
             </aside>
@@ -542,28 +559,41 @@ export function AppSidebar() {
 
             <div className="shrink-0 p-3">
                 <div className="flex items-center gap-3 px-2 py-2">
-                    <Avatar className="h-10 w-10">
+                    <Avatar className="h-14 w-14 border bg-muted shrink-0">
+                        <AvatarImage
+                            className="object-cover"
+                            src={user.avatarUrl || ''}
+                            alt={user.fullName}
+                        />
+                        <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
+                            {getUserInitialsFromFullName(
+                                user.fullName ??
+                                    `${user.lastName} ${user.firstName}`,
+                            )}
+                        </AvatarFallback>
+                    </Avatar>
+                    {/* <Avatar className="h-10 w-10">
                         <AvatarFallback className="bg-white/20 text-black text-xs font-medium border-2 border-black/10">
                             {user.firstName[0]}
                             {user.lastName[0]}
                         </AvatarFallback>
-                    </Avatar>
+                    </Avatar> */}
                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-black truncate">
+                        <p className="text-base font-medium text-black break-words">
                             {user.firstName + ' ' + user.lastName}
                         </p>
-                        <p className="text-xs text-black/70 truncate">
+                        <p className="text-sm text-black/70 break-words">
                             {user.positionTitle}
                         </p>
                     </div>
-                    <Link href="/">
+                    {/* <Link href="/">
                         <button
                             className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:text-accent-foreground transition-colors"
                             aria-label="Log out"
                         >
                             <LogOut className="h-6 w-6" />
                         </button>
-                    </Link>
+                    </Link> */}
                 </div>
             </div>
         </aside>

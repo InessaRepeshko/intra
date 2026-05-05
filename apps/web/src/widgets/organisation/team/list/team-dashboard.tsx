@@ -138,7 +138,7 @@ export function TeamDashboard({
                                         className="flex flex-col lg:flex-row !flex-wrap items-stretch lg:items-center justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
                                     >
                                         <div className="flex flex-col items-start gap-2 text-left flex-1 min-w-[100px] w-full">
-                                            <div className="flex flex-row justify-between w-full">
+                                            <div className="flex flex-row justify-between w-full flex-wrap">
                                                 <div className="flex flex-col items-start text-base text-muted-foreground">
                                                     <div className="flex flex-row flex-wrap items-center gap-1">
                                                         <UsersRound className="h-4 w-4" />
@@ -184,7 +184,10 @@ export function TeamDashboard({
                                                         return team.users.map(
                                                             (user) => {
                                                                 return (
-                                                                    <div className="flex flex-col sm:flex-row items-center gap-2 text-center min-w-[100px] w-full">
+                                                                    <div
+                                                                        key={`${user.teamId}-${user.id}`}
+                                                                        className="flex flex-col sm:flex-row items-center gap-2 text-center min-w-[100px] w-full"
+                                                                    >
                                                                         <Avatar className="h-20 w-20 border bg-muted shrink-0">
                                                                             <AvatarImage
                                                                                 className="object-cover"
@@ -220,7 +223,7 @@ export function TeamDashboard({
                                                                             </div>
                                                                             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-muted-foreground text-base">
                                                                                 <Mail className="h-4 w-4" />
-                                                                                <span className="break-words">
+                                                                                <span className="break-all">
                                                                                     {
                                                                                         user.email
                                                                                     }
