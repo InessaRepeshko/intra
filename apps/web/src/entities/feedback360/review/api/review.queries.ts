@@ -208,7 +208,7 @@ export function useReviewCycleTitlesQuery(
 
 export function useReviewsByIdsQuery(reviewIds: number[]) {
     const uniqueReviewIds = Array.from(new Set(reviewIds));
-    
+
     const queries = useQueries({
         queries: uniqueReviewIds.map((reviewId) => ({
             queryKey: reviewKeys.detail(reviewId),

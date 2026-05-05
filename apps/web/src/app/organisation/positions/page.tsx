@@ -1,8 +1,8 @@
 'use client';
 
+import { useAuth } from '@entities/identity/user/model/auth-context';
 import { PageHeader } from '@shared/ui/app-sidebar';
 import { PositionList } from '@widgets/organisation/position/list/position-list';
-import { useAuth } from '@entities/identity/user/model/auth-context';
 import { forbidden, notFound } from 'next/navigation';
 
 export default function PositionsPage() {

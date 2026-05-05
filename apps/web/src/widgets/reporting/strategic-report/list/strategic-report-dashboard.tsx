@@ -14,6 +14,7 @@ import {
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
+import { AvatarGroupWithCount } from '@/shared/ui/avatar-group-with-count';
 import { useCyclesQuery } from '@entities/feedback360/cycle/api/cycle.queries';
 import {
     CYCLE_STAGE_ENUM_VALUES,
@@ -46,15 +47,15 @@ import {
 } from '@shared/components/ui/tabs';
 import { formatNumber } from '@shared/lib/utils/format-number';
 import { StatisticsCard } from '@shared/ui/statistics-card';
-import { AvatarGroupList } from '@/shared/ui/avatar-group-list';
-import { AvatarGroupWithCount } from '@/shared/ui/avatar-group-with-count';
 
 export function StrategicReportDashboard({
     currentUser: _currentUser,
 }: {
     currentUser: AuthContextType;
 }) {
-    const [activeTab, setActiveTab] = useState<CycleStage>(CycleStage.PUBLISHED);
+    const [activeTab, setActiveTab] = useState<CycleStage>(
+        CycleStage.PUBLISHED,
+    );
 
     const { data: allReportsData = [] } = useStrategicReportsQuery({});
     const { data: allCyclesData = [] } = useCyclesQuery();
@@ -106,8 +107,8 @@ export function StrategicReportDashboard({
                         360° Feedback Strategic Reports Dashboard
                     </h1>
                     <p className="mt-1 text-muted-foreground">
-                        Overview of strategic reports grouped by cycle stage.
-                        {' '}Total{' '}
+                        Overview of strategic reports grouped by cycle stage.{' '}
+                        Total{' '}
                         <span className="font-medium text-foreground">
                             {finishedCount}
                         </span>{' '}
@@ -220,8 +221,7 @@ export function StrategicReportDashboard({
                                                         <div className="flex flex-wrap items-center gap-2">
                                                             <p className="font-medium text-lg text-foreground break-words">
                                                                 <span className="text-muted-foreground border border-border rounded-xl px-1 bg-neutral-100">
-                                                                    #
-                                                                    {report.id}
+                                                                    #{report.id}
                                                                 </span>{' '}
                                                                 {
                                                                     report.cycleTitle
@@ -238,35 +238,50 @@ export function StrategicReportDashboard({
                                                         <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
                                                             <Calendar className="shrink-0 h-4 w-4" />
                                                             <span className="break-words">
-                                                                {format(cycle?.startDate || "", "MMM dd, yyyy")}
+                                                                {format(
+                                                                    cycle?.startDate ||
+                                                                        '',
+                                                                    'MMM dd, yyyy',
+                                                                )}
                                                                 {' - '}
-                                                                {format(cycle?.endDate || "", "MMM dd, yyyy")}
+                                                                {format(
+                                                                    cycle?.endDate ||
+                                                                        '',
+                                                                    'MMM dd, yyyy',
+                                                                )}
                                                             </span>
                                                         </div>
                                                         {reportTeams.length >
                                                             0 && (
-                                                                <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
-                                                                    <Users className="shrink-0 h-4 w-4" />
-                                                                    <span className="break-words">
-                                                                        {reportTeams
-                                                                            .map(
-                                                                                (
-                                                                                    t,
-                                                                                ) =>
-                                                                                    t.title,
-                                                                            )
-                                                                            .join(
-                                                                                ', ',
-                                                                            )}
-                                                                    </span>
-                                                                </div>
-                                                            )}
+                                                            <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
+                                                                <Users className="shrink-0 h-4 w-4" />
+                                                                <span className="break-words">
+                                                                    {reportTeams
+                                                                        .map(
+                                                                            (
+                                                                                t,
+                                                                            ) =>
+                                                                                t.title,
+                                                                        )
+                                                                        .join(
+                                                                            ', ',
+                                                                        )}
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                         {reportRatees.length >
                                                             0 && (
                                                             <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
                                                                 <UserRound className="shrink-0 h-4 w-4" />
                                                                 <span className="break-words">
-                                                                    <AvatarGroupWithCount users={reportRatees} maxVisibleUsers={4} />
+                                                                    <AvatarGroupWithCount
+                                                                        users={
+                                                                            reportRatees
+                                                                        }
+                                                                        maxVisibleUsers={
+                                                                            4
+                                                                        }
+                                                                    />
                                                                 </span>
                                                             </div>
                                                         )}

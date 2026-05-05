@@ -354,7 +354,10 @@ export function ClusterScoreAnalyticsTable({
                 <div className="flex items-center justify-start gap-1.5">
                     <SeparatorHorizontal className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium text-foreground">
-                        {formatNumber(clusterScoreAnalytics.averageScore ?? 0, 2)}
+                        {formatNumber(
+                            clusterScoreAnalytics.averageScore ?? 0,
+                            2,
+                        )}
                     </span>
                 </div>
             ),

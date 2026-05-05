@@ -1,10 +1,10 @@
 'use client';
 
 import { RespondentCategory } from '@entities/feedback360/answer/model/types';
+import { useAuth } from '@entities/identity/user/model/auth-context';
 import { SubmitSurveyForm } from '@features/feedback360/survey/submit-form/ui/SubmitSurveyForm';
-import { notFound, useSearchParams, unauthorized } from 'next/navigation';
+import { notFound, unauthorized, useSearchParams } from 'next/navigation';
 import { use } from 'react';
-import { useAuth, useCurrentUser } from '@entities/identity/user/model/auth-context';
 
 function resolveRespondentCategory(rawType: string | null): RespondentCategory {
     switch (rawType?.toLowerCase()) {

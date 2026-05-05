@@ -12,8 +12,8 @@ import {
 import type { Answer } from '@entities/reporting/individual-report-comment/model/mappers';
 import {
     AnswerType,
-    REVIEW_STAGE_ENUM_VALUES,
     RESPONDENT_CATEGORIES_ENUM_VALUES,
+    REVIEW_STAGE_ENUM_VALUES,
     ReviewStage,
     SortDirection,
 } from '@entities/reporting/individual-report-comment/model/types';

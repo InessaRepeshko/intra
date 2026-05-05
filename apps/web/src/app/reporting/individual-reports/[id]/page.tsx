@@ -1,11 +1,11 @@
 'use client';
 
+import { useAuth } from '@entities/identity/user/model/auth-context';
 import { parseParamToPositiveNumber } from '@shared/lib/utils/parse-param-to-positive-number';
 import { PageHeader } from '@shared/ui/app-sidebar';
 import { IndividualReportPage } from '@widgets/reporting/individual-report/page/individual-report-page';
-import { forbidden, notFound, unauthorized } from 'next/navigation';
+import { notFound, unauthorized } from 'next/navigation';
 import { use } from 'react';
-import { useAuth } from '@entities/identity/user/model/auth-context';
 
 interface PageProps {
     params: Promise<{
@@ -15,7 +15,7 @@ interface PageProps {
 
 export default function IndividualReportByIdPage({ params }: PageProps) {
     const auth = useAuth();
-    
+
     if (!auth.user) return unauthorized();
 
     const unwrappedParams = use(params);

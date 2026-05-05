@@ -5,10 +5,8 @@ import {
     Award,
     Bookmark,
     Calendar,
-    Eye,
     File,
     FileQuestionMark,
-    MoreHorizontal,
     RefreshCcw,
     Sigma,
     TextInitial,
@@ -18,12 +16,6 @@ import {
 import { StageBadge } from '@entities/feedback360/review/ui/stage-badge';
 import { Button } from '@shared/components/ui/button';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@shared/components/ui/dropdown-menu';
-import {
     Table,
     TableBody,
     TableCell,
@@ -31,18 +23,18 @@ import {
     TableHeader,
     TableRow,
 } from '@shared/components/ui/table';
-import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
-import { SortableHeader } from '@shared/ui/sortable-table-column-header';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { SurveyData, SurveyQuestion } from '../model/mappers';
-import { SortDirection } from '../model/types';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from '@shared/components/ui/tooltip';
+import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
+import { SortableHeader } from '@shared/ui/sortable-table-column-header';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { SurveyData, SurveyQuestion } from '../model/mappers';
+import { SortDirection } from '../model/types';
 
 interface SurveysTableProps {
     surveyQuestions: Record<number, SurveyQuestion[]>;
@@ -53,11 +45,7 @@ interface SurveysTableProps {
     resetTrigger?: number;
 }
 
-function SurveysActionsMenu({
-    reviewId,
-}: {
-    reviewId: number;
-}) {
+function SurveysActionsMenu({ reviewId }: { reviewId: number }) {
     const router = useRouter();
 
     return (
@@ -368,11 +356,7 @@ export function SurveysTable({
             header: <span className="text-muted-foreground">Actions</span>,
             headerClassName:
                 'min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1',
-            cell: (survey) => (
-                <SurveysActionsMenu
-                    reviewId={survey.reviewId}
-                />
-            ),
+            cell: (survey) => <SurveysActionsMenu reviewId={survey.reviewId} />,
             cellClassName: 'whitespace-nowrap text-center',
         },
     };
@@ -435,9 +419,7 @@ export function SurveysTable({
                                     </p>
                                 )}
                             </div>
-                            <SurveysActionsMenu
-                                reviewId={survey.reviewId}
-                            />
+                            <SurveysActionsMenu reviewId={survey.reviewId} />
                         </div>
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">

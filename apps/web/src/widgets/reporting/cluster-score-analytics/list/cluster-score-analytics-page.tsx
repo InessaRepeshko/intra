@@ -48,9 +48,7 @@ export function ClusterScoreAnalyticsPage({
                 </Tabs>
 
                 {activeTab === 'analytics_dashboard' && (
-                    <ClusterScoreAnalyticsDashboard
-                        currentUser={currentUser}
-                    />
+                    <ClusterScoreAnalyticsDashboard currentUser={currentUser} />
                 )}
                 {activeTab === 'analytics_table' && (
                     <ClusterScoreAnalyticsList />

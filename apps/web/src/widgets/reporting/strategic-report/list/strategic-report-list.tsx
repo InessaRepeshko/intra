@@ -168,10 +168,12 @@ export function StrategicReportList() {
                 }
                 case 'ratees': {
                     const rateesA =
-                        rateeData.find((d) => d.cycleId === a.cycleId)
+                        rateeData
+                            .find((d) => d.cycleId === a.cycleId)
                             ?.ratees.map((r) => r.fullName) || [];
                     const rateesB =
-                        rateeData.find((d) => d.cycleId === b.cycleId)
+                        rateeData
+                            .find((d) => d.cycleId === b.cycleId)
                             ?.ratees.map((r) => r.fullName) || [];
                     const comparison = compareStringArrays(rateesA, rateesB);
                     return sortDirection === SortDirection.ASC

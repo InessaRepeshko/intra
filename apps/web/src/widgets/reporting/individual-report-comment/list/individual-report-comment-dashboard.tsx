@@ -4,22 +4,17 @@ import { format } from 'date-fns';
 import {
     Archive,
     Calendar,
-    Eye,
     FileUser,
     Hourglass,
     MessageCircle,
     Pencil,
-    ShieldCheck,
     SquareCheck,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
 import { useCyclesQuery } from '@entities/feedback360/cycle/api/cycle.queries';
-import {
-    StageBadge,
-    stageConfig,
-} from '@entities/feedback360/review/ui/stage-badge';
+import { StageBadge } from '@entities/feedback360/review/ui/stage-badge';
 import { useUsersByUserIdsQuery } from '@entities/identity/user/api/user.queries';
 import { type AuthContextType } from '@entities/identity/user/model/types';
 import {
@@ -158,35 +153,56 @@ export function IndividualReportCommentDashboard({
             })
             .filter((r): r is Report => r !== null && r !== undefined)
             .sort((a, b) => a.id - b.id)
-            .sort((a, b) => REVIEW_STAGE_ENUM_VALUES.indexOf(allReportReviews[a.id]?.stage ?? '') -
-                REVIEW_STAGE_ENUM_VALUES.indexOf(allReportReviews[b.id]?.stage ?? ''));
+            .sort(
+                (a, b) =>
+                    REVIEW_STAGE_ENUM_VALUES.indexOf(
+                        allReportReviews[a.id]?.stage ?? '',
+                    ) -
+                    REVIEW_STAGE_ENUM_VALUES.indexOf(
+                        allReportReviews[b.id]?.stage ?? '',
+                    ),
+            );
 
         buckets[-1] = filteredReports;
-        buckets[0] = filteredReports.filter((r) => r.cycleId === null || r.cycleId === undefined);
+        buckets[0] = filteredReports.filter(
+            (r) => r.cycleId === null || r.cycleId === undefined,
+        );
         filteredReports.forEach((r) => {
             const cycleId = r.cycleId;
             if (cycleId && buckets[cycleId]) buckets[cycleId].push(r);
         });
         return buckets;
-    }, [
-        allReportsData,
-        allReportReviews,
-        currentUser,
-    ]);
+    }, [allReportsData, allReportReviews, currentUser]);
 
     const totalFilteredReports = reportsByCycle[-1]?.length ?? 0;
 
     const preparingCount =
-        (reportsByCycle[-1]?.filter((r) => allReportReviews[r.id]?.stage === ReviewStage.FINISHED)?.length ?? 0) +
-        (reportsByCycle[-1]?.filter((r) => allReportReviews[r.id]?.stage === ReviewStage.PREPARING_REPORT)?.length ?? 0);
+        (reportsByCycle[-1]?.filter(
+            (r) => allReportReviews[r.id]?.stage === ReviewStage.FINISHED,
+        )?.length ?? 0) +
+        (reportsByCycle[-1]?.filter(
+            (r) =>
+                allReportReviews[r.id]?.stage === ReviewStage.PREPARING_REPORT,
+        )?.length ?? 0);
     const processingCount =
-        reportsByCycle[-1]?.filter((r) => allReportReviews[r.id]?.stage === ReviewStage.PROCESSING_BY_HR)?.length ?? 0;
+        reportsByCycle[-1]?.filter(
+            (r) =>
+                allReportReviews[r.id]?.stage === ReviewStage.PROCESSING_BY_HR,
+        )?.length ?? 0;
     const publishedCount =
-        (reportsByCycle[-1]?.filter((r) => allReportReviews[r.id]?.stage === ReviewStage.PUBLISHED)?.length ?? 0) +
-        (reportsByCycle[-1]?.filter((r) => allReportReviews[r.id]?.stage === ReviewStage.ANALYSIS)?.length ?? 0);
+        (reportsByCycle[-1]?.filter(
+            (r) => allReportReviews[r.id]?.stage === ReviewStage.PUBLISHED,
+        )?.length ?? 0) +
+        (reportsByCycle[-1]?.filter(
+            (r) => allReportReviews[r.id]?.stage === ReviewStage.ANALYSIS,
+        )?.length ?? 0);
     const archivedCount =
-        (reportsByCycle[-1]?.filter((r) => allReportReviews[r.id]?.stage === ReviewStage.ARCHIVED)?.length ?? 0) +
-        (reportsByCycle[-1]?.filter((r) => allReportReviews[r.id]?.stage === ReviewStage.CANCELED)?.length ?? 0);
+        (reportsByCycle[-1]?.filter(
+            (r) => allReportReviews[r.id]?.stage === ReviewStage.ARCHIVED,
+        )?.length ?? 0) +
+        (reportsByCycle[-1]?.filter(
+            (r) => allReportReviews[r.id]?.stage === ReviewStage.CANCELED,
+        )?.length ?? 0);
 
     return (
         <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
@@ -197,15 +213,19 @@ export function IndividualReportCommentDashboard({
                         Individual Report Comments Dashboard
                     </h1>
                     <p className="mt-1 text-muted-foreground">
-                        Overview of individual report comments. A total of {' '}
+                        Overview of individual report comments. A total of{' '}
                         <span className="font-medium text-foreground">
                             {totalFilteredReports}
                         </span>{' '}
-                        {totalFilteredReports === 1 ? 'report is' : 'reports are'} finished. A total of {' '}
+                        {totalFilteredReports === 1
+                            ? 'report is'
+                            : 'reports are'}{' '}
+                        finished. A total of{' '}
                         <span className="font-medium text-foreground">
                             {publishedCount}
                         </span>{' '}
-                        {publishedCount === 1 ? 'report is' : 'reports are'} published.
+                        {publishedCount === 1 ? 'report is' : 'reports are'}{' '}
+                        published.
                     </p>
                 </div>
             </div>
@@ -275,11 +295,11 @@ export function IndividualReportCommentDashboard({
                                 activeCycleTab.value === -1
                                     ? r
                                     : activeCycleTab.value === 0
-                                        ? r.cycleId === null ||
+                                      ? r.cycleId === null ||
                                         r.cycleId === undefined
-                                        : r.cycleId === activeCycleTab.value
-                                            ? r
-                                            : null,
+                                      : r.cycleId === activeCycleTab.value
+                                        ? r
+                                        : null,
                             )
                             .filter((r): r is Report => r !== null);
 
@@ -288,7 +308,8 @@ export function IndividualReportCommentDashboard({
                                 <Card className="border-[0px] shadow-none">
                                     <CardHeader className="px-2">
                                         <CardTitle className="text-foreground text-lg break-words">
-                                            {cycle.label} Individual Report Comments
+                                            {cycle.label} Individual Report
+                                            Comments
                                         </CardTitle>
                                         <CardDescription className="text-base">
                                             A total of{' '}
@@ -298,8 +319,8 @@ export function IndividualReportCommentDashboard({
                                             {reports.length !== 1
                                                 ? 'reports are'
                                                 : 'report is'}{' '}
-                                            currently for
-                                            the {activeCycleTab.label}.
+                                            currently for the{' '}
+                                            {activeCycleTab.label}.
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent className="p-0">
@@ -310,14 +331,40 @@ export function IndividualReportCommentDashboard({
                                                 </div>
                                             ) : (
                                                 reports.map((report) => {
-                                                    const review = allReportReviews[report.id];
-                                                    const ratee = review ? rateeUserById.get(review.rateeId) : undefined;
-                                                    const rateeFullName = review?.rateeFullName ?? '';
-                                                    const positionTitle = review?.rateePositionTitle ?? null;
-                                                    const teamTitle = review?.teamTitle ?? null;
-                                                    const cycleTitle = report.cycleId ? allCycles.find((c) => c.id === report.cycleId)?.title : null;
-                                                    const commentCount = allCommentsData[report.id]?.length ?? 0;
-                                                    const textAnswerCount = reportTextAnswers[report.id] ?? 0;
+                                                    const review =
+                                                        allReportReviews[
+                                                            report.id
+                                                        ];
+                                                    const ratee = review
+                                                        ? rateeUserById.get(
+                                                              review.rateeId,
+                                                          )
+                                                        : undefined;
+                                                    const rateeFullName =
+                                                        review?.rateeFullName ??
+                                                        '';
+                                                    const positionTitle =
+                                                        review?.rateePositionTitle ??
+                                                        null;
+                                                    const teamTitle =
+                                                        review?.teamTitle ??
+                                                        null;
+                                                    const cycleTitle =
+                                                        report.cycleId
+                                                            ? allCycles.find(
+                                                                  (c) =>
+                                                                      c.id ===
+                                                                      report.cycleId,
+                                                              )?.title
+                                                            : null;
+                                                    const commentCount =
+                                                        allCommentsData[
+                                                            report.id
+                                                        ]?.length ?? 0;
+                                                    const textAnswerCount =
+                                                        reportTextAnswers[
+                                                            report.id
+                                                        ] ?? 0;
 
                                                     return (
                                                         <div
@@ -428,7 +475,8 @@ export function IndividualReportCommentDashboard({
                                                                         )}
                                                                     </span>
                                                                 </div>
-                                                                {review?.stage === ReviewStage.PROCESSING_BY_HR && (
+                                                                {review?.stage ===
+                                                                    ReviewStage.PROCESSING_BY_HR && (
                                                                     <Button
                                                                         asChild
                                                                         className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
@@ -454,6 +502,6 @@ export function IndividualReportCommentDashboard({
                     })}
                 </Tabs>
             </div>
-        </Card >
+        </Card>
     );
 }

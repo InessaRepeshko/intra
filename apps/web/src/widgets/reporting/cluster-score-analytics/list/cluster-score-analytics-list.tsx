@@ -59,8 +59,7 @@ export function ClusterScoreAnalyticsList() {
     } = useClusterScoreAnalyticsClusterScoreTitlesQuery(allClusterIds);
 
     const competenceIds = useMemo(
-        () =>
-            Object.values(clusterScoreTitles).map((c) => c.competenceId),
+        () => Object.values(clusterScoreTitles).map((c) => c.competenceId),
         [clusterScoreTitles],
     );
 
@@ -206,12 +205,8 @@ export function ClusterScoreAnalyticsList() {
                         clusterScoreTitles[c.clusterId]?.competenceId
                     ];
                 return (
-                    competence?.title
-                        ?.toLowerCase()
-                        .includes(lowerSearch) ||
-                    competence?.description
-                        ?.toLowerCase()
-                        .includes(lowerSearch)
+                    competence?.title?.toLowerCase().includes(lowerSearch) ||
+                    competence?.description?.toLowerCase().includes(lowerSearch)
                 );
             });
         }

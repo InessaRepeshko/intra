@@ -35,7 +35,7 @@ export function useSurveyQuestionsQuery(reviewId: number) {
 
 export function useAllSurveyQuestionsQuery(reviewIds: number[]) {
     const uniqueReviewIds = Array.from(new Set(reviewIds));
-    
+
     const queries = useQueries({
         queries: uniqueReviewIds.map((reviewId) => ({
             queryKey: reviewQuestionKeys.list(reviewId),

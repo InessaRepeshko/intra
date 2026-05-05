@@ -1,5 +1,7 @@
 'use client';
 
+import { useReviewReviewersQuery } from '@entities/feedback360/reviewer/api/reviewer.queries';
+import type { AuthContextType } from '@entities/identity/user/model/types';
 import {
     useCycleTitleQuery,
     useReportQuery,
@@ -26,11 +28,14 @@ import { CompetenciesRadialChartsGroup } from '@shared/ui/competencies-radial-ch
 import { EntityInsightCards } from '@shared/ui/entity-insight-cards';
 import { RateeHorisontalCard } from '@shared/ui/ratee-horisontal-card';
 import { forbidden, notFound } from 'next/navigation';
-import type { AuthContextType } from '@entities/identity/user/model/types';
-import { useReviewRespondentsQuery } from '@entities/feedback360/respondent/api/respondent.queries';
-import { useReviewReviewersQuery } from '@entities/feedback360/reviewer/api/reviewer.queries';
 
-export function IndividualReportPage({ reportId, currentUser }: { reportId: number, currentUser: AuthContextType }) {
+export function IndividualReportPage({
+    reportId,
+    currentUser,
+}: {
+    reportId: number;
+    currentUser: AuthContextType;
+}) {
     const {
         data: reportData,
         isLoading: isReportLoading,
@@ -39,7 +44,11 @@ export function IndividualReportPage({ reportId, currentUser }: { reportId: numb
 
     const reviewId = Number(reportData?.reviewId);
 
-    const { data: reviewers, isPending: isLoadingReviewers, error: reviewersError } = useReviewReviewersQuery(reviewId);
+    const {
+        data: reviewers,
+        isPending: isLoadingReviewers,
+        error: reviewersError,
+    } = useReviewReviewersQuery(reviewId);
 
     const {
         data: reviewData,
@@ -103,8 +112,12 @@ export function IndividualReportPage({ reportId, currentUser }: { reportId: numb
         return notFound();
     }
 
-    if (!currentUser.isAdmin && !currentUser.isHR
-        && reviewers?.find((r) => r.reviewerId === currentUser.user.id) === undefined) {
+    if (
+        !currentUser.isAdmin &&
+        !currentUser.isHR &&
+        reviewers?.find((r) => r.reviewerId === currentUser.user.id) ===
+            undefined
+    ) {
         return forbidden();
     }
 

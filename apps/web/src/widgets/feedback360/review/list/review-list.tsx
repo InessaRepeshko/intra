@@ -3,8 +3,6 @@
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
-import { useCyclesQuery } from '@entities/feedback360/cycle/api/cycle.queries';
-import { CycleStage } from '@entities/feedback360/cycle/model/types';
 import {
     useReviewAnswersCountsQuery,
     useReviewCycleTitlesQuery,
@@ -21,7 +19,6 @@ import {
 } from '@entities/feedback360/review/model/types';
 import { ReviewsFilters } from '@entities/feedback360/review/ui/reviews-filters';
 import { ReviewsTable } from '@entities/feedback360/review/ui/reviews-table';
-import { useUsersByUserIdsQuery } from '@entities/identity/user/api/user.queries';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';

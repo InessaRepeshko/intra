@@ -7,7 +7,13 @@ import {
     AvatarImage,
 } from '@shared/components/ui/avatar';
 
-export function AvatarGroupWithCount({ users, maxVisibleUsers = 3 }: { users: User[], maxVisibleUsers?: number }) {
+export function AvatarGroupWithCount({
+    users,
+    maxVisibleUsers = 3,
+}: {
+    users: User[];
+    maxVisibleUsers?: number;
+}) {
     const visibleUsers = users.slice(0, maxVisibleUsers);
     const remainingCount = users.length - maxVisibleUsers;
 

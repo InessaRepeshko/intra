@@ -1,7 +1,6 @@
 'use client';
 
 import { useAuth } from '@entities/identity/user/model/auth-context';
-import { IdentityRole } from '@intra/shared-kernel';
 import { PageHeader } from '@shared/ui/app-sidebar';
 import { IndividualReportCommentsPage } from '@widgets/reporting/individual-report-comment/list/individual-report-comments-page';
 import { forbidden, unauthorized } from 'next/navigation';

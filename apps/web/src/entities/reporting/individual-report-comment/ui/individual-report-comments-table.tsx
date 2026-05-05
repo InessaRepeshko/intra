@@ -50,7 +50,13 @@ interface IndividualReportCommentsTableProps {
     resetTrigger?: number;
 }
 
-function IndividualReportCommentActionsMenu({ report, review }: { report: Report, review: Review }) {
+function IndividualReportCommentActionsMenu({
+    report,
+    review,
+}: {
+    report: Report;
+    review: Review;
+}) {
     const router = useRouter();
     const isProcessingByHR = review.stage === ReviewStage.PROCESSING_BY_HR;
 
@@ -68,7 +74,6 @@ function IndividualReportCommentActionsMenu({ report, review }: { report: Report
                             )
                         }
                     >
-
                         <Pencil className=" h-4 w-4" />
                     </Button>
                 </TooltipTrigger>
@@ -77,7 +82,9 @@ function IndividualReportCommentActionsMenu({ report, review }: { report: Report
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
-    ) : <span className="text-muted-foreground">Done</span>;
+    ) : (
+        <span className="text-muted-foreground">Done</span>
+    );
 }
 
 export function IndividualReportCommentsTable({
@@ -430,7 +437,10 @@ export function IndividualReportCommentsTable({
             headerClassName:
                 'min-w-[80px] w-[100px] whitespace-nowrap text-center align-bottom pb-2',
             cell: (report) => (
-                <IndividualReportCommentActionsMenu report={report} review={reportReviews[report.id]}/>
+                <IndividualReportCommentActionsMenu
+                    report={report}
+                    review={reportReviews[report.id]}
+                />
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },

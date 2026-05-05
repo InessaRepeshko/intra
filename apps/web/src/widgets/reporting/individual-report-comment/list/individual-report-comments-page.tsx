@@ -3,11 +3,7 @@
 import { useState } from 'react';
 
 import { type AuthContextType } from '@entities/identity/user/model/types';
-import {
-    Tabs,
-    TabsList,
-    TabsTrigger,
-} from '@shared/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@shared/components/ui/tabs';
 
 import { IndividualReportCommentDashboard } from './individual-report-comment-dashboard';
 import { IndividualReportCommentList } from './individual-report-comment-list';
@@ -52,14 +48,14 @@ export function IndividualReportCommentsPage({
                 </Tabs>
 
                 {activeTab === 'comments_dashboard' && (
-                        <IndividualReportCommentDashboard
-                            currentUser={currentUser}
-                        />
-                    )}
+                    <IndividualReportCommentDashboard
+                        currentUser={currentUser}
+                    />
+                )}
 
                 {activeTab === 'comments_table' && (
-                        <IndividualReportCommentList />
-                    )}
+                    <IndividualReportCommentList />
+                )}
             </div>
         </main>
     );

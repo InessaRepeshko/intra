@@ -6,8 +6,8 @@ import {
     QuestionSortField,
     QuestionSearchQuery as QuestionTemplateFilterQuery,
     RespondentCategory,
-    ResponseStatus,
     RESPONSE_STATUSES as RESPONSE_STATUS_ENUM_VALUES,
+    ResponseStatus,
     REVIEW_STAGES as REVIEW_STAGE_ENUM_VALUES,
     ReviewQuestionRelationDto,
     ReviewQuestionRelationSearchQuery as ReviewQuestionRelationFilterQuery,
@@ -31,12 +31,12 @@ export {
     AnswerType,
     QuestionSortField,
     RespondentCategory,
+    RESPONSE_STATUS_ENUM_VALUES,
     ResponseStatus,
     REVIEW_STAGE_ENUM_VALUES,
     ReviewQuestionRelationSortField,
     ReviewStage,
     SortDirection,
-    RESPONSE_STATUS_ENUM_VALUES,
 };
 
 export enum ForSelfassessmentType {

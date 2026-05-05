@@ -10,10 +10,8 @@ import {
     FileUser,
     Hourglass,
     NotebookTabs,
-    Plus,
     RefreshCw,
     SquareCheck,
-    Target,
     TrendingUp,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -25,7 +23,8 @@ import { StageBadge as CycleStageBadge } from '@entities/feedback360/cycle/ui/st
 import { useReviewsQuery } from '@entities/feedback360/review/api/review.queries';
 import { ReviewStage } from '@entities/feedback360/review/model/types';
 import { StageBadge as ReviewStageBadge } from '@entities/feedback360/review/ui/stage-badge';
-import { useAuth } from '@entities/identity/user/model/auth-context';
+import { AuthContextType } from '@entities/identity/user/model/types';
+import { RoleBadge } from '@entities/identity/user/ui/role-badge';
 import { useReportsQuery } from '@entities/reporting/individual-report/api/individual-report.queries';
 import { useStrategicReportsQuery } from '@entities/reporting/strategic-report/api/strategic-report.queries';
 import {
@@ -33,7 +32,6 @@ import {
     AvatarFallback,
     AvatarImage,
 } from '@shared/components/ui/avatar';
-import { Badge } from '@shared/components/ui/badge';
 import { Button } from '@shared/components/ui/button';
 import {
     Card,
@@ -46,10 +44,12 @@ import { Progress } from '@shared/components/ui/progress';
 import { formatNumber } from '@shared/lib/utils/format-number';
 import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 import { StatisticsCard } from '@shared/ui/statistics-card';
-import { AuthContextType } from '@entities/identity/user/model/types';
-import { RoleBadge } from '@entities/identity/user/ui/role-badge';
 
-export function DashboardContent({ currentUser }: { currentUser: AuthContextType }) {
+export function DashboardContent({
+    currentUser,
+}: {
+    currentUser: AuthContextType;
+}) {
     const { user, isAdmin, isHR, isManager, isEmployee } = currentUser;
     const userId = user.id;
 
@@ -111,8 +111,8 @@ export function DashboardContent({ currentUser }: { currentUser: AuthContextType
         () =>
             currentCycle
                 ? allStrategicReports.filter(
-                    (r) => r.cycleId === currentCycle.id,
-                )
+                      (r) => r.cycleId === currentCycle.id,
+                  )
                 : [],
         [allStrategicReports, currentCycle],
     );
@@ -145,8 +145,8 @@ export function DashboardContent({ currentUser }: { currentUser: AuthContextType
     const cycleProgressPct =
         currentCycleReviews.length > 0
             ? Math.round(
-                (reviewsFinished.length / currentCycleReviews.length) * 100,
-            )
+                  (reviewsFinished.length / currentCycleReviews.length) * 100,
+              )
             : 0;
 
     // Role-based view modes (priority: admin/HR > manager > employee).
@@ -157,14 +157,14 @@ export function DashboardContent({ currentUser }: { currentUser: AuthContextType
     const greetingTitle = showAdmin
         ? `Welcome back, ${user.firstName}!`
         : showManager
-            ? `Welcome, ${user.firstName}!`
-            : `Hi, ${user.firstName}!`;
+          ? `Welcome, ${user.firstName}!`
+          : `Hi, ${user.firstName}!`;
 
     const greetingSubtitle = showAdmin
         ? 'Here is the organization-wide overview of 360° feedback platform.'
         : showManager
-            ? 'Here is an overview of your team and your own 360° feedback activity.'
-            : 'Here is an overview of your 360° feedback activity.';
+          ? 'Here is an overview of your team and your own 360° feedback activity.'
+          : 'Here is an overview of your 360° feedback activity.';
 
     const teamReviewsList = showAdmin ? currentCycleReviews : teamReviews;
 
@@ -183,22 +183,33 @@ export function DashboardContent({ currentUser }: { currentUser: AuthContextType
                 {showAdmin && (
                     <div className="flex flex-wrap gap-2 items-end">
                         <Button asChild variant="outline">
-                            <Link href="/feedback360/cycles" className="flex items-center justify-center rounded-xl border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 text-muted-foreground backdrop-blur-sm">
+                            <Link
+                                href="/feedback360/cycles"
+                                className="flex items-center justify-center rounded-xl border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 text-muted-foreground backdrop-blur-sm"
+                            >
                                 <span className="flex items-center justify-center gap-1 bg-gradient-to-r from-pink-600 to-amber-600 bg-clip-text text-transparent font-medium">
                                     <RefreshCw className="h-4 w-4 text-pink-500" />
-                                Manage Cycles
+                                    Manage Cycles
                                 </span>
                             </Link>
                         </Button>
-                        <Button asChild variant="outline" className="flex items-center justify-center rounded-xl border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 text-muted-foreground backdrop-blur-sm">
+                        <Button
+                            asChild
+                            variant="outline"
+                            className="flex items-center justify-center rounded-xl border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 text-muted-foreground backdrop-blur-sm"
+                        >
                             <Link href="/feedback360/reviews">
                                 <span className="flex items-center justify-center gap-1 bg-gradient-to-r from-pink-600 to-amber-600 bg-clip-text text-transparent font-medium">
                                     <NotebookTabs className="h-4 w-4 text-pink-500" />
-                                Manage Reviews
+                                    Manage Reviews
                                 </span>
                             </Link>
                         </Button>
-                        <Button asChild variant="outline" className="flex items-center justify-center rounded-xl border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 text-muted-foreground backdrop-blur-sm">
+                        <Button
+                            asChild
+                            variant="outline"
+                            className="flex items-center justify-center rounded-xl border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 text-muted-foreground backdrop-blur-sm"
+                        >
                             <Link href="/feedback360/surveys">
                                 <span className="flex items-center justify-center gap-1 bg-gradient-to-r from-pink-600 to-amber-600 bg-clip-text text-transparent font-medium">
                                     <NotebookTabs className="h-4 w-4 text-pink-500" />
@@ -206,23 +217,35 @@ export function DashboardContent({ currentUser }: { currentUser: AuthContextType
                                 </span>
                             </Link>
                         </Button>
-                        <Button asChild variant="outline" className="flex items-center justify-center rounded-xl border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 text-muted-foreground backdrop-blur-sm">
+                        <Button
+                            asChild
+                            variant="outline"
+                            className="flex items-center justify-center rounded-xl border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 text-muted-foreground backdrop-blur-sm"
+                        >
                             <Link href="/reporting/individual-reports">
                                 <span className="flex items-center justify-center gap-1 bg-gradient-to-r from-pink-600 to-amber-600 bg-clip-text text-transparent font-medium">
                                     <FileUser className="h-4 w-4 text-pink-500" />
-                                Individual Reports
+                                    Individual Reports
                                 </span>
                             </Link>
                         </Button>
-                        <Button asChild variant="outline" className="flex items-center justify-center rounded-xl border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 text-muted-foreground backdrop-blur-sm">
+                        <Button
+                            asChild
+                            variant="outline"
+                            className="flex items-center justify-center rounded-xl border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 text-muted-foreground backdrop-blur-sm"
+                        >
                             <Link href="/reporting/strategic-reports">
                                 <span className="flex items-center justify-center gap-1 bg-gradient-to-r from-pink-600 to-amber-600 bg-clip-text text-transparent font-medium">
                                     <FileLineChart className="h-4 w-4 text-pink-500" />
-                                Strategic Reports
+                                    Strategic Reports
                                 </span>
                             </Link>
                         </Button>
-                        <Button asChild variant="outline" className="flex items-center justify-center rounded-xl border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 text-muted-foreground backdrop-blur-sm">
+                        <Button
+                            asChild
+                            variant="outline"
+                            className="flex items-center justify-center rounded-xl border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 text-muted-foreground backdrop-blur-sm"
+                        >
                             <Link href="/reporting/cluster-score-analytics">
                                 <span className="flex items-center justify-center gap-1 bg-gradient-to-r from-pink-600 to-amber-600 bg-clip-text text-transparent font-medium">
                                     <Boxes className="h-4 w-4 text-pink-500" />
@@ -313,16 +336,16 @@ export function DashboardContent({ currentUser }: { currentUser: AuthContextType
                         showAdmin
                             ? `Reviews in Cycle`
                             : showManager
-                                ? `My Team Reviews`
-                                : `My Reviews`
+                              ? `My Team Reviews`
+                              : `My Reviews`
                     }
                     value={
                         formatNumber(
                             showAdmin
                                 ? currentCycleReviews.length
                                 : showManager
-                                    ? teamReviews.length
-                                    : myReviews.length,
+                                  ? teamReviews.length
+                                  : myReviews.length,
                         ) ?? '-'
                     }
                     icon={NotebookTabs}
@@ -334,16 +357,16 @@ export function DashboardContent({ currentUser }: { currentUser: AuthContextType
                         showAdmin
                             ? `Individual Reports`
                             : showManager
-                                ? `My Team Reports`
-                                : `My Reports`
+                              ? `My Team Reports`
+                              : `My Reports`
                     }
                     value={
                         formatNumber(
                             showAdmin
                                 ? allIndividualReports.length
                                 : showManager
-                                    ? teamIndividualReports.length
-                                    : myIndividualReports.length,
+                                  ? teamIndividualReports.length
+                                  : myIndividualReports.length,
                         ) ?? '-'
                     }
                     icon={FileUser}
@@ -506,7 +529,9 @@ export function DashboardContent({ currentUser }: { currentUser: AuthContextType
                                                     ` • ${review.teamTitle}`}
                                             </span>
                                         </div>
-                                        <ReviewStageBadge stage={review.stage} />
+                                        <ReviewStageBadge
+                                            stage={review.stage}
+                                        />
                                     </Link>
                                 ))
                             )}

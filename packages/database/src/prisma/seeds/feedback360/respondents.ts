@@ -161,7 +161,7 @@ export const RESPONDENT_SEED_DATA: RespondentSeed[] = [
         cycleTitle: 'Mid-Year Performance Review 2025',
         respondentEmails: [
             'iryna.shevchenko@intra.com',
-            'mariia.pavlenko@intra.com'
+            'mariia.pavlenko@intra.com',
         ],
         category: RespondentCategory.OTHER,
         responseStatus: ResponseStatus.COMPLETED,

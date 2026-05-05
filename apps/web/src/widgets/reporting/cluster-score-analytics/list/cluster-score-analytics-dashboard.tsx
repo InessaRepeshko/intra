@@ -2,24 +2,17 @@
 
 import { format } from 'date-fns';
 import {
-    ArrowUpFromLine,
-    ArrowUpToLine,
     Bookmark,
     Calendar,
     Layers,
     NotebookTabs,
     RefreshCcw,
     Scale,
-    Target,
     Users,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { useCyclesQuery } from '@entities/feedback360/cycle/api/cycle.queries';
-import {
-    StageBadge,
-    stageConfig,
-} from '@entities/feedback360/cycle/ui/stage-badge';
 import { type AuthContextType } from '@entities/identity/user/model/types';
 import {
     useClusterScoreAnalyticsClusterScoreTitlesQuery,
@@ -28,6 +21,7 @@ import {
     useClusterScoresAnalyticsQuery,
 } from '@entities/reporting/cluster-score-analytics/api/cluster-score-analytics.queries';
 import type { ClusterScoreAnalytics } from '@entities/reporting/cluster-score-analytics/model/mappers';
+import { predefinedColors } from '@entities/reporting/cluster-score-analytics/ui/cluster-badge';
 import {
     Card,
     CardContent,
@@ -41,10 +35,9 @@ import {
     TabsList,
     TabsTrigger,
 } from '@shared/components/ui/tabs';
+import { cn } from '@shared/lib/utils/cn';
 import { formatNumber } from '@shared/lib/utils/format-number';
 import { StatisticsCard } from '@shared/ui/statistics-card';
-import { ClusterBadge, predefinedColors } from '@entities/reporting/cluster-score-analytics/ui/cluster-badge';
-import { cn } from '@shared/lib/utils/cn';
 
 const ALL_CYCLES_VALUE = -1;
 
@@ -217,9 +210,7 @@ export function ClusterScoreAnalyticsDashboard({
                 />
                 <StatisticsCard
                     title={`Avg Score`}
-                    value={
-                        formatNumber(averageScoreOverall) ?? '-'
-                    }
+                    value={formatNumber(averageScoreOverall) ?? '-'}
                     icon={Scale}
                     color="text-rose-300"
                     width={250}
@@ -288,8 +279,7 @@ export function ClusterScoreAnalyticsDashboard({
                     ).map((g) => ({
                         ...g,
                         records: [...g.records].sort(
-                            (a, b) =>
-                                (a.lowerBound ?? 0) - (b.lowerBound ?? 0),
+                            (a, b) => (a.lowerBound ?? 0) - (b.lowerBound ?? 0),
                         ),
                     }));
 
@@ -404,9 +394,20 @@ export function ClusterScoreAnalyticsDashboard({
                                                             <div className="flex flex-row items-center gap-x-2 flex-wrap">
                                                                 <Layers className="shrink-0 h-4 w-4 text-muted-foreground" />
                                                                 <span className="text-muted-foreground whitespace-nowrap">
-                                                                    <span className='text-foreground font-medium'>{group.records.length}{" "}</span>
+                                                                    <span className="text-foreground font-medium">
+                                                                        {
+                                                                            group
+                                                                                .records
+                                                                                .length
+                                                                        }{' '}
+                                                                    </span>
                                                                     cluster{' '}
-                                                                    {group.records.length === 1 ? 'level' : 'levels'}
+                                                                    {group
+                                                                        .records
+                                                                        .length ===
+                                                                    1
+                                                                        ? 'level'
+                                                                        : 'levels'}
                                                                 </span>
                                                                 <span className="text-muted-foreground">
                                                                     •
@@ -444,21 +445,31 @@ export function ClusterScoreAnalyticsDashboard({
                                                                             record
                                                                                 .clusterId
                                                                         ];
-                                                                    const colors = predefinedColors[cluster.title.toLowerCase()] ?? "border-border bg-muted/30";
+                                                                    const colors =
+                                                                        predefinedColors[
+                                                                            cluster.title.toLowerCase()
+                                                                        ] ??
+                                                                        'border-border bg-muted/30';
                                                                     return (
                                                                         <div
                                                                             key={
                                                                                 record.id
                                                                             }
-                                                                            className={cn(colors, "flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-y-2 gap-x-6 p-3 rounded-xl border w-full overflow-hidden")}>
+                                                                            className={cn(
+                                                                                colors,
+                                                                                'flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-y-2 gap-x-6 p-3 rounded-xl border w-full overflow-hidden',
+                                                                            )}
+                                                                        >
                                                                             <div className="flex flex-row items-center gap-x-3 gap-y-2 flex-wrap min-w-[180px]">
                                                                                 <span className="text-muted-foreground border border-border border-foreground/50 rounded-xl px-1 text-sm break-words">
-                                                                                    #{record.id}
+                                                                                    #
+                                                                                    {
+                                                                                        record.id
+                                                                                    }
                                                                                 </span>
                                                                                 <span className="font-medium text-foreground break-words">
                                                                                     {cluster?.title ??
                                                                                         `Cluster #${record.clusterId}`}
-                                                                                       
                                                                                 </span>
                                                                                 {/* <ClusterBadge
                                                                                     key={cluster.title}
@@ -466,12 +477,16 @@ export function ClusterScoreAnalyticsDashboard({
                                                                                     className="text-sm"
                                                                                 /> */}
                                                                                 <span className="inline-flex items-center gap-1 text-base text-muted-foreground whitespace-nowrap">
-                                                                                    <span className="text-muted-foreground">from</span>
+                                                                                    <span className="text-muted-foreground">
+                                                                                        from
+                                                                                    </span>
                                                                                     <span className="font-medium text-foreground">
                                                                                         {record.lowerBound ??
                                                                                             '–'}{' '}
                                                                                     </span>
-                                                                                    <span className="text-muted-foreground">to</span>
+                                                                                    <span className="text-muted-foreground">
+                                                                                        to
+                                                                                    </span>
                                                                                     <span className="font-medium text-foreground">
                                                                                         {record.upperBound ??
                                                                                             '–'}
@@ -487,7 +502,10 @@ export function ClusterScoreAnalyticsDashboard({
                                                                                             0}
                                                                                     </span>
                                                                                     <span className="text-muted-foreground whitespace-nowrap">
-                                                                                        {record.employeesCount === 1 ? 'employee' : 'employees'}
+                                                                                        {record.employeesCount ===
+                                                                                        1
+                                                                                            ? 'employee'
+                                                                                            : 'employees'}
                                                                                     </span>
                                                                                 </div>
                                                                                 <div className="flex flex-row items-center gap-x-1 text-base flex-wrap justify-center lg:justify-end">
@@ -495,7 +513,10 @@ export function ClusterScoreAnalyticsDashboard({
                                                                                         Min
                                                                                     </span>
                                                                                     <span className="font-medium text-foreground whitespace-nowrap">
-                                                                                        {formatNumber(record.minScore ?? "-")}
+                                                                                        {formatNumber(
+                                                                                            record.minScore ??
+                                                                                                '-',
+                                                                                        )}
                                                                                     </span>
                                                                                     <span className="text-muted-foreground whitespace-nowrap">
                                                                                         /
@@ -504,7 +525,10 @@ export function ClusterScoreAnalyticsDashboard({
                                                                                         Max
                                                                                     </span>
                                                                                     <span className="font-medium text-foreground whitespace-nowrap">
-                                                                                        {formatNumber(record.maxScore ?? "-")}
+                                                                                        {formatNumber(
+                                                                                            record.maxScore ??
+                                                                                                '-',
+                                                                                        )}
                                                                                     </span>
                                                                                     <span className="text-muted-foreground whitespace-nowrap">
                                                                                         /
@@ -513,7 +537,10 @@ export function ClusterScoreAnalyticsDashboard({
                                                                                         Avg
                                                                                     </span>
                                                                                     <span className="font-medium text-foreground whitespace-nowrap">
-                                                                                        {formatNumber(record.averageScore ?? "-")}
+                                                                                        {formatNumber(
+                                                                                            record.averageScore ??
+                                                                                                '-',
+                                                                                        )}
                                                                                     </span>
                                                                                 </div>
                                                                             </div>
@@ -522,8 +549,6 @@ export function ClusterScoreAnalyticsDashboard({
                                                                 },
                                                             )}
                                                         </div>
-
-                                                        
                                                     </div>
                                                 );
                                             })

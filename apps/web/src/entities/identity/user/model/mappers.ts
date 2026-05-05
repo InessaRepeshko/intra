@@ -17,7 +17,8 @@ export interface User extends Omit<
 
 const getFullAvatarUrl = (avatarUrl?: string | null): string | null => {
     if (!avatarUrl) return null;
-    if (avatarUrl.startsWith('http') || avatarUrl.startsWith('/')) return avatarUrl;
+    if (avatarUrl.startsWith('http') || avatarUrl.startsWith('/'))
+        return avatarUrl;
     return `/user-avatars/${avatarUrl}`;
 };
 
