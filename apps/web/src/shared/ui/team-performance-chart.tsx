@@ -37,7 +37,7 @@ export function TeamProgressWithLabel({
                 </span>
                 <span className="ml-auto flex flex-row gap-1 items-center justify-center">
                     <span className="font-semibold">
-                        {formatNumber(averageRating, 2)}
+                        {formatNumber(averageRating || 0, 2)}
                     </span>
                     <Percent className="shrink-0 h-4 w-4 text-muted-foreground" />
                 </span>

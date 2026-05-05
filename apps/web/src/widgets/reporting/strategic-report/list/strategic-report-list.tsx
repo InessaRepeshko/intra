@@ -11,13 +11,7 @@ import {
 } from '@entities/reporting/strategic-report/api/strategic-report.queries';
 import { StrategicReportsFilters } from '@entities/reporting/strategic-report/ui/strategic-reports-filters';
 import { StrategicReportsTable } from '@entities/reporting/strategic-report/ui/strategic-reports-table';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@shared/components/ui/card';
+import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { compareStringArrays } from '@shared/lib/utils/compare-arrays';
 import { TablePagination } from '@shared/ui/table-pagination';
@@ -38,15 +32,15 @@ export function StrategicReportList() {
     const [currentPage, setCurrentPage] = useState(1);
     const [resetTrigger, setResetTrigger] = useState(0);
 
-    // Feature dialogs state
-    const [deleteReport, setDeleteReport] = useState<Report | null>(null);
-
     const {
         data: allReportsData = [],
         isLoading,
         isError,
     } = useStrategicReportsQuery({});
-    const allCycleIds = allReportsData.map((r) => r.cycleId);
+    const allCycleIds = useMemo(
+        () => allReportsData.map((r) => r.cycleId),
+        [allReportsData],
+    );
 
     // Fetch ratees and team titles for all reports
     const { ratees: rateeData, isLoading: isRateesLoading } =
@@ -154,15 +148,7 @@ export function StrategicReportList() {
         }
 
         return result;
-    }, [
-        allReportsData,
-        search,
-        dateRange,
-        cycles,
-        teams,
-        teamTitles,
-        rateeData,
-    ]);
+    }, [allReportsData, search, dateRange, cycles, teams, teamTitles]);
 
     // Client-side sorting for all fields
     const sortedReports = useMemo(() => {
@@ -182,11 +168,11 @@ export function StrategicReportList() {
                 }
                 case 'ratees': {
                     const rateesA =
-                        rateeData[a.cycleId]?.ratees.map((r) => r.fullName) ||
-                        [];
+                        rateeData.find((d) => d.cycleId === a.cycleId)
+                            ?.ratees.map((r) => r.fullName) || [];
                     const rateesB =
-                        rateeData[b.cycleId]?.ratees.map((r) => r.fullName) ||
-                        [];
+                        rateeData.find((d) => d.cycleId === b.cycleId)
+                            ?.ratees.map((r) => r.fullName) || [];
                     const comparison = compareStringArrays(rateesA, rateesB);
                     return sortDirection === SortDirection.ASC
                         ? comparison
@@ -308,7 +294,7 @@ export function StrategicReportList() {
                     return 0;
             }
         });
-    }, [filteredReports, sortField, sortDirection]);
+    }, [filteredReports, sortField, sortDirection, rateeData, teamTitles]);
 
     const totalPages = Math.ceil(sortedReports.length / ITEMS_PER_PAGE);
     const paginatedReports = sortedReports.slice(
@@ -320,126 +306,101 @@ export function StrategicReportList() {
     const totalReports = allReportsData.length;
 
     return (
-        <main className="min-h-screen">
-            <div className="mx-auto max-w-8xl">
-                {/* Page Header */}
-                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+        <div className="mx-auto max-w-8xl gap-8 flex flex-col w-full min-w-0">
+            <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap min-w-0">
+                    {/* Table Header */}
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
-                            360° Feedback Strategic Reports
+                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
+                            360° Feedback Strategic Reports Table
                         </h1>
                         <p className="mt-1 text-muted-foreground">
                             Monitor strategic reports across your organization.{' '}
-                            <br />
-                            Total{' '}
                             <span className="font-medium text-foreground">
                                 {totalReports}
                             </span>{' '}
-                            reports.
+                            total reports.
                         </p>
                     </div>
                 </div>
 
-                {/* Main Card */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg">
-                            All Strategic Reports
-                        </CardTitle>
-                        <CardDescription>
-                            Search, filter, and monitor strategic reports.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-6">
-                        {/* Filters */}
-                        <StrategicReportsFilters
-                            search={search}
-                            onSearchChange={(val) => {
-                                setSearch(val);
-                                setCurrentPage(1);
-                            }}
-                            dateRange={dateRange}
-                            onDateRangeChange={(range) => {
-                                setDateRange(range);
-                                setCurrentPage(1);
-                            }}
-                            cycles={cycles}
-                            onCyclesChange={(val) => {
-                                setCycles(val);
-                                setCurrentPage(1);
-                            }}
-                            teams={teams}
-                            onTeamsChange={(val) => {
-                                setTeams(val);
-                                setCurrentPage(1);
-                            }}
-                            cycleOptions={cycleOptions}
-                            teamOptions={teamOptions}
-                            onReset={handleReset}
-                        />
+                {/* Table Content */}
+                <CardContent className="flex flex-col gap-6 m-0 p-0 min-w-0 w-full">
+                    {/* Filters */}
+                    <StrategicReportsFilters
+                        search={search}
+                        onSearchChange={(val) => {
+                            setSearch(val);
+                            setCurrentPage(1);
+                        }}
+                        dateRange={dateRange}
+                        onDateRangeChange={(range) => {
+                            setDateRange(range);
+                            setCurrentPage(1);
+                        }}
+                        cycles={cycles}
+                        onCyclesChange={(val) => {
+                            setCycles(val);
+                            setCurrentPage(1);
+                        }}
+                        teams={teams}
+                        onTeamsChange={(val) => {
+                            setTeams(val);
+                            setCurrentPage(1);
+                        }}
+                        cycleOptions={cycleOptions}
+                        teamOptions={teamOptions}
+                        onReset={handleReset}
+                    />
 
-                        {/* Loading State */}
-                        {(isLoading ||
-                            isRateesLoading ||
-                            isTeamTitlesLoading) && (
-                            <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
-                                <Spinner />
-                            </div>
+                    {/* Loading State */}
+                    {(isLoading || isRateesLoading || isTeamTitlesLoading) && (
+                        <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
+                            <Spinner />
+                        </div>
+                    )}
+
+                    {/* Error State */}
+                    {isError && (
+                        <div className="flex flex-col items-center justify-center py-16 text-center">
+                            <h3 className="text-lg font-semibold text-destructive">
+                                Failed to load reports
+                            </h3>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                Please try refreshing the page.
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Table */}
+                    {!isLoading &&
+                        !isError &&
+                        !isRateesLoading &&
+                        !isTeamTitlesLoading && (
+                            <>
+                                <StrategicReportsTable
+                                    strategicReports={paginatedReports}
+                                    ratees={rateeData}
+                                    teams={teamTitles}
+                                    sortField={sortField}
+                                    sortDirection={sortDirection}
+                                    onSort={handleSort}
+                                    resetTrigger={resetTrigger}
+                                />
+
+                                {/* Pagination */}
+                                <TablePagination
+                                    entityName="reports"
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    totalItems={filteredReports.length}
+                                    limit={ITEMS_PER_PAGE}
+                                    onPageChange={setCurrentPage}
+                                />
+                            </>
                         )}
-
-                        {/* Error State */}
-                        {isError && (
-                            <div className="flex flex-col items-center justify-center py-16 text-center">
-                                <h3 className="text-lg font-semibold text-destructive">
-                                    Failed to load reports
-                                </h3>
-                                <p className="mt-1 text-sm text-muted-foreground">
-                                    Please try refreshing the page.
-                                </p>
-                            </div>
-                        )}
-
-                        {/* Table */}
-                        {!isLoading &&
-                            !isError &&
-                            !isRateesLoading &&
-                            !isTeamTitlesLoading && (
-                                <>
-                                    <StrategicReportsTable
-                                        strategicReports={paginatedReports}
-                                        ratees={rateeData}
-                                        teams={teamTitles}
-                                        sortField={sortField}
-                                        sortDirection={sortDirection}
-                                        onSort={handleSort}
-                                        resetTrigger={resetTrigger}
-                                        // onDelete={setDeleteReport}
-                                    />
-
-                                    {/* Pagination */}
-                                    <TablePagination
-                                        entityName="reports"
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        totalItems={filteredReports.length}
-                                        limit={ITEMS_PER_PAGE}
-                                        onPageChange={setCurrentPage}
-                                    />
-                                </>
-                            )}
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Feature Dialogs */}
-            {/* <ForceFinishCycleDialog
-                cycle={forceFinishCycle}
-                onClose={() => setForceFinishCycle(null)}
-            />
-            <DeleteCycleDialog
-                cycle={deleteCycle}
-                onClose={() => setDeleteCycle(null)}
-            /> */}
-        </main>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

@@ -99,7 +99,7 @@ export function CycleDashboard({
                         360° Feedback Cycles Dashboard
                     </h1>
                     <p className="mt-1 text-muted-foreground">
-                        Overview of cycles across all stages. You have{' '}
+                        Overview of cycles across all stages.{' '}Total{' '}
                         <span className="font-medium text-foreground">
                             {cyclesByStage[CycleStage.ACTIVE].length}
                         </span>{' '}
