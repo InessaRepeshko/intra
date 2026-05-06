@@ -151,6 +151,7 @@ import { LibraryModule } from '../library/library.module';
         ReportCommentService,
         TextAnswerService,
         CLUSTER_REPOSITORY,
+        STRATEGIC_REPORT_REPOSITORY,
     ],
 })
 export class ReportingModule {}

@@ -4,6 +4,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { StrategicReportingService } from 'src/contexts/reporting/application/services/strategic-reports.service';
 import { CycleStageProcessedEvent } from '../../../feedback360/application/events/cycle-stage-processed.event';
 import { CycleService } from '../../../feedback360/application/services/cycle.service';
+import { ReviewService } from '../../../feedback360/application/services/review.service';
 
 /**
  * Event listener for cycle stage changes
@@ -17,6 +18,7 @@ export class CycleStageListener {
     constructor(
         private readonly strategicReportingService: StrategicReportingService,
         private readonly cycleService: CycleService,
+        private readonly reviewService: ReviewService,
     ) {}
 
     /*
@@ -37,6 +39,16 @@ export class CycleStageListener {
         this.logger.debug(
             `Cycle ${event.cycleId} with stage ${event.currentStage} was processed`,
         );
+
+        const reviews = await this.reviewService.search({ cycleId: event.cycleId });
+        
+        if (reviews.length === 0) {
+            this.logger.debug(
+                `No reviews found for cycle ${event.cycleId}. Skipping strategic report generation.`,
+            );
+            return;
+        }
+
         this.logger.debug(
             `Initiating strategic report generation for cycle ${event.cycleId}`,
         );

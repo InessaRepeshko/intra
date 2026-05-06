@@ -34,6 +34,10 @@ import {
     REVIEW_REPOSITORY,
     ReviewRepositoryPort,
 } from '../ports/review.repository.port';
+import {
+    STRATEGIC_REPORT_REPOSITORY,
+    StrategicReportRepositoryPort,
+} from 'src/contexts/reporting/application/ports/strategic-report.repository.port';
 
 @Injectable()
 export class CycleService {
@@ -46,7 +50,9 @@ export class CycleService {
         private readonly reviews: ReviewRepositoryPort,
         private readonly eventEmitter: EventEmitter2,
         private readonly prisma: PrismaService,
-    ) {}
+        @Inject(STRATEGIC_REPORT_REPOSITORY)
+        private readonly strategicReports: StrategicReportRepositoryPort,
+    ) { }
 
     async create(payload: CreateCyclePayload): Promise<CycleDomain> {
         const cycle = CycleDomain.create({
@@ -83,16 +89,6 @@ export class CycleService {
     async update(id: number, patch: UpdateCyclePayload): Promise<CycleDomain> {
         const cycle = await this.getById(id);
 
-        if (
-            cycle.stage !== CycleStage.NEW &&
-            cycle.stage !== CycleStage.ACTIVE
-        ) {
-            throw new BadRequestException(
-                'Cycle must be new or active to be updated. Current stage: ' +
-                    cycle.stage,
-            );
-        }
-
         const payload: UpdateCyclePayload = {
             ...(patch.title !== undefined ? { title: patch.title } : {}),
             ...(patch.description !== undefined
@@ -117,29 +113,59 @@ export class CycleService {
             ...(patch.endDate !== undefined ? { endDate: patch.endDate } : {}),
         };
 
-        const updated = await this.cycles.updateById(id, payload);
+        // Check if cycle has strategic report and title is being updated
+        const strategicReport = await this.strategicReports.findByCycleId(id);
 
-        // Reactive Trigger: Check if all responses completed
-        if (patch.stage && patch.stage === CycleStage.FINISHED) {
-            await this.completeCycle(id);
-        }
-
-        if (patch.stage && patch.stage !== CycleStage.PUBLISHED) {
-            await this.changeStage(
-                id,
-                patch.stage,
-                SYSTEM_ACTOR.ID,
-                SYSTEM_ACTOR.NAME,
-                TRANSITION_REASONS.CYCLE_UPDATED,
+        if (strategicReport !== null && payload.title) {
+            throw new BadRequestException(
+                'Cycle ' + cycle.id + ' has strategic report. Cannot update. Current stage: ' +
+                cycle.stage,
             );
         }
+
+        const updated = await this.cycles.updateById(id, payload);
+
+        if (patch.stage && (patch.stage as CycleStage) !== cycle.stage) {
+            // Check if cycle has incomplete reviews and stage is being updated to a final stage
+            const reviews = await this.reviews.listByCycleId(id);
+            const incompleteReviews = reviews.filter(
+                (r) => [ReviewStage.SELF_ASSESSMENT, ReviewStage.IN_PROGRESS, ReviewStage.PROCESSING_BY_HR].includes(r.stage),
+            );
+            const hasInProgressReviews = incompleteReviews.length > 0;
+
+            if (hasInProgressReviews
+                && patch.stage
+                && [CycleStage.CANCELED, CycleStage.FINISHED, CycleStage.PREPARING_REPORT, CycleStage.PUBLISHED, CycleStage.ARCHIVED].includes(patch.stage)) {
+                throw new BadRequestException(
+                    'Cycle ' + cycle.id + ' has ' + incompleteReviews.length + ' active or processing by HR reviews. Cannot update. Current cycle stage: ' +
+                    cycle.stage,
+                );
+            }
+
+            // Reactive Trigger: Check if all responses completed
+            if (patch.stage && patch.stage === CycleStage.FINISHED) {
+                await this.completeCycle(id);
+            }
+
+            if (patch.stage && patch.stage !== CycleStage.PUBLISHED) {
+                await this.changeStage(
+                    id,
+                    patch.stage,
+                    SYSTEM_ACTOR.ID,
+                    SYSTEM_ACTOR.NAME,
+                    TRANSITION_REASONS.CYCLE_UPDATED,
+                );
+            }
+        }
+
+
 
         return updated;
     }
 
     async delete(id: number): Promise<void> {
         const cycle = await this.getById(id);
-        
+
         await this.cycles.deleteById(id);
     }
 
@@ -240,10 +266,10 @@ export class CycleService {
                 SYSTEM_ACTOR.NAME,
                 TRANSITION_REASONS.ALL_REVIEWS_COLLECTED,
             );
-        } else {
+        } else if (hasInProgressReviews && reviews.length > 0) {
             throw new BadRequestException(
                 'All reviews must be completed to finish the cycle. Incomplete reviews count: ' +
-                    incompleteReviews.length,
+                incompleteReviews.length,
             );
         }
     }

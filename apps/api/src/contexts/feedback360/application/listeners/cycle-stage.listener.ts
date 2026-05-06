@@ -4,6 +4,7 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { CycleStageChangedEvent } from '../../../feedback360/application/events/cycle-stage-changed.event';
 import { ClusterScoreAnalyticsService } from '../../../feedback360/application/services/cluster-score-analytics.service';
 import { CycleStageProcessedEvent } from '../events/cycle-stage-processed.event';
+import { ReviewService } from '../services/review.service';
 
 /**
  * Event listener for cycle stage changes
@@ -17,6 +18,7 @@ export class CycleStageListener {
     constructor(
         private readonly analytics: ClusterScoreAnalyticsService,
         private readonly eventEmitter: EventEmitter2,
+        private readonly reviewService: ReviewService,
     ) {}
 
     /*
@@ -34,6 +36,19 @@ export class CycleStageListener {
 
         if (event.toStage !== CycleStage.FINISHED) {
             // Emit event for listeners to react
+            this.eventEmitter.emit(
+                'cycle.stage.processed',
+                CycleStageProcessedEvent.fromCycleStageChangedEvent(event),
+            );
+            return;
+        }
+
+        const reviews = await this.reviewService.search({ cycleId: event.cycleId });
+
+        if (reviews.length === 0) {
+            this.logger.debug(
+                `No reviews found for cycle ${event.cycleId}. Skipping cluster score analytics generation.`,
+            );
             this.eventEmitter.emit(
                 'cycle.stage.processed',
                 CycleStageProcessedEvent.fromCycleStageChangedEvent(event),

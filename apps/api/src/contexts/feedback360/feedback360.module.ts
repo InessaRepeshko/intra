@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from 'src/auth/auth.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { IdentityModule } from '../identity/identity.module';
 import { LibraryModule } from '../library/library.module';
+import { ReportingModule } from '../reporting/reporting.module';
 import { CycleStageListener } from './application/listeners/cycle-stage.listener';
 import { RespondentStatusListener } from './application/listeners/respondent-status.listener';
 import { ReviewStageListener } from './application/listeners/review-stage.listener';
@@ -48,6 +49,7 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
         LibraryModule,
         AuthModule,
         IdentityModule,
+        forwardRef(() => ReportingModule),
     ],
     controllers: [
         CyclesController,

@@ -157,7 +157,7 @@ function isStageDisabledFor(
         return stage !== CycleStage.NEW && stage !== CycleStage.ACTIVE;
     }
     if (mode === 'edit') {
-        return stage === CycleStage.PREPARING_REPORT;
+        return stage === CycleStage.PREPARING_REPORT || stage === CycleStage.PUBLISHED;
     }
     return true;
 }

@@ -9,9 +9,9 @@ export const CYCLE_STAGE_TRANSITIONS: Record<CycleStage, CycleStage[]> = {
 
     [CycleStage.ACTIVE]: [CycleStage.FINISHED, CycleStage.CANCELED],
 
-    [CycleStage.FINISHED]: [CycleStage.PREPARING_REPORT],
+    [CycleStage.FINISHED]: [CycleStage.PREPARING_REPORT, CycleStage.ARCHIVED],
 
-    [CycleStage.PREPARING_REPORT]: [CycleStage.PUBLISHED],
+    [CycleStage.PREPARING_REPORT]: [CycleStage.PUBLISHED, CycleStage.ARCHIVED], 
 
     [CycleStage.PUBLISHED]: [CycleStage.ARCHIVED],
 
