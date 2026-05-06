@@ -114,6 +114,7 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
         REVIEW_QUESTION_RELATION_REPOSITORY,
         REVIEW_REPOSITORY,
         REVIEWER_REPOSITORY,
+        QUESTION_REPOSITORY,
     ],
 })
 export class Feedback360Module {}

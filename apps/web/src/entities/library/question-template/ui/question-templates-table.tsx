@@ -52,6 +52,8 @@ interface QuestionTemplatesTableProps {
     sortField: string;
     sortDirection: SortDirection;
     onSort: (field: string) => void;
+    onView?: (questionTemplate: QuestionTemplate) => void;
+    onEdit?: (questionTemplate: QuestionTemplate) => void;
     onArchive?: (questionTemplate: QuestionTemplate) => void;
     onDelete?: (questionTemplate: QuestionTemplate) => void;
     resetTrigger?: number;
@@ -59,10 +61,14 @@ interface QuestionTemplatesTableProps {
 
 function QuestionTemplateActionsMenu({
     questionTemplate,
+    onView,
+    onEdit,
     onArchive,
     onDelete,
 }: {
     questionTemplate: QuestionTemplate;
+    onView?: (questionTemplate: QuestionTemplate) => void;
+    onEdit?: (questionTemplate: QuestionTemplate) => void;
     onArchive?: (questionTemplate: QuestionTemplate) => void;
     onDelete?: (questionTemplate: QuestionTemplate) => void;
 }) {
@@ -79,11 +85,11 @@ function QuestionTemplateActionsMenu({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onView?.(questionTemplate)}>
                     <Eye className="mr-2 h-4 w-4" />
                     View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit?.(questionTemplate)}>
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
                 </DropdownMenuItem>
@@ -117,6 +123,8 @@ export function QuestionTemplatesTable({
     sortField,
     sortDirection,
     onSort,
+    onView,
+    onEdit,
     onArchive,
     onDelete,
     resetTrigger,
@@ -393,6 +401,8 @@ export function QuestionTemplatesTable({
             cell: (questionTemplate) => (
                 <QuestionTemplateActionsMenu
                     questionTemplate={questionTemplate}
+                    onView={onView}
+                    onEdit={onEdit}
                     onArchive={onArchive}
                     onDelete={onDelete}
                 />
@@ -449,6 +459,8 @@ export function QuestionTemplatesTable({
                             </div>
                             <QuestionTemplateActionsMenu
                                 questionTemplate={questionTemplate}
+                                onView={onView}
+                                onEdit={onEdit}
                                 onArchive={onArchive}
                                 onDelete={onDelete}
                             />

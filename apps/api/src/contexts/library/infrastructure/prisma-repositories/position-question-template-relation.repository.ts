@@ -93,4 +93,12 @@ export class PositionQuestionTemplateRelationRepository implements PositionQuest
 
         return this.listByQuestion(questionId);
     }
+
+    async deleteAllForQuestionTemplate(
+        questionTemplateId: number,
+    ): Promise<void> {
+        await this.prisma.positionQuestionTemplateRelation.deleteMany({
+            where: { questionTemplateId: questionTemplateId },
+        });
+    }
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
@@ -21,6 +22,10 @@ import {
 } from '@entities/library/question-template/model/types';
 import { QuestionTemplatesFilters } from '@entities/library/question-template/ui/question-templates-filters';
 import { QuestionTemplatesTable } from '@entities/library/question-template/ui/question-templates-table';
+import { ArchiveQuestionTemplateDialog } from '@features/library/question-template/archive/ui/ArchiveQuestionTemplateDialog';
+import { DeleteQuestionTemplateDialog } from '@features/library/question-template/delete/ui/DeleteQuestionTemplateDialog';
+import { QuestionTemplateFormDialog } from '@features/library/question-template/form/ui/QuestionTemplateFormDialog';
+import { Button } from '@shared/components/ui/button';
 import {
     Card,
     CardContent,
@@ -35,6 +40,7 @@ import { TablePagination } from '@shared/ui/table-pagination';
 const ITEMS_PER_PAGE = 6;
 
 export function QuestionTemplateList() {
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [search, setSearch] = useState('');
     const [statuses, setStatuses] = useState<string[]>([]);
     const [answerTypes, setAnswerTypes] = useState<string[]>([]);
@@ -54,7 +60,13 @@ export function QuestionTemplateList() {
     const [resetTrigger, setResetTrigger] = useState(0);
 
     // Feature dialogs state
-    const [deleteQuestionTemplate, setDeleteQuestionTemplate] =
+    const [viewingQuestionTemplate, setViewingQuestionTemplate] =
+        useState<QuestionTemplate | null>(null);
+    const [editingQuestionTemplate, setEditingQuestionTemplate] =
+        useState<QuestionTemplate | null>(null);
+    const [archivingQuestionTemplate, setArchivingQuestionTemplate] =
+        useState<QuestionTemplate | null>(null);
+    const [deletingQuestionTemplate, setDeletingQuestionTemplate] =
         useState<QuestionTemplate | null>(null);
 
     // Build query params (exclude all sort params and forSelfassessment - they are client-side only)
@@ -488,14 +500,14 @@ export function QuestionTemplateList() {
                             total question templates.
                         </p>
                     </div>
-                    {/* <CreateReportForm
-                        trigger={
-                            <Button size="lg" className="shrink-0">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Create New Report
-                            </Button>
-                        }
-                    /> */}
+                    <Button
+                        size="lg"
+                        className="shrink-0 rounded-xl"
+                        onClick={() => setIsCreateOpen(true)}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create New
+                    </Button>
                 </div>
 
                 {/* Main Card */}
@@ -597,8 +609,11 @@ export function QuestionTemplateList() {
                                         sortField={sortField}
                                         sortDirection={sortDirection}
                                         onSort={handleSort}
+                                        onView={setViewingQuestionTemplate}
+                                        onEdit={setEditingQuestionTemplate}
+                                        onArchive={setArchivingQuestionTemplate}
+                                        onDelete={setDeletingQuestionTemplate}
                                         resetTrigger={resetTrigger}
-                                        // onDelete={setDeleteQuestionTemplate}
                                     />
 
                                     {/* Pagination */}
@@ -619,14 +634,29 @@ export function QuestionTemplateList() {
             </div>
 
             {/* Feature Dialogs */}
-            {/* <ForceFinishCycleDialog
-                cycle={forceFinishCycle}
-                onClose={() => setForceFinishCycle(null)}
+            <QuestionTemplateFormDialog
+                mode="create"
+                open={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
             />
-            <DeleteCycleDialog
-                cycle={deleteCycle}
-                onClose={() => setDeleteCycle(null)}
-            /> */}
+            <QuestionTemplateFormDialog
+                mode="view"
+                questionTemplate={viewingQuestionTemplate}
+                onClose={() => setViewingQuestionTemplate(null)}
+            />
+            <QuestionTemplateFormDialog
+                mode="edit"
+                questionTemplate={editingQuestionTemplate}
+                onClose={() => setEditingQuestionTemplate(null)}
+            />
+            <ArchiveQuestionTemplateDialog
+                questionTemplate={archivingQuestionTemplate}
+                onClose={() => setArchivingQuestionTemplate(null)}
+            />
+            <DeleteQuestionTemplateDialog
+                questionTemplate={deletingQuestionTemplate}
+                onClose={() => setDeletingQuestionTemplate(null)}
+            />
         </main>
     );
 }

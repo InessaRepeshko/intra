@@ -21,7 +21,7 @@ import {
     useClusterScoresAnalyticsQuery,
 } from '@entities/reporting/cluster-score-analytics/api/cluster-score-analytics.queries';
 import type { ClusterScoreAnalytics } from '@entities/reporting/cluster-score-analytics/model/mappers';
-import { lightPredefinedColors, predefinedColors } from '@entities/reporting/cluster-score-analytics/ui/cluster-badge';
+import { lightPredefinedColors } from '@entities/reporting/cluster-score-analytics/ui/cluster-badge';
 import {
     Card,
     CardContent,
@@ -439,7 +439,7 @@ export function ClusterScoreAnalyticsDashboard({
                                                                                 .clusterId
                                                                         ];
                                                                     const colors =
-                                                                    lightPredefinedColors[
+                                                                        lightPredefinedColors[
                                                                             cluster.title.toLowerCase()
                                                                         ] ??
                                                                         'border-border bg-muted/30';

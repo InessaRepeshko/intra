@@ -106,4 +106,12 @@ export class CompetenceQuestionTemplateRelationRepository implements CompetenceQ
 
         return this.listByCompetence(competenceId);
     }
+
+    async deleteAllForQuestionTemplate(
+        questionTemplateId: number,
+    ): Promise<void> {
+        await this.prisma.competenceQuestionTemplateRelation.deleteMany({
+            where: { questionTemplateId },
+        });
+    }
 }

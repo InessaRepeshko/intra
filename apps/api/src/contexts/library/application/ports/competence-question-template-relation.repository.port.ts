@@ -20,4 +20,5 @@ export interface CompetenceQuestionTemplateRelationRepositoryPort {
         competenceId: number,
         questionTemplateIds: number[],
     ): Promise<CompetenceQuestionTemplateRelationDomain[]>;
+    deleteAllForQuestionTemplate(questionTemplateId: number): Promise<void>;
 }

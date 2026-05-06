@@ -4,7 +4,16 @@ import {
     QuestionTemplateStatus,
     UpdateQuestionTemplatePayload,
 } from '@intra/shared-kernel';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Inject,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
+import {
+    QUESTION_REPOSITORY,
+    QuestionRepositoryPort,
+} from 'src/contexts/feedback360/application/ports/question.repository.port';
 import { PositionService } from 'src/contexts/organisation/application/services/position.service';
 import { QuestionTemplateDomain } from '../../domain/question-template.domain';
 import {
@@ -32,6 +41,8 @@ export class QuestionTemplateService {
         private readonly competenceQuestionTemplateRelations: CompetenceQuestionTemplateRelationRepositoryPort,
         private readonly competences: CompetenceService,
         private readonly positions: PositionService,
+        @Inject(QUESTION_REPOSITORY)
+        private readonly reviewQuestions: QuestionRepositoryPort,
     ) {}
 
     async create(
@@ -120,6 +131,24 @@ export class QuestionTemplateService {
 
     async delete(id: number): Promise<void> {
         await this.getById(id);
+        const relatedQuestions = await this.reviewQuestions.search({
+            questionTemplateId: id,
+        });
+        if (relatedQuestions.length > 0) {
+            throw new BadRequestException(
+                'Question template #' +
+                    id +
+                    ' cannot be deleted. It has ' +
+                    relatedQuestions.length +
+                    ' review questions assigned to it.',
+            );
+        }
+        await this.positionQuestionTemplateRelations.deleteAllForQuestionTemplate(
+            id,
+        );
+        await this.competenceQuestionTemplateRelations.deleteAllForQuestionTemplate(
+            id,
+        );
         await this.questionTemplates.deleteById(id);
     }
 

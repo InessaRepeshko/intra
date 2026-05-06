@@ -17,4 +17,5 @@ export interface PositionQuestionTemplateRelationRepositoryPort {
         questionId: number,
         positionIds: number[],
     ): Promise<PositionQuestionTemplateRelationDomain[]>;
+    deleteAllForQuestionTemplate(questionTemplateId: number): Promise<void>;
 }
