@@ -47,7 +47,7 @@ export class ReviewSchedulerService {
                     });
 
                     this.logger.log(
-                        `Found ${reviews.length} reviews past deadline in cycle ${cycle.id}`,
+                        `Found ${reviews.length} reviews past deadline in cycle #${cycle.id}`,
                     );
 
                     // Transition each review to PREPARING_REPORT
@@ -61,11 +61,11 @@ export class ReviewSchedulerService {
                                 TRANSITION_REASONS.DEADLINE_REACHED,
                             );
                             this.logger.log(
-                                `Transitioned review ${review.id} to PREPARING_REPORT (deadline)`,
+                                `Transitioned review #${review.id} to PREPARING_REPORT (deadline)`,
                             );
                         } catch (error) {
                             this.logger.error(
-                                `Failed to transition review ${review.id}: ${error.message}`,
+                                `Failed to transition review #${review.id}: ${error.message}`,
                             );
                         }
                     }
@@ -108,11 +108,11 @@ export class ReviewSchedulerService {
                 try {
                     await this.cycleService.forceFinish(cycle.id!);
                     this.logger.log(
-                        `Finished cycle ${cycle.id} (deadline reached)`,
+                        `Finished cycle #${cycle.id} (deadline reached)`,
                     );
                 } catch (error) {
                     this.logger.error(
-                        `Failed to finish cycle ${cycle.id}: ${error.message}`,
+                        `Failed to finish cycle #${cycle.id}: ${error.message}`,
                     );
                 }
             }

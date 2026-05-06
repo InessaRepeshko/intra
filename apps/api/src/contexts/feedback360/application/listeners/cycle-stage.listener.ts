@@ -1,10 +1,13 @@
 import { CycleStage } from '@intra/shared-kernel';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { CycleStageChangedEvent } from '../../../feedback360/application/events/cycle-stage-changed.event';
 import { ClusterScoreAnalyticsService } from '../../../feedback360/application/services/cluster-score-analytics.service';
 import { CycleStageProcessedEvent } from '../events/cycle-stage-processed.event';
-import { ReviewService } from '../services/review.service';
+import {
+    REVIEW_REPOSITORY,
+    ReviewRepositoryPort,
+} from '../ports/review.repository.port';
 
 /**
  * Event listener for cycle stage changes
@@ -18,7 +21,8 @@ export class CycleStageListener {
     constructor(
         private readonly analytics: ClusterScoreAnalyticsService,
         private readonly eventEmitter: EventEmitter2,
-        private readonly reviewService: ReviewService,
+        @Inject(REVIEW_REPOSITORY)
+        private readonly reviews: ReviewRepositoryPort,
     ) {}
 
     /*
@@ -43,7 +47,7 @@ export class CycleStageListener {
             return;
         }
 
-        const reviews = await this.reviewService.search({ cycleId: event.cycleId });
+        const reviews = await this.reviews.listByCycleId(event.cycleId);
 
         if (reviews.length === 0) {
             this.logger.debug(

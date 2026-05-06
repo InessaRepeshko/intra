@@ -14,6 +14,10 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import {
+    STRATEGIC_REPORT_REPOSITORY,
+    StrategicReportRepositoryPort,
+} from 'src/contexts/reporting/application/ports/strategic-report.repository.port';
 import { PrismaService } from 'src/database/prisma.service';
 import { CycleStageHistoryDomain } from '../../domain/cycle-stage-history.domain';
 import { CycleDomain } from '../../domain/cycle.domain';
@@ -34,10 +38,6 @@ import {
     REVIEW_REPOSITORY,
     ReviewRepositoryPort,
 } from '../ports/review.repository.port';
-import {
-    STRATEGIC_REPORT_REPOSITORY,
-    StrategicReportRepositoryPort,
-} from 'src/contexts/reporting/application/ports/strategic-report.repository.port';
 
 @Injectable()
 export class CycleService {
@@ -52,7 +52,7 @@ export class CycleService {
         private readonly prisma: PrismaService,
         @Inject(STRATEGIC_REPORT_REPOSITORY)
         private readonly strategicReports: StrategicReportRepositoryPort,
-    ) { }
+    ) {}
 
     async create(payload: CreateCyclePayload): Promise<CycleDomain> {
         const cycle = CycleDomain.create({
@@ -118,8 +118,10 @@ export class CycleService {
 
         if (strategicReport !== null && payload.title) {
             throw new BadRequestException(
-                'Cycle ' + cycle.id + ' has strategic report. Cannot update. Current stage: ' +
-                cycle.stage,
+                'Cycle ' +
+                    cycle.id +
+                    ' has strategic report. Cannot update. Current stage: ' +
+                    cycle.stage,
             );
         }
 
@@ -128,17 +130,33 @@ export class CycleService {
         if (patch.stage && (patch.stage as CycleStage) !== cycle.stage) {
             // Check if cycle has incomplete reviews and stage is being updated to a final stage
             const reviews = await this.reviews.listByCycleId(id);
-            const incompleteReviews = reviews.filter(
-                (r) => [ReviewStage.SELF_ASSESSMENT, ReviewStage.IN_PROGRESS, ReviewStage.PROCESSING_BY_HR].includes(r.stage),
+            const incompleteReviews = reviews.filter((r) =>
+                [
+                    ReviewStage.SELF_ASSESSMENT,
+                    ReviewStage.IN_PROGRESS,
+                    ReviewStage.PROCESSING_BY_HR,
+                ].includes(r.stage),
             );
             const hasInProgressReviews = incompleteReviews.length > 0;
 
-            if (hasInProgressReviews
-                && patch.stage
-                && [CycleStage.CANCELED, CycleStage.FINISHED, CycleStage.PREPARING_REPORT, CycleStage.PUBLISHED, CycleStage.ARCHIVED].includes(patch.stage)) {
+            if (
+                hasInProgressReviews &&
+                patch.stage &&
+                [
+                    CycleStage.CANCELED,
+                    CycleStage.FINISHED,
+                    CycleStage.PREPARING_REPORT,
+                    CycleStage.PUBLISHED,
+                    CycleStage.ARCHIVED,
+                ].includes(patch.stage)
+            ) {
                 throw new BadRequestException(
-                    'Cycle ' + cycle.id + ' has ' + incompleteReviews.length + ' active or processing by HR reviews. Cannot update. Current cycle stage: ' +
-                    cycle.stage,
+                    'Cycle ' +
+                        cycle.id +
+                        ' has ' +
+                        incompleteReviews.length +
+                        ' active or processing by HR reviews. Cannot update. Current cycle stage: ' +
+                        cycle.stage,
                 );
             }
 
@@ -157,8 +175,6 @@ export class CycleService {
                 );
             }
         }
-
-
 
         return updated;
     }
@@ -268,8 +284,10 @@ export class CycleService {
             );
         } else if (hasInProgressReviews && reviews.length > 0) {
             throw new BadRequestException(
-                'All reviews must be completed to finish the cycle. Incomplete reviews count: ' +
-                incompleteReviews.length,
+                'All reviews must be completed to finish cycle #' +
+                    cycleId +
+                    '. Incomplete reviews count: ' +
+                    incompleteReviews.length,
             );
         }
     }

@@ -1,8 +1,14 @@
+import { addRespondentToReview } from '@entities/feedback360/respondent/api/respondent.api';
+import { respondentKeys } from '@entities/feedback360/respondent/api/respondent.queries';
+import { RespondentCategory } from '@entities/feedback360/respondent/model/types';
 import {
     createReview,
     updateReview,
 } from '@entities/feedback360/review/api/review.api';
 import { reviewKeys } from '@entities/feedback360/review/api/review.queries';
+import { addReviewerToReview } from '@entities/feedback360/reviewer/api/reviewer.api';
+import { reviewerKeys } from '@entities/feedback360/reviewer/api/reviewer.queries';
+import { addQuestionToReview } from '@entities/feedback360/survey/api/review-question-relation.api';
 import type { User } from '@entities/identity/user/model/mappers';
 import type { AuthUser } from '@entities/identity/user/model/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -27,20 +33,69 @@ function extractApiErrorMessage(error: unknown, fallback: string): string {
     return fallback;
 }
 
+function buildRespondentPayload(
+    user: User,
+    rateeId: number,
+    managerId?: number | null,
+) {
+    const fullName =
+        user.fullName ??
+        `${user.lastName ?? ''} ${user.firstName ?? ''}`.trim();
+    let category: RespondentCategory;
+    if (user.id === rateeId) {
+        category = RespondentCategory.SELF_ASSESSMENT;
+    } else if (managerId && user.id === managerId) {
+        category = RespondentCategory.OTHER;
+    } else if (user.teamId && user.teamId === user.teamId) {
+        category = RespondentCategory.TEAM;
+    } else {
+        category = RespondentCategory.OTHER;
+    }
+    return {
+        respondentId: user.id,
+        fullName,
+        category,
+        positionId: user.positionId ?? 0,
+        positionTitle: user.positionTitle ?? '',
+        teamId: user.teamId ?? null,
+        teamTitle: user.teamTitle ?? null,
+    };
+}
+
+function buildReviewerPayload(user: User) {
+    const fullName =
+        user.fullName ??
+        `${user.lastName ?? ''} ${user.firstName ?? ''}`.trim();
+    return {
+        reviewerId: user.id,
+        fullName,
+        positionId: user.positionId ?? 0,
+        positionTitle: user.positionTitle ?? '',
+        teamId: user.teamId ?? null,
+        teamTitle: user.teamTitle ?? null,
+    };
+}
+
 export function useCreateReviewFormMutation() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({
+        mutationFn: async ({
             values,
             rateeUser,
             currentUser,
+            respondentUsers,
+            reviewerUsers,
+            questionTemplateIds,
         }: {
             values: ReviewFormValues;
             rateeUser: User;
             currentUser: AuthUser;
-        }) =>
-            createReview({
+            respondentUsers: User[];
+            reviewerUsers: User[];
+            questionTemplateIds: number[];
+        }) => {
+            const review = await createReview({
                 rateeId: values.rateeId,
                 rateeFullName:
                     rateeUser.fullName ??
@@ -56,9 +111,39 @@ export function useCreateReviewFormMutation() {
                 managerFullName: rateeUser.managerName ?? null,
                 cycleId: values.cycleId ?? null,
                 stage: values.stage,
-            }),
+            });
+
+            await Promise.all(
+                respondentUsers.map((user) =>
+                    addRespondentToReview(
+                        review.id,
+                        buildRespondentPayload(
+                            user,
+                            values.rateeId,
+                            rateeUser.managerId ?? null,
+                        ),
+                    ),
+                ),
+            );
+
+            await Promise.all(
+                reviewerUsers.map((user) =>
+                    addReviewerToReview(review.id, buildReviewerPayload(user)),
+                ),
+            );
+
+            await Promise.all(
+                questionTemplateIds.map((questionTemplateId) =>
+                    addQuestionToReview(review.id, questionTemplateId),
+                ),
+            );
+
+            return review;
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: reviewKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: respondentKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: reviewerKeys.lists() });
             toast.success('Review created successfully');
         },
         onError: (error) => {

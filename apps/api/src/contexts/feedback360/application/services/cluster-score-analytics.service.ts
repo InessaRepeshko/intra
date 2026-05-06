@@ -71,7 +71,9 @@ export class ClusterScoreAnalyticsService {
     async getById(id: number): Promise<ClusterScoreAnalyticsDomain> {
         const item = await this.analytics.findById(id);
         if (!item)
-            throw new NotFoundException('Cycle cluster analytics not found');
+            throw new NotFoundException(
+                'Cycle cluster analytics with id ' + id + ' not found',
+            );
         return item;
     }
 

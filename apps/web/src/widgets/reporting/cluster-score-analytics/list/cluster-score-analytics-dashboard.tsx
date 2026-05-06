@@ -134,9 +134,7 @@ export function ClusterScoreAnalyticsDashboard({
 
     const analyticsByCycle = useMemo(() => {
         const buckets: Record<number, ClusterScoreAnalytics[]> = {};
-        buckets[-1] = [...allAnalytics].sort(
-            (a, b) => b.id - a.id,
-        );
+        buckets[-1] = [...allAnalytics].sort((a, b) => b.id - a.id);
         allAnalytics.forEach((a) => {
             if (a.cycleId === null || a.cycleId === undefined) return;
             if (!buckets[a.cycleId]) buckets[a.cycleId] = [];

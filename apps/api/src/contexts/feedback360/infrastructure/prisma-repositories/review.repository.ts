@@ -66,7 +66,20 @@ export class ReviewRepository implements ReviewRepositoryPort {
     }
 
     async deleteById(id: number): Promise<void> {
-        await this.prisma.review.delete({ where: { id } });
+        // Cascade-clean dependent rows that don't have ON DELETE CASCADE
+        // configured at the schema level. This is safe because the service
+        // layer guarantees there are no submitted answers at this point.
+        await this.prisma.$transaction([
+            this.prisma.reviewQuestionRelation.deleteMany({
+                where: { reviewId: id },
+            }),
+            this.prisma.respondent.deleteMany({ where: { reviewId: id } }),
+            this.prisma.reviewer.deleteMany({ where: { reviewId: id } }),
+            this.prisma.reviewStageHistory.deleteMany({
+                where: { reviewId: id },
+            }),
+            this.prisma.review.delete({ where: { id } }),
+        ]);
     }
 
     private buildWhere(query: ReviewSearchQuery): Prisma.ReviewWhereInput {

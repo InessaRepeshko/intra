@@ -313,14 +313,16 @@ export function QuestionTemplatesTable({
             headerClassName:
                 'min-w-[180px] w-[180px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
             cell: (questionTemplate) => (
-                <ForSelfAssessmentBadge
-                    key={questionTemplate.id}
-                    forSelfassessment={
-                        String(
-                            questionTemplate.isForSelfassessment,
-                        ).toUpperCase() as ForSelfassessmentType
-                    }
-                />
+                <span className="flex items-center justify-center">
+                    <ForSelfAssessmentBadge
+                        key={questionTemplate.id}
+                        forSelfassessment={
+                            String(
+                                questionTemplate.isForSelfassessment,
+                            ).toUpperCase() as ForSelfassessmentType
+                        }
+                    />
+                </span>
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },

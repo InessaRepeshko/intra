@@ -78,8 +78,7 @@ export function StrategicReportDashboard({
         const buckets = Object.fromEntries(
             CYCLE_STAGE_ENUM_VALUES.map((s) => [s, [] as StrategicReport[]]),
         ) as Record<CycleStage | 'ALL', StrategicReport[]>;
-        const sortedReports = [...allReportsData]
-            .sort((a, b) => b.id - a.id);
+        const sortedReports = [...allReportsData].sort((a, b) => b.id - a.id);
         buckets['ALL'] = sortedReports;
         sortedReports.forEach((r) => {
             const stage = cycleById.get(r.cycleId)?.stage;
@@ -166,13 +165,18 @@ export function StrategicReportDashboard({
                             value={stage}
                             className="rounded-xl text-sm whitespace-nowrap text-center"
                         >
-                            {stage === 'ALL' ? 'All stages' : stageConfig[stage].label}
+                            {stage === 'ALL'
+                                ? 'All stages'
+                                : stageConfig[stage].label}
                         </TabsTrigger>
                     ))}
                 </TabsList>
 
                 {cycleStageTabOptions.map((stage) => {
-                    const stageLabel = stage === 'ALL' ? 'All stages' : stageConfig[stage].label;
+                    const stageLabel =
+                        stage === 'ALL'
+                            ? 'All stages'
+                            : stageConfig[stage].label;
                     const reports = reportsByStage[stage];
                     return (
                         <TabsContent key={stage} value={stage}>
@@ -189,17 +193,19 @@ export function StrategicReportDashboard({
                                         {reports.length !== 1
                                             ? 'strategic reports are'
                                             : 'strategic report is'}{' '}
-                                        available for cycles at the{' '}
-                                        {stageLabel}{stage === 'ALL' || stage === 'NONE'
+                                        available for cycles at the {stageLabel}
+                                        {stage === 'ALL' || stage === 'NONE'
                                             ? ''
-                                            : ' stage'}.
+                                            : ' stage'}
+                                        .
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="p-0">
                                     <div className="space-y-6">
                                         {reports.length === 0 ? (
                                             <div className="py-12 text-center text-muted-foreground">
-                                                No strategic reports for this stage
+                                                No strategic reports for this
+                                                stage
                                             </div>
                                         ) : (
                                             reports.map((report) => {
@@ -213,8 +219,9 @@ export function StrategicReportDashboard({
                                                             report.cycleId,
                                                     )?.ratees ?? [];
                                                 const reportTeams =
-                                                    teamTitles[report.cycleId] ??
-                                                    [];
+                                                    teamTitles[
+                                                        report.cycleId
+                                                    ] ?? [];
 
                                                 return (
                                                     <div
@@ -225,7 +232,10 @@ export function StrategicReportDashboard({
                                                             <div className="flex flex-wrap items-center gap-2">
                                                                 <p className="font-medium text-lg text-foreground break-words">
                                                                     <span className="text-muted-foreground border border-border rounded-xl px-1 bg-neutral-100">
-                                                                        #{report.id}
+                                                                        #
+                                                                        {
+                                                                            report.id
+                                                                        }
                                                                     </span>{' '}
                                                                     {
                                                                         report.cycleTitle
@@ -239,56 +249,61 @@ export function StrategicReportDashboard({
                                                                     />
                                                                 )}
                                                             </div>
-                                                            <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
-                                                                <Calendar className="shrink-0 h-4 w-4" />
-                                                                <span className="break-words">
-                                                                    {format(
-                                                                        cycle?.startDate ||
-                                                                        '',
-                                                                        'MMM dd, yyyy',
-                                                                    )}
-                                                                    {' - '}
-                                                                    {format(
-                                                                        cycle?.endDate ||
-                                                                        '',
-                                                                        'MMM dd, yyyy',
-                                                                    )}
-                                                                </span>
-                                                            </div>
+                                                            {cycle?.startDate &&
+                                                                cycle?.endDate && (
+                                                                    <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
+                                                                        <Calendar className="shrink-0 h-4 w-4" />
+                                                                        <span className="break-words">
+                                                                            {format(
+                                                                                cycle?.startDate ||
+                                                                                    '',
+                                                                                'MMM dd, yyyy',
+                                                                            )}
+                                                                            {
+                                                                                ' - '
+                                                                            }
+                                                                            {format(
+                                                                                cycle?.endDate ||
+                                                                                    '',
+                                                                                'MMM dd, yyyy',
+                                                                            )}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
                                                             {reportTeams.length >
                                                                 0 && (
-                                                                    <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
-                                                                        <Users className="shrink-0 h-4 w-4" />
-                                                                        <span className="break-words">
-                                                                            {reportTeams
-                                                                                .map(
-                                                                                    (
-                                                                                        t,
-                                                                                    ) =>
-                                                                                        t.title,
-                                                                                )
-                                                                                .join(
-                                                                                    ', ',
-                                                                                )}
-                                                                        </span>
-                                                                    </div>
-                                                                )}
+                                                                <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
+                                                                    <Users className="shrink-0 h-4 w-4" />
+                                                                    <span className="break-words">
+                                                                        {reportTeams
+                                                                            .map(
+                                                                                (
+                                                                                    t,
+                                                                                ) =>
+                                                                                    t.title,
+                                                                            )
+                                                                            .join(
+                                                                                ', ',
+                                                                            )}
+                                                                    </span>
+                                                                </div>
+                                                            )}
                                                             {reportRatees.length >
                                                                 0 && (
-                                                                    <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
-                                                                        <UserRound className="shrink-0 h-4 w-4" />
-                                                                        <span className="break-words">
-                                                                            <AvatarGroupWithCount
-                                                                                users={
-                                                                                    reportRatees
-                                                                                }
-                                                                                maxVisibleUsers={
-                                                                                    4
-                                                                                }
-                                                                            />
-                                                                        </span>
-                                                                    </div>
-                                                                )}
+                                                                <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
+                                                                    <UserRound className="shrink-0 h-4 w-4" />
+                                                                    <span className="break-words">
+                                                                        <AvatarGroupWithCount
+                                                                            users={
+                                                                                reportRatees
+                                                                            }
+                                                                            maxVisibleUsers={
+                                                                                4
+                                                                            }
+                                                                        />
+                                                                    </span>
+                                                                </div>
+                                                            )}
                                                         </div>
 
                                                         <div className="flex flex-row items-center gap-y-2 gap-x-8 w-full sm:w-auto flex-wrap justify-center lg:justify-end">

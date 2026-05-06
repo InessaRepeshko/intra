@@ -1,10 +1,13 @@
 import { ReviewStage } from '@intra/shared-kernel';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { ReviewStageChangedEvent } from '../../../feedback360/application/events/review-stage-changed.event';
 import { CycleService } from '../../../feedback360/application/services/cycle.service';
-import { ReviewService } from '../../../feedback360/application/services/review.service';
 import { ReviewStageProcessedEvent } from '../events/review-stage-processed.event';
+import {
+    REVIEW_REPOSITORY,
+    ReviewRepositoryPort,
+} from '../ports/review.repository.port';
 
 /**
  * Event listener for review stage changes
@@ -16,7 +19,8 @@ export class ReviewStageListener {
 
     constructor(
         private readonly cycles: CycleService,
-        private readonly reviews: ReviewService,
+        @Inject(REVIEW_REPOSITORY)
+        private readonly reviews: ReviewRepositoryPort,
         private readonly eventEmitter: EventEmitter2,
     ) {}
 
@@ -42,7 +46,12 @@ export class ReviewStageListener {
             return;
         }
 
-        const review = await this.reviews.getById(event.reviewId);
+        const review = await this.reviews.findById(event.reviewId);
+
+        if (!review) {
+            this.logger.warn(`Review ${event.reviewId} not found`);
+            return;
+        }
 
         if (!review.cycleId) {
             return;
@@ -53,9 +62,7 @@ export class ReviewStageListener {
         );
 
         try {
-            const reviews = await this.reviews.search({
-                cycleId: review.cycleId,
-            });
+            const reviews = await this.reviews.listByCycleId(review.cycleId);
             const allCompleted = reviews.every(
                 (review) =>
                     review.stage === ReviewStage.FINISHED ||

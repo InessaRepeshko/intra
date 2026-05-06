@@ -19,10 +19,14 @@ import {
 } from '@entities/feedback360/review/model/types';
 import { ReviewsFilters } from '@entities/feedback360/review/ui/reviews-filters';
 import { ReviewsTable } from '@entities/feedback360/review/ui/reviews-table';
+import { DeleteReviewDialog } from '@features/feedback360/review/delete/ui/DeleteReviewDialog';
+import { ForceCompleteReviewDialog } from '@features/feedback360/review/force-complete/ui/ForceCompleteReviewDialog';
 import { ReviewFormDialog } from '@features/feedback360/review/form/ui/ReviewFormDialog';
+import { Button } from '@shared/components/ui/button';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';
+import { Plus } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -43,6 +47,7 @@ export function ReviewList() {
     const [resetTrigger, setResetTrigger] = useState(0);
 
     // Feature dialogs state
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [forceFinishReview, setForceFinishReview] = useState<Review | null>(
         null,
     );
@@ -343,7 +348,7 @@ export function ReviewList() {
     return (
         <div className="mx-auto max-w-8xl gap-8 flex flex-col">
             <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between flex-wrap">
                     {/* Table Header */}
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
@@ -361,6 +366,14 @@ export function ReviewList() {
                             total reviews.
                         </p>
                     </div>
+                    <Button
+                        size="lg"
+                        className="shrink-0 rounded-xl"
+                        onClick={() => setIsCreateOpen(true)}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create New Review
+                    </Button>
                 </div>
                 {/* Table Content */}
                 <CardContent className="flex flex-col gap-6 m-0 p-0">
@@ -467,6 +480,12 @@ export function ReviewList() {
                 </CardContent>
             </Card>
 
+            {/* Feature Dialogs */}
+            <ReviewFormDialog
+                mode="create"
+                open={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
+            />
             <ReviewFormDialog
                 mode="view"
                 review={viewingReview}
@@ -476,6 +495,14 @@ export function ReviewList() {
                 mode="edit"
                 review={editingReview}
                 onClose={() => setEditingReview(null)}
+            />
+            <ForceCompleteReviewDialog
+                review={forceFinishReview}
+                onClose={() => setForceFinishReview(null)}
+            />
+            <DeleteReviewDialog
+                review={deleteReview}
+                onClose={() => setDeleteReview(null)}
             />
         </div>
     );

@@ -86,19 +86,15 @@ function ReviewActionsMenu({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
                 {review.reportId && (
-                    <DropdownMenuItem>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() =>
-                                router.push(
-                                    `/reporting/individual-reports/${review.reportId}`,
-                                )
-                            }
-                        >
-                            <FileUser className="mr-2 h-4 w-4" />
-                            View Report
-                        </Button>
+                    <DropdownMenuItem
+                        onClick={() =>
+                            router.push(
+                                `/reporting/individual-reports/${review.reportId}`,
+                            )
+                        }
+                    >
+                        <FileUser className="mr-2 h-4 w-4" />
+                        View Report
                     </DropdownMenuItem>
                 )}
                 <DropdownMenuItem onClick={() => onView?.(review)}>

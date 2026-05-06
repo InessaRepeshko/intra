@@ -3,6 +3,8 @@
 import { format } from 'date-fns';
 import { useMemo, useState } from 'react';
 
+import { DeleteReviewDialog } from '@features/feedback360/review/delete/ui/DeleteReviewDialog';
+import { ForceCompleteReviewDialog } from '@features/feedback360/review/force-complete/ui/ForceCompleteReviewDialog';
 import {
     AlarmClock,
     Archive,
@@ -12,10 +14,10 @@ import {
     Hourglass,
     MessageCircle,
     Pencil,
+    Plus,
     SquareCheck,
     UserRound,
 } from 'lucide-react';
-import Link from 'next/link';
 
 import { useCyclesQuery } from '@entities/feedback360/cycle/api/cycle.queries';
 import {
@@ -34,6 +36,7 @@ import {
 } from '@entities/feedback360/review/ui/stage-badge';
 import { useUsersByUserIdsQuery } from '@entities/identity/user/api/user.queries';
 import { type AuthContextType } from '@entities/identity/user/model/types';
+import { ReviewFormDialog } from '@features/feedback360/review/form/ui/ReviewFormDialog';
 import {
     Avatar,
     AvatarFallback,
@@ -57,6 +60,7 @@ import {
 import { formatNumber } from '@shared/lib/utils/format-number';
 import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials-from-full-name';
 import { StatisticsCard } from '@shared/ui/statistics-card';
+import { useRouter } from 'next/navigation';
 
 type CycleTabType = {
     value: number;
@@ -72,6 +76,17 @@ export function ReviewDashboard({
     isMyReviews?: boolean;
     isTeamReviews?: boolean;
 }) {
+    const router = useRouter();
+    // Feature dialogs state
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const canCreateReview = currentUser.isAdmin || currentUser.isHR;
+    const [forceFinishReview, setForceFinishReview] = useState<Review | null>(
+        null,
+    );
+    const [deleteReview, setDeleteReview] = useState<Review | null>(null);
+    const [viewingReview, setViewingReview] = useState<Review | null>(null);
+    const [editingReview, setEditingReview] = useState<Review | null>(null);
+
     const [activeReviewStageTab, setActiveReviewStageTab] = useState<
         ReviewStage | 'ALL'
     >('ALL');
@@ -169,7 +184,7 @@ export function ReviewDashboard({
     return (
         <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
             {/* Reviews Dashboard Header */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between flex-wrap">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
                         {isMyReviews
@@ -188,6 +203,16 @@ export function ReviewDashboard({
                         reviews in progress.
                     </p>
                 </div>
+                {canCreateReview && (
+                    <Button
+                        size="lg"
+                        className="shrink-0 rounded-xl"
+                        onClick={() => setIsCreateOpen(true)}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create New Review
+                    </Button>
+                )}
             </div>
 
             {/* Review stats */}
@@ -521,27 +546,40 @@ export function ReviewDashboard({
                                                                               : 'Due'}
                                                                     </span>
                                                                     <span className="font-medium text-foreground whitespace-nowrap">
-                                                                        {review.cycleId
-                                                                            ? format(
-                                                                                  cycle?.responseDeadline ||
-                                                                                      cycle?.reviewDeadline ||
-                                                                                      cycle?.endDate ||
-                                                                                      '',
-                                                                                  'MMM dd, yyyy',
-                                                                              )
-                                                                            : format(
-                                                                                  review.createdAt,
-                                                                                  'MMM dd, yyyy',
-                                                                              )}
+                                                                        {(() => {
+                                                                            const candidate =
+                                                                                review.cycleId
+                                                                                    ? (cycle?.responseDeadline ??
+                                                                                      cycle?.reviewDeadline ??
+                                                                                      cycle?.endDate ??
+                                                                                      null)
+                                                                                    : review.createdAt;
+                                                                            return candidate
+                                                                                ? format(
+                                                                                      candidate,
+                                                                                      'MMM dd, yyyy',
+                                                                                  )
+                                                                                : '—';
+                                                                        })()}
                                                                     </span>
                                                                 </div>
                                                                 <Button
                                                                     asChild
                                                                     className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
+                                                                    onClick={() =>
+                                                                        (currentUser.isAdmin ||
+                                                                            currentUser.isHR) &&
+                                                                        review.stage ===
+                                                                            ReviewStage.NEW
+                                                                            ? setEditingReview(
+                                                                                  review,
+                                                                              )
+                                                                            : setViewingReview(
+                                                                                  review,
+                                                                              )
+                                                                    }
                                                                 >
-                                                                    <Link
-                                                                        href={`/feedback360/reviews/${review.id}`}
-                                                                    >
+                                                                    <span>
                                                                         {(currentUser.isAdmin ||
                                                                             currentUser.isHR) &&
                                                                         review.stage ===
@@ -556,8 +594,24 @@ export function ReviewDashboard({
                                                                             ReviewStage.NEW
                                                                             ? 'Edit'
                                                                             : 'View'}
-                                                                    </Link>
+                                                                    </span>
                                                                 </Button>
+                                                                {review.reportId && (
+                                                                    <Button
+                                                                        asChild
+                                                                        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
+                                                                        onClick={() =>
+                                                                            router.push(
+                                                                                `/reporting/individual-reports/${review.reportId}`,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <span>
+                                                                            <FileUser className="h-4 w-4" />
+                                                                            Report
+                                                                        </span>
+                                                                    </Button>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     );
@@ -571,6 +625,31 @@ export function ReviewDashboard({
                     })}
                 </Tabs>
             </div>
+
+            {/* Feature Dialogs */}
+            <ReviewFormDialog
+                mode="create"
+                open={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
+            />
+            <ReviewFormDialog
+                mode="view"
+                review={viewingReview}
+                onClose={() => setViewingReview(null)}
+            />
+            <ReviewFormDialog
+                mode="edit"
+                review={editingReview}
+                onClose={() => setEditingReview(null)}
+            />
+            <ForceCompleteReviewDialog
+                review={forceFinishReview}
+                onClose={() => setForceFinishReview(null)}
+            />
+            <DeleteReviewDialog
+                review={deleteReview}
+                onClose={() => setDeleteReview(null)}
+            />
         </Card>
     );
 }

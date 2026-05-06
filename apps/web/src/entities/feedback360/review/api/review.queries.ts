@@ -182,10 +182,18 @@ export function useReviewCycleTitlesQuery(
     cycleIds: number[],
 ) {
     const queries = useQueries({
-        queries: reviewIds.map((reviewId, index) => ({
-            queryKey: reviewKeys.cycleTitle(reviewId),
-            queryFn: () => fetchCycleTitleById(cycleIds[index]),
-        })),
+        queries: reviewIds.map((reviewId, index) => {
+            const cycleId = cycleIds[index];
+            const hasCycle =
+                typeof cycleId === 'number' &&
+                Number.isFinite(cycleId) &&
+                cycleId > 0;
+            return {
+                queryKey: reviewKeys.cycleTitle(reviewId),
+                queryFn: () => fetchCycleTitleById(cycleId),
+                enabled: hasCycle,
+            };
+        }),
     });
 
     const cycleTitles: Record<number, string> = {};

@@ -3,10 +3,7 @@
 import { useState } from 'react';
 
 import { type AuthContextType } from '@entities/identity/user/model/types';
-import { ReviewFormDialog } from '@features/feedback360/review/form/ui/ReviewFormDialog';
-import { Button } from '@shared/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@shared/components/ui/tabs';
-import { Plus } from 'lucide-react';
 import { ReviewDashboard } from './review-dashboard';
 import { ReviewList } from './review-list';
 
@@ -24,11 +21,9 @@ export function ReviewsPage({ currentUser }: { currentUser: AuthContextType }) {
     const [activeTab, setActiveTab] = useState<
         (typeof allTabs)[number]['value']
     >(allTabs[0].value);
-    const [isCreateOpen, setIsCreateOpen] = useState(false);
 
     const isEmployee =
         !currentUser.isManager && !currentUser.isAdmin && !currentUser.isHR;
-    const canCreateReview = currentUser.isAdmin || currentUser.isHR;
 
     return (
         <main className="min-h-screen">
@@ -55,16 +50,6 @@ export function ReviewsPage({ currentUser }: { currentUser: AuthContextType }) {
                                 ))}
                             </TabsList>
                         </Tabs>
-                    )}
-                    {canCreateReview && (
-                        <Button
-                            size="lg"
-                            className="shrink-0 rounded-xl"
-                            onClick={() => setIsCreateOpen(true)}
-                        >
-                            <Plus className="mr-2 h-4 w-4" />
-                            Create New Review
-                        </Button>
                     )}
                 </div>
                 {/* My Reviews Dashboard (for Employee) */}
@@ -93,12 +78,6 @@ export function ReviewsPage({ currentUser }: { currentUser: AuthContextType }) {
                         <ReviewList />
                     )}
             </div>
-
-            <ReviewFormDialog
-                mode="create"
-                open={isCreateOpen}
-                onClose={() => setIsCreateOpen(false)}
-            />
         </main>
     );
 }

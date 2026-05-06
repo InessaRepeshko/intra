@@ -4268,7 +4268,7 @@
             "in": "query",
             "description": "HR note (contains, case-insensitive)",
             "schema": {
-              "minimum": 1000,
+              "minimum": 1,
               "maximum": 1000,
               "example": "Completion of probationary period",
               "type": "string"
@@ -4510,7 +4510,7 @@
             "name": "hrNote",
             "in": "query",
             "schema": {
-              "minimum": 1000,
+              "minimum": 1,
               "maximum": 1000,
               "example": "Completion of probationary period",
               "type": "string"
@@ -11305,7 +11305,7 @@
             "type": "string",
             "example": "Completion of probationary period",
             "description": "HR note",
-            "minimum": 1000,
+            "minimum": 1,
             "maximum": 1000
           },
           "teamId": {
@@ -11439,7 +11439,7 @@
             "example": "HR comment",
             "description": "HR note",
             "nullable": true,
-            "minimum": 1000,
+            "minimum": 1,
             "maximum": 1000
           },
           "teamId": {
@@ -11583,7 +11583,7 @@
             "type": "string",
             "example": "Completion of probationary period",
             "description": "HR note",
-            "minimum": 1000,
+            "minimum": 1,
             "maximum": 1000
           },
           "teamId": {

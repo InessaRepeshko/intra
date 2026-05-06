@@ -2,7 +2,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { toast } from 'sonner';
 
-import { createCycle, updateCycle } from '@entities/feedback360/cycle/api/cycle.api';
+import {
+    createCycle,
+    updateCycle,
+} from '@entities/feedback360/cycle/api/cycle.api';
 import { cycleKeys } from '@entities/feedback360/cycle/api/cycle.queries';
 import type { CycleFormValues } from '../model/cycle-form.schema';
 

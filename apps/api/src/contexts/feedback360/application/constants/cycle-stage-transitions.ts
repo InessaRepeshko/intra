@@ -11,7 +11,7 @@ export const CYCLE_STAGE_TRANSITIONS: Record<CycleStage, CycleStage[]> = {
 
     [CycleStage.FINISHED]: [CycleStage.PREPARING_REPORT, CycleStage.ARCHIVED],
 
-    [CycleStage.PREPARING_REPORT]: [CycleStage.PUBLISHED, CycleStage.ARCHIVED], 
+    [CycleStage.PREPARING_REPORT]: [CycleStage.PUBLISHED, CycleStage.ARCHIVED],
 
     [CycleStage.PUBLISHED]: [CycleStage.ARCHIVED],
 

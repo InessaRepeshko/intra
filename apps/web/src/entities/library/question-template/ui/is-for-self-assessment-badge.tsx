@@ -8,12 +8,12 @@ export const forSelfAssessmentConfig: Record<
 > = {
     [ForSelfassessmentType.TRUE]: {
         label: `For self-assessment`,
-        icon: <Check />,
+        icon: <Check className="shrink-0 h-4 w-4" />,
         className: 'bg-green-100 text-green-800 border-green-200',
     },
     [ForSelfassessmentType.FALSE]: {
         label: `Not for self-assessment`,
-        icon: <X />,
+        icon: <X className="shrink-0 h-4 w-4" />,
         className: 'bg-red-100 text-red-800 border-red-200',
     },
 };
@@ -31,7 +31,7 @@ export function ForSelfAssessmentBadge({
                 'inline-flex items-center px-2.5 py-0.5 text-xs font-semibold',
             )}
         >
-            <span className={cn(config.className, 'rounded-lg border')}>
+            <span className={cn(config.className, 'rounded-md border')}>
                 {config.icon}
             </span>
             {/* <span className="ml-1">{config.label}</span> */}

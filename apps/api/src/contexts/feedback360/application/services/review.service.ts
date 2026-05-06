@@ -201,7 +201,7 @@ export class ReviewService {
         if (reviewers.length > 0) return;
 
         throw new ForbiddenException(
-            'You do not have permission to view this review',
+            'You do not have permission to view review #' + review.id + '.',
         );
     }
 
@@ -267,7 +267,7 @@ export class ReviewService {
         if (reviewers.length > 0) return;
 
         throw new ForbiddenException(
-            'You do not have permission to view this review',
+            'You do not have permission to view review #' + review.id + '.',
         );
     }
 
@@ -283,7 +283,9 @@ export class ReviewService {
             review.stage !== ReviewStage.PROCESSING_BY_HR
         ) {
             throw new BadRequestException(
-                'Review must be new or processing by HR to be updated. Current stage: ' +
+                'Review #' +
+                    id +
+                    ' must be new or processing by HR to be updated. Current stage: ' +
                     review.stage,
             );
         }
@@ -295,7 +297,9 @@ export class ReviewService {
                 cycle.stage !== CycleStage.ACTIVE
             ) {
                 throw new BadRequestException(
-                    'Cycle must be new or active to be assigned to review. Current stage: ' +
+                    'Cycle #' +
+                        id +
+                        ' must be new or active to be assigned to review. Current stage: ' +
                         cycle.stage,
                 );
             }
@@ -361,6 +365,16 @@ export class ReviewService {
 
     async delete(id: number): Promise<void> {
         await this.getById(id);
+
+        const existingAnswers = await this.answers.list({ reviewId: id });
+        if (existingAnswers.length > 0) {
+            throw new BadRequestException(
+                'Review #' +
+                    id +
+                    ' cannot be deleted. It already has answers submitted by respondents.',
+            );
+        }
+
         await this.reviews.deleteById(id);
     }
 
@@ -374,7 +388,9 @@ export class ReviewService {
                 cycle.stage !== CycleStage.ACTIVE
             ) {
                 throw new BadRequestException(
-                    'Cycle must be in NEW or ACTIVE stage to be assigned to question. Current stage: ' +
+                    'Cycle #' +
+                        cycle.id +
+                        ' must be in NEW or ACTIVE stage to be assigned to question. Current stage: ' +
                         cycle.stage,
                 );
             }
@@ -389,7 +405,7 @@ export class ReviewService {
 
         if (!title || !answerType) {
             throw new NotFoundException(
-                'Base question data is required to create review question',
+                'Base question data is required to create review question: title and answer type are required.',
             );
         }
 
@@ -417,7 +433,9 @@ export class ReviewService {
         const question = await this.questions.findById(id);
 
         if (!question) {
-            throw new NotFoundException('Question not found');
+            throw new NotFoundException(
+                'Question with id ' + id + ' not found',
+            );
         }
 
         if (question.cycleId) {
@@ -427,7 +445,9 @@ export class ReviewService {
                 cycle.stage !== CycleStage.ACTIVE
             ) {
                 throw new BadRequestException(
-                    'Question cannot be deleted from cycle that is not active. Current stage: ' +
+                    'Question #' +
+                        id +
+                        ' cannot be deleted from cycle that is not active. Current stage: ' +
                         cycle.stage,
                 );
             }
@@ -443,7 +463,9 @@ export class ReviewService {
 
         if (review.stage !== ReviewStage.NEW) {
             throw new BadRequestException(
-                'Review must be not started to be assigned to question. Current stage: ' +
+                'Review #' +
+                    review.id +
+                    ' must be not started to be assigned to question. Current stage: ' +
                     review.stage,
             );
         }
@@ -455,9 +477,29 @@ export class ReviewService {
             questionTemplate.competenceId,
         );
 
+        // The relation table FK requires a real `feedback360_questions` row.
+        // Reuse an existing snapshot for this (cycle, template) tuple if present,
+        // otherwise create a new feedback360 Question from the library template.
+        const existingQuestions = await this.questions.search({
+            cycleId: review.cycleId ?? undefined,
+            questionTemplateId: questionTemplate.id!,
+        });
+        const reviewQuestion =
+            existingQuestions[0] ??
+            (await this.questions.create(
+                QuestionDomain.create({
+                    cycleId: review.cycleId ?? null,
+                    questionTemplateId: questionTemplate.id!,
+                    title: questionTemplate.title,
+                    answerType: questionTemplate.answerType,
+                    competenceId: questionTemplate.competenceId,
+                    isForSelfassessment: questionTemplate.isForSelfassessment,
+                }),
+            ));
+
         const relation = ReviewQuestionRelationDomain.create({
             reviewId: payload.reviewId,
-            questionId: questionTemplate.id!,
+            questionId: reviewQuestion.id!,
             questionTitle: questionTemplate.title,
             answerType: questionTemplate.answerType,
             competenceId: questionTemplate.competenceId,
@@ -484,7 +526,9 @@ export class ReviewService {
 
         if (review.stage !== ReviewStage.NEW) {
             throw new BadRequestException(
-                'Question cannot be unassigned from review that is already started. Current stage: ' +
+                'Question #' +
+                    questionId +
+                    ' cannot be unassigned from review that is already started. Current stage: ' +
                     review.stage,
             );
         }
@@ -503,7 +547,9 @@ export class ReviewService {
             review.stage !== ReviewStage.SELF_ASSESSMENT
         ) {
             throw new BadRequestException(
-                'Review must be in progress to add answer. Current stage: ' +
+                'Review #' +
+                    review.id +
+                    ' must be in progress to add answer. Current stage: ' +
                     review.stage,
             );
         }
@@ -556,7 +602,11 @@ export class ReviewService {
             review.stage !== ReviewStage.SELF_ASSESSMENT
         ) {
             throw new BadRequestException(
-                'Respondent cannot be added to review that is already finished or cancelled. Current stage: ' +
+                'Respondent ' +
+                    payload.fullName +
+                    ' cannot be added to review #' +
+                    review.id +
+                    ' that is already finished or cancelled. Current stage: ' +
                     review.stage,
             );
         }
@@ -596,7 +646,9 @@ export class ReviewService {
             review.stage !== ReviewStage.SELF_ASSESSMENT
         ) {
             throw new BadRequestException(
-                'Review must be in progress to update response status. Current stage: ' +
+                'Review #' +
+                    review.id +
+                    ' must be in progress to update response status. Current stage: ' +
                     review.stage,
             );
         }
@@ -640,7 +692,7 @@ export class ReviewService {
         const respondent = await this.respondents.getById(relationId);
         if (respondent.reviewId != reviewId) {
             throw new BadRequestException(
-                `Respondent relation ${relationId} does not belong to review ${reviewId}`,
+                `Respondent relation #${relationId} does not belong to review #${reviewId}`,
             );
         }
         const currentStatus = respondent.responseStatus;
@@ -692,7 +744,9 @@ export class ReviewService {
         if (respondent.respondentId === actor.id) return;
 
         throw new ForbiddenException(
-            'You do not have permission to update response status for this review',
+            'You do not have permission to update response status for review #' +
+                respondent.reviewId +
+                '.',
         );
     }
 
@@ -705,7 +759,7 @@ export class ReviewService {
 
         if (!this.hasAccessToReadReview(review, actor)) {
             throw new ForbiddenException(
-                'You do not have permission to view this review',
+                'You do not have permission to view review #' + review.id + '.',
             );
         }
 
@@ -765,7 +819,9 @@ export class ReviewService {
         if (isManagerOfReview || isRateeOfReview) return;
 
         throw new ForbiddenException(
-            'You do not have permission to view reviewers of this review',
+            'You do not have permission to view reviewers of review #' +
+                review.id +
+                '.',
         );
     }
 
@@ -915,7 +971,9 @@ export class ReviewService {
             );
         } else {
             throw new BadRequestException(
-                'All responses must be collected to finish the review. Incomplete responses count: ' +
+                'All responses must be collected to finish review #' +
+                    reviewId +
+                    '. Incomplete responses count: ' +
                     incompleteRespondents.length,
             );
         }

@@ -1,7 +1,11 @@
 import { ResponseStatus } from '@intra/shared-kernel';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { RespondentStatusChangedEvent } from '../events/respondent-status-changed.event';
+import {
+    RESPONDENT_REPOSITORY,
+    RespondentRepositoryPort,
+} from '../ports/respondent.repository.port';
 import { ReviewService } from '../services/review.service';
 
 /**
@@ -13,6 +17,8 @@ export class RespondentStatusListener {
     private readonly logger = new Logger(RespondentStatusListener.name);
 
     constructor(
+        @Inject(RESPONDENT_REPOSITORY)
+        private readonly respondents: RespondentRepositoryPort,
         private readonly reviews: ReviewService,
         private readonly eventEmitter: EventEmitter2,
     ) {}
@@ -42,7 +48,7 @@ export class RespondentStatusListener {
         );
 
         try {
-            const respondents = await this.reviews.listRespondents(
+            const respondents = await this.respondents.listByReview(
                 event.reviewId,
                 {},
             );

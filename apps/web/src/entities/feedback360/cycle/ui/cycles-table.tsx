@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import {
     Calendar,
     Eye,
+    FileChartLine,
     HatGlasses,
     MoreHorizontal,
     Pencil,
@@ -14,6 +15,7 @@ import {
 
 import type { Cycle } from '@entities/feedback360/cycle/model/mappers';
 import { CycleStage } from '@entities/feedback360/cycle/model/types';
+import { StrategicReport } from '@entities/reporting/strategic-report/model/mappers';
 import { Button } from '@shared/components/ui/button';
 import {
     DropdownMenu,
@@ -39,6 +41,7 @@ import { StageBadge } from './stage-badge';
 
 interface CyclesTableProps {
     cycles: Cycle[];
+    strategicReports: StrategicReport[];
     reviewCounts: Record<number, number>;
     sortField: string;
     sortDirection: SortDirection;
@@ -52,17 +55,20 @@ interface CyclesTableProps {
 
 function CycleActionsMenu({
     cycle,
+    strategicReport,
     onForceFinish,
     onDelete,
     onView,
     onEdit,
 }: {
     cycle: Cycle;
+    strategicReport: StrategicReport | null;
     onForceFinish?: (cycle: Cycle) => void;
     onDelete?: (cycle: Cycle) => void;
     onView?: (cycle: Cycle) => void;
     onEdit?: (cycle: Cycle) => void;
 }) {
+    const router = useRouter();
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -76,6 +82,18 @@ function CycleActionsMenu({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
+                {strategicReport !== null && (
+                    <DropdownMenuItem
+                        onClick={() =>
+                            router.push(
+                                `/reporting/strategic-reports/${strategicReport.id}`,
+                            )
+                        }
+                    >
+                        <FileChartLine className="mr-2 h-4 w-4" />
+                        View Report
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={() => onView?.(cycle)}>
                     <Eye className="mr-2 h-4 w-4" />
                     View Details
@@ -108,6 +126,7 @@ function CycleActionsMenu({
 
 export function CyclesTable({
     cycles,
+    strategicReports,
     reviewCounts,
     sortField,
     sortDirection,
@@ -297,6 +316,11 @@ export function CyclesTable({
             cell: (cycle) => (
                 <CycleActionsMenu
                     cycle={cycle}
+                    strategicReport={
+                        strategicReports.find(
+                            (report) => report.cycleId === cycle.id,
+                        ) ?? null
+                    }
                     onForceFinish={onForceFinish}
                     onDelete={onDelete}
                     onView={onView}
@@ -356,6 +380,11 @@ export function CyclesTable({
                             </div>
                             <CycleActionsMenu
                                 cycle={cycle}
+                                strategicReport={
+                                    strategicReports.find(
+                                        (report) => report.cycleId === cycle.id,
+                                    ) ?? null
+                                }
                                 onForceFinish={onForceFinish}
                                 onDelete={onDelete}
                                 onView={onView}

@@ -54,7 +54,7 @@ export async function forceCompleteReview(
     id: number,
 ): Promise<ReviewResponseDto> {
     const { data } = await apiClient.post<ReviewResponseDto>(
-        `${REVIEWS_BASE}/${id}/force-complete`,
+        `${REVIEWS_BASE}/${id}/force-finish`,
     );
     return data;
 }

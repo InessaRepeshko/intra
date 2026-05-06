@@ -3,10 +3,7 @@
 import { useState } from 'react';
 
 import { type AuthContextType } from '@entities/identity/user/model/types';
-import { CycleFormDialog } from '@features/feedback360/cycle/form/ui/CycleFormDialog';
-import { Button } from '@shared/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@shared/components/ui/tabs';
-import { Plus } from 'lucide-react';
 
 import { CycleDashboard } from './cycle-dashboard';
 import { CycleList } from './cycle-list';
@@ -47,14 +44,6 @@ export function CyclesPage({ currentUser }: { currentUser: AuthContextType }) {
                             ))}
                         </TabsList>
                     </Tabs>
-                    {/* <Button
-                        size="lg"
-                        className="shrink-0 rounded-xl"
-                        onClick={() => setIsCreateOpen(true)}
-                    >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Create New Cycle
-                    </Button> */}
                 </div>
 
                 {activeTab === 'cycle_dashboard' && (
@@ -62,12 +51,6 @@ export function CyclesPage({ currentUser }: { currentUser: AuthContextType }) {
                 )}
                 {activeTab === 'cycle_table' && <CycleList />}
             </div>
-
-            {/* <CycleFormDialog
-                mode="create"
-                open={isCreateOpen}
-                onClose={() => setIsCreateOpen(false)}
-            /> */}
         </main>
     );
 }

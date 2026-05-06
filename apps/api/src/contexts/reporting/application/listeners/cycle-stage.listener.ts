@@ -1,10 +1,13 @@
 import { CycleStage } from '@intra/shared-kernel';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { StrategicReportingService } from 'src/contexts/reporting/application/services/strategic-reports.service';
 import { CycleStageProcessedEvent } from '../../../feedback360/application/events/cycle-stage-processed.event';
+import {
+    REVIEW_REPOSITORY,
+    ReviewRepositoryPort,
+} from '../../../feedback360/application/ports/review.repository.port';
 import { CycleService } from '../../../feedback360/application/services/cycle.service';
-import { ReviewService } from '../../../feedback360/application/services/review.service';
 
 /**
  * Event listener for cycle stage changes
@@ -18,7 +21,8 @@ export class CycleStageListener {
     constructor(
         private readonly strategicReportingService: StrategicReportingService,
         private readonly cycleService: CycleService,
-        private readonly reviewService: ReviewService,
+        @Inject(REVIEW_REPOSITORY)
+        private readonly reviews: ReviewRepositoryPort,
     ) {}
 
     /*
@@ -40,14 +44,14 @@ export class CycleStageListener {
             `Cycle ${event.cycleId} with stage ${event.currentStage} was processed`,
         );
 
-        const reviews = await this.reviewService.search({ cycleId: event.cycleId });
-        
-        if (reviews.length === 0) {
-            this.logger.debug(
-                `No reviews found for cycle ${event.cycleId}. Skipping strategic report generation.`,
-            );
-            return;
-        }
+        setTimeout(async () => {
+            const reviews = await this.reviews.listByCycleId(event.cycleId);
+            if (reviews.length === 0) {
+                this.logger.debug(
+                    `No reviews found for cycle ${event.cycleId}. Skipping strategic report generation.`,
+                );
+            }
+        }, 10000);
 
         this.logger.debug(
             `Initiating strategic report generation for cycle ${event.cycleId}`,

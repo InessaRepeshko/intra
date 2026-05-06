@@ -14,14 +14,14 @@ import {
 } from '@entities/feedback360/cycle/model/types';
 import { CyclesFilters } from '@entities/feedback360/cycle/ui/cycles-filters';
 import { CyclesTable } from '@entities/feedback360/cycle/ui/cycles-table';
+import { useStrategicReportsQuery } from '@entities/reporting/strategic-report/api/strategic-report.queries';
 import { DeleteCycleDialog } from '@features/feedback360/cycle/delete/ui/DeleteCycleDialog';
 import { ForceFinishCycleDialog } from '@features/feedback360/cycle/force-finish/ui/ForceFinishCycleDialog';
 import { CycleFormDialog } from '@features/feedback360/cycle/form/ui/CycleFormDialog';
+import { Button } from '@shared/components/ui/button';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';
-import { Button } from '@shared/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@shared/components/ui/tabs';
 import { Plus } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 6;
@@ -48,23 +48,10 @@ export function CycleList() {
     const [viewingCycle, setViewingCycle] = useState<Cycle | null>(null);
     const [editingCycle, setEditingCycle] = useState<Cycle | null>(null);
 
-    // Build query params (exclude all sort params - sorting is client-side only)
-    const queryParams = useMemo(() => {
-        const params: Record<string, unknown> = {};
-
-        if (search.trim()) params.search = search.trim();
-        if (stages.length === 1) params.stage = stages[0];
-
-        return params;
-    }, [search, stages]);
-
-    const {
-        data: cycles = [],
-        isLoading,
-        isError,
-    } = useCyclesQuery(queryParams);
+    const { data: cycles = [], isLoading, isError } = useCyclesQuery();
 
     const cycleIds = useMemo(() => cycles.map((c) => c.id), [cycles]);
+    const { data: strategicReports = [] } = useStrategicReportsQuery();
     const { reviewCounts, isLoading: isReviewCountsLoading } =
         useReviewCountsQuery(cycleIds);
 
@@ -178,7 +165,7 @@ export function CycleList() {
         <div className="mx-auto max-w-8xl gap-8 flex flex-col">
             <Card className="mx-auto gap-6 sm:gap-8 flex flex-col w-full h-full border-border p-4 sm:p-6 md:p-8 overflow-hidden">
                 {/* Table Header */}
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between flex-wrap">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground break-words">
                             360° Feedback Cycles Table
@@ -247,6 +234,7 @@ export function CycleList() {
                         <>
                             <CyclesTable
                                 cycles={paginatedCycles}
+                                strategicReports={strategicReports}
                                 reviewCounts={reviewCounts}
                                 sortField={sortField}
                                 sortDirection={sortDirection}
@@ -273,13 +261,10 @@ export function CycleList() {
             </Card>
 
             {/* Feature Dialogs */}
-            <ForceFinishCycleDialog
-                cycle={forceFinishCycle}
-                onClose={() => setForceFinishCycle(null)}
-            />
-            <DeleteCycleDialog
-                cycle={deleteCycle}
-                onClose={() => setDeleteCycle(null)}
+            <CycleFormDialog
+                mode="create"
+                open={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
             />
             <CycleFormDialog
                 mode="view"
@@ -291,10 +276,13 @@ export function CycleList() {
                 cycle={editingCycle}
                 onClose={() => setEditingCycle(null)}
             />
-            <CycleFormDialog
-                mode="create"
-                open={isCreateOpen}
-                onClose={() => setIsCreateOpen(false)}
+            <ForceFinishCycleDialog
+                cycle={forceFinishCycle}
+                onClose={() => setForceFinishCycle(null)}
+            />
+            <DeleteCycleDialog
+                cycle={deleteCycle}
+                onClose={() => setDeleteCycle(null)}
             />
         </div>
     );
