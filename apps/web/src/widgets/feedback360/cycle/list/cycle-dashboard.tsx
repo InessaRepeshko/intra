@@ -54,11 +54,13 @@ export function CycleDashboard({
 }: {
     currentUser: AuthContextType;
 }) {
-    const [activeTab, setActiveTab] = useState<CycleStage>(CycleStage.ACTIVE);
+    const [activeTab, setActiveTab] = useState<CycleStage | 'ALL'>('ALL');
     const [editingCycle, setEditingCycle] = useState<Cycle | null>(null);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
 
     const { data: allCyclesData = [] } = useCyclesQuery({});
+
+    const cycleStageTabOptions = ['ALL', ...CYCLE_STAGE_ENUM_VALUES];
 
     const cycleIds = useMemo(
         () => allCyclesData.map((c) => c.id),
@@ -71,12 +73,13 @@ export function CycleDashboard({
     const cyclesByStage = useMemo(() => {
         const buckets = Object.fromEntries(
             CYCLE_STAGE_ENUM_VALUES.map((s) => [s, [] as Cycle[]]),
-        ) as Record<CycleStage, Cycle[]>;
-        allCyclesData
-            .sort((a, b) => b.id - a.id)
-            .forEach((c) => {
-                if (c.stage && buckets[c.stage]) buckets[c.stage].push(c);
-            });
+        ) as Record<CycleStage | 'ALL', Cycle[]>;
+        const sortedCycles = allCyclesData
+            .sort((a, b) => b.id - a.id);
+        buckets['ALL'] = sortedCycles;
+        sortedCycles.forEach((c) => {
+            if (c.stage && buckets[c.stage]) buckets[c.stage].push(c);
+        });
         return buckets;
     }, [allCyclesData]);
 
@@ -172,51 +175,56 @@ export function CycleDashboard({
             {/* Cycle List Tabs */}
             <Tabs
                 value={activeTab}
-                onValueChange={(v) => setActiveTab(v as CycleStage)}
+                onValueChange={(v) => setActiveTab(v as CycleStage | 'ALL')}
                 className="w-full overflow-hidden"
             >
                 <TabsList
                     variant="default"
                     className="flex flex-wrap h-auto justify-start gap-1 overflow-x-auto rounded-xl p-1"
                 >
-                    {CYCLE_STAGE_ENUM_VALUES.map((stage) => (
+                    {cycleStageTabOptions.map((stage) => (
                         <TabsTrigger
                             key={stage}
                             value={stage}
                             className="rounded-xl text-sm whitespace-nowrap text-center"
                         >
-                            {stageConfig[stage].label}
+                            {stage === 'ALL' ? 'All stages' : stageConfig[stage].label}
                         </TabsTrigger>
                     ))}
                 </TabsList>
 
-                {CYCLE_STAGE_ENUM_VALUES.map((stage) => (
+                {cycleStageTabOptions.map((stage) => { 
+                    const stageLabel = stage === 'ALL' ? 'All stages' : stageConfig[stage].label;
+                    const cycles = cyclesByStage[stage];
+                    return (
                     <TabsContent key={stage} value={stage}>
                         <Card className="border-[0px] shadow-none">
                             <CardHeader className="px-2">
                                 <CardTitle className="text-foreground text-lg break-words">
-                                    {stageConfig[stage].label} Cycles
+                                    {stageLabel} Cycles
                                 </CardTitle>
                                 <CardDescription className="text-base">
                                     A total of{' '}
                                     <span className="font-semibold text-foreground">
-                                        {cyclesByStage[stage].length}
+                                        {cycles.length}
                                     </span>{' '}
-                                    {cyclesByStage[stage].length !== 1
+                                    {cycles.length !== 1
                                         ? 'cycles are'
                                         : 'cycle is'}{' '}
-                                    currently at the {stageConfig[stage].label}{' '}
-                                    stage.
+                                    currently at the {stageLabel}
+                                    {stage === 'ALL' || stage === 'NONE'
+                                                ? ''
+                                                : ' stage'}.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="p-0">
                                 <div className="space-y-6">
-                                    {cyclesByStage[stage].length === 0 ? (
+                                    {cycles.length === 0 ? (
                                         <div className="py-12 text-center text-muted-foreground">
                                             No cycles in this stage
                                         </div>
                                     ) : (
-                                        cyclesByStage[stage].map((cycle) => {
+                                        cycles.map((cycle) => {
                                             const totalReviewsInCycle =
                                                 reviewsByCycleId[cycle.id]
                                                     ?.length ?? 0;
@@ -332,7 +340,7 @@ export function CycleDashboard({
                             </CardContent>
                         </Card>
                     </TabsContent>
-                ))}
+                )})}
             </Tabs>
 
             <CycleFormDialog

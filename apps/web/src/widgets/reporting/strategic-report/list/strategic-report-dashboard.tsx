@@ -53,9 +53,8 @@ export function StrategicReportDashboard({
 }: {
     currentUser: AuthContextType;
 }) {
-    const [activeTab, setActiveTab] = useState<CycleStage>(
-        CycleStage.PUBLISHED,
-    );
+    const [activeTab, setActiveTab] = useState<CycleStage | 'ALL'>('ALL');
+    const cycleStageTabOptions = ['ALL', ...CYCLE_STAGE_ENUM_VALUES];
 
     const { data: allReportsData = [] } = useStrategicReportsQuery({});
     const { data: allCyclesData = [] } = useCyclesQuery();
@@ -78,13 +77,14 @@ export function StrategicReportDashboard({
     const reportsByStage = useMemo(() => {
         const buckets = Object.fromEntries(
             CYCLE_STAGE_ENUM_VALUES.map((s) => [s, [] as StrategicReport[]]),
-        ) as Record<CycleStage, StrategicReport[]>;
-        [...allReportsData]
-            .sort((a, b) => b.id - a.id)
-            .forEach((r) => {
-                const stage = cycleById.get(r.cycleId)?.stage;
-                if (stage && buckets[stage]) buckets[stage].push(r);
-            });
+        ) as Record<CycleStage | 'ALL', StrategicReport[]>;
+        const sortedReports = [...allReportsData]
+            .sort((a, b) => b.id - a.id);
+        buckets['ALL'] = sortedReports;
+        sortedReports.forEach((r) => {
+            const stage = cycleById.get(r.cycleId)?.stage;
+            if (stage && buckets[stage]) buckets[stage].push(r);
+        });
         return buckets;
     }, [allReportsData, cycleById]);
 
@@ -153,174 +153,179 @@ export function StrategicReportDashboard({
             {/* Strategic Report List Tabs by Cycle Stage */}
             <Tabs
                 value={activeTab}
-                onValueChange={(v) => setActiveTab(v as CycleStage)}
+                onValueChange={(v) => setActiveTab(v as CycleStage | 'ALL')}
                 className="w-full overflow-hidden"
             >
                 <TabsList
                     variant="default"
                     className="flex flex-wrap h-auto justify-start gap-1 overflow-x-auto rounded-xl p-1"
                 >
-                    {CYCLE_STAGE_ENUM_VALUES.map((stage) => (
+                    {cycleStageTabOptions.map((stage) => (
                         <TabsTrigger
                             key={stage}
                             value={stage}
                             className="rounded-xl text-sm whitespace-nowrap text-center"
                         >
-                            {stageConfig[stage].label}
+                            {stage === 'ALL' ? 'All stages' : stageConfig[stage].label}
                         </TabsTrigger>
                     ))}
                 </TabsList>
 
-                {CYCLE_STAGE_ENUM_VALUES.map((stage) => (
-                    <TabsContent key={stage} value={stage}>
-                        <Card className="border-[0px] shadow-none">
-                            <CardHeader className="px-2">
-                                <CardTitle className="text-foreground text-lg break-words">
-                                    {stageConfig[stage].label} Strategic Reports
-                                </CardTitle>
-                                <CardDescription className="text-base">
-                                    A total of{' '}
-                                    <span className="font-semibold text-foreground">
-                                        {reportsByStage[stage]?.length ?? 0}
-                                    </span>{' '}
-                                    {(reportsByStage[stage]?.length ?? 0) !== 1
-                                        ? 'strategic reports are'
-                                        : 'strategic report is'}{' '}
-                                    available for cycles at the{' '}
-                                    {stageConfig[stage].label} stage.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="p-0">
-                                <div className="space-y-6">
-                                    {(reportsByStage[stage]?.length ?? 0) ===
-                                    0 ? (
-                                        <div className="py-12 text-center text-muted-foreground">
-                                            No strategic reports for this stage
-                                        </div>
-                                    ) : (
-                                        reportsByStage[stage].map((report) => {
-                                            const cycle = cycleById.get(
-                                                report.cycleId,
-                                            );
-                                            const reportRatees =
-                                                rateeData.find(
-                                                    (d) =>
-                                                        d.cycleId ===
-                                                        report.cycleId,
-                                                )?.ratees ?? [];
-                                            const reportTeams =
-                                                teamTitles[report.cycleId] ??
-                                                [];
+                {cycleStageTabOptions.map((stage) => {
+                    const stageLabel = stage === 'ALL' ? 'All stages' : stageConfig[stage].label;
+                    const reports = reportsByStage[stage];
+                    return (
+                        <TabsContent key={stage} value={stage}>
+                            <Card className="border-[0px] shadow-none">
+                                <CardHeader className="px-2">
+                                    <CardTitle className="text-foreground text-lg break-words">
+                                        {stageLabel} Strategic Reports
+                                    </CardTitle>
+                                    <CardDescription className="text-base">
+                                        A total of{' '}
+                                        <span className="font-semibold text-foreground">
+                                            {reports.length}
+                                        </span>{' '}
+                                        {reports.length !== 1
+                                            ? 'strategic reports are'
+                                            : 'strategic report is'}{' '}
+                                        available for cycles at the{' '}
+                                        {stageLabel}{stage === 'ALL' || stage === 'NONE'
+                                            ? ''
+                                            : ' stage'}.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="p-0">
+                                    <div className="space-y-6">
+                                        {reports.length === 0 ? (
+                                            <div className="py-12 text-center text-muted-foreground">
+                                                No strategic reports for this stage
+                                            </div>
+                                        ) : (
+                                            reports.map((report) => {
+                                                const cycle = cycleById.get(
+                                                    report.cycleId,
+                                                );
+                                                const reportRatees =
+                                                    rateeData.find(
+                                                        (d) =>
+                                                            d.cycleId ===
+                                                            report.cycleId,
+                                                    )?.ratees ?? [];
+                                                const reportTeams =
+                                                    teamTitles[report.cycleId] ??
+                                                    [];
 
-                                            return (
-                                                <div
-                                                    key={report.id}
-                                                    className="flex flex-col lg:flex-row !flex-wrap items-stretch lg:items-center justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
-                                                >
-                                                    <div className="flex flex-col items-start gap-2 text-left flex-1 min-w-[100px] w-full">
-                                                        <div className="flex flex-wrap items-center gap-2">
-                                                            <p className="font-medium text-lg text-foreground break-words">
-                                                                <span className="text-muted-foreground border border-border rounded-xl px-1 bg-neutral-100">
-                                                                    #{report.id}
-                                                                </span>{' '}
-                                                                {
-                                                                    report.cycleTitle
-                                                                }
-                                                            </p>
-                                                            {cycle?.stage && (
-                                                                <StageBadge
-                                                                    stage={
-                                                                        cycle.stage
+                                                return (
+                                                    <div
+                                                        key={report.id}
+                                                        className="flex flex-col lg:flex-row !flex-wrap items-stretch lg:items-center justify-between gap-6 p-4 rounded-2xl border border-border shadow-sm w-full overflow-hidden"
+                                                    >
+                                                        <div className="flex flex-col items-start gap-2 text-left flex-1 min-w-[100px] w-full">
+                                                            <div className="flex flex-wrap items-center gap-2">
+                                                                <p className="font-medium text-lg text-foreground break-words">
+                                                                    <span className="text-muted-foreground border border-border rounded-xl px-1 bg-neutral-100">
+                                                                        #{report.id}
+                                                                    </span>{' '}
+                                                                    {
+                                                                        report.cycleTitle
                                                                     }
-                                                                />
-                                                            )}
-                                                        </div>
-                                                        <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
-                                                            <Calendar className="shrink-0 h-4 w-4" />
-                                                            <span className="break-words">
-                                                                {format(
-                                                                    cycle?.startDate ||
-                                                                        '',
-                                                                    'MMM dd, yyyy',
-                                                                )}
-                                                                {' - '}
-                                                                {format(
-                                                                    cycle?.endDate ||
-                                                                        '',
-                                                                    'MMM dd, yyyy',
-                                                                )}
-                                                            </span>
-                                                        </div>
-                                                        {reportTeams.length >
-                                                            0 && (
-                                                            <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
-                                                                <Users className="shrink-0 h-4 w-4" />
-                                                                <span className="break-words">
-                                                                    {reportTeams
-                                                                        .map(
-                                                                            (
-                                                                                t,
-                                                                            ) =>
-                                                                                t.title,
-                                                                        )
-                                                                        .join(
-                                                                            ', ',
-                                                                        )}
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                        {reportRatees.length >
-                                                            0 && (
-                                                            <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
-                                                                <UserRound className="shrink-0 h-4 w-4" />
-                                                                <span className="break-words">
-                                                                    <AvatarGroupWithCount
-                                                                        users={
-                                                                            reportRatees
-                                                                        }
-                                                                        maxVisibleUsers={
-                                                                            4
+                                                                </p>
+                                                                {cycle?.stage && (
+                                                                    <StageBadge
+                                                                        stage={
+                                                                            cycle.stage
                                                                         }
                                                                     />
+                                                                )}
+                                                            </div>
+                                                            <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
+                                                                <Calendar className="shrink-0 h-4 w-4" />
+                                                                <span className="break-words">
+                                                                    {format(
+                                                                        cycle?.startDate ||
+                                                                        '',
+                                                                        'MMM dd, yyyy',
+                                                                    )}
+                                                                    {' - '}
+                                                                    {format(
+                                                                        cycle?.endDate ||
+                                                                        '',
+                                                                        'MMM dd, yyyy',
+                                                                    )}
                                                                 </span>
                                                             </div>
-                                                        )}
-                                                    </div>
-
-                                                    <div className="flex flex-row items-center gap-y-2 gap-x-8 w-full sm:w-auto flex-wrap justify-center lg:justify-end">
-                                                        <div className="flex flex-row items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
-                                                            <Calendar className="shrink-0 h-4 w-4 text-muted-foreground" />
-                                                            <span className="text-muted-foreground whitespace-nowrap">
-                                                                Generated
-                                                            </span>
-                                                            <span className="font-medium text-foreground whitespace-nowrap">
-                                                                {format(
-                                                                    report.createdAt,
-                                                                    'MMM dd, yyyy',
+                                                            {reportTeams.length >
+                                                                0 && (
+                                                                    <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
+                                                                        <Users className="shrink-0 h-4 w-4" />
+                                                                        <span className="break-words">
+                                                                            {reportTeams
+                                                                                .map(
+                                                                                    (
+                                                                                        t,
+                                                                                    ) =>
+                                                                                        t.title,
+                                                                                )
+                                                                                .join(
+                                                                                    ', ',
+                                                                                )}
+                                                                        </span>
+                                                                    </div>
                                                                 )}
-                                                            </span>
+                                                            {reportRatees.length >
+                                                                0 && (
+                                                                    <div className="flex flex-wrap items-center gap-x-2 text-base text-muted-foreground">
+                                                                        <UserRound className="shrink-0 h-4 w-4" />
+                                                                        <span className="break-words">
+                                                                            <AvatarGroupWithCount
+                                                                                users={
+                                                                                    reportRatees
+                                                                                }
+                                                                                maxVisibleUsers={
+                                                                                    4
+                                                                                }
+                                                                            />
+                                                                        </span>
+                                                                    </div>
+                                                                )}
                                                         </div>
-                                                        <Button
-                                                            asChild
-                                                            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
-                                                        >
-                                                            <Link
-                                                                href={`/reporting/strategic-reports/${report.id}`}
+
+                                                        <div className="flex flex-row items-center gap-y-2 gap-x-8 w-full sm:w-auto flex-wrap justify-center lg:justify-end">
+                                                            <div className="flex flex-row items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
+                                                                <Calendar className="shrink-0 h-4 w-4 text-muted-foreground" />
+                                                                <span className="text-muted-foreground whitespace-nowrap">
+                                                                    Generated
+                                                                </span>
+                                                                <span className="font-medium text-foreground whitespace-nowrap">
+                                                                    {format(
+                                                                        report.createdAt,
+                                                                        'MMM dd, yyyy',
+                                                                    )}
+                                                                </span>
+                                                            </div>
+                                                            <Button
+                                                                asChild
+                                                                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
                                                             >
-                                                                <Eye className="h-4 w-4" />
-                                                                View
-                                                            </Link>
-                                                        </Button>
+                                                                <Link
+                                                                    href={`/reporting/strategic-reports/${report.id}`}
+                                                                >
+                                                                    <Eye className="h-4 w-4" />
+                                                                    View
+                                                                </Link>
+                                                            </Button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            );
-                                        })
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-                ))}
+                                                );
+                                            })
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </TabsContent>
+                    );
+                })}
             </Tabs>
         </Card>
     );

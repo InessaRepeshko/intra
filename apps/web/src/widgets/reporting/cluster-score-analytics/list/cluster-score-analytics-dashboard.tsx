@@ -39,14 +39,12 @@ import { cn } from '@shared/lib/utils/cn';
 import { formatNumber } from '@shared/lib/utils/format-number';
 import { StatisticsCard } from '@shared/ui/statistics-card';
 
-const ALL_CYCLES_VALUE = -1;
-
 export function ClusterScoreAnalyticsDashboard({
     currentUser: _currentUser,
 }: {
     currentUser: AuthContextType;
 }) {
-    const [activeTab, setActiveTab] = useState<number>(ALL_CYCLES_VALUE);
+    const [activeTab, setActiveTab] = useState<number>(-1);
 
     const { data: allAnalytics = [] } = useClusterScoresAnalyticsQuery({});
     const { data: allCycles = [] } = useCyclesQuery();
@@ -125,8 +123,8 @@ export function ClusterScoreAnalyticsDashboard({
 
     const cycleOptions = useMemo(
         () => [
-            { value: ALL_CYCLES_VALUE, label: 'All cycles' },
-            ...cyclesWithAnalytics.map((c) => ({
+            { value: -1, label: 'All cycles' },
+            ...allCycles.map((c) => ({
                 value: c.id,
                 label: c.title,
             })),
@@ -136,7 +134,7 @@ export function ClusterScoreAnalyticsDashboard({
 
     const analyticsByCycle = useMemo(() => {
         const buckets: Record<number, ClusterScoreAnalytics[]> = {};
-        buckets[ALL_CYCLES_VALUE] = [...allAnalytics].sort(
+        buckets[-1] = [...allAnalytics].sort(
             (a, b) => b.id - a.id,
         );
         allAnalytics.forEach((a) => {
@@ -240,10 +238,7 @@ export function ClusterScoreAnalyticsDashboard({
 
                 {cycleOptions.map((cycle) => {
                     const analytics = analyticsByCycle[cycle.value] ?? [];
-                    const cycleTitle =
-                        cycle.value === ALL_CYCLES_VALUE
-                            ? 'All cycles'
-                            : cycle.label;
+                    const cycleTitle = cycle.label;
 
                     // Group records by (cycleId, competenceId) so that one card
                     // shows all cluster levels for a single competence.
@@ -310,8 +305,8 @@ export function ClusterScoreAnalyticsDashboard({
                                             ? 'level'
                                             : 'levels'}
                                         ) for{' '}
-                                        {cycle.value === ALL_CYCLES_VALUE
-                                            ? 'all cycles'
+                                        {cycle.value === -1
+                                            ? `the ${cycleTitle}`
                                             : `the ${cycleTitle} cycle`}
                                         .
                                     </CardDescription>
