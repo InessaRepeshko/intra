@@ -1,16 +1,21 @@
 'use client';
 
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import {
     Award,
     Calendar,
     CircleDot,
+    LogOut,
     Mail,
     UserCog,
     User as UserIcon,
     Users,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
+import { logout } from '@entities/identity/user/api/auth.api';
 import { useMeQuery } from '@entities/identity/user/api/user.queries';
 import { RoleBadge } from '@entities/identity/user/ui/role-badge';
 import { StatusBadge } from '@entities/identity/user/ui/status-badge';
@@ -19,6 +24,7 @@ import {
     AvatarFallback,
     AvatarImage,
 } from '@shared/components/ui/avatar';
+import { Button } from '@shared/components/ui/button';
 import {
     Card,
     CardContent,
@@ -30,6 +36,20 @@ import { getUserInitialsFromFullName } from '@shared/lib/utils/get-user-initials
 
 export function ProfileContent() {
     const { data: user, isLoading } = useMeQuery();
+    const router = useRouter();
+    const queryClient = useQueryClient();
+
+    const logoutMutation = useMutation({
+        mutationFn: logout,
+        onSuccess: () => {
+            queryClient.clear();
+            toast.success('Logged out successfully');
+            router.replace('/signin');
+        },
+        onError: () => {
+            toast.error('Failed to log out. Please try again.');
+        },
+    });
 
     if (isLoading) {
         return (
@@ -92,15 +112,19 @@ export function ProfileContent() {
                         </div>
                     </div>
                     <div className="flex flex-col gap-3 text-base sm:text-right">
-                        <div className="flex items-center gap-2 sm:justify-end flex-wrap">
-                            <StatusBadge status={user.status} />
-                        </div>
-                        <div className="flex items-center gap-1 sm:justify-end text-muted-foreground flex-wrap">
-                            <Calendar className="shrink-0 h-4 w-4" />
-                            <span className="whitespace-nowrap">
-                                Member since{' '}
-                                {format(user.createdAt, 'MMM dd, yyyy')}
-                            </span>
+                        <div className="flex sm:justify-end">
+                            <Button
+                                type="button"
+                                variant="default"
+                                className="rounded-xl"
+                                onClick={() => logoutMutation.mutate()}
+                                disabled={logoutMutation.isPending}
+                            >
+                                <LogOut className="mr-2 h-4 w-4" />
+                                {logoutMutation.isPending
+                                    ? 'Logging out...'
+                                    : 'Log out'}
+                            </Button>
                         </div>
                     </div>
                 </div>

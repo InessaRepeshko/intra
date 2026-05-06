@@ -1,7 +1,6 @@
 'use client';
 
 import { AuthProvider } from '@entities/identity/user/model/auth-context';
-import { Toaster } from '@shared/components/ui/sonner';
 import { AppSidebar, SidebarProvider } from '@shared/ui/app-sidebar';
 import { type ReactNode } from 'react';
 
@@ -15,7 +14,6 @@ export function MainLayout({ children }: { children: ReactNode }) {
                         {children}
                     </main>
                 </div>
-                <Toaster />
             </SidebarProvider>
         </AuthProvider>
     );

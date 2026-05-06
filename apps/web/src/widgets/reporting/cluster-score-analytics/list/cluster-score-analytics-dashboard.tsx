@@ -21,7 +21,7 @@ import {
     useClusterScoresAnalyticsQuery,
 } from '@entities/reporting/cluster-score-analytics/api/cluster-score-analytics.queries';
 import type { ClusterScoreAnalytics } from '@entities/reporting/cluster-score-analytics/model/mappers';
-import { predefinedColors } from '@entities/reporting/cluster-score-analytics/ui/cluster-badge';
+import { lightPredefinedColors, predefinedColors } from '@entities/reporting/cluster-score-analytics/ui/cluster-badge';
 import {
     Card,
     CardContent,
@@ -439,7 +439,7 @@ export function ClusterScoreAnalyticsDashboard({
                                                                                 .clusterId
                                                                         ];
                                                                     const colors =
-                                                                        predefinedColors[
+                                                                    lightPredefinedColors[
                                                                             cluster.title.toLowerCase()
                                                                         ] ??
                                                                         'border-border bg-muted/30';
@@ -464,11 +464,6 @@ export function ClusterScoreAnalyticsDashboard({
                                                                                     {cluster?.title ??
                                                                                         `Cluster #${record.clusterId}`}
                                                                                 </span>
-                                                                                {/* <ClusterBadge
-                                                                                    key={cluster.title}
-                                                                                    label={cluster.title}
-                                                                                    className="text-sm"
-                                                                                /> */}
                                                                                 <span className="inline-flex items-center gap-1 text-base text-muted-foreground whitespace-nowrap">
                                                                                     <span className="text-muted-foreground">
                                                                                         from

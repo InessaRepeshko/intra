@@ -8,6 +8,14 @@ const colorClasses = [
     'bg-purple-100 text-purple-800 border-purple-200',
 ];
 
+export const lightPredefinedColors: Record<string, string> = {
+    beginner: 'bg-rose-100/50 border-rose-200/50 text-rose-800',
+    novice: 'bg-orange-100/50 border-orange-200/50 text-orange-800',
+    intermediate: 'bg-green-100/50 border-green-200/50 text-green-800',
+    advanced: 'bg-cyan-100/50 border-cyan-200/50 text-cyan-800',
+    expert: 'bg-purple-100/50 border-purple-200/50 text-purple-800',
+};
+
 export const predefinedColors: Record<string, string> = {
     beginner: 'bg-rose-100 border-rose-200 text-rose-800',
     novice: 'bg-orange-100 border-orange-200 text-orange-800',
