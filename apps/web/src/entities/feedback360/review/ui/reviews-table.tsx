@@ -52,6 +52,8 @@ interface ReviewsTableProps {
     onSort: (field: string) => void;
     onForceFinish?: (review: Review) => void;
     onDelete?: (review: Review) => void;
+    onView?: (review: Review) => void;
+    onEdit?: (review: Review) => void;
     resetTrigger?: number;
 }
 
@@ -59,10 +61,14 @@ function ReviewActionsMenu({
     review,
     onForceFinish,
     onDelete,
+    onView,
+    onEdit,
 }: {
     review: Review;
     onForceFinish?: (review: Review) => void;
     onDelete?: (review: Review) => void;
+    onView?: (review: Review) => void;
+    onEdit?: (review: Review) => void;
 }) {
     const router = useRouter();
 
@@ -95,11 +101,11 @@ function ReviewActionsMenu({
                         </Button>
                     </DropdownMenuItem>
                 )}
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onView?.(review)}>
                     <Eye className="mr-2 h-4 w-4" />
                     View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit?.(review)}>
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
                 </DropdownMenuItem>
@@ -137,6 +143,8 @@ export function ReviewsTable({
     onSort,
     onForceFinish,
     onDelete,
+    onView,
+    onEdit,
     resetTrigger,
 }: ReviewsTableProps) {
     const {
@@ -419,6 +427,8 @@ export function ReviewsTable({
                     review={review}
                     onForceFinish={onForceFinish}
                     onDelete={onDelete}
+                    onView={onView}
+                    onEdit={onEdit}
                 />
             ),
             cellClassName: 'whitespace-nowrap text-center',
@@ -487,6 +497,8 @@ export function ReviewsTable({
                                 review={review}
                                 onForceFinish={onForceFinish}
                                 onDelete={onDelete}
+                                onView={onView}
+                                onEdit={onEdit}
                             />
                         </div>
 

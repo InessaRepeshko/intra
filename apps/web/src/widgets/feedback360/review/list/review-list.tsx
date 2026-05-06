@@ -19,6 +19,7 @@ import {
 } from '@entities/feedback360/review/model/types';
 import { ReviewsFilters } from '@entities/feedback360/review/ui/reviews-filters';
 import { ReviewsTable } from '@entities/feedback360/review/ui/reviews-table';
+import { ReviewFormDialog } from '@features/feedback360/review/form/ui/ReviewFormDialog';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';
@@ -46,6 +47,8 @@ export function ReviewList() {
         null,
     );
     const [deleteReview, setDeleteReview] = useState<Review | null>(null);
+    const [viewingReview, setViewingReview] = useState<Review | null>(null);
+    const [editingReview, setEditingReview] = useState<Review | null>(null);
 
     const { data: reviews = [], isLoading, isError } = useReviewsQuery();
     const { data: allReviewsData = [] } = useReviewsQuery();
@@ -445,6 +448,8 @@ export function ReviewList() {
                                     onSort={handleSort}
                                     onForceFinish={setForceFinishReview}
                                     onDelete={setDeleteReview}
+                                    onView={setViewingReview}
+                                    onEdit={setEditingReview}
                                     resetTrigger={resetTrigger}
                                 />
 
@@ -461,6 +466,17 @@ export function ReviewList() {
                         )}
                 </CardContent>
             </Card>
+
+            <ReviewFormDialog
+                mode="view"
+                review={viewingReview}
+                onClose={() => setViewingReview(null)}
+            />
+            <ReviewFormDialog
+                mode="edit"
+                review={editingReview}
+                onClose={() => setEditingReview(null)}
+            />
         </div>
     );
 }
