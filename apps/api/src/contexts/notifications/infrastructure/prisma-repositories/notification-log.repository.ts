@@ -14,7 +14,7 @@ export class NotificationLogRepository implements NotificationLogRepositoryPort 
 
     constructor(private readonly prisma: PrismaService) {}
 
-    async findOne(
+    async findOneForReview(
         reviewId: number,
         kind: NotificationKind,
         recipientUserId: number,
@@ -26,6 +26,44 @@ export class NotificationLogRepository implements NotificationLogRepositoryPort 
                     kind: NotificationLogMapper.toPrismaKind(kind),
                     recipientUserId,
                 },
+            },
+        });
+
+        return record ? NotificationLogMapper.toDomain(record) : null;
+    }
+
+    async findOneForCycle(
+        cycleId: number,
+        kind: NotificationKind,
+        recipientUserId: number,
+    ): Promise<NotificationLogDomain | null> {
+        const record = await this.prisma.notificationLog.findUnique({
+            where: {
+                uniq_cycle_kind_recipient: {
+                    cycleId,
+                    kind: NotificationLogMapper.toPrismaKind(kind),
+                    recipientUserId,
+                },
+            },
+        });
+
+        return record ? NotificationLogMapper.toDomain(record) : null;
+    }
+
+    async findOneForUser(
+        kind: NotificationKind,
+        recipientUserId: number,
+    ): Promise<NotificationLogDomain | null> {
+        // No unique constraint exists for (recipientUserId, kind) when both
+        // reviewId and cycleId are null, so use findFirst. Welcome-style
+        // notifications are dispatched only once per user, so a duplicate
+        // here is benign (worst case: a second email if a race occurs).
+        const record = await this.prisma.notificationLog.findFirst({
+            where: {
+                kind: NotificationLogMapper.toPrismaKind(kind),
+                recipientUserId,
+                reviewId: null,
+                cycleId: null,
             },
         });
 

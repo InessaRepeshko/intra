@@ -36,6 +36,7 @@ import { toast } from 'sonner';
 
 import { useReviewRespondentsQuery } from '@entities/feedback360/respondent/api/respondent.queries';
 import { useReviewReviewersQuery } from '@entities/feedback360/reviewer/api/reviewer.queries';
+import { ResponseStatus } from '@entities/feedback360/survey/model/types';
 import { useUserQuery } from '@entities/identity/user/api/user.queries';
 import type { AuthContextType } from '@entities/identity/user/model/types';
 import { Progress } from '@shared/components/ui/progress';
@@ -234,6 +235,26 @@ export function SubmitSurveyForm({
     const submitMutation = useSubmitSurveyMutation();
     const rateeQuery = useUserQuery(reviewQuery.data?.rateeId!);
 
+    const isCurrentUserRespondent = respondents?.find(
+        (r) => r.respondentId === currentUser.user.id,
+    );
+    const isCurrentUserRatee =
+        currentUser.user.id === reviewQuery.data?.rateeId;
+
+    // Only enforce access guards after the underlying queries have resolved —
+    // otherwise the very first render fires `forbidden()` before data loads.
+    const accessChecksReady = !isLoadingRespondents && !reviewQuery.isLoading;
+
+    if (accessChecksReady && !isCurrentUserRespondent && !isCurrentUserRatee) {
+        forbidden();
+    }
+
+    // If the respondent has already submitted, render the form in read-only mode
+    // (instead of blocking access). Show the questions only — without answers.
+    const isReadOnly =
+        !!isCurrentUserRespondent &&
+        isCurrentUserRespondent.responseStatus === ResponseStatus.COMPLETED;
+
     /** Stable key for the set of questions - without duplicate reset when the same list of ids (new array with React Query). */
     const answersShapeKey = useMemo(() => {
         const all = questionsQuery.data ?? [];
@@ -336,6 +357,13 @@ export function SubmitSurveyForm({
 
         const next = buildEmptyAnswersFromSurveyQuestions(ordered);
 
+        if (isReadOnly) {
+            // In view mode skip draft, leave empty values; the next effect
+            // will overlay the persisted answers once they load.
+            reset({ answers: next });
+            return;
+        }
+
         const draftKey = surveyDraftStorageKey(
             answersShapeKey,
             respondentCategory,
@@ -353,6 +381,7 @@ export function SubmitSurveyForm({
         reset,
         reviewId,
         respondentCategory,
+        isReadOnly,
     ]);
 
     const watchedAnswers =
@@ -439,8 +468,40 @@ export function SubmitSurveyForm({
             }
         }
 
+        // Prefer the exact (userId + category) match, fall back to userId-only
+        // (some setups only have one row per user regardless of category).
+        const currentRespondent =
+            respondents?.find(
+                (r) =>
+                    r.respondentId === currentUser.user.id &&
+                    r.category === respondentCategory,
+            ) ??
+            respondents?.find((r) => r.respondentId === currentUser.user.id);
+        const respondentRelationId = currentRespondent?.id ?? null;
+        const currentResponseStatus =
+            (currentRespondent?.responseStatus as ResponseStatus | undefined) ??
+            null;
+
+        if (!respondentRelationId) {
+            // eslint-disable-next-line no-console
+            console.warn(
+                '[SubmitSurveyForm] Could not resolve respondent relation id for current user.',
+                {
+                    userId: currentUser.user.id,
+                    respondentCategory,
+                    respondentsCount: respondents?.length ?? 0,
+                },
+            );
+        }
+
         submitMutation.mutate(
-            { reviewId, respondentCategory, values },
+            {
+                reviewId,
+                respondentCategory,
+                respondentRelationId,
+                currentResponseStatus,
+                values,
+            },
             {
                 onSuccess: () => {
                     router.push('/feedback360/surveys');
@@ -495,6 +556,16 @@ export function SubmitSurveyForm({
         respondentsError ||
         reviewersError
     ) {
+        console.error({
+            error: 'Error loading survey data',
+            reviewError: reviewQuery.error,
+            respondentsError,
+            reviewersError,
+            reviewQueryLoading: reviewQuery.isLoading,
+            questionsQueryLoading: questionsQuery.isLoading,
+            isLoadingRespondents,
+            isLoadingReviewers,
+        });
         return notFound();
     }
 
@@ -573,7 +644,13 @@ export function SubmitSurveyForm({
                     <div
                         className={`flex items-center justify-end gap-3 overflow-hidden grow-0 m-auto ${totalQuestions === 0 ? 'invisible' : ''}`}
                     >
-                        <div className="hidden md:flex items-center justify-end gap-2">
+                        <div
+                            className={cn(
+                                'hidden md:flex items-center justify-end gap-2',
+                                isReadOnly && 'invisible',
+                            )}
+                            aria-hidden={isReadOnly}
+                        >
                             <Progress
                                 value={progress}
                                 id={review.id.toString()}
@@ -589,16 +666,20 @@ export function SubmitSurveyForm({
                                 <span>{progress}%</span>
                             </span>
                         </div>
-                        <Button
-                            type="submit"
-                            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
-                            disabled={!isComplete || submitMutation.isPending}
-                        >
-                            <Send className="mr-2 h-4 w-4" />
-                            {submitMutation.isPending
-                                ? 'Submitting...'
-                                : 'Submit'}
-                        </Button>
+                        {!isReadOnly && (
+                            <Button
+                                type="submit"
+                                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
+                                disabled={
+                                    !isComplete || submitMutation.isPending
+                                }
+                            >
+                                <Send className="mr-2 h-4 w-4" />
+                                {submitMutation.isPending
+                                    ? 'Submitting...'
+                                    : 'Submit'}
+                            </Button>
+                        )}
                     </div>
                 </header>
 
@@ -725,10 +806,15 @@ export function SubmitSurveyForm({
                                                                                         title={
                                                                                             option.description
                                                                                         }
+                                                                                        disabled={
+                                                                                            isReadOnly
+                                                                                        }
                                                                                         className={cn(
                                                                                             'peer absolute inset-0 z-10 h-full w-full cursor-pointer',
                                                                                             'border-0 bg-transparent opacity-0',
                                                                                             'focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                                                                                            isReadOnly &&
+                                                                                                'cursor-not-allowed',
                                                                                         )}
                                                                                     />
                                                                                     <div
@@ -843,6 +929,8 @@ export function SubmitSurveyForm({
                                                             question.questionId,
                                                         )}
                                                         placeholder="Enter your response..."
+                                                        disabled={isReadOnly}
+                                                        readOnly={isReadOnly}
                                                         className="min-h-32 resize-none border-border bg-secondary/30 text-foreground placeholder:text-muted-foreground"
                                                         {...form.register(
                                                             `answers.${formIndex}.textValue`,
@@ -866,16 +954,18 @@ export function SubmitSurveyForm({
                             )}
 
                             <div className="flex flex-wrap justify-end gap-4 pb-8">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="border-border text-foreground hover:bg-secondary rounded-xl"
-                                    disabled={submitMutation.isPending}
-                                    onClick={handleClearForm}
-                                >
-                                    <RotateCcw className="mr-2 h-4 w-4" />
-                                    Clear
-                                </Button>
+                                {!isReadOnly && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="border-border text-foreground hover:bg-secondary rounded-xl"
+                                        disabled={submitMutation.isPending}
+                                        onClick={handleClearForm}
+                                    >
+                                        <RotateCcw className="mr-2 h-4 w-4" />
+                                        Clear
+                                    </Button>
+                                )}
                                 <Button
                                     type="button"
                                     variant="outline"
@@ -885,20 +975,23 @@ export function SubmitSurveyForm({
                                     }
                                 >
                                     <X className="mr-2 h-4 w-4" />
-                                    Cancel
+                                    {isReadOnly ? 'Close' : 'Cancel'}
                                 </Button>
-                                <Button
-                                    type="submit"
-                                    className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
-                                    disabled={
-                                        !isComplete || submitMutation.isPending
-                                    }
-                                >
-                                    <Send className="mr-2 h-4 w-4" />
-                                    {submitMutation.isPending
-                                        ? 'Submitting...'
-                                        : 'Submit'}
-                                </Button>
+                                {!isReadOnly && (
+                                    <Button
+                                        type="submit"
+                                        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
+                                        disabled={
+                                            !isComplete ||
+                                            submitMutation.isPending
+                                        }
+                                    >
+                                        <Send className="mr-2 h-4 w-4" />
+                                        {submitMutation.isPending
+                                            ? 'Submitting...'
+                                            : 'Submit'}
+                                    </Button>
+                                )}
                             </div>
                         </>
                     )}

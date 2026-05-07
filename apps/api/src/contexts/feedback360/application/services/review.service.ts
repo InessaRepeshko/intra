@@ -222,6 +222,12 @@ export class ReviewService {
 
         if (isManagerOfReview || isRateeOfReview) return true;
 
+        const respondents = await this.respondents.listByReview(review.id!, {
+            respondentId: actor.id,
+        });
+
+        if (respondents.length > 0) return true;
+
         const reviewers = await this.reviewers.listByReview(review.id!, {
             reviewerId: actor.id,
         });
@@ -346,11 +352,19 @@ export class ReviewService {
         const updatedReview = await this.reviews.updateById(id, payload);
 
         // Reactive Trigger: Check if all responses completed
-        if (patch.stage && patch.stage !== updatedReview.stage && patch.stage === ReviewStage.FINISHED) {
+        if (
+            patch.stage &&
+            patch.stage !== updatedReview.stage &&
+            patch.stage === ReviewStage.FINISHED
+        ) {
             await this.completeReview(id);
         }
 
-        if (patch.stage && patch.stage !== updatedReview.stage && patch.stage !== ReviewStage.FINISHED) {
+        if (
+            patch.stage &&
+            patch.stage !== updatedReview.stage &&
+            patch.stage !== ReviewStage.FINISHED
+        ) {
             await this.changeReviewStage(
                 id,
                 patch.stage,
@@ -795,7 +809,7 @@ export class ReviewService {
 
     /**
      * Checks if the actor has access to the reviewers of the review
-     * as an admin, hr, manager, or ratee.
+     * as an admin, hr, manager, ratee, respondent, or reviewer of that review.
      * @param reviewId The review identifier.
      * @param actor The actor to check access for.
      */
@@ -817,6 +831,18 @@ export class ReviewService {
         const isRateeOfReview = review.rateeId === actor.id;
 
         if (isManagerOfReview || isRateeOfReview) return;
+
+        const respondents = await this.respondents.listByReview(review.id!, {
+            respondentId: actor.id,
+        });
+
+        if (respondents.length > 0) return;
+
+        const reviewers = await this.reviewers.listByReview(review.id!, {
+            reviewerId: actor.id,
+        });
+
+        if (reviewers.length > 0) return;
 
         throw new ForbiddenException(
             'You do not have permission to view reviewers of review #' +

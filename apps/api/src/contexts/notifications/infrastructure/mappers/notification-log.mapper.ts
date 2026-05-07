@@ -13,6 +13,7 @@ export class NotificationLogMapper {
         return NotificationLogDomain.create({
             id: record.id,
             reviewId: record.reviewId,
+            cycleId: record.cycleId,
             kind: NotificationLogMapper.fromPrismaKind(record.kind),
             channel: NotificationLogMapper.fromPrismaChannel(record.channel),
             recipientUserId: record.recipientUserId,
@@ -29,6 +30,7 @@ export class NotificationLogMapper {
     ): Prisma.NotificationLogUncheckedCreateInput {
         return {
             reviewId: log.reviewId,
+            cycleId: log.cycleId,
             kind: NotificationLogMapper.toPrismaKind(log.kind),
             channel: NotificationLogMapper.toPrismaChannel(log.channel),
             recipientUserId: log.recipientUserId,

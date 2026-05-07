@@ -12,7 +12,7 @@ import {
     REVIEWER_REPOSITORY,
     ReviewerRepositoryPort,
 } from 'src/contexts/feedback360/application/ports/reviewer.repository.port';
-import { ReviewDomain } from 'src/contexts/feedback360/domain/review.domain';
+import { CycleService } from 'src/contexts/feedback360/application/services/cycle.service';
 import {
     IDENTITY_USER_REPOSITORY,
     UserRepositoryPort,
@@ -42,8 +42,69 @@ export class ReviewEmailNotificationService {
         private readonly reviewerRepo: ReviewerRepositoryPort,
         @Inject(IDENTITY_USER_REPOSITORY)
         private readonly userRepo: UserRepositoryPort,
+        private readonly cycleService: CycleService,
         private readonly configService: ConfigService,
     ) {}
+
+    /**
+     * Send a welcome email to a freshly registered user. Triggered from
+     * the identity context when a new user is created.
+     *
+     * Dedup is per-user (regardless of review/cycle), so re-creating the
+     * same user-id (which doesn't really happen) or replaying the event
+     * won't cause duplicate emails.
+     */
+    async notifyUserWelcome(userId: number): Promise<number> {
+        const user = await this.userRepo.findById(userId);
+        if (!user) {
+            this.logger.warn(`User ${userId} not found for welcome email`);
+            return 0;
+        }
+
+        const sent = await this.dispatch({
+            owner: { kind: 'user', id: userId },
+            kind: NotificationKind.USER_WELCOME,
+            recipient: user,
+            subject: 'Welcome to Intra · Feedback360',
+            template: 'user-welcome',
+            actionUrl: this.buildUrl('dashboard'),
+            extraContext: {
+                userFirstName: user.firstName,
+            },
+        });
+
+        return sent ? 1 : 0;
+    }
+
+    /**
+     * Notify the HR responsible for the cycle that the strategic
+     * (cycle-level) report is ready. Triggered when the cycle reaches
+     * `CycleStage.PUBLISHED`.
+     */
+    async notifyCycleStrategicReportReady(cycleId: number): Promise<number> {
+        const cycle = await this.cycleService.getById(cycleId);
+
+        const hr = await this.userRepo.findById(cycle.hrId);
+        if (!hr) {
+            this.logger.warn(`HR ${cycle.hrId} not found for cycle ${cycleId}`);
+            return 0;
+        }
+
+        const sent = await this.dispatch({
+            owner: { kind: 'cycle', id: cycleId },
+            kind: NotificationKind.CYCLE_STRATEGIC_REPORT_READY,
+            recipient: hr,
+            subject: `Strategic report ready: ${cycle.title}`,
+            template: 'cycle-strategic-report-ready',
+            actionUrl: this.buildUrl(`hr/cycles/${cycleId}/strategic-report`),
+            extraContext: {
+                hrFirstName: hr.firstName,
+                cycleTitle: cycle.title,
+            },
+        });
+
+        return sent ? 1 : 0;
+    }
 
     async notifyRateeSelfAssessment(reviewId: number): Promise<number> {
         const review = await this.reviewRepo.findById(reviewId);
@@ -61,7 +122,7 @@ export class ReviewEmailNotificationService {
         }
 
         const sent = await this.dispatch({
-            review,
+            owner: { kind: 'review', id: review.id! },
             kind: NotificationKind.RATEE_SELF_ASSESSMENT,
             recipient: ratee,
             subject: 'A new 360° review has been created for you',
@@ -99,7 +160,7 @@ export class ReviewEmailNotificationService {
             }
 
             const sent = await this.dispatch({
-                review,
+                owner: { kind: 'review', id: review.id! },
                 kind: NotificationKind.RESPONDENT_INVITATION,
                 recipient: user,
                 subject: `Your feedback is requested for ${review.rateeFullName}`,
@@ -136,7 +197,7 @@ export class ReviewEmailNotificationService {
         }
 
         const sent = await this.dispatch({
-            review,
+            owner: { kind: 'review', id: review.id! },
             kind: NotificationKind.HR_REPORT_READY,
             recipient: hr,
             subject: `Review report ready: ${review.rateeFullName}`,
@@ -172,7 +233,7 @@ export class ReviewEmailNotificationService {
             }
 
             const sent = await this.dispatch({
-                review,
+                owner: { kind: 'review', id: review.id! },
                 kind: NotificationKind.REVIEWER_REPORT_READY,
                 recipient: user,
                 subject: `Individual report ready: ${review.rateeFullName}`,
@@ -193,7 +254,10 @@ export class ReviewEmailNotificationService {
     }
 
     private async dispatch(args: {
-        review: ReviewDomain;
+        owner:
+            | { kind: 'review'; id: number }
+            | { kind: 'cycle'; id: number }
+            | { kind: 'user'; id: number };
         kind: NotificationKind;
         recipient: UserDomain;
         subject: string;
@@ -201,11 +265,10 @@ export class ReviewEmailNotificationService {
         actionUrl: string;
         extraContext: Record<string, unknown>;
     }): Promise<boolean> {
-        const { review, kind, recipient, subject, template, actionUrl } = args;
-        const reviewId = review.id;
+        const { owner, kind, recipient, subject, template, actionUrl } = args;
 
-        if (!reviewId) {
-            this.logger.warn(`Review without id, skipping ${kind}`);
+        if (!owner.id) {
+            this.logger.warn(`${owner.kind} without id, skipping ${kind}`);
             return false;
         }
         if (!recipient.id) {
@@ -219,15 +282,31 @@ export class ReviewEmailNotificationService {
             return false;
         }
 
-        const existing = await this.notificationLogRepo.findOne(
-            reviewId,
-            kind,
-            recipient.id,
-        );
+        const ownerLabel = `${owner.kind}=${owner.id}`;
+
+        let existing;
+        if (owner.kind === 'review') {
+            existing = await this.notificationLogRepo.findOneForReview(
+                owner.id,
+                kind,
+                recipient.id,
+            );
+        } else if (owner.kind === 'cycle') {
+            existing = await this.notificationLogRepo.findOneForCycle(
+                owner.id,
+                kind,
+                recipient.id,
+            );
+        } else {
+            existing = await this.notificationLogRepo.findOneForUser(
+                kind,
+                recipient.id,
+            );
+        }
 
         if (existing?.isSent()) {
             this.logger.debug(
-                `Skipping ${kind} for review=${reviewId} user=${recipient.id} (already sent)`,
+                `Skipping ${kind} for ${ownerLabel} user=${recipient.id} (already sent)`,
             );
             return false;
         }
@@ -236,7 +315,8 @@ export class ReviewEmailNotificationService {
             existing ??
             (await this.notificationLogRepo.create(
                 NotificationLogDomain.create({
-                    reviewId,
+                    reviewId: owner.kind === 'review' ? owner.id : null,
+                    cycleId: owner.kind === 'cycle' ? owner.id : null,
                     kind,
                     recipientUserId: recipient.id,
                     recipientEmail: recipient.email,
@@ -259,14 +339,14 @@ export class ReviewEmailNotificationService {
             });
             await this.notificationLogRepo.markSent(log.id!);
             this.logger.log(
-                `Sent ${kind} for review=${reviewId} to user=${recipient.id}`,
+                `Sent ${kind} for ${ownerLabel} to user=${recipient.id}`,
             );
             return true;
         } catch (error) {
             const message =
                 error instanceof Error ? error.message : String(error);
             this.logger.error(
-                `Failed to send ${kind} for review=${reviewId} to user=${recipient.id}: ${message}`,
+                `Failed to send ${kind} for ${ownerLabel} to user=${recipient.id}: ${message}`,
                 error instanceof Error ? error.stack : undefined,
             );
             await this.notificationLogRepo.markFailure(log.id!, message);

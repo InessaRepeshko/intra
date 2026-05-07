@@ -5,6 +5,7 @@ import {
     AlarmClock,
     Eye,
     Hourglass,
+    MessageCircle,
     Pencil,
     PencilIcon,
     SquareCheck,
@@ -22,6 +23,7 @@ import { useAllReviewsRespondentsQuery } from '@entities/feedback360/respondent/
 import { CategoryBadge } from '@entities/feedback360/respondent/ui/category-badge';
 import { useReviewsQuery } from '@entities/feedback360/review/api/review.queries';
 import { useAllReviewsReviewersQuery } from '@entities/feedback360/reviewer/api/reviewer.queries';
+import { useAllSurveyQuestionsQuery } from '@entities/feedback360/survey/api/review-question-relation.queries';
 import { type SurveyInfo } from '@entities/feedback360/survey/model/mappers';
 import {
     RespondentCategory,
@@ -105,6 +107,15 @@ export function SurveyDashboard({
         useAllReviewsRespondentsQuery(allReviewIds);
     const { data: reviewReviewersData } =
         useAllReviewsReviewersQuery(allReviewIds);
+    const { surveyQuestions } = useAllSurveyQuestionsQuery(allReviewIds);
+
+    const surveyQuestionCounts = useMemo(() => {
+        const map: Record<number, number> = {};
+        allReviewIds.forEach((reviewId) => {
+            map[reviewId] = surveyQuestions[reviewId]?.length ?? 0;
+        });
+        return map;
+    }, [allReviewIds, surveyQuestions]);
 
     const rateeIds = useMemo(
         () => Array.from(new Set(allReviewsData.map((r) => r.rateeId))),
@@ -372,6 +383,10 @@ export function SurveyDashboard({
                                                         survey.respondent
                                                             ?.respondentId ===
                                                         currentUser.user?.id;
+                                                    const isCurrentUserRatee =
+                                                        survey.review
+                                                            ?.rateeId ===
+                                                        currentUser.user?.id;
                                                     return (
                                                         <div
                                                             key={`${survey.cycle?.id}-${survey.review?.id}-${survey.respondent?.respondentId}`}
@@ -485,6 +500,29 @@ export function SurveyDashboard({
 
                                                             <div className="flex flex-row items-center gap-x-8 gap-y-2 w-full flex-wrap justify-center sm:justify-end">
                                                                 <div className="flex items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
+                                                                    <MessageCircle className="shrink-0 h-4 w-4 text-muted-foreground" />
+                                                                    <span className="font-medium text-foreground whitespace-nowrap">
+                                                                        {surveyQuestionCounts[
+                                                                            survey
+                                                                                .review
+                                                                                ?.id ??
+                                                                                0
+                                                                        ] ?? 0}
+                                                                    </span>
+                                                                    <span className="text-muted-foreground whitespace-nowrap">
+                                                                        {(surveyQuestionCounts[
+                                                                            survey
+                                                                                .review
+                                                                                ?.id ??
+                                                                                0
+                                                                        ] ??
+                                                                            0) ===
+                                                                        1
+                                                                            ? 'question'
+                                                                            : 'questions'}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="flex items-center gap-x-1 gap-y-0 text-base flex-wrap justify-center lg:justify-end">
                                                                     <AlarmClock className="shrink-0 h-4 w-4 text-muted-foreground" />
                                                                     <span className="text-muted-foreground whitespace-nowrap">
                                                                         {survey
@@ -526,38 +564,72 @@ export function SurveyDashboard({
                                                                               )}
                                                                     </span>
                                                                 </div>
-                                                                <Button
-                                                                    asChild
-                                                                    className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
-                                                                >
-                                                                    {isCurrentUserRespondent &&
-                                                                    survey
-                                                                        .review
-                                                                        .stage ===
-                                                                        ReviewStage.IN_PROGRESS &&
-                                                                    (survey
-                                                                        .respondent
-                                                                        .responseStatus ===
-                                                                        ResponseStatus.PENDING ||
+                                                                {(() => {
+                                                                    const status =
                                                                         survey
                                                                             .respondent
-                                                                            .responseStatus ===
-                                                                            ResponseStatus.IN_PROGRESS) ? (
-                                                                        <Link
-                                                                            href={`/feedback360/surveys/${survey.review?.id}`}
-                                                                        >
-                                                                            <Pencil className="h-4 w-4" />
-                                                                            Review
-                                                                        </Link>
-                                                                    ) : (
-                                                                        <Link
-                                                                            href={`/feedback360/surveys/${survey.review?.id}`}
-                                                                        >
-                                                                            <Eye className="h-4 w-4" />
-                                                                            View
-                                                                        </Link>
-                                                                    )}
-                                                                </Button>
+                                                                            ?.responseStatus;
+                                                                    const stage =
+                                                                        survey
+                                                                            .review
+                                                                            ?.stage;
+
+                                                                    // Review: ratee at SELF_ASSESSMENT (PENDING)
+                                                                    // OR non-ratee respondent at IN_PROGRESS (PENDING).
+                                                                    const showReview =
+                                                                        status ===
+                                                                            ResponseStatus.PENDING &&
+                                                                        ((isCurrentUserRatee &&
+                                                                            stage ===
+                                                                                ReviewStage.SELF_ASSESSMENT) ||
+                                                                            (isCurrentUserRespondent &&
+                                                                                !isCurrentUserRatee &&
+                                                                                stage ===
+                                                                                    ReviewStage.IN_PROGRESS));
+
+                                                                    // View: only ratee, already submitted (COMPLETED),
+                                                                    // regardless of review stage.
+                                                                    const showView =
+                                                                        isCurrentUserRatee &&
+                                                                        status ===
+                                                                            ResponseStatus.COMPLETED;
+
+                                                                    if (
+                                                                        showReview
+                                                                    ) {
+                                                                        return (
+                                                                            <Button
+                                                                                asChild
+                                                                                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
+                                                                            >
+                                                                                <Link
+                                                                                    href={`/feedback360/surveys/${survey.review?.id}`}
+                                                                                >
+                                                                                    <Pencil className="h-4 w-4" />
+                                                                                    Review
+                                                                                </Link>
+                                                                            </Button>
+                                                                        );
+                                                                    }
+                                                                    if (
+                                                                        showView
+                                                                    ) {
+                                                                        return (
+                                                                            <Button
+                                                                                asChild
+                                                                                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
+                                                                            >
+                                                                                <Link
+                                                                                    href={`/feedback360/surveys/${survey.review?.id}`}
+                                                                                >
+                                                                                    <Eye className="h-4 w-4" />
+                                                                                    View
+                                                                                </Link>
+                                                                            </Button>
+                                                                        );
+                                                                    }
+                                                                    return null;
+                                                                })()}
                                                             </div>
                                                         </div>
                                                     );

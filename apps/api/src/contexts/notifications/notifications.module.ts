@@ -7,7 +7,9 @@ import { join } from 'path';
 import { DatabaseModule } from 'src/database/database.module';
 import { Feedback360Module } from '../feedback360/feedback360.module';
 import { IdentityModule } from '../identity/identity.module';
+import { CycleStageNotificationListener } from './application/listeners/cycle-stage-notification.listener';
 import { ReviewStageNotificationListener } from './application/listeners/review-stage-notification.listener';
+import { UserCreatedNotificationListener } from './application/listeners/user-created-notification.listener';
 import { MAILER } from './application/ports/mailer.port';
 import { NOTIFICATION_LOG_REPOSITORY } from './application/ports/notification-log.repository.port';
 import { ReviewEmailNotificationService } from './application/services/review-email-notification.service';
@@ -61,6 +63,8 @@ import { NotificationLogRepository } from './infrastructure/prisma-repositories/
     ],
     providers: [
         ReviewStageNotificationListener,
+        CycleStageNotificationListener,
+        UserCreatedNotificationListener,
         ReviewEmailNotificationService,
         NestMailerAdapter,
         NotificationLogRepository,

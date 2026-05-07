@@ -3,7 +3,8 @@ import { NotificationKind } from './notification-kind.enum';
 
 export type NotificationLogProps = {
     id?: number;
-    reviewId: number;
+    reviewId?: number | null;
+    cycleId?: number | null;
     kind: NotificationKind;
     channel?: NotificationChannel;
     recipientUserId: number;
@@ -16,7 +17,8 @@ export type NotificationLogProps = {
 
 export class NotificationLogDomain {
     readonly id?: number;
-    readonly reviewId: number;
+    readonly reviewId: number | null;
+    readonly cycleId: number | null;
     readonly kind: NotificationKind;
     readonly channel: NotificationChannel;
     readonly recipientUserId: number;
@@ -28,7 +30,8 @@ export class NotificationLogDomain {
 
     private constructor(props: NotificationLogProps) {
         this.id = props.id;
-        this.reviewId = props.reviewId;
+        this.reviewId = props.reviewId ?? null;
+        this.cycleId = props.cycleId ?? null;
         this.kind = props.kind;
         this.channel = props.channel ?? NotificationChannel.EMAIL;
         this.recipientUserId = props.recipientUserId;

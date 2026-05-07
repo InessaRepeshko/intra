@@ -11,7 +11,9 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UserDomain } from '../../domain/user.domain';
+import { UserCreatedEvent } from '../events/user-created.event';
 import type { RoleRepositoryPort } from '../ports/role.repository.port';
 import { IDENTITY_ROLE_REPOSITORY } from '../ports/role.repository.port';
 import type { UserRepositoryPort } from '../ports/user.repository.port';
@@ -26,6 +28,7 @@ export class IdentityUserService {
         private readonly users: UserRepositoryPort,
         @Inject(IDENTITY_ROLE_REPOSITORY)
         private readonly roles: RoleRepositoryPort,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async create(payload: CreateUserPayload): Promise<UserDomain> {
@@ -49,7 +52,16 @@ export class IdentityUserService {
             roles: payload.roles ?? [],
         });
 
-        return this.users.create(user);
+        const created = await this.users.create(user);
+
+        if (created.id) {
+            this.eventEmitter.emit(
+                'user.created',
+                new UserCreatedEvent(created.id, created.email),
+            );
+        }
+
+        return created;
     }
 
     async search(query: UserSearchQuery): Promise<UserDomain[]> {
@@ -152,7 +164,16 @@ export class IdentityUserService {
             roles: [IdentityRole.EMPLOYEE],
         });
 
-        return this.users.create(createdUser);
+        const persisted = await this.users.create(createdUser);
+
+        if (persisted.id) {
+            this.eventEmitter.emit(
+                'user.created',
+                new UserCreatedEvent(persisted.id, persisted.email),
+            );
+        }
+
+        return persisted;
     }
 
     private buildFullName(

@@ -7,7 +7,10 @@ import { IdentityModule } from '../identity/identity.module';
 import { LibraryModule } from '../library/library.module';
 import { ReportingModule } from '../reporting/reporting.module';
 import { CycleStageListener } from './application/listeners/cycle-stage.listener';
-import { RespondentStatusListener } from './application/listeners/respondent-status.listener';
+import {
+    RespondentStatusListener,
+    SelfAssessmentCompletedListener,
+} from './application/listeners/respondent-status.listener';
 import { ReviewStageListener } from './application/listeners/review-stage.listener';
 import { ANSWER_REPOSITORY } from './application/ports/answer.repository.port';
 import { CLUSTER_SCORE_ANALYTICS_REPOSITORY } from './application/ports/cluster-score-analytics.repository.port';
@@ -61,6 +64,7 @@ import { ReviewController } from './presentation/http/controllers/reviews.contro
     providers: [
         CycleStageListener,
         ReviewStageListener,
+        SelfAssessmentCompletedListener,
         RespondentStatusListener,
         CycleService,
         ReviewService,

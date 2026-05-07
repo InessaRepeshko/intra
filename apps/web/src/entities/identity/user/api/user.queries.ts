@@ -152,6 +152,7 @@ export function useUserQuery(id: number) {
             const user = mapUserResponseDtoToModel(dto);
             return enrichUserWithOrgData(user);
         },
+        enabled: id > 0,
     });
 }
 

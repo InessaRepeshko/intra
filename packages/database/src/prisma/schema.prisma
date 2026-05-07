@@ -367,6 +367,7 @@ model Cycle {
   reviewQuestions       Question[]
   strategicReports      StrategicReport[]
   cycleStageHistories   CycleStageHistory[]
+  notificationLogs      NotificationLog[]
 
   @@index([hrId])
   @@index([stage])
@@ -445,10 +446,12 @@ model Review {
  */
 
 enum NotificationKind {
-  RATEE_SELF_ASSESSMENT @map("ratee_self_assessment")
-  RESPONDENT_INVITATION @map("respondent_invitation")
-  HR_REPORT_READY       @map("hr_report_ready")
-  REVIEWER_REPORT_READY @map("reviewer_report_ready")
+  RATEE_SELF_ASSESSMENT        @map("ratee_self_assessment")
+  RESPONDENT_INVITATION        @map("respondent_invitation")
+  HR_REPORT_READY              @map("hr_report_ready")
+  REVIEWER_REPORT_READY        @map("reviewer_report_ready")
+  CYCLE_STRATEGIC_REPORT_READY @map("cycle_strategic_report_ready")
+  USER_WELCOME                 @map("user_welcome")
 
   @@map("notification_kind")
 }
@@ -461,7 +464,8 @@ enum NotificationChannel {
 
 model NotificationLog {
   id              Int                 @id @default(autoincrement())
-  reviewId        Int                 @map("review_id")
+  reviewId        Int?                @map("review_id")
+  cycleId         Int?                @map("cycle_id")
   kind            NotificationKind
   channel         NotificationChannel @default(EMAIL)
   recipientUserId Int                 @map("recipient_user_id")
@@ -471,10 +475,13 @@ model NotificationLog {
   createdAt       DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt       DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
 
-  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  review Review? @relation(fields: [reviewId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  cycle  Cycle?  @relation(fields: [cycleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([reviewId, kind, recipientUserId], name: "uniq_review_kind_recipient")
+  @@unique([cycleId, kind, recipientUserId], name: "uniq_cycle_kind_recipient")
   @@index([reviewId])
+  @@index([cycleId])
   @@index([recipientUserId])
   @@map("notification_logs")
 }

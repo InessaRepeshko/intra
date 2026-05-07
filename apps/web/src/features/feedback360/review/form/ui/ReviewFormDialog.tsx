@@ -1043,6 +1043,8 @@ export function ReviewFormDialog({
             : 0,
     );
 
+    const { data: managerUser } = useUserQuery(rateeUser?.managerId ?? 0);
+
     // Track previous ratee to detect changes
     const [prevRateeId, setPrevRateeId] = useState<number | undefined>(
         review?.rateeId,
@@ -1174,8 +1176,58 @@ export function ReviewFormDialog({
 
     const onSubmit = (values: ReviewFormValues) => {
         if (isEdit && review) {
+            // When the review is in NEW stage, sync ratee/manager + the full
+            // respondents and reviewers lists from the form. Other stages keep
+            // member lists untouched.
+            const syncMembers = review.stage === ReviewStage.NEW;
+            const respondentUsers = syncMembers
+                ? values.respondentIds
+                      .map((id) => enrichedUsersMap[id])
+                      .filter((u): u is User => Boolean(u))
+                : undefined;
+            const reviewerUsers = syncMembers
+                ? values.reviewerIds
+                      .map((id) => enrichedUsersMap[id])
+                      .filter((u): u is User => Boolean(u))
+                : undefined;
+
+            if (
+                syncMembers &&
+                respondentUsers &&
+                respondentUsers.length !== values.respondentIds.length
+            ) {
+                toast.error(
+                    'Loading respondent details... please wait a moment and try again.',
+                );
+                return;
+            }
+            if (
+                syncMembers &&
+                reviewerUsers &&
+                reviewerUsers.length !== values.reviewerIds.length
+            ) {
+                toast.error(
+                    'Loading reviewer details... please wait a moment and try again.',
+                );
+                return;
+            }
+
             updateMutation.mutate(
-                { id: review.id, values, rateeUser },
+                {
+                    id: review.id,
+                    values,
+                    rateeUser,
+                    managerUser,
+                    syncMembers,
+                    respondentUsers,
+                    reviewerUsers,
+                    existingRespondents: syncMembers
+                        ? existingRespondents
+                        : undefined,
+                    existingReviewers: syncMembers
+                        ? existingReviewers
+                        : undefined,
+                },
                 {
                     onSuccess: () => {
                         handleClose();
@@ -1213,6 +1265,7 @@ export function ReviewFormDialog({
                 {
                     values,
                     rateeUser,
+                    managerUser,
                     currentUser: auth.user,
                     respondentUsers,
                     reviewerUsers,

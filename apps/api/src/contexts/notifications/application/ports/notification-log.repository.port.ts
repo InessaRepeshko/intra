@@ -6,8 +6,24 @@ export const NOTIFICATION_LOG_REPOSITORY = Symbol(
 );
 
 export interface NotificationLogRepositoryPort {
-    findOne(
+    findOneForReview(
         reviewId: number,
+        kind: NotificationKind,
+        recipientUserId: number,
+    ): Promise<NotificationLogDomain | null>;
+
+    findOneForCycle(
+        cycleId: number,
+        kind: NotificationKind,
+        recipientUserId: number,
+    ): Promise<NotificationLogDomain | null>;
+
+    /**
+     * Find a standalone (no review/cycle) notification for a user by kind.
+     * Used for user-scoped notifications such as USER_WELCOME, where the
+     * dedup key is purely (recipientUserId, kind).
+     */
+    findOneForUser(
         kind: NotificationKind,
         recipientUserId: number,
     ): Promise<NotificationLogDomain | null>;
