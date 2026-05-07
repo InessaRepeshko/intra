@@ -46,15 +46,21 @@ interface PositionTableProps {
     sortField: string;
     sortDirection: SortDirection;
     onSort: (field: string) => void;
+    onView?: (position: Position) => void;
+    onEdit?: (position: Position) => void;
     onDelete?: (position: Position) => void;
     resetTrigger?: number;
 }
 
 function PositionActionsMenu({
     position,
+    onView,
+    onEdit,
     onDelete,
 }: {
     position: Position;
+    onView?: (position: Position) => void;
+    onEdit?: (position: Position) => void;
     onDelete?: (position: Position) => void;
 }) {
     return (
@@ -70,11 +76,11 @@ function PositionActionsMenu({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onView?.(position)}>
                     <Eye className="mr-2 h-4 w-4" />
                     View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit?.(position)}>
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
                 </DropdownMenuItem>
@@ -98,6 +104,8 @@ export function PositionTable({
     sortField,
     sortDirection,
     onSort,
+    onView,
+    onEdit,
     onDelete,
     resetTrigger,
 }: PositionTableProps) {
@@ -316,7 +324,12 @@ export function PositionTable({
             headerClassName:
                 'min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1',
             cell: (position) => (
-                <PositionActionsMenu position={position} onDelete={onDelete} />
+                <PositionActionsMenu
+                    position={position}
+                    onView={onView}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                />
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },

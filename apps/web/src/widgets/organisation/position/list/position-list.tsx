@@ -1,5 +1,6 @@
 'use client';
 
+import { Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
@@ -14,6 +15,9 @@ import {
 import type { Position } from '@entities/organisation/position/model/mappers';
 import { PositionFilters } from '@entities/organisation/position/ui/position-filters';
 import { PositionTable } from '@entities/organisation/position/ui/position-table';
+import { DeletePositionDialog } from '@features/organisation/position/delete/ui/DeletePositionDialog';
+import { PositionFormDialog } from '@features/organisation/position/form/ui/PositionFormDialog';
+import { Button } from '@shared/components/ui/button';
 import {
     Card,
     CardContent,
@@ -28,6 +32,7 @@ import { TablePagination } from '@shared/ui/table-pagination';
 const ITEMS_PER_PAGE = 6;
 
 export function PositionList() {
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [search, setSearch] = useState('');
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
         undefined,
@@ -42,7 +47,15 @@ export function PositionList() {
     const [resetTrigger, setResetTrigger] = useState(0);
 
     // Feature dialogs state
-    const [deletePosition, setDeletePosition] = useState<Position | null>(null);
+    const [viewingPosition, setViewingPosition] = useState<Position | null>(
+        null,
+    );
+    const [editingPosition, setEditingPosition] = useState<Position | null>(
+        null,
+    );
+    const [deletingPosition, setDeletingPosition] = useState<Position | null>(
+        null,
+    );
 
     // Build query params (client-side only)
     const queryParams = useMemo(() => {
@@ -292,14 +305,14 @@ export function PositionList() {
                             total positions.
                         </p>
                     </div>
-                    {/* <CreateCompetenceForm
-                        trigger={
-                            <Button size="lg" className="shrink-0">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Create New Competence
-                            </Button>
-                        }
-                    /> */}
+                    <Button
+                        size="lg"
+                        className="shrink-0 rounded-xl"
+                        onClick={() => setIsCreateOpen(true)}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create New Position
+                    </Button>
                 </div>
 
                 {/* Main Card */}
@@ -368,8 +381,10 @@ export function PositionList() {
                                         sortField={sortField}
                                         sortDirection={sortDirection}
                                         onSort={handleSort}
+                                        onView={setViewingPosition}
+                                        onEdit={setEditingPosition}
+                                        onDelete={setDeletingPosition}
                                         resetTrigger={resetTrigger}
-                                        // onDelete={setDeleteCompetence}
                                     />
 
                                     {/* Pagination */}
@@ -388,14 +403,25 @@ export function PositionList() {
             </div>
 
             {/* Feature Dialogs */}
-            {/* <ForceFinishCycleDialog
-                cycle={forceFinishCycle}
-                onClose={() => setForceFinishCycle(null)}
+            <PositionFormDialog
+                mode="create"
+                open={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
             />
-            <DeleteCycleDialog
-                cycle={deleteCycle}
-                onClose={() => setDeleteCycle(null)}
-            /> */}
+            <PositionFormDialog
+                mode="view"
+                position={viewingPosition}
+                onClose={() => setViewingPosition(null)}
+            />
+            <PositionFormDialog
+                mode="edit"
+                position={editingPosition}
+                onClose={() => setEditingPosition(null)}
+            />
+            <DeletePositionDialog
+                position={deletingPosition}
+                onClose={() => setDeletingPosition(null)}
+            />
         </main>
     );
 }

@@ -17,8 +17,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm, type FieldErrors } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import type { Cluster } from '@entities/library/cluster/model/mappers';
 import { useCompetencesQuery } from '@entities/library/competence/api/competence.queries';
+import { usePositionCompetenceIdsQuery } from '@entities/organisation/position/api/position.queries';
+import type { Position } from '@entities/organisation/position/model/mappers';
 import { Button } from '@shared/components/ui/button';
 import {
     Card,
@@ -49,21 +50,21 @@ import {
 import { Textarea } from '@shared/components/ui/textarea';
 import { cn } from '@shared/lib/utils/cn';
 
-import { DeleteClusterDialog } from '../../delete/ui/DeleteClusterDialog';
+import { DeletePositionDialog } from '../../delete/ui/DeletePositionDialog';
 import {
-    useCreateClusterFormMutation,
-    useUpdateClusterFormMutation,
-} from '../api/cluster-form.mutation';
+    useCreatePositionFormMutation,
+    useUpdatePositionFormMutation,
+} from '../api/position-form.mutation';
 import {
-    clusterFormSchema,
-    type ClusterFormValues,
-} from '../model/cluster-form.schema';
+    positionFormSchema,
+    type PositionFormValues,
+} from '../model/position-form.schema';
 
-export type ClusterFormMode = 'create' | 'edit' | 'view';
+export type PositionFormMode = 'create' | 'edit' | 'view';
 
-interface ClusterFormDialogProps {
-    mode: ClusterFormMode;
-    cluster?: Cluster | null;
+interface PositionFormDialogProps {
+    mode: PositionFormMode;
+    position?: Position | null;
     open?: boolean;
     onClose: () => void;
 }
@@ -71,22 +72,21 @@ interface ClusterFormDialogProps {
 const inputClassName =
     'border-border bg-secondary/30 text-foreground placeholder:text-muted-foreground rounded-xl';
 
-function buildDefaults(cluster?: Cluster | null): ClusterFormValues {
-    if (!cluster) {
+function buildDefaults(
+    position?: Position | null,
+    competenceIds: number[] = [],
+): PositionFormValues {
+    if (!position) {
         return {
             title: '',
             description: '',
-            competenceId: 0,
-            lowerBound: 0,
-            upperBound: 5,
+            competenceIds: [],
         };
     }
     return {
-        title: cluster.title,
-        description: cluster.description ?? '',
-        competenceId: cluster.competenceId ?? 0,
-        lowerBound: cluster.lowerBound ?? 0,
-        upperBound: cluster.upperBound ?? 5,
+        title: position.title,
+        description: position.description ?? '',
+        competenceIds,
     };
 }
 
@@ -107,7 +107,7 @@ interface EntityOption {
     subtitle?: string | null;
 }
 
-function EntitySingleCombobox({
+function EntityMultiCombobox({
     options,
     value,
     onChange,
@@ -117,123 +117,183 @@ function EntitySingleCombobox({
     disabled,
 }: {
     options: EntityOption[];
-    value: number | undefined;
-    onChange: (value: number | undefined) => void;
+    value: number[];
+    onChange: (value: number[]) => void;
     placeholder: string;
     searchPlaceholder: string;
     emptyText: string;
     disabled?: boolean;
 }) {
     const [open, setOpen] = useState(false);
-    const selected = options.find((opt) => opt.id === value);
+
+    const selectedOptions = useMemo(
+        () =>
+            value
+                .map((id) => options.find((opt) => opt.id === id))
+                .filter((opt): opt is EntityOption => Boolean(opt)),
+        [value, options],
+    );
+
+    const toggle = (id: number) => {
+        if (value.includes(id)) {
+            onChange(value.filter((v) => v !== id));
+        } else {
+            onChange([...value, id]);
+        }
+    };
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-                <Button
-                    type="button"
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    disabled={disabled}
-                    className={cn(
-                        'w-full justify-between text-left font-normal h-auto min-h-9 py-2',
-                        inputClassName,
-                        !selected && 'text-muted-foreground',
-                    )}
+        <div className="flex flex-col gap-2">
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        disabled={disabled}
+                        className={cn(
+                            'w-full justify-between text-left font-normal',
+                            inputClassName,
+                            value.length === 0 && 'text-muted-foreground',
+                        )}
+                    >
+                        <span className="truncate">
+                            {value.length === 0
+                                ? placeholder
+                                : `${value.length} selected`}
+                        </span>
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                    className="p-0"
+                    align="start"
+                    style={{ width: 'var(--radix-popover-trigger-width)' }}
+                    onWheel={forwardWheelToCommandList}
+                    onTouchMove={(e) => e.stopPropagation()}
                 >
-                    {selected ? (
-                        <div className="flex flex-col items-start min-w-0 flex-1">
-                            <span className="font-medium text-foreground truncate">
-                                {selected.title}
-                            </span>
-                            {selected.subtitle && (
-                                <span className="text-xs text-muted-foreground truncate">
-                                    {selected.subtitle}
+                    <Command
+                        filter={(itemValue, search) =>
+                            itemValue
+                                .toLowerCase()
+                                .includes(search.toLowerCase())
+                                ? 1
+                                : 0
+                        }
+                    >
+                        <CommandInput placeholder={searchPlaceholder} />
+                        <CommandList>
+                            <CommandEmpty>{emptyText}</CommandEmpty>
+                            {options.map((option) => {
+                                const isSelected = value.includes(option.id);
+                                const haystack = [option.title, option.subtitle]
+                                    .filter(Boolean)
+                                    .join(' ');
+                                return (
+                                    <CommandItem
+                                        key={option.id}
+                                        value={haystack}
+                                        onSelect={() => toggle(option.id)}
+                                    >
+                                        <div
+                                            className={cn(
+                                                'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border',
+                                                isSelected
+                                                    ? 'bg-primary text-primary-foreground border-primary'
+                                                    : 'border-muted-foreground/40',
+                                            )}
+                                        >
+                                            {isSelected && (
+                                                <Check className="h-3 w-3" />
+                                            )}
+                                        </div>
+                                        <div className="flex flex-col flex-1 min-w-0">
+                                            <span className="font-medium text-foreground truncate">
+                                                {option.title}
+                                            </span>
+                                            {option.subtitle && (
+                                                <span className="text-xs text-muted-foreground truncate">
+                                                    {option.subtitle}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </CommandItem>
+                                );
+                            })}
+                        </CommandList>
+                    </Command>
+                </PopoverContent>
+            </Popover>
+
+            {selectedOptions.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                    {selectedOptions.map((option) => (
+                        <div
+                            key={option.id}
+                            className="inline-flex items-center gap-2 rounded-2xl border px-3 py-1.5 max-w-full w-full"
+                        >
+                            <div className="flex flex-col min-w-0 w-full">
+                                <span className="text-sm font-medium truncate">
+                                    {option.title}
                                 </span>
+                                {option.subtitle && (
+                                    <span className="text-xs text-muted-foreground truncate">
+                                        {option.subtitle}
+                                    </span>
+                                )}
+                            </div>
+                            {!disabled && (
+                                <button
+                                    type="button"
+                                    className="ml-0.5 rounded-full p-1 hover:bg-foreground/10 shrink-0"
+                                    onClick={() =>
+                                        onChange(
+                                            value.filter(
+                                                (v) => v !== option.id,
+                                            ),
+                                        )
+                                    }
+                                    aria-label={`Remove ${option.title}`}
+                                >
+                                    <X className="h-3.5 w-3.5" />
+                                </button>
                             )}
                         </div>
-                    ) : (
-                        <span>{placeholder}</span>
-                    )}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent
-                className="p-0"
-                align="start"
-                style={{ width: 'var(--radix-popover-trigger-width)' }}
-                onWheel={forwardWheelToCommandList}
-                onTouchMove={(e) => e.stopPropagation()}
-            >
-                <Command
-                    filter={(itemValue, search) =>
-                        itemValue.toLowerCase().includes(search.toLowerCase())
-                            ? 1
-                            : 0
-                    }
-                >
-                    <CommandInput placeholder={searchPlaceholder} />
-                    <CommandList>
-                        <CommandEmpty>{emptyText}</CommandEmpty>
-                        {options.map((option) => {
-                            const haystack = [option.title, option.subtitle]
-                                .filter(Boolean)
-                                .join(' ');
-                            return (
-                                <CommandItem
-                                    key={option.id}
-                                    value={haystack}
-                                    onSelect={() => {
-                                        onChange(option.id);
-                                        setOpen(false);
-                                    }}
-                                >
-                                    <div className="flex flex-col flex-1 min-w-0">
-                                        <span className="font-medium text-foreground truncate">
-                                            {option.title}
-                                        </span>
-                                        {option.subtitle && (
-                                            <span className="text-xs text-muted-foreground truncate">
-                                                {option.subtitle}
-                                            </span>
-                                        )}
-                                    </div>
-                                    {value === option.id && (
-                                        <Check className="ml-auto h-4 w-4 shrink-0" />
-                                    )}
-                                </CommandItem>
-                            );
-                        })}
-                    </CommandList>
-                </Command>
-            </PopoverContent>
-        </Popover>
+                    ))}
+                </div>
+            )}
+        </div>
     );
 }
 
-export function ClusterFormDialog({
+export function PositionFormDialog({
     mode,
-    cluster,
+    position,
     open,
     onClose,
-}: ClusterFormDialogProps) {
+}: PositionFormDialogProps) {
     const isCreate = mode === 'create';
     const isEdit = mode === 'edit';
     const isView = mode === 'view';
 
-    const isOpen = isCreate ? !!open : cluster != null;
+    const isOpen = isCreate ? !!open : position != null;
 
-    const createMutation = useCreateClusterFormMutation();
-    const updateMutation = useUpdateClusterFormMutation();
+    const createMutation = useCreatePositionFormMutation();
+    const updateMutation = useUpdatePositionFormMutation();
     const mutation = isEdit ? updateMutation : createMutation;
 
-    const [deletingCluster, setDeletingCluster] = useState<Cluster | null>(
+    const [deletingPosition, setDeletingPosition] = useState<Position | null>(
         null,
     );
 
     const { data: competences = [], isLoading: isCompetencesLoading } =
         useCompetencesQuery();
+
+    const {
+        data: existingCompetenceIds,
+        isLoading: isExistingCompetenceIdsLoading,
+    } = usePositionCompetenceIdsQuery(position?.id ?? 0);
 
     const competenceOptions: EntityOption[] = useMemo(
         () =>
@@ -247,17 +307,29 @@ export function ClusterFormDialog({
         [competences],
     );
 
-    const form = useForm<ClusterFormValues>({
+    const form = useForm<PositionFormValues>({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        resolver: zodResolver(clusterFormSchema) as any,
-        defaultValues: buildDefaults(cluster),
+        resolver: zodResolver(positionFormSchema) as any,
+        defaultValues: buildDefaults(position, []),
         mode: 'onChange',
     });
 
     useEffect(() => {
         if (!isOpen) return;
-        form.reset(buildDefaults(cluster));
-    }, [isOpen, cluster, form]);
+        if (isCreate) {
+            form.reset(buildDefaults(null, []));
+            return;
+        }
+        if (isExistingCompetenceIdsLoading) return;
+        form.reset(buildDefaults(position, existingCompetenceIds ?? []));
+    }, [
+        isOpen,
+        isCreate,
+        position,
+        existingCompetenceIds,
+        isExistingCompetenceIdsLoading,
+        form,
+    ]);
 
     const handleOpenChange = (next: boolean) => {
         if (!next) {
@@ -266,11 +338,11 @@ export function ClusterFormDialog({
     };
 
     const handleClose = () => {
-        form.reset(buildDefaults(null));
+        form.reset(buildDefaults(null, []));
         onClose();
     };
 
-    const onSubmit = (values: ClusterFormValues) => {
+    const onSubmit = (values: PositionFormValues) => {
         if (isCreate) {
             createMutation.mutate(values, {
                 onSuccess: () => {
@@ -279,11 +351,12 @@ export function ClusterFormDialog({
             });
             return;
         }
-        if (isEdit && cluster) {
+        if (isEdit && position) {
             updateMutation.mutate(
                 {
-                    id: cluster.id,
+                    id: position.id,
                     values,
+                    originalCompetenceIds: existingCompetenceIds ?? [],
                 },
                 {
                     onSuccess: () => {
@@ -294,7 +367,7 @@ export function ClusterFormDialog({
         }
     };
 
-    const onInvalid = (errors: FieldErrors<ClusterFormValues>) => {
+    const onInvalid = (errors: FieldErrors<PositionFormValues>) => {
         const firstField = Object.keys(errors)[0];
         const firstMessage =
             firstField &&
@@ -309,24 +382,24 @@ export function ClusterFormDialog({
     };
 
     const titleText = isCreate
-        ? 'Create New Cluster'
+        ? 'Create New Position'
         : isEdit
-          ? 'Edit Cluster'
-          : 'Cluster Details';
+          ? 'Edit Position'
+          : 'Position Details';
 
     const TitleIcon = isCreate ? Plus : isEdit ? Pencil : Eye;
 
     const submitLabel = isCreate
         ? mutation.isPending
             ? 'Creating...'
-            : 'Create Cluster'
+            : 'Create Position'
         : mutation.isPending
           ? 'Saving...'
           : 'Save Changes';
 
     const fieldsDisabled = isView;
 
-    const watchedCompetenceId = form.watch('competenceId');
+    const watchedCompetenceIds = form.watch('competenceIds') ?? [];
 
     return (
         <>
@@ -349,9 +422,9 @@ export function ClusterFormDialog({
                                     <p className="text-lg font-semibold tracking-tight text-foreground truncate">
                                         {titleText}
                                     </p>
-                                    {cluster && (
+                                    {position && (
                                         <p className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
-                                            <span>#{cluster.id}</span>
+                                            <span>#{position.id}</span>
                                         </p>
                                     )}
                                 </div>
@@ -375,7 +448,7 @@ export function ClusterFormDialog({
                                         General
                                     </CardTitle>
                                     <CardDescription>
-                                        Basic information about the cluster.
+                                        Basic information about the position.
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
@@ -390,7 +463,7 @@ export function ClusterFormDialog({
                                         </Label>
                                         <Input
                                             id="title"
-                                            placeholder="e.g. Excellent"
+                                            placeholder="e.g. Frontend Engineer"
                                             disabled={fieldsDisabled}
                                             className={inputClassName}
                                             {...form.register('title')}
@@ -407,16 +480,11 @@ export function ClusterFormDialog({
 
                                     <div className="flex flex-col gap-2">
                                         <Label htmlFor="description">
-                                            Description{' '}
-                                            {!isView && (
-                                                <span className="text-destructive">
-                                                    *
-                                                </span>
-                                            )}
+                                            Description
                                         </Label>
                                         <Textarea
                                             id="description"
-                                            placeholder="Describe the cluster..."
+                                            placeholder="Optional description of the position..."
                                             rows={3}
                                             disabled={fieldsDisabled}
                                             className={cn(
@@ -440,39 +508,28 @@ export function ClusterFormDialog({
                             <Card className="border-border bg-card">
                                 <CardHeader>
                                     <CardTitle className="text-base text-foreground">
-                                        Competence{' '}
-                                        {!isView && (
-                                            <span className="text-destructive">
-                                                *
-                                            </span>
-                                        )}
+                                        Competences
                                     </CardTitle>
                                     <CardDescription>
-                                        Pick the competence this cluster belongs
-                                        to.
+                                        Optionally link competences associated
+                                        with this position.
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                    <EntitySingleCombobox
+                                    <EntityMultiCombobox
                                         options={competenceOptions}
-                                        value={
-                                            watchedCompetenceId
-                                                ? watchedCompetenceId
-                                                : undefined
-                                        }
-                                        onChange={(id) =>
+                                        value={watchedCompetenceIds}
+                                        onChange={(ids) =>
                                             form.setValue(
-                                                'competenceId',
-                                                id ?? 0,
-                                                {
-                                                    shouldValidate: true,
-                                                },
+                                                'competenceIds',
+                                                ids,
+                                                { shouldValidate: true },
                                             )
                                         }
                                         placeholder={
                                             isCompetencesLoading
                                                 ? 'Loading competences...'
-                                                : 'Select a competence'
+                                                : 'Select competences'
                                         }
                                         searchPlaceholder="Search competences..."
                                         emptyText="No competences found."
@@ -481,99 +538,26 @@ export function ClusterFormDialog({
                                             isCompetencesLoading
                                         }
                                     />
-                                    {form.formState.errors.competenceId && (
+                                    {form.formState.errors.competenceIds && (
                                         <p className="mt-2 text-sm text-destructive">
                                             {
                                                 form.formState.errors
-                                                    .competenceId.message
+                                                    .competenceIds.message
                                             }
                                         </p>
                                     )}
                                 </CardContent>
                             </Card>
 
-                            <Card className="border-border bg-card">
-                                <CardHeader>
-                                    <CardTitle className="text-base text-foreground">
-                                        Score Range
-                                    </CardTitle>
-                                    <CardDescription>
-                                        Numeric bounds (0–5) for which this
-                                        cluster is assigned. Upper bound must be
-                                        greater than lower bound.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                    <div className="flex flex-col gap-2">
-                                        <Label htmlFor="lowerBound">
-                                            Lower Bound{' '}
-                                            {!isView && (
-                                                <span className="text-destructive">
-                                                    *
-                                                </span>
-                                            )}
-                                        </Label>
-                                        <Input
-                                            id="lowerBound"
-                                            type="number"
-                                            step="0.01"
-                                            min={0}
-                                            max={5}
-                                            placeholder="0"
-                                            disabled={fieldsDisabled}
-                                            className={inputClassName}
-                                            {...form.register('lowerBound')}
-                                        />
-                                        {form.formState.errors.lowerBound && (
-                                            <p className="text-sm text-destructive">
-                                                {
-                                                    form.formState.errors
-                                                        .lowerBound.message
-                                                }
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <Label htmlFor="upperBound">
-                                            Upper Bound{' '}
-                                            {!isView && (
-                                                <span className="text-destructive">
-                                                    *
-                                                </span>
-                                            )}
-                                        </Label>
-                                        <Input
-                                            id="upperBound"
-                                            type="number"
-                                            step="0.01"
-                                            min={0}
-                                            max={5}
-                                            placeholder="5"
-                                            disabled={fieldsDisabled}
-                                            className={inputClassName}
-                                            {...form.register('upperBound')}
-                                        />
-                                        {form.formState.errors.upperBound && (
-                                            <p className="text-sm text-destructive">
-                                                {
-                                                    form.formState.errors
-                                                        .upperBound.message
-                                                }
-                                            </p>
-                                        )}
-                                    </div>
-                                </CardContent>
-                            </Card>
-
                             <div className="flex flex-wrap justify-end gap-3 pt-2">
-                                {isEdit && cluster && (
+                                {isEdit && position && (
                                     <Button
                                         type="button"
                                         variant="outline"
                                         className="border-destructive/40 bg-red-50 text-destructive hover:bg-destructive/10 hover:text-destructive rounded-xl"
                                         disabled={mutation.isPending}
                                         onClick={() =>
-                                            setDeletingCluster(cluster)
+                                            setDeletingPosition(position)
                                         }
                                     >
                                         <Trash2 className="mr-2 h-4 w-4" />
@@ -587,7 +571,7 @@ export function ClusterFormDialog({
                                         className="border-border text-foreground hover:bg-secondary rounded-xl"
                                         disabled={mutation.isPending}
                                         onClick={() =>
-                                            form.reset(buildDefaults(null))
+                                            form.reset(buildDefaults(null, []))
                                         }
                                     >
                                         <RotateCcw className="mr-2 h-4 w-4" />
@@ -601,7 +585,12 @@ export function ClusterFormDialog({
                                         className="border-border text-foreground hover:bg-secondary rounded-xl"
                                         disabled={mutation.isPending}
                                         onClick={() =>
-                                            form.reset(buildDefaults(cluster))
+                                            form.reset(
+                                                buildDefaults(
+                                                    position,
+                                                    existingCompetenceIds ?? [],
+                                                ),
+                                            )
                                         }
                                     >
                                         <RotateCcw className="mr-2 h-4 w-4" />
@@ -633,9 +622,9 @@ export function ClusterFormDialog({
                 </DialogContent>
             </Dialog>
 
-            <DeleteClusterDialog
-                cluster={deletingCluster}
-                onClose={() => setDeletingCluster(null)}
+            <DeletePositionDialog
+                position={deletingPosition}
+                onClose={() => setDeletingPosition(null)}
                 onSuccess={handleClose}
             />
         </>

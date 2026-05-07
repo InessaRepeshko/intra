@@ -9,6 +9,7 @@ import {
     Plus,
     RotateCcw,
     Save,
+    Trash2,
     X,
 } from 'lucide-react';
 import * as React from 'react';
@@ -49,6 +50,7 @@ import {
 import { Textarea } from '@shared/components/ui/textarea';
 import { cn } from '@shared/lib/utils/cn';
 
+import { DeleteCompetenceDialog } from '../../delete/ui/DeleteCompetenceDialog';
 import {
     useCreateCompetenceFormMutation,
     useUpdateCompetenceFormMutation,
@@ -283,6 +285,9 @@ export function CompetenceFormDialog({
     const updateMutation = useUpdateCompetenceFormMutation();
     const mutation = isEdit ? updateMutation : createMutation;
 
+    const [deletingCompetence, setDeletingCompetence] =
+        useState<Competence | null>(null);
+
     const { data: positions = [], isLoading: isPositionsLoading } =
         usePositionsQuery();
 
@@ -398,228 +403,41 @@ export function CompetenceFormDialog({
     const watchedPositionIds = form.watch('positionIds') ?? [];
 
     return (
-        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-            <DialogContent
-                showCloseButton={false}
-                className="sm:max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl p-0 gap-0"
-            >
-                <DialogTitle className="sr-only">{titleText}</DialogTitle>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-                    className="flex flex-col"
+        <>
+            <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+                <DialogContent
+                    showCloseButton={false}
+                    className="sm:max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl p-0 gap-0"
                 >
-                    <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background rounded-t-xl px-6 py-4 flex-wrap gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
-                                <TitleIcon className="h-5 w-5" />
-                            </span>
-                            <div className="min-w-0">
-                                <p className="text-lg font-semibold tracking-tight text-foreground truncate">
-                                    {titleText}
-                                </p>
-                                {competence && (
-                                    <p className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
-                                        <span>#{competence.id}</span>
-                                        {competence.code && (
-                                            <>
-                                                <span>·</span>
-                                                <span className="font-medium text-foreground">
-                                                    {competence.code}
-                                                </span>
-                                            </>
-                                        )}
+                    <DialogTitle className="sr-only">{titleText}</DialogTitle>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+                        className="flex flex-col"
+                    >
+                        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background rounded-t-xl px-6 py-4 flex-wrap gap-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                                    <TitleIcon className="h-5 w-5" />
+                                </span>
+                                <div className="min-w-0">
+                                    <p className="text-lg font-semibold tracking-tight text-foreground truncate">
+                                        {titleText}
                                     </p>
-                                )}
+                                    {competence && (
+                                        <p className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
+                                            <span>#{competence.id}</span>
+                                            {competence.code && (
+                                                <>
+                                                    <span>·</span>
+                                                    <span className="font-medium text-foreground">
+                                                        {competence.code}
+                                                    </span>
+                                                </>
+                                            )}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                        {!isView && (
-                            <Button
-                                type="submit"
-                                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
-                                disabled={mutation.isPending}
-                            >
-                                <Save className="mr-2 h-4 w-4" />
-                                {submitLabel}
-                            </Button>
-                        )}
-                    </header>
-
-                    <div className="flex flex-col gap-6 p-6">
-                        <Card className="border-border bg-card">
-                            <CardHeader>
-                                <CardTitle className="text-base text-foreground">
-                                    General
-                                </CardTitle>
-                                <CardDescription>
-                                    Basic information about the competence.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex flex-col gap-2">
-                                    <Label htmlFor="title">
-                                        Title{' '}
-                                        {!isView && (
-                                            <span className="text-destructive">
-                                                *
-                                            </span>
-                                        )}
-                                    </Label>
-                                    <Input
-                                        id="title"
-                                        placeholder="e.g. Communication"
-                                        disabled={fieldsDisabled}
-                                        className={inputClassName}
-                                        {...form.register('title')}
-                                    />
-                                    {form.formState.errors.title && (
-                                        <p className="text-sm text-destructive">
-                                            {
-                                                form.formState.errors.title
-                                                    .message
-                                            }
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <Label htmlFor="code">Code</Label>
-                                    <Input
-                                        id="code"
-                                        placeholder="e.g. COMM-01"
-                                        disabled={fieldsDisabled}
-                                        className={inputClassName}
-                                        {...form.register('code', {
-                                            setValueAs: (value: unknown) =>
-                                                typeof value === 'string'
-                                                    ? value
-                                                          .toUpperCase()
-                                                          .replace(/\s+/g, '-')
-                                                    : value,
-                                            onChange: (e) => {
-                                                e.target.value = e.target.value
-                                                    .toUpperCase()
-                                                    .replace(/\s+/g, '-');
-                                            },
-                                        })}
-                                    />
-                                    {form.formState.errors.code && (
-                                        <p className="text-sm text-destructive">
-                                            {form.formState.errors.code.message}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <Label htmlFor="description">
-                                        Description
-                                    </Label>
-                                    <Textarea
-                                        id="description"
-                                        placeholder="Optional description of the competence..."
-                                        rows={3}
-                                        disabled={fieldsDisabled}
-                                        className={cn(
-                                            'resize-none',
-                                            inputClassName,
-                                        )}
-                                        {...form.register('description')}
-                                    />
-                                    {form.formState.errors.description && (
-                                        <p className="text-sm text-destructive">
-                                            {
-                                                form.formState.errors
-                                                    .description.message
-                                            }
-                                        </p>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="border-border bg-card">
-                            <CardHeader>
-                                <CardTitle className="text-base text-foreground">
-                                    Positions
-                                </CardTitle>
-                                <CardDescription>
-                                    Optionally link this competence to positions
-                                    that require it.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <EntityMultiCombobox
-                                    options={positionOptions}
-                                    value={watchedPositionIds}
-                                    onChange={(ids) =>
-                                        form.setValue('positionIds', ids, {
-                                            shouldValidate: true,
-                                        })
-                                    }
-                                    placeholder={
-                                        isPositionsLoading
-                                            ? 'Loading positions...'
-                                            : 'Select positions'
-                                    }
-                                    searchPlaceholder="Search positions..."
-                                    emptyText="No positions found."
-                                    disabled={
-                                        fieldsDisabled || isPositionsLoading
-                                    }
-                                />
-                                {form.formState.errors.positionIds && (
-                                    <p className="mt-2 text-sm text-destructive">
-                                        {
-                                            form.formState.errors.positionIds
-                                                .message
-                                        }
-                                    </p>
-                                )}
-                            </CardContent>
-                        </Card>
-
-                        <div className="flex flex-wrap justify-end gap-3 pt-2">
-                            {isCreate && (
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="border-border text-foreground hover:bg-secondary rounded-xl"
-                                    disabled={mutation.isPending}
-                                    onClick={() =>
-                                        form.reset(buildDefaults(null, []))
-                                    }
-                                >
-                                    <RotateCcw className="mr-2 h-4 w-4" />
-                                    Clear
-                                </Button>
-                            )}
-                            {isEdit && (
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="border-border text-foreground hover:bg-secondary rounded-xl"
-                                    disabled={mutation.isPending}
-                                    onClick={() =>
-                                        form.reset(
-                                            buildDefaults(
-                                                competence,
-                                                existingPositionIds ?? [],
-                                            ),
-                                        )
-                                    }
-                                >
-                                    <RotateCcw className="mr-2 h-4 w-4" />
-                                    Reset
-                                </Button>
-                            )}
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="border-border text-foreground hover:bg-secondary rounded-xl"
-                                onClick={handleClose}
-                            >
-                                <X className="mr-2 h-4 w-4" />
-                                {isView ? 'Close' : 'Cancel'}
-                            </Button>
                             {!isView && (
                                 <Button
                                     type="submit"
@@ -630,10 +448,229 @@ export function CompetenceFormDialog({
                                     {submitLabel}
                                 </Button>
                             )}
+                        </header>
+
+                        <div className="flex flex-col gap-6 p-6">
+                            <Card className="border-border bg-card">
+                                <CardHeader>
+                                    <CardTitle className="text-base text-foreground">
+                                        General
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Basic information about the competence.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="flex flex-col gap-2">
+                                        <Label htmlFor="title">
+                                            Title{' '}
+                                            {!isView && (
+                                                <span className="text-destructive">
+                                                    *
+                                                </span>
+                                            )}
+                                        </Label>
+                                        <Input
+                                            id="title"
+                                            placeholder="e.g. Communication"
+                                            disabled={fieldsDisabled}
+                                            className={inputClassName}
+                                            {...form.register('title')}
+                                        />
+                                        {form.formState.errors.title && (
+                                            <p className="text-sm text-destructive">
+                                                {
+                                                    form.formState.errors.title
+                                                        .message
+                                                }
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label htmlFor="code">Code</Label>
+                                        <Input
+                                            id="code"
+                                            placeholder="e.g. COMM-01"
+                                            disabled={fieldsDisabled}
+                                            className={inputClassName}
+                                            {...form.register('code', {
+                                                setValueAs: (value: unknown) =>
+                                                    typeof value === 'string'
+                                                        ? value
+                                                              .toUpperCase()
+                                                              .replace(
+                                                                  /\s+/g,
+                                                                  '-',
+                                                              )
+                                                        : value,
+                                                onChange: (e) => {
+                                                    e.target.value =
+                                                        e.target.value
+                                                            .toUpperCase()
+                                                            .replace(
+                                                                /\s+/g,
+                                                                '-',
+                                                            );
+                                                },
+                                            })}
+                                        />
+                                        {form.formState.errors.code && (
+                                            <p className="text-sm text-destructive">
+                                                {
+                                                    form.formState.errors.code
+                                                        .message
+                                                }
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label htmlFor="description">
+                                            Description
+                                        </Label>
+                                        <Textarea
+                                            id="description"
+                                            placeholder="Optional description of the competence..."
+                                            rows={3}
+                                            disabled={fieldsDisabled}
+                                            className={cn(
+                                                'resize-none',
+                                                inputClassName,
+                                            )}
+                                            {...form.register('description')}
+                                        />
+                                        {form.formState.errors.description && (
+                                            <p className="text-sm text-destructive">
+                                                {
+                                                    form.formState.errors
+                                                        .description.message
+                                                }
+                                            </p>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card className="border-border bg-card">
+                                <CardHeader>
+                                    <CardTitle className="text-base text-foreground">
+                                        Positions
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Optionally link this competence to
+                                        positions that require it.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <EntityMultiCombobox
+                                        options={positionOptions}
+                                        value={watchedPositionIds}
+                                        onChange={(ids) =>
+                                            form.setValue('positionIds', ids, {
+                                                shouldValidate: true,
+                                            })
+                                        }
+                                        placeholder={
+                                            isPositionsLoading
+                                                ? 'Loading positions...'
+                                                : 'Select positions'
+                                        }
+                                        searchPlaceholder="Search positions..."
+                                        emptyText="No positions found."
+                                        disabled={
+                                            fieldsDisabled || isPositionsLoading
+                                        }
+                                    />
+                                    {form.formState.errors.positionIds && (
+                                        <p className="mt-2 text-sm text-destructive">
+                                            {
+                                                form.formState.errors
+                                                    .positionIds.message
+                                            }
+                                        </p>
+                                    )}
+                                </CardContent>
+                            </Card>
+
+                            <div className="flex flex-wrap justify-end gap-3 pt-2">
+                                {isEdit && competence && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="border-destructive/40 bg-red-50 text-destructive hover:bg-destructive/10 hover:text-destructive rounded-xl"
+                                        disabled={mutation.isPending}
+                                        onClick={() =>
+                                            setDeletingCompetence(competence)
+                                        }
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        Delete
+                                    </Button>
+                                )}
+                                {isCreate && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="border-border text-foreground hover:bg-secondary rounded-xl"
+                                        disabled={mutation.isPending}
+                                        onClick={() =>
+                                            form.reset(buildDefaults(null, []))
+                                        }
+                                    >
+                                        <RotateCcw className="mr-2 h-4 w-4" />
+                                        Clear
+                                    </Button>
+                                )}
+                                {isEdit && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="border-border text-foreground hover:bg-secondary rounded-xl"
+                                        disabled={mutation.isPending}
+                                        onClick={() =>
+                                            form.reset(
+                                                buildDefaults(
+                                                    competence,
+                                                    existingPositionIds ?? [],
+                                                ),
+                                            )
+                                        }
+                                    >
+                                        <RotateCcw className="mr-2 h-4 w-4" />
+                                        Reset
+                                    </Button>
+                                )}
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="border-border text-foreground hover:bg-secondary rounded-xl"
+                                    onClick={handleClose}
+                                >
+                                    <X className="mr-2 h-4 w-4" />
+                                    {isView ? 'Close' : 'Cancel'}
+                                </Button>
+                                {!isView && (
+                                    <Button
+                                        type="submit"
+                                        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
+                                        disabled={mutation.isPending}
+                                    >
+                                        <Save className="mr-2 h-4 w-4" />
+                                        {submitLabel}
+                                    </Button>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+            <DeleteCompetenceDialog
+                competence={deletingCompetence}
+                onClose={() => setDeletingCompetence(null)}
+                onSuccess={handleClose}
+            />
+        </>
     );
 }
