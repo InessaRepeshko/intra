@@ -48,15 +48,21 @@ interface TeamTableProps {
     sortField: string;
     sortDirection: SortDirection;
     onSort: (field: string) => void;
+    onView?: (team: Team) => void;
+    onEdit?: (team: Team) => void;
     onDelete?: (team: Team) => void;
     resetTrigger?: number;
 }
 
 function TeamActionsMenu({
     team,
+    onView,
+    onEdit,
     onDelete,
 }: {
     team: Team;
+    onView?: (team: Team) => void;
+    onEdit?: (team: Team) => void;
     onDelete?: (team: Team) => void;
 }) {
     return (
@@ -72,11 +78,11 @@ function TeamActionsMenu({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onView?.(team)}>
                     <Eye className="mr-2 h-4 w-4" />
                     View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit?.(team)}>
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
                 </DropdownMenuItem>
@@ -100,6 +106,8 @@ export function TeamTable({
     sortField,
     sortDirection,
     onSort,
+    onView,
+    onEdit,
     onDelete,
     resetTrigger,
 }: TeamTableProps) {
@@ -351,7 +359,12 @@ export function TeamTable({
             header: <span className="text-muted-foreground"> Actions </span>,
             headerClassName:
                 'min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1',
-            cell: (team) => <TeamActionsMenu team={team} onDelete={onDelete} />,
+            cell: (team) => <TeamActionsMenu
+                    team={team}
+                    onView={onView}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                />,
             cellClassName: 'whitespace-nowrap text-center',
         },
     };
@@ -398,7 +411,12 @@ export function TeamTable({
                                     </p>
                                 )}
                             </div>
-                            <TeamActionsMenu team={team} onDelete={onDelete} />
+                            <TeamActionsMenu
+                    team={team}
+                    onView={onView}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                />
                         </div>
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">

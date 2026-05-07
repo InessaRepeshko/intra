@@ -1,8 +1,7 @@
 'use client';
 
-import { Award, Mail, Pencil, UserRound, UsersRound } from 'lucide-react';
-import Link from 'next/link';
-import { useMemo } from 'react';
+import { Award, Mail, Pencil, Plus, UserRound, UsersRound } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 import {
     Avatar,
@@ -10,9 +9,14 @@ import {
     AvatarImage,
 } from '@shared/components/ui/avatar';
 
-import { useUsersByTeamIdsQuery } from '@entities/identity/user/api/user.queries';
 import { type AuthContextType } from '@entities/identity/user/model/types';
-import { useTeamsQuery } from '@entities/organisation/team/api/team.queries';
+import type { Team } from '@entities/organisation/team/model/mappers';
+import {
+    useTeamAllPositionTitlesQuery,
+    useTeamAllUsersQuery,
+    useTeamsQuery,
+} from '@entities/organisation/team/api/team.queries';
+import { TeamFormDialog } from '@features/organisation/team/form/ui/TeamFormDialog';
 import { Button } from '@shared/components/ui/button';
 import {
     Card,
@@ -30,6 +34,8 @@ export function TeamDashboard({
 }: {
     currentUser: AuthContextType;
 }) {
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [editingTeam, setEditingTeam] = useState<Team | null>(null);
     const { data: allTeamsData = [] } = useTeamsQuery();
 
     const allTeamIds = useMemo(
@@ -37,7 +43,21 @@ export function TeamDashboard({
         [allTeamsData],
     );
 
-    const { usersByTeam: allTeamUsers } = useUsersByTeamIdsQuery(allTeamIds);
+    const { users: allTeamUsers } = useTeamAllUsersQuery(allTeamIds);
+
+    const teamPositionInput = useMemo(
+        () =>
+            allTeamUsers.map((t) => ({
+                teamId: t.teamId,
+                positionIds: t.users
+                    .map((m) => m.user?.positionId)
+                    .filter((id): id is number => Boolean(id)),
+            })),
+        [allTeamUsers],
+    );
+
+    const { positionTitles: allPositionTitles } =
+        useTeamAllPositionTitlesQuery(teamPositionInput);
 
     const totalTeams = allTeamsData.length;
     const totalMembers = useMemo(
@@ -46,13 +66,13 @@ export function TeamDashboard({
     );
     const totalPositions = useMemo(() => {
         const unique = new Set<string>();
-        Object.values(allTeamUsers).forEach((team) => {
-            team.users.forEach((user) => {
-                if (user.positionTitle?.trim()) unique.add(user.positionTitle);
+        Object.values(allPositionTitles).forEach((titles) => {
+            titles.forEach((p) => {
+                if (p.title?.trim()) unique.add(p.title);
             });
         });
         return unique.size;
-    }, [allTeamUsers]);
+    }, [allPositionTitles]);
 
     const sortedTeams = useMemo(
         () =>
@@ -82,6 +102,14 @@ export function TeamDashboard({
                         member{totalMembers === 1 ? '' : 's'}.
                     </p>
                 </div>
+                <Button
+                    size="lg"
+                    className="shrink-0 rounded-xl"
+                    onClick={() => setIsCreateOpen(true)}
+                >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create New Team
+                </Button>
             </div>
 
             {/* Team stats */}
@@ -160,15 +188,16 @@ export function TeamDashboard({
                                                     _currentUser.isManager) && (
                                                     <div className="flex flex-row items-start gap-y-2 gap-x-8 w-full sm:w-auto flex-wrap justify-center lg:justify-end">
                                                         <Button
-                                                            asChild
+                                                            type="button"
                                                             className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl w-full md:w-auto min-w-[120px]"
+                                                            onClick={() =>
+                                                                setEditingTeam(
+                                                                    team,
+                                                                )
+                                                            }
                                                         >
-                                                            <Link
-                                                                href={`/organisation/teams/${team.id}`}
-                                                            >
-                                                                <Pencil className="h-4 w-4" />
-                                                                Edit
-                                                            </Link>
+                                                            <Pencil className="h-4 w-4" />
+                                                            Edit
                                                         </Button>
                                                     </div>
                                                 )}
@@ -180,12 +209,30 @@ export function TeamDashboard({
                                                             t.teamId ===
                                                             team.id,
                                                     )
-                                                    .map((team) => {
-                                                        return team.users.map(
-                                                            (user) => {
+                                                    .map((teamUsers) => {
+                                                        const titlesForTeam =
+                                                            allPositionTitles[
+                                                                teamUsers.teamId
+                                                            ] ?? [];
+                                                        return teamUsers.users.map(
+                                                            (member) => {
+                                                                const user =
+                                                                    member.user;
+                                                                if (!user)
+                                                                    return null;
+                                                                const fullName =
+                                                                    user.fullName ??
+                                                                    '';
+                                                                const positionTitle =
+                                                                    titlesForTeam.find(
+                                                                        (p) =>
+                                                                            p.id ===
+                                                                            user.positionId,
+                                                                    )?.title ??
+                                                                    '';
                                                                 return (
                                                                     <div
-                                                                        key={`${user.teamId}-${user.id}`}
+                                                                        key={`${teamUsers.teamId}-${member.id}`}
                                                                         className="flex flex-col sm:flex-row items-center gap-2 text-center min-w-[100px] w-full"
                                                                     >
                                                                         <Avatar className="h-20 w-20 border bg-muted shrink-0">
@@ -196,12 +243,12 @@ export function TeamDashboard({
                                                                                     ''
                                                                                 }
                                                                                 alt={
-                                                                                    user.fullName
+                                                                                    fullName
                                                                                 }
                                                                             />
                                                                             <AvatarFallback className="text-4xl font-medium text-muted-foreground bg-neutral-100">
                                                                                 {getUserInitialsFromFullName(
-                                                                                    user.fullName,
+                                                                                    fullName,
                                                                                 )}
                                                                             </AvatarFallback>
                                                                         </Avatar>
@@ -209,26 +256,30 @@ export function TeamDashboard({
                                                                             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                                                                                 <p className="font-medium text-lg text-foreground break-words">
                                                                                     {
-                                                                                        user.fullName
+                                                                                        fullName
                                                                                     }
                                                                                 </p>
                                                                             </div>
-                                                                            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-muted-foreground text-base">
-                                                                                <Award className="h-4 w-4" />
-                                                                                <span className="break-words">
-                                                                                    {
-                                                                                        user.positionTitle
-                                                                                    }
-                                                                                </span>
-                                                                            </div>
-                                                                            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-muted-foreground text-base">
-                                                                                <Mail className="h-4 w-4" />
-                                                                                <span className="break-all">
-                                                                                    {
-                                                                                        user.email
-                                                                                    }
-                                                                                </span>
-                                                                            </div>
+                                                                            {positionTitle && (
+                                                                                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-muted-foreground text-base">
+                                                                                    <Award className="h-4 w-4" />
+                                                                                    <span className="break-words">
+                                                                                        {
+                                                                                            positionTitle
+                                                                                        }
+                                                                                    </span>
+                                                                                </div>
+                                                                            )}
+                                                                            {user.email && (
+                                                                                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 text-muted-foreground text-base">
+                                                                                    <Mail className="h-4 w-4" />
+                                                                                    <span className="break-all">
+                                                                                        {
+                                                                                            user.email
+                                                                                        }
+                                                                                    </span>
+                                                                                </div>
+                                                                            )}
                                                                         </div>
                                                                     </div>
                                                                 );
@@ -244,6 +295,17 @@ export function TeamDashboard({
                     </div>
                 </CardContent>
             </Card>
+
+            <TeamFormDialog
+                mode="create"
+                open={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
+            />
+            <TeamFormDialog
+                mode="edit"
+                team={editingTeam}
+                onClose={() => setEditingTeam(null)}
+            />
         </Card>
     );
 }

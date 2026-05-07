@@ -75,6 +75,20 @@ export function useUsersQuery(params?: UserSearchQuery) {
     });
 }
 
+export function useUsersWithOrgDataQuery(params?: UserSearchQuery) {
+    return useQuery<User[]>({
+        queryKey: userKeys.list(params),
+        queryFn: async () => {
+            const dtos = await fetchUsers(params);
+            const users = dtos.map(mapUserResponseDtoToModel);
+            const usersWithOrgData = await Promise.all(
+                users.map(enrichUserWithOrgData),
+            );
+            return usersWithOrgData;
+        },
+    });
+}
+
 export function useUsersByTeamIdsQuery(teamIds: number[]) {
     const queries = useQueries({
         queries: teamIds.map((teamId) => ({

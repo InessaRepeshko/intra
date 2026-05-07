@@ -1,10 +1,12 @@
 'use client';
 
+import { Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
 import { User } from '@entities/identity/user/model/mappers';
 import { SortDirection } from '@entities/library/competence/model/types';
+import type { Team } from '@entities/organisation/team/model/mappers';
 import {
     useTeamAllPositionTitlesQuery,
     useTeamAllUsersQuery,
@@ -12,6 +14,9 @@ import {
 } from '@entities/organisation/team/api/team.queries';
 import { TeamFilters } from '@entities/organisation/team/ui/team-filters';
 import { TeamTable } from '@entities/organisation/team/ui/team-table';
+import { DeleteTeamDialog } from '@features/organisation/team/delete/ui/DeleteTeamDialog';
+import { TeamFormDialog } from '@features/organisation/team/form/ui/TeamFormDialog';
+import { Button } from '@shared/components/ui/button';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { compareStringArrays } from '@shared/lib/utils/compare-arrays';
@@ -20,6 +25,10 @@ import { TablePagination } from '@shared/ui/table-pagination';
 const ITEMS_PER_PAGE = 6;
 
 export function TeamList() {
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [viewingTeam, setViewingTeam] = useState<Team | null>(null);
+    const [editingTeam, setEditingTeam] = useState<Team | null>(null);
+    const [deletingTeam, setDeletingTeam] = useState<Team | null>(null);
     const [search, setSearch] = useState('');
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
         undefined,
@@ -47,7 +56,9 @@ export function TeamList() {
             allUsers.map((members) => ({
                 teamId: members.teamId,
                 positionIds:
-                    members.users?.map((u) => u.user?.positionId) || [],
+                    members.users
+                        ?.map((u) => u.user?.positionId)
+                        .filter((id): id is number => Boolean(id)) ?? [],
             })),
         [allUsers],
     );
@@ -245,6 +256,14 @@ export function TeamList() {
                             total teams.
                         </p>
                     </div>
+                    <Button
+                        size="lg"
+                        className="shrink-0 rounded-xl"
+                        onClick={() => setIsCreateOpen(true)}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create New Team
+                    </Button>
                 </div>
 
                 {/* Table Content */}
@@ -304,6 +323,9 @@ export function TeamList() {
                                     sortField={sortField}
                                     sortDirection={sortDirection}
                                     onSort={handleSort}
+                                    onView={setViewingTeam}
+                                    onEdit={setEditingTeam}
+                                    onDelete={setDeletingTeam}
                                     resetTrigger={resetTrigger}
                                 />
 
@@ -320,6 +342,27 @@ export function TeamList() {
                         )}
                 </CardContent>
             </Card>
+
+            {/* Feature Dialogs */}
+            <TeamFormDialog
+                mode="create"
+                open={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
+            />
+            <TeamFormDialog
+                mode="view"
+                team={viewingTeam}
+                onClose={() => setViewingTeam(null)}
+            />
+            <TeamFormDialog
+                mode="edit"
+                team={editingTeam}
+                onClose={() => setEditingTeam(null)}
+            />
+            <DeleteTeamDialog
+                team={deletingTeam}
+                onClose={() => setDeletingTeam(null)}
+            />
         </div>
     );
 }

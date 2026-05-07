@@ -1,8 +1,8 @@
 import { fetchPositionTitlesByIds } from '@entities/organisation/position/api/position.api';
 import { fetchTeamMembers } from '@entities/organisation/team-member/api/team-member.api';
 import {
-    TeamMember,
-    mapTeamMemberDtoToModel,
+    UserTeamMember,
+    mapUserTeamMemberDtoToModel,
 } from '@entities/organisation/team-member/model/mappers';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { Team, mapTeamDtoToModel } from '../model/mappers';
@@ -43,11 +43,11 @@ export function useTeamQuery(id: number) {
 }
 
 export function useTeamUsersQuery(teamId: number) {
-    return useQuery<TeamMember[]>({
+    return useQuery<UserTeamMember[]>({
         queryKey: teamKeys.users(teamId),
         queryFn: async () => {
             const dtos = await fetchTeamMembers(teamId);
-            return dtos.map(mapTeamMemberDtoToModel);
+            return dtos.map(mapUserTeamMemberDtoToModel);
         },
         enabled: teamId > 0,
     });
@@ -61,13 +61,13 @@ export function useTeamAllUsersQuery(teamIds: number[]) {
             queryKey: teamKeys.users(teamId),
             queryFn: async () => {
                 const dtos = await fetchTeamMembers(teamId);
-                return dtos.map(mapTeamMemberDtoToModel);
+                return dtos.map(mapUserTeamMemberDtoToModel);
             },
             enabled: teamId > 0,
         })),
     });
 
-    const users: { teamId: number; users: TeamMember[] }[] = [];
+    const users: { teamId: number; users: UserTeamMember[] }[] = [];
 
     uniqueTeamIds.forEach((teamId, index) => {
         const result = queries[index];
