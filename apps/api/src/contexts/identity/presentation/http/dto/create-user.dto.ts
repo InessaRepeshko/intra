@@ -17,7 +17,6 @@ import {
 import {
     ToOptionalEnum,
     ToOptionalInt,
-    ToOptionalIntArray,
     ToOptionalTrimmedString,
 } from 'src/common/transforms/query-sanitize.transform';
 import { IsEmail } from 'src/common/validators/email.validator';
@@ -174,7 +173,6 @@ export class CreateUserDto {
         isArray: true,
         example: [IdentityRole.MANAGER],
     })
-    @ToOptionalIntArray()
     @IsArray()
     @IsOptional()
     @IsEnum(IdentityRole, { each: true })

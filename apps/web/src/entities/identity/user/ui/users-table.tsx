@@ -39,7 +39,6 @@ import {
 } from '@shared/components/ui/table';
 import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { IdentityStatus, SortDirection } from '../model/types';
 import { RoleBadge } from './role-badge';
@@ -53,6 +52,8 @@ interface UsersTableProps {
     sortField: string;
     sortDirection: SortDirection;
     onSort: (field: string) => void;
+    onView?: (user: User) => void;
+    onEdit?: (user: User) => void;
     onDeactivate?: (user: User) => void;
     onDelete?: (user: User) => void;
     resetTrigger?: number;
@@ -60,15 +61,17 @@ interface UsersTableProps {
 
 function UserActionsMenu({
     user,
+    onView,
+    onEdit,
     onDeactivate,
     onDelete,
 }: {
     user: User;
+    onView?: (user: User) => void;
+    onEdit?: (user: User) => void;
     onDeactivate?: (user: User) => void;
     onDelete?: (user: User) => void;
 }) {
-    const router = useRouter();
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -82,11 +85,11 @@ function UserActionsMenu({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onView?.(user)}>
                     <Eye className="mr-2 h-4 w-4" />
                     View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit?.(user)}>
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
                 </DropdownMenuItem>
@@ -120,6 +123,8 @@ export function UsersTable({
     sortField,
     sortDirection,
     onSort,
+    onView,
+    onEdit,
     onDeactivate,
     onDelete,
     resetTrigger,
@@ -390,6 +395,8 @@ export function UsersTable({
             cell: (user) => (
                 <UserActionsMenu
                     user={user}
+                    onView={onView}
+                    onEdit={onEdit}
                     onDeactivate={onDeactivate}
                     onDelete={onDelete}
                 />
@@ -461,6 +468,8 @@ export function UsersTable({
                             </div>
                             <UserActionsMenu
                                 user={user}
+                                onView={onView}
+                                onEdit={onEdit}
                                 onDeactivate={onDeactivate}
                                 onDelete={onDelete}
                             />

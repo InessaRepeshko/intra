@@ -1,5 +1,6 @@
 'use client';
 
+import { Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
@@ -19,6 +20,10 @@ import {
 } from '@entities/identity/user/model/types';
 import { UsersFilters } from '@entities/identity/user/ui/users-filters';
 import { UsersTable } from '@entities/identity/user/ui/users-table';
+import { DeactivateUserDialog } from '@features/identity/user/deactivate/ui/DeactivateUserDialog';
+import { DeleteUserDialog } from '@features/identity/user/delete/ui/DeleteUserDialog';
+import { UserFormDialog } from '@features/identity/user/form/ui/UserFormDialog';
+import { Button } from '@shared/components/ui/button';
 import {
     Card,
     CardContent,
@@ -50,8 +55,11 @@ export function UsersList() {
     const [resetTrigger, setResetTrigger] = useState(0);
 
     // Feature dialogs state
-    const [deactivateUser, setDeactivateUser] = useState<User | null>(null);
-    const [deleteUser, setDeleteUser] = useState<User | null>(null);
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [viewingUser, setViewingUser] = useState<User | null>(null);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [deactivatingUser, setDeactivatingUser] = useState<User | null>(null);
+    const [deletingUser, setDeletingUser] = useState<User | null>(null);
 
     // Build query params (exclude all sort params - sorting is client-side only)
     const queryParams = useMemo(() => {
@@ -370,14 +378,14 @@ export function UsersList() {
                             total users.
                         </p>
                     </div>
-                    {/* <CreateReviewForm
-                        trigger={
-                            <Button size="lg" className="shrink-0">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Create New Review
-                            </Button>
-                        }
-                    /> */}
+                    <Button
+                        size="lg"
+                        className="shrink-0 rounded-xl"
+                        onClick={() => setIsCreateOpen(true)}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create New User
+                    </Button>
                 </div>
 
                 {/* Main Card */}
@@ -465,8 +473,10 @@ export function UsersList() {
                                         sortField={sortField}
                                         sortDirection={sortDirection}
                                         onSort={handleSort}
-                                        onDeactivate={setDeactivateUser}
-                                        onDelete={setDeleteUser}
+                                        onView={setViewingUser}
+                                        onEdit={setEditingUser}
+                                        onDeactivate={setDeactivatingUser}
+                                        onDelete={setDeletingUser}
                                         resetTrigger={resetTrigger}
                                     />
 
@@ -486,14 +496,29 @@ export function UsersList() {
             </div>
 
             {/* Feature Dialogs */}
-            {/* <ForceFinishCycleDialog
-                cycle={forceFinishCycle}
-                onClose={() => setForceFinishCycle(null)}
+            <UserFormDialog
+                mode="create"
+                open={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
             />
-            <DeleteCycleDialog
-                cycle={deleteCycle}
-                onClose={() => setDeleteCycle(null)}
-            /> */}
+            <UserFormDialog
+                mode="view"
+                user={viewingUser}
+                onClose={() => setViewingUser(null)}
+            />
+            <UserFormDialog
+                mode="edit"
+                user={editingUser}
+                onClose={() => setEditingUser(null)}
+            />
+            <DeactivateUserDialog
+                user={deactivatingUser}
+                onClose={() => setDeactivatingUser(null)}
+            />
+            <DeleteUserDialog
+                user={deletingUser}
+                onClose={() => setDeletingUser(null)}
+            />
         </main>
     );
 }
