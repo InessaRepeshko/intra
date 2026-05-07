@@ -161,7 +161,7 @@ export function DashboardContent({
           : `Hi, ${user.firstName}!`;
 
     const greetingSubtitle = showAdmin
-        ? 'Here is the organization-wide overview of 360° feedback platform.'
+        ? 'Here is the organization-wide overview of 360° feedback service.'
         : showManager
           ? 'Here is an overview of your team and your own 360° feedback activity.'
           : 'Here is an overview of your 360° feedback activity.';

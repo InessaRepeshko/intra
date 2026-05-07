@@ -137,7 +137,7 @@ export function ProfileContent() {
                         Personal Information
                     </CardTitle>
                     <CardDescription className="text-base">
-                        Your account details as stored in the platform.
+                        Your account details as stored in the service.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0 flex flex-row gap-4 flex-wrap items-stretch justify-between w-full">

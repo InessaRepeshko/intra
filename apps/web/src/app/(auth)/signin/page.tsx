@@ -88,7 +88,7 @@ export default function LoginPage() {
                     {/* Badge */}
                     <div className="relative mt-4 mb-4 inline-flex items-center gap-4 ">
                         <span className="bg-gradient-to-r from-pink-600 to-amber-600 bg-clip-text text-transparent font-medium">
-                            360° Feedback Platform
+                            360° Feedback Service
                         </span>
                     </div>
                 </div>

@@ -2,6 +2,7 @@
 
 import { useReviewReviewersQuery } from '@entities/feedback360/reviewer/api/reviewer.queries';
 import type { AuthContextType } from '@entities/identity/user/model/types';
+import { IndividualReportCommentsSection } from '@entities/reporting/individual-report-comment/ui/individual-report-comments-section';
 import {
     useCycleTitleQuery,
     useReportQuery,
@@ -284,6 +285,9 @@ export function IndividualReportPage({
                             )}
                     </CardContent>
                 </Card>
+
+                {/* Feedbacks Section */}
+                <IndividualReportCommentsSection reportId={reportId} />
             </div>
         </main>
     );

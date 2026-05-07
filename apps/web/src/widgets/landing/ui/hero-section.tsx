@@ -16,7 +16,7 @@ export function HeroSection() {
             {/* Badge */}
             <div className="relative mb-8 inline-flex items-center gap-4 rounded-full border border-border bg-gradient-to-r from-pink-200/30 to-yellow-200/30 px-8 py-3 text-xl text-muted-foreground backdrop-blur-sm">
                 <span className="bg-gradient-to-r from-pink-600 to-amber-600 bg-clip-text text-transparent font-medium">
-                    360° Feedback Platform
+                    360° Feedback Service
                 </span>
             </div>
 
@@ -28,7 +28,7 @@ export function HeroSection() {
                 </span>
                 <br />{' '}
                 <span className="bg-gradient-to-r from-foreground via-foreground/70 to-foreground bg-clip-text text-transparent">
-                    platform for
+                    service for
                 </span>
                 <br />{' '}
                 <span className="bg-gradient-to-r from-foreground via-foreground/60 to-foreground bg-clip-text text-transparent">
