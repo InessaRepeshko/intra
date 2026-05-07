@@ -98,4 +98,10 @@ export class PositionCompetenceRelationRepository implements PositionCompetenceR
 
         return this.listByCompetence(competenceId);
     }
+
+    async deleteAllForCompetence(competenceId: number): Promise<void> {
+        await this.prisma.positionCompetenceRelation.deleteMany({
+            where: { competenceId },
+        });
+    }
 }

@@ -44,15 +44,21 @@ interface CompetenceTableProps {
     sortField: string;
     sortDirection: SortDirection;
     onSort: (field: string) => void;
+    onView?: (competence: Competence) => void;
+    onEdit?: (competence: Competence) => void;
     onDelete?: (competence: Competence) => void;
     resetTrigger?: number;
 }
 
 function CompetenceActionsMenu({
     competence,
+    onView,
+    onEdit,
     onDelete,
 }: {
     competence: Competence;
+    onView?: (competence: Competence) => void;
+    onEdit?: (competence: Competence) => void;
     onDelete?: (competence: Competence) => void;
 }) {
     return (
@@ -68,11 +74,11 @@ function CompetenceActionsMenu({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onView?.(competence)}>
                     <Eye className="mr-2 h-4 w-4" />
                     View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit?.(competence)}>
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
                 </DropdownMenuItem>
@@ -97,6 +103,8 @@ export function CompetenceTable({
     sortField,
     sortDirection,
     onSort,
+    onView,
+    onEdit,
     onDelete,
     resetTrigger,
 }: CompetenceTableProps) {
@@ -130,7 +138,7 @@ export function CompetenceTable({
         const [isExpanded, setIsExpanded] = useState(false);
 
         if (!positions?.length)
-            return <span className="text-muted-foreground">None</span>;
+            return <span className="text-muted-foreground flex items-center justify-start ml-2">None</span>;
 
         const firstPosition = positions[0].title;
         const extraCount = positions.length - 1;
@@ -287,6 +295,8 @@ export function CompetenceTable({
             cell: (competence) => (
                 <CompetenceActionsMenu
                     competence={competence}
+                    onView={onView}
+                    onEdit={onEdit}
                     onDelete={onDelete}
                 />
             ),
@@ -340,6 +350,8 @@ export function CompetenceTable({
                             </div>
                             <CompetenceActionsMenu
                                 competence={competence}
+                                onView={onView}
+                                onEdit={onEdit}
                                 onDelete={onDelete}
                             />
                         </div>

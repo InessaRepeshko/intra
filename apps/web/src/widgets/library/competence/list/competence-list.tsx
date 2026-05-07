@@ -1,5 +1,6 @@
 'use client';
 
+import { Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
@@ -15,6 +16,9 @@ import type { Competence } from '@entities/library/competence/model/mappers';
 import { SortDirection } from '@entities/library/competence/model/types';
 import { CompetenceFilters } from '@entities/library/competence/ui/competence-filters';
 import { CompetenceTable } from '@entities/library/competence/ui/competence-table';
+import { DeleteCompetenceDialog } from '@features/library/competence/delete/ui/DeleteCompetenceDialog';
+import { CompetenceFormDialog } from '@features/library/competence/form/ui/CompetenceFormDialog';
+import { Button } from '@shared/components/ui/button';
 import {
     Card,
     CardContent,
@@ -29,6 +33,7 @@ import { TablePagination } from '@shared/ui/table-pagination';
 const ITEMS_PER_PAGE = 6;
 
 export function CompetenceList() {
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [search, setSearch] = useState('');
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
         undefined,
@@ -43,9 +48,12 @@ export function CompetenceList() {
     const [resetTrigger, setResetTrigger] = useState(0);
 
     // Feature dialogs state
-    const [deleteCompetence, setDeleteCompetence] = useState<Competence | null>(
-        null,
-    );
+    const [viewingCompetence, setViewingCompetence] =
+        useState<Competence | null>(null);
+    const [editingCompetence, setEditingCompetence] =
+        useState<Competence | null>(null);
+    const [deletingCompetence, setDeletingCompetence] =
+        useState<Competence | null>(null);
 
     // Build query params (client-side only)
     const queryParams = useMemo(() => {
@@ -303,14 +311,14 @@ export function CompetenceList() {
                             total competences.
                         </p>
                     </div>
-                    {/* <CreateCompetenceForm
-                        trigger={
-                            <Button size="lg" className="shrink-0">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Create New Competence
-                            </Button>
-                        }
-                    /> */}
+                    <Button
+                        size="lg"
+                        className="shrink-0 rounded-xl"
+                        onClick={() => setIsCreateOpen(true)}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create New Competence
+                    </Button>
                 </div>
 
                 {/* Main Card */}
@@ -384,8 +392,10 @@ export function CompetenceList() {
                                         sortField={sortField}
                                         sortDirection={sortDirection}
                                         onSort={handleSort}
+                                        onView={setViewingCompetence}
+                                        onEdit={setEditingCompetence}
+                                        onDelete={setDeletingCompetence}
                                         resetTrigger={resetTrigger}
-                                        // onDelete={setDeleteCompetence}
                                     />
 
                                     {/* Pagination */}
@@ -404,14 +414,25 @@ export function CompetenceList() {
             </div>
 
             {/* Feature Dialogs */}
-            {/* <ForceFinishCycleDialog
-                cycle={forceFinishCycle}
-                onClose={() => setForceFinishCycle(null)}
+            <CompetenceFormDialog
+                mode="create"
+                open={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
             />
-            <DeleteCycleDialog
-                cycle={deleteCycle}
-                onClose={() => setDeleteCycle(null)}
-            /> */}
+            <CompetenceFormDialog
+                mode="view"
+                competence={viewingCompetence}
+                onClose={() => setViewingCompetence(null)}
+            />
+            <CompetenceFormDialog
+                mode="edit"
+                competence={editingCompetence}
+                onClose={() => setEditingCompetence(null)}
+            />
+            <DeleteCompetenceDialog
+                competence={deletingCompetence}
+                onClose={() => setDeletingCompetence(null)}
+            />
         </main>
     );
 }

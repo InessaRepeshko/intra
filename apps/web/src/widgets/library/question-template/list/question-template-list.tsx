@@ -506,7 +506,7 @@ export function QuestionTemplateList() {
                         onClick={() => setIsCreateOpen(true)}
                     >
                         <Plus className="mr-2 h-4 w-4" />
-                        Create New
+                        Create New Question Template
                     </Button>
                 </div>
 

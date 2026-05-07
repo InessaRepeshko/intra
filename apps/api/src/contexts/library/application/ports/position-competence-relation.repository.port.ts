@@ -20,4 +20,5 @@ export interface PositionCompetenceRelationRepositoryPort {
         competenceId: number,
         positionIds: number[],
     ): Promise<PositionCompetenceRelationDomain[]>;
+    deleteAllForCompetence(competenceId: number): Promise<void>;
 }

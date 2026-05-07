@@ -3,7 +3,7 @@ import {
     CreateCompetencePayload,
     UpdateCompetencePayload,
 } from '@intra/shared-kernel';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PositionService } from 'src/contexts/organisation/application/services/position.service';
 import { CompetenceDomain } from '../../domain/competence.domain';
 import {
@@ -73,6 +73,20 @@ export class CompetenceService {
 
     async delete(id: number): Promise<void> {
         await this.getById(id);
+        const relatedQuestionTemplates = await this.listQuestionTemplates(id);
+        const relatedPositions = await this.listPositions(id);
+        if (relatedQuestionTemplates.length > 0 || relatedPositions.length > 0) {
+            throw new BadRequestException('Competence #' +
+                id +
+                ' cannot be deleted. It has ' +
+                relatedQuestionTemplates.length +
+                ' question templates and ' +
+                relatedPositions.length +
+                ' positions assigned to it.',
+            );
+        }
+        await this.positionCompetenceRelations.deleteAllForCompetence(id);
+        await this.competenceQuestionTemplateRelations.deleteAllForCompetence(id);
         await this.competences.deleteById(id);
     }
 
