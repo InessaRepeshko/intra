@@ -34,6 +34,7 @@ import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { useEffect } from 'react';
 import { SortDirection } from '../model/types';
+import { ClusterBadge } from '@entities/reporting/cluster-score-analytics/ui/cluster-badge';
 
 interface ClustersTableProps {
     clusters: Cluster[];
@@ -41,15 +42,21 @@ interface ClustersTableProps {
     sortField: string;
     sortDirection: SortDirection;
     onSort: (field: string) => void;
+    onView?: (cluster: Cluster) => void;
+    onEdit?: (cluster: Cluster) => void;
     onDelete?: (cluster: Cluster) => void;
     resetTrigger?: number;
 }
 
 function ClusterActionsMenu({
     cluster,
+    onView,
+    onEdit,
     onDelete,
 }: {
     cluster: Cluster;
+    onView?: (cluster: Cluster) => void;
+    onEdit?: (cluster: Cluster) => void;
     onDelete?: (cluster: Cluster) => void;
 }) {
     return (
@@ -65,11 +72,11 @@ function ClusterActionsMenu({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onView?.(cluster)}>
                     <Eye className="mr-2 h-4 w-4" />
                     View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit?.(cluster)}>
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
                 </DropdownMenuItem>
@@ -92,6 +99,8 @@ export function ClusterTable({
     sortField,
     sortDirection,
     onSort,
+    onView,
+    onEdit,
     onDelete,
     resetTrigger,
 }: ClustersTableProps) {
@@ -181,9 +190,10 @@ export function ClusterTable({
                 'min-w-[300px] w-[400px] cursor-grab active:cursor-grabbing',
             cell: (cluster) => (
                 <div className="flex flex-col gap-0.5 w-full">
-                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
+                    {/* <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
                         {cluster.title}
-                    </span>
+                    </span> */}
+                    <ClusterBadge label={cluster.title} className='w-fit'/>
                     {cluster.description && (
                         <span className="text-sm text-muted-foreground break-words overflow-wrap-anywhere">
                             {cluster.description}
@@ -264,7 +274,12 @@ export function ClusterTable({
             headerClassName:
                 'min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1',
             cell: (cluster) => (
-                <ClusterActionsMenu cluster={cluster} onDelete={onDelete} />
+                <ClusterActionsMenu
+                    cluster={cluster}
+                    onView={onView}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                />
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
@@ -310,6 +325,8 @@ export function ClusterTable({
                             </div>
                             <ClusterActionsMenu
                                 cluster={cluster}
+                                onView={onView}
+                                onEdit={onEdit}
                                 onDelete={onDelete}
                             />
                         </div>

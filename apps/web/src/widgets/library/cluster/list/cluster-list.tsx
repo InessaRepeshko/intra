@@ -1,5 +1,6 @@
 'use client';
 
+import { Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
@@ -11,6 +12,9 @@ import {
 import type { Cluster } from '@entities/library/cluster/model/mappers';
 import { ClusterFilters } from '@entities/library/cluster/ui/cluster-filters';
 import { ClusterTable } from '@entities/library/cluster/ui/cluster-table';
+import { DeleteClusterDialog } from '@features/library/cluster/delete/ui/DeleteClusterDialog';
+import { ClusterFormDialog } from '@features/library/cluster/form/ui/ClusterFormDialog';
+import { Button } from '@shared/components/ui/button';
 import {
     Card,
     CardContent,
@@ -24,6 +28,7 @@ import { TablePagination } from '@shared/ui/table-pagination';
 const ITEMS_PER_PAGE = 10;
 
 export function ClusterList() {
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [search, setSearch] = useState('');
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
         undefined,
@@ -39,7 +44,11 @@ export function ClusterList() {
     const [resetTrigger, setResetTrigger] = useState(0);
 
     // Feature dialogs state
-    const [deleteCluster, setDeleteCluster] = useState<Cluster | null>(null);
+    const [viewingCluster, setViewingCluster] = useState<Cluster | null>(null);
+    const [editingCluster, setEditingCluster] = useState<Cluster | null>(null);
+    const [deletingCluster, setDeletingCluster] = useState<Cluster | null>(
+        null,
+    );
 
     // Always fetch all clusters - filtering is done client-side
     const { data: allClusters = [], isLoading, isError } = useClustersQuery({});
@@ -266,14 +275,14 @@ export function ClusterList() {
                             total clusters.
                         </p>
                     </div>
-                    {/* <CreateCompetenceForm
-                        trigger={
-                            <Button size="lg" className="shrink-0">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Create New Competence
-                            </Button>
-                        }
-                    /> */}
+                    <Button
+                        size="lg"
+                        className="shrink-0 rounded-xl"
+                        onClick={() => setIsCreateOpen(true)}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create New Cluster
+                    </Button>
                 </div>
 
                 {/* Main Card */}
@@ -346,8 +355,10 @@ export function ClusterList() {
                                     sortField={sortField}
                                     sortDirection={sortDirection}
                                     onSort={handleSort}
+                                    onView={setViewingCluster}
+                                    onEdit={setEditingCluster}
+                                    onDelete={setDeletingCluster}
                                     resetTrigger={resetTrigger}
-                                    // onDelete={setDeleteCompetence}
                                 />
 
                                 {/* Pagination */}
@@ -366,14 +377,25 @@ export function ClusterList() {
             </div>
 
             {/* Feature Dialogs */}
-            {/* <ForceFinishCycleDialog
-                cycle={forceFinishCycle}
-                onClose={() => setForceFinishCycle(null)}
+            <ClusterFormDialog
+                mode="create"
+                open={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
             />
-            <DeleteCycleDialog
-                cycle={deleteCycle}
-                onClose={() => setDeleteCycle(null)}
-            /> */}
+            <ClusterFormDialog
+                mode="view"
+                cluster={viewingCluster}
+                onClose={() => setViewingCluster(null)}
+            />
+            <ClusterFormDialog
+                mode="edit"
+                cluster={editingCluster}
+                onClose={() => setEditingCluster(null)}
+            />
+            <DeleteClusterDialog
+                cluster={deletingCluster}
+                onClose={() => setDeletingCluster(null)}
+            />
         </main>
     );
 }
