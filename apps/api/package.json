@@ -35,12 +35,17 @@
     "dependencies": {
         "@intra/database": "workspace:*",
         "@intra/shared-kernel": "workspace:*",
+        "@nestjs-modules/mailer": "^2.3.4",
         "@nestjs/event-emitter": "^3.0.1",
         "better-auth": "^1.4.18",
         "decimal.js": "^10.6.0",
+        "googleapis": "^171.4.0",
+        "handlebars": "^4.7.9",
+        "nodemailer": "^8.0.7",
         "pg": "^8.18.0"
     },
     "devDependencies": {
-        "@nestjs/schedule": "^6.1.1"
+        "@nestjs/schedule": "^6.1.1",
+        "@types/nodemailer": "^8.0.0"
     }
 }

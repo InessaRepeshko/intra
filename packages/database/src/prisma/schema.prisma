@@ -427,6 +427,7 @@ model Review {
   reviewers               Reviewer[]
   clusterScores           ClusterScore[]
   reviewStageHistories    ReviewStageHistory[]
+  notificationLogs        NotificationLog[]
 
   @@index([cycleId])
   @@index([hrId])
@@ -437,6 +438,45 @@ model Review {
   @@index([stage])
   @@index([createdAt])
   @@map("feedback360_reviews")
+}
+
+/**
+ * ==================== Notifications ====================
+ */
+
+enum NotificationKind {
+  RATEE_SELF_ASSESSMENT @map("ratee_self_assessment")
+  RESPONDENT_INVITATION @map("respondent_invitation")
+  HR_REPORT_READY       @map("hr_report_ready")
+  REVIEWER_REPORT_READY @map("reviewer_report_ready")
+
+  @@map("notification_kind")
+}
+
+enum NotificationChannel {
+  EMAIL @map("email")
+
+  @@map("notification_channel")
+}
+
+model NotificationLog {
+  id              Int                 @id @default(autoincrement())
+  reviewId        Int                 @map("review_id")
+  kind            NotificationKind
+  channel         NotificationChannel @default(EMAIL)
+  recipientUserId Int                 @map("recipient_user_id")
+  recipientEmail  String              @map("recipient_email") @db.VarChar(255)
+  sentAt          DateTime?           @map("sent_at") @db.Timestamp(0)
+  errorMessage    String?             @map("error_message") @db.Text
+  createdAt       DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt       DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([reviewId, kind, recipientUserId], name: "uniq_review_kind_recipient")
+  @@index([reviewId])
+  @@index([recipientUserId])
+  @@map("notification_logs")
 }
 
 model Question {

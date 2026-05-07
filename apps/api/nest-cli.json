@@ -8,8 +8,13 @@
         "deleteOutDir": false,
         "tsConfigPath": "./tsconfig.json",
         "assets": [
-            "**/*.assets"
+            "**/*.assets",
+            {
+                "include": "contexts/notifications/infrastructure/templates/**/*.hbs",
+                "outDir": "./dist/src"
+            }
         ],
+        "watchAssets": true,
         "webpack": false
     }
 }

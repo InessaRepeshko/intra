@@ -346,11 +346,11 @@ export class ReviewService {
         const updatedReview = await this.reviews.updateById(id, payload);
 
         // Reactive Trigger: Check if all responses completed
-        if (patch.stage && patch.stage === ReviewStage.FINISHED) {
+        if (patch.stage && patch.stage !== updatedReview.stage && patch.stage === ReviewStage.FINISHED) {
             await this.completeReview(id);
         }
 
-        if (patch.stage && patch.stage !== ReviewStage.FINISHED) {
+        if (patch.stage && patch.stage !== updatedReview.stage && patch.stage !== ReviewStage.FINISHED) {
             await this.changeReviewStage(
                 id,
                 patch.stage,

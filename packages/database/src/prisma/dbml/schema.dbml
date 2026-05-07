@@ -272,6 +272,25 @@ Table feedback360_reviews {
   reviewers feedback360_reviewers [not null]
   clusterScores feedback360_cluster_scores [not null]
   reviewStageHistories feedback360_review_stage_history [not null]
+  notificationLogs notification_logs [not null]
+}
+
+Table notification_logs {
+  id Int [pk, increment]
+  reviewId Int [not null]
+  kind NotificationKind [not null]
+  channel NotificationChannel [not null, default: 'EMAIL']
+  recipientUserId Int [not null]
+  recipientEmail String [not null]
+  sentAt DateTime
+  errorMessage String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  review feedback360_reviews [not null]
+
+  indexes {
+    (reviewId, kind, recipientUserId) [unique]
+  }
 }
 
 Table feedback360_questions {
@@ -693,6 +712,17 @@ Enum RespondentCategory {
   OTHER
 }
 
+Enum NotificationKind {
+  RATEE_SELF_ASSESSMENT
+  RESPONDENT_INVITATION
+  HR_REPORT_READY
+  REVIEWER_REPORT_READY
+}
+
+Enum NotificationChannel {
+  EMAIL
+}
+
 Enum EntityType {
   QUESTION
   COMPETENCE
@@ -759,6 +789,8 @@ Ref: feedback360_reviews.rateePositionId > org_positions.id [delete: No Action]
 Ref: feedback360_reviews.teamId > org_teams.id [delete: No Action]
 
 Ref: feedback360_reviews.managerId > identity_users.id [delete: No Action]
+
+Ref: notification_logs.reviewId > feedback360_reviews.id [delete: Cascade]
 
 Ref: feedback360_questions.cycleId > feedback360_cycles.id [delete: No Action]
 
