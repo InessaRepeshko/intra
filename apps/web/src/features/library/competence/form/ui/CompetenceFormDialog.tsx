@@ -249,7 +249,9 @@ function EntityMultiCombobox({
                                     className="ml-0.5 rounded-full p-1 hover:bg-foreground/10 shrink-0"
                                     onClick={() =>
                                         onChange(
-                                            value.filter((v) => v !== option.id),
+                                            value.filter(
+                                                (v) => v !== option.id,
+                                            ),
                                         )
                                     }
                                     aria-label={`Remove ${option.title}`}

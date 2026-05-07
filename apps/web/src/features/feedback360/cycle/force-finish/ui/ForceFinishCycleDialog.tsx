@@ -41,9 +41,9 @@ export function ForceFinishCycleDialog({
         <AlertDialog open={!!cycle} onOpenChange={() => onClose()}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Force Finish Cycle</AlertDialogTitle>
+                    <AlertDialogTitle>Force Complete Cycle</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to force finish{' '}
+                        Are you sure you want to force complete{' '}
                         <span className="font-semibold text-foreground">
                             &ldquo;{cycle?.title}&rdquo;
                         </span>
@@ -66,7 +66,9 @@ export function ForceFinishCycleDialog({
                         variant={undefined}
                         size={undefined}
                     >
-                        {mutation.isPending ? 'Finishing...' : 'Force Finish'}
+                        {mutation.isPending
+                            ? 'Completing...'
+                            : 'Force Complete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

@@ -33,9 +33,7 @@ export function useDeleteTeamMutation() {
             toast.success('Team deleted successfully');
         },
         onError: (error) => {
-            toast.error(
-                extractApiErrorMessage(error, 'Failed to delete team'),
-            );
+            toast.error(extractApiErrorMessage(error, 'Failed to delete team'));
         },
     });
 }

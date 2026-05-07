@@ -20,10 +20,7 @@ export const clusterFormSchema = z
                 CLUSTER_CONSTRAINTS.DESCRIPTION.LENGTH.MAX,
                 `Description must be at most ${CLUSTER_CONSTRAINTS.DESCRIPTION.LENGTH.MAX} characters`,
             ),
-        competenceId: z.coerce
-            .number()
-            .int()
-            .min(1, 'Competence is required'),
+        competenceId: z.coerce.number().int().min(1, 'Competence is required'),
         lowerBound: z.coerce
             .number()
             .min(

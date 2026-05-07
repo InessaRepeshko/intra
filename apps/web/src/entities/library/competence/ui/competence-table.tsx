@@ -138,7 +138,11 @@ export function CompetenceTable({
         const [isExpanded, setIsExpanded] = useState(false);
 
         if (!positions?.length)
-            return <span className="text-muted-foreground flex items-center justify-start ml-2">None</span>;
+            return (
+                <span className="text-muted-foreground flex items-center justify-start ml-2">
+                    None
+                </span>
+            );
 
         const firstPosition = positions[0].title;
         const extraCount = positions.length - 1;

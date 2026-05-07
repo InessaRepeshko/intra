@@ -9,9 +9,11 @@ import {
     useClusterScoreAnalyticsCycleTitlesQuery,
     useClusterScoresAnalyticsQuery,
 } from '@entities/reporting/cluster-score-analytics/api/cluster-score-analytics.queries';
+import type { ClusterScoreAnalytics } from '@entities/reporting/cluster-score-analytics/model/mappers';
 import { SortDirection } from '@entities/reporting/cluster-score-analytics/model/types';
 import { ClusterScoreAnalyticsFilters } from '@entities/reporting/cluster-score-analytics/ui/cluster-score-analytics-filters';
 import { ClusterScoreAnalyticsTable } from '@entities/reporting/cluster-score-analytics/ui/cluster-score-analytics-table';
+import { ClusterScoreAnalyticsViewDialog } from '@features/reporting/cluster-score-analytics/view/ui/ClusterScoreAnalyticsViewDialog';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { Spinner } from '@shared/components/ui/spinner';
 import { TablePagination } from '@shared/ui/table-pagination';
@@ -19,6 +21,8 @@ import { TablePagination } from '@shared/ui/table-pagination';
 const ITEMS_PER_PAGE = 6;
 
 export function ClusterScoreAnalyticsList() {
+    const [viewingClusterScoreAnalytics, setViewingClusterScoreAnalytics] =
+        useState<ClusterScoreAnalytics | null>(null);
     const [search, setSearch] = useState('');
     const [dateRange, setDateRange] = useState<DateRange | undefined>(
         undefined,
@@ -479,6 +483,7 @@ export function ClusterScoreAnalyticsList() {
                                 sortField={sortField}
                                 sortDirection={sortDirection}
                                 onSort={handleSort}
+                                onView={setViewingClusterScoreAnalytics}
                                 resetTrigger={resetTrigger}
                             />
 
@@ -497,6 +502,14 @@ export function ClusterScoreAnalyticsList() {
                     )}
                 </CardContent>
             </Card>
+
+            <ClusterScoreAnalyticsViewDialog
+                clusterScoreAnalytics={viewingClusterScoreAnalytics}
+                clusterScoreTitles={clusterScoreTitles}
+                competenceTitles={competenceTitles}
+                cycleTitles={cycleTitles}
+                onClose={() => setViewingClusterScoreAnalytics(null)}
+            />
         </div>
     );
 }

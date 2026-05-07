@@ -10,12 +10,12 @@ import {
 } from '@shared/components/ui/avatar';
 
 import { type AuthContextType } from '@entities/identity/user/model/types';
-import type { Team } from '@entities/organisation/team/model/mappers';
 import {
     useTeamAllPositionTitlesQuery,
     useTeamAllUsersQuery,
     useTeamsQuery,
 } from '@entities/organisation/team/api/team.queries';
+import type { Team } from '@entities/organisation/team/model/mappers';
 import { TeamFormDialog } from '@features/organisation/team/form/ui/TeamFormDialog';
 import { Button } from '@shared/components/ui/button';
 import {

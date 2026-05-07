@@ -4,7 +4,12 @@ import {
     TeamSearchQuery,
     UpdateTeamPayload,
 } from '@intra/shared-kernel';
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Inject,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { IdentityUserService } from 'src/contexts/identity/application/services/identity-user.service';
 import { TeamMembershipDomain } from '../../domain/team-membership.domain';
 import { TeamDomain } from '../../domain/team.domain';
@@ -63,7 +68,13 @@ export class TeamService {
         await this.getById(id);
         const members = await this.listMembers(id);
         if (members.length > 0) {
-            throw new BadRequestException('Team #' + id + ' cannot be deleted. It has ' + members.length + ' members assigned to it.');
+            throw new BadRequestException(
+                'Team #' +
+                    id +
+                    ' cannot be deleted. It has ' +
+                    members.length +
+                    ' members assigned to it.',
+            );
         }
         await this.teams.deleteById(id);
     }

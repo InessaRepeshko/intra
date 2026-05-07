@@ -18,7 +18,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm, type FieldErrors } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { useUsersQuery, useUsersWithOrgDataQuery } from '@entities/identity/user/api/user.queries';
+import { useUsersWithOrgDataQuery } from '@entities/identity/user/api/user.queries';
 import { useTeamMembersQuery } from '@entities/organisation/team-member/api/team-member.queries';
 import type { Team } from '@entities/organisation/team/model/mappers';
 import { Button } from '@shared/components/ui/button';
@@ -56,10 +56,7 @@ import {
     useCreateTeamFormMutation,
     useUpdateTeamFormMutation,
 } from '../api/team-form.mutation';
-import {
-    teamFormSchema,
-    type TeamFormValues,
-} from '../model/team-form.schema';
+import { teamFormSchema, type TeamFormValues } from '../model/team-form.schema';
 
 export type TeamFormMode = 'create' | 'edit' | 'view';
 
@@ -121,7 +118,12 @@ function userSubline(option: UserOption): string {
 }
 
 function userSearchHaystack(option: UserOption): string {
-    return [option.fullName, option.positionTitle, option.teamTitle, option.email]
+    return [
+        option.fullName,
+        option.positionTitle,
+        option.teamTitle,
+        option.email,
+    ]
         .filter(Boolean)
         .join(' ');
 }
@@ -434,12 +436,11 @@ export function TeamFormDialog({
 
     const [deletingTeam, setDeletingTeam] = useState<Team | null>(null);
 
-    const { data: users = [], isLoading: isUsersLoading } = useUsersWithOrgDataQuery();
+    const { data: users = [], isLoading: isUsersLoading } =
+        useUsersWithOrgDataQuery();
 
-    const {
-        data: existingMembers,
-        isLoading: isExistingMembersLoading,
-    } = useTeamMembersQuery(team?.id ?? 0);
+    const { data: existingMembers, isLoading: isExistingMembersLoading } =
+        useTeamMembersQuery(team?.id ?? 0);
 
     const existingMemberIds = useMemo(
         () => existingMembers?.map((m) => m.memberId) ?? [],
@@ -588,239 +589,31 @@ export function TeamFormDialog({
     return (
         <>
             <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-            <DialogContent
-                showCloseButton={false}
-                className="sm:max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl p-0 gap-0"
-            >
-                <DialogTitle className="sr-only">{titleText}</DialogTitle>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-                    className="flex flex-col"
+                <DialogContent
+                    showCloseButton={false}
+                    className="sm:max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl p-0 gap-0"
                 >
-                    <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background rounded-t-xl px-6 py-4 flex-wrap gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
-                                <TitleIcon className="h-5 w-5" />
-                            </span>
-                            <div className="min-w-0">
-                                <p className="text-lg font-semibold tracking-tight text-foreground truncate">
-                                    {titleText}
-                                </p>
-                                {team && (
-                                    <p className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
-                                        <span>#{team.id}</span>
+                    <DialogTitle className="sr-only">{titleText}</DialogTitle>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+                        className="flex flex-col"
+                    >
+                        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background rounded-t-xl px-6 py-4 flex-wrap gap-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                                    <TitleIcon className="h-5 w-5" />
+                                </span>
+                                <div className="min-w-0">
+                                    <p className="text-lg font-semibold tracking-tight text-foreground truncate">
+                                        {titleText}
                                     </p>
-                                )}
+                                    {team && (
+                                        <p className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
+                                            <span>#{team.id}</span>
+                                        </p>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                        {!isView && (
-                            <Button
-                                type="submit"
-                                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
-                                disabled={mutation.isPending}
-                            >
-                                <Save className="mr-2 h-4 w-4" />
-                                {submitLabel}
-                            </Button>
-                        )}
-                    </header>
-
-                    <div className="flex flex-col gap-6 p-6">
-                        <Card className="border-border bg-card">
-                            <CardHeader>
-                                <CardTitle className="text-base text-foreground">
-                                    General
-                                </CardTitle>
-                                <CardDescription>
-                                    Basic information about the team.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex flex-col gap-2">
-                                    <Label htmlFor="title">
-                                        Title{' '}
-                                        {!isView && (
-                                            <span className="text-destructive">
-                                                *
-                                            </span>
-                                        )}
-                                    </Label>
-                                    <Input
-                                        id="title"
-                                        placeholder="e.g. Frontend Engineering"
-                                        disabled={fieldsDisabled}
-                                        className={inputClassName}
-                                        {...form.register('title')}
-                                    />
-                                    {form.formState.errors.title && (
-                                        <p className="text-sm text-destructive">
-                                            {
-                                                form.formState.errors.title
-                                                    .message
-                                            }
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <Label htmlFor="description">
-                                        Description
-                                    </Label>
-                                    <Textarea
-                                        id="description"
-                                        placeholder="Optional description of the team..."
-                                        rows={3}
-                                        disabled={fieldsDisabled}
-                                        className={cn(
-                                            'resize-none',
-                                            inputClassName,
-                                        )}
-                                        {...form.register('description')}
-                                    />
-                                    {form.formState.errors.description && (
-                                        <p className="text-sm text-destructive">
-                                            {
-                                                form.formState.errors
-                                                    .description.message
-                                            }
-                                        </p>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="border-border bg-card">
-                            <CardHeader>
-                                <CardTitle className="text-base text-foreground">
-                                    Team Lead
-                                </CardTitle>
-                                <CardDescription>
-                                    Optionally assign a user as the head of this
-                                    team.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <UserSingleCombobox
-                                    options={userOptions}
-                                    value={
-                                        watchedHeadId && watchedHeadId > 0
-                                            ? watchedHeadId
-                                            : undefined
-                                    }
-                                    onChange={(id) =>
-                                        form.setValue('headId', id ?? 0, {
-                                            shouldValidate: true,
-                                        })
-                                    }
-                                    placeholder={
-                                        isUsersLoading
-                                            ? 'Loading users...'
-                                            : 'Select a team lead'
-                                    }
-                                    disabled={fieldsDisabled || isUsersLoading}
-                                    allowClear
-                                    clearLabel="No team lead"
-                                />
-                                {form.formState.errors.headId && (
-                                    <p className="mt-2 text-sm text-destructive">
-                                        {form.formState.errors.headId.message}
-                                    </p>
-                                )}
-                            </CardContent>
-                        </Card>
-
-                        <Card className="border-border bg-card">
-                            <CardHeader>
-                                <CardTitle className="text-base text-foreground">
-                                    Team Members
-                                </CardTitle>
-                                <CardDescription>
-                                    People who belong to this team.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <UserMultiCombobox
-                                    options={userOptions}
-                                    value={watchedMemberIds}
-                                    onChange={(ids) =>
-                                        form.setValue('memberIds', ids, {
-                                            shouldValidate: true,
-                                        })
-                                    }
-                                    placeholder={
-                                        isUsersLoading
-                                            ? 'Loading users...'
-                                            : 'Select team members'
-                                    }
-                                    disabled={fieldsDisabled || isUsersLoading}
-                                    lockedIds={lockedMemberIds}
-                                />
-                                {form.formState.errors.memberIds && (
-                                    <p className="mt-2 text-sm text-destructive">
-                                        {
-                                            form.formState.errors.memberIds
-                                                .message
-                                        }
-                                    </p>
-                                )}
-                            </CardContent>
-                        </Card>
-
-                        <div className="flex flex-wrap justify-end gap-3 pt-2">
-                            {isEdit && team && (
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="border-destructive/40 bg-red-50 text-destructive hover:bg-destructive/10 hover:text-destructive rounded-xl"
-                                    disabled={mutation.isPending}
-                                    onClick={() => setDeletingTeam(team)}
-                                >
-                                    <Trash2 className="mr-2 h-4 w-4" />
-                                    Delete
-                                </Button>
-                            )}
-                            {isCreate && (
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="border-border text-foreground hover:bg-secondary rounded-xl"
-                                    disabled={mutation.isPending}
-                                    onClick={() =>
-                                        form.reset(buildDefaults(null, []))
-                                    }
-                                >
-                                    <RotateCcw className="mr-2 h-4 w-4" />
-                                    Clear
-                                </Button>
-                            )}
-                            {isEdit && (
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="border-border text-foreground hover:bg-secondary rounded-xl"
-                                    disabled={mutation.isPending}
-                                    onClick={() =>
-                                        form.reset(
-                                            buildDefaults(
-                                                team,
-                                                existingMemberIds,
-                                            ),
-                                        )
-                                    }
-                                >
-                                    <RotateCcw className="mr-2 h-4 w-4" />
-                                    Reset
-                                </Button>
-                            )}
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="border-border text-foreground hover:bg-secondary rounded-xl"
-                                onClick={handleClose}
-                            >
-                                <X className="mr-2 h-4 w-4" />
-                                {isView ? 'Close' : 'Cancel'}
-                            </Button>
                             {!isView && (
                                 <Button
                                     type="submit"
@@ -831,11 +624,226 @@ export function TeamFormDialog({
                                     {submitLabel}
                                 </Button>
                             )}
+                        </header>
+
+                        <div className="flex flex-col gap-6 p-6">
+                            <Card className="border-border bg-card">
+                                <CardHeader>
+                                    <CardTitle className="text-base text-foreground">
+                                        General
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Basic information about the team.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="flex flex-col gap-2">
+                                        <Label htmlFor="title">
+                                            Title{' '}
+                                            {!isView && (
+                                                <span className="text-destructive">
+                                                    *
+                                                </span>
+                                            )}
+                                        </Label>
+                                        <Input
+                                            id="title"
+                                            placeholder="e.g. Frontend Engineering"
+                                            disabled={fieldsDisabled}
+                                            className={inputClassName}
+                                            {...form.register('title')}
+                                        />
+                                        {form.formState.errors.title && (
+                                            <p className="text-sm text-destructive">
+                                                {
+                                                    form.formState.errors.title
+                                                        .message
+                                                }
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label htmlFor="description">
+                                            Description
+                                        </Label>
+                                        <Textarea
+                                            id="description"
+                                            placeholder="Optional description of the team..."
+                                            rows={3}
+                                            disabled={fieldsDisabled}
+                                            className={cn(
+                                                'resize-none',
+                                                inputClassName,
+                                            )}
+                                            {...form.register('description')}
+                                        />
+                                        {form.formState.errors.description && (
+                                            <p className="text-sm text-destructive">
+                                                {
+                                                    form.formState.errors
+                                                        .description.message
+                                                }
+                                            </p>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card className="border-border bg-card">
+                                <CardHeader>
+                                    <CardTitle className="text-base text-foreground">
+                                        Team Lead
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Optionally assign a user as the head of
+                                        this team.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <UserSingleCombobox
+                                        options={userOptions}
+                                        value={
+                                            watchedHeadId && watchedHeadId > 0
+                                                ? watchedHeadId
+                                                : undefined
+                                        }
+                                        onChange={(id) =>
+                                            form.setValue('headId', id ?? 0, {
+                                                shouldValidate: true,
+                                            })
+                                        }
+                                        placeholder={
+                                            isUsersLoading
+                                                ? 'Loading users...'
+                                                : 'Select a team lead'
+                                        }
+                                        disabled={
+                                            fieldsDisabled || isUsersLoading
+                                        }
+                                        allowClear
+                                        clearLabel="No team lead"
+                                    />
+                                    {form.formState.errors.headId && (
+                                        <p className="mt-2 text-sm text-destructive">
+                                            {
+                                                form.formState.errors.headId
+                                                    .message
+                                            }
+                                        </p>
+                                    )}
+                                </CardContent>
+                            </Card>
+
+                            <Card className="border-border bg-card">
+                                <CardHeader>
+                                    <CardTitle className="text-base text-foreground">
+                                        Team Members
+                                    </CardTitle>
+                                    <CardDescription>
+                                        People who belong to this team.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <UserMultiCombobox
+                                        options={userOptions}
+                                        value={watchedMemberIds}
+                                        onChange={(ids) =>
+                                            form.setValue('memberIds', ids, {
+                                                shouldValidate: true,
+                                            })
+                                        }
+                                        placeholder={
+                                            isUsersLoading
+                                                ? 'Loading users...'
+                                                : 'Select team members'
+                                        }
+                                        disabled={
+                                            fieldsDisabled || isUsersLoading
+                                        }
+                                        lockedIds={lockedMemberIds}
+                                    />
+                                    {form.formState.errors.memberIds && (
+                                        <p className="mt-2 text-sm text-destructive">
+                                            {
+                                                form.formState.errors.memberIds
+                                                    .message
+                                            }
+                                        </p>
+                                    )}
+                                </CardContent>
+                            </Card>
+
+                            <div className="flex flex-wrap justify-end gap-3 pt-2">
+                                {isEdit && team && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="border-destructive/40 bg-red-50 text-destructive hover:bg-destructive/10 hover:text-destructive rounded-xl"
+                                        disabled={mutation.isPending}
+                                        onClick={() => setDeletingTeam(team)}
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        Delete
+                                    </Button>
+                                )}
+                                {isCreate && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="border-border text-foreground hover:bg-secondary rounded-xl"
+                                        disabled={mutation.isPending}
+                                        onClick={() =>
+                                            form.reset(buildDefaults(null, []))
+                                        }
+                                    >
+                                        <RotateCcw className="mr-2 h-4 w-4" />
+                                        Clear
+                                    </Button>
+                                )}
+                                {isEdit && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="border-border text-foreground hover:bg-secondary rounded-xl"
+                                        disabled={mutation.isPending}
+                                        onClick={() =>
+                                            form.reset(
+                                                buildDefaults(
+                                                    team,
+                                                    existingMemberIds,
+                                                ),
+                                            )
+                                        }
+                                    >
+                                        <RotateCcw className="mr-2 h-4 w-4" />
+                                        Reset
+                                    </Button>
+                                )}
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="border-border text-foreground hover:bg-secondary rounded-xl"
+                                    onClick={handleClose}
+                                >
+                                    <X className="mr-2 h-4 w-4" />
+                                    {isView ? 'Close' : 'Cancel'}
+                                </Button>
+                                {!isView && (
+                                    <Button
+                                        type="submit"
+                                        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
+                                        disabled={mutation.isPending}
+                                    >
+                                        <Save className="mr-2 h-4 w-4" />
+                                        {submitLabel}
+                                    </Button>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
+                    </form>
+                </DialogContent>
+            </Dialog>
 
             <DeleteTeamDialog
                 team={deletingTeam}

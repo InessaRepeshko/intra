@@ -81,9 +81,7 @@ export function useCreateTeamFormMutation() {
             toast.success('Team created successfully');
         },
         onError: (error) => {
-            toast.error(
-                extractApiErrorMessage(error, 'Failed to create team'),
-            );
+            toast.error(extractApiErrorMessage(error, 'Failed to create team'));
         },
     });
 }
@@ -115,9 +113,7 @@ export function useUpdateTeamFormMutation() {
             const toRemove = originalMemberIds.filter((mid) => !next.has(mid));
 
             await Promise.all([
-                ...toAdd.map((memberId) =>
-                    addTeamMember(id, { memberId }),
-                ),
+                ...toAdd.map((memberId) => addTeamMember(id, { memberId })),
                 ...toRemove.map((memberId) => deleteTeamMember(id, memberId)),
             ]);
 
@@ -142,9 +138,7 @@ export function useUpdateTeamFormMutation() {
             toast.success('Team updated successfully');
         },
         onError: (error) => {
-            toast.error(
-                extractApiErrorMessage(error, 'Failed to update team'),
-            );
+            toast.error(extractApiErrorMessage(error, 'Failed to update team'));
         },
     });
 }

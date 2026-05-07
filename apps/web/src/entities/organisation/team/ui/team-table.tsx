@@ -359,12 +359,14 @@ export function TeamTable({
             header: <span className="text-muted-foreground"> Actions </span>,
             headerClassName:
                 'min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1',
-            cell: (team) => <TeamActionsMenu
+            cell: (team) => (
+                <TeamActionsMenu
                     team={team}
                     onView={onView}
                     onEdit={onEdit}
                     onDelete={onDelete}
-                />,
+                />
+            ),
             cellClassName: 'whitespace-nowrap text-center',
         },
     };
@@ -412,11 +414,11 @@ export function TeamTable({
                                 )}
                             </div>
                             <TeamActionsMenu
-                    team={team}
-                    onView={onView}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                />
+                                team={team}
+                                onView={onView}
+                                onEdit={onEdit}
+                                onDelete={onDelete}
+                            />
                         </div>
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">

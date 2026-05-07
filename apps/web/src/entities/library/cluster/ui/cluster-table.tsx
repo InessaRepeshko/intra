@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 
 import type { Cluster } from '@entities/library/cluster/model/mappers';
+import { ClusterBadge } from '@entities/reporting/cluster-score-analytics/ui/cluster-badge';
 import { Button } from '@shared/components/ui/button';
 import {
     DropdownMenu,
@@ -34,7 +35,6 @@ import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { useEffect } from 'react';
 import { SortDirection } from '../model/types';
-import { ClusterBadge } from '@entities/reporting/cluster-score-analytics/ui/cluster-badge';
 
 interface ClustersTableProps {
     clusters: Cluster[];
@@ -193,7 +193,7 @@ export function ClusterTable({
                     {/* <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
                         {cluster.title}
                     </span> */}
-                    <ClusterBadge label={cluster.title} className='w-fit'/>
+                    <ClusterBadge label={cluster.title} className="w-fit" />
                     {cluster.description && (
                         <span className="text-sm text-muted-foreground break-words overflow-wrap-anywhere">
                             {cluster.description}

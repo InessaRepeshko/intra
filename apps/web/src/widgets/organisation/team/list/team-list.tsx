@@ -6,12 +6,12 @@ import type { DateRange } from 'react-day-picker';
 
 import { User } from '@entities/identity/user/model/mappers';
 import { SortDirection } from '@entities/library/competence/model/types';
-import type { Team } from '@entities/organisation/team/model/mappers';
 import {
     useTeamAllPositionTitlesQuery,
     useTeamAllUsersQuery,
     useTeamsQuery,
 } from '@entities/organisation/team/api/team.queries';
+import type { Team } from '@entities/organisation/team/model/mappers';
 import { TeamFilters } from '@entities/organisation/team/ui/team-filters';
 import { TeamTable } from '@entities/organisation/team/ui/team-table';
 import { DeleteTeamDialog } from '@features/organisation/team/delete/ui/DeleteTeamDialog';

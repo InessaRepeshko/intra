@@ -7,12 +7,9 @@ import {
     Boxes,
     Calendar,
     Eye,
-    MoreHorizontal,
-    Pencil,
     Percent,
     RefreshCcw,
     SeparatorHorizontal,
-    Trash2,
     TrendingDown,
     TrendingUp,
     UserRound,
@@ -22,13 +19,6 @@ import {
 import { ClusterScoreAnalytics } from '@entities/reporting/cluster-score-analytics/model/mappers';
 import { Button } from '@shared/components/ui/button';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@shared/components/ui/dropdown-menu';
-import {
     Table,
     TableBody,
     TableCell,
@@ -36,6 +26,12 @@ import {
     TableHeader,
     TableRow,
 } from '@shared/components/ui/table';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@shared/components/ui/tooltip';
 import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
 import { formatNumber } from '@shared/lib/utils/format-number';
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
@@ -57,48 +53,35 @@ interface ClusterScoreAnalyticsTableProps {
     sortField: string;
     sortDirection: SortDirection;
     onSort: (field: string) => void;
-    onDelete?: (clusterScoreAnalytics: ClusterScoreAnalytics) => void;
+    onView?: (clusterScoreAnalytics: ClusterScoreAnalytics) => void;
     resetTrigger?: number;
 }
 
-function ClusterScoreAnalyticsActionsMenu({
+function ClusterScoreAnalyticsViewButton({
     clusterScoreAnalytics,
-    onDelete,
+    onView,
 }: {
     clusterScoreAnalytics: ClusterScoreAnalytics;
-    onDelete?: (clusterScoreAnalytics: ClusterScoreAnalytics) => void;
+    onView?: (clusterScoreAnalytics: ClusterScoreAnalytics) => void;
 }) {
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground"
-                >
-                    <MoreHorizontal className="h-4 w-4" />
-                    <span className="sr-only">Open actions</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Details
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Edit
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                    className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                    onClick={() => onDelete?.(clusterScoreAnalytics)}
-                >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground text-center cursor-pointer"
+                        onClick={() => onView?.(clusterScoreAnalytics)}
+                    >
+                        <Eye className="mr-2 h-4 w-4" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top" sideOffset={6}>
+                    <p>View Details</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
     );
 }
 
@@ -110,7 +93,7 @@ export function ClusterScoreAnalyticsTable({
     sortField,
     sortDirection,
     onSort,
-    onDelete,
+    onView,
     resetTrigger,
 }: ClusterScoreAnalyticsTableProps) {
     const {
@@ -463,9 +446,9 @@ export function ClusterScoreAnalyticsTable({
             headerClassName:
                 'min-w-[80px] w-[100px] whitespace-nowrap text-center pb-1',
             cell: (clusterScoreAnalytics) => (
-                <ClusterScoreAnalyticsActionsMenu
+                <ClusterScoreAnalyticsViewButton
                     clusterScoreAnalytics={clusterScoreAnalytics}
-                    onDelete={onDelete}
+                    onView={onView}
                 />
             ),
             cellClassName: 'whitespace-nowrap text-center',
@@ -570,9 +553,9 @@ export function ClusterScoreAnalyticsTable({
                                     </p>
                                 )}
                             </div>
-                            <ClusterScoreAnalyticsActionsMenu
+                            <ClusterScoreAnalyticsViewButton
                                 clusterScoreAnalytics={clusterScoreAnalytics}
-                                onDelete={onDelete}
+                                onView={onView}
                             />
                         </div>
 

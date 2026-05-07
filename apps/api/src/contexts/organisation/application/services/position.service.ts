@@ -3,7 +3,12 @@ import {
     PositionSearchQuery,
     UpdatePositionPayload,
 } from '@intra/shared-kernel';
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Inject,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import {
     POSITION_COMPETENCE_RELATION_REPOSITORY,
     PositionCompetenceRelationRepositoryPort,
@@ -57,7 +62,13 @@ export class PositionService {
         await this.getById(id);
         const competences = await this.listCompetences(id);
         if (competences.length > 0) {
-            throw new BadRequestException('Position #' + id + ' cannot be deleted. It has ' + competences.length + ' competences assigned to it.');
+            throw new BadRequestException(
+                'Position #' +
+                    id +
+                    ' cannot be deleted. It has ' +
+                    competences.length +
+                    ' competences assigned to it.',
+            );
         }
         // await this.positionCompetenceRelations.deleteAllForPosition(id);
         // await this.positionQuestionTemplateRelations.deleteAllForPosition(id);

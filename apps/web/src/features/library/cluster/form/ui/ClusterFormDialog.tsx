@@ -453,11 +453,9 @@ export function ClusterFormDialog({
                                             : undefined
                                     }
                                     onChange={(id) =>
-                                        form.setValue(
-                                            'competenceId',
-                                            id ?? 0,
-                                            { shouldValidate: true },
-                                        )
+                                        form.setValue('competenceId', id ?? 0, {
+                                            shouldValidate: true,
+                                        })
                                     }
                                     placeholder={
                                         isCompetencesLoading
