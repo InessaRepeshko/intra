@@ -74,9 +74,6 @@ export default async function seedClusterScoreAnalytics(
                             .toString(),
                     },
                 });
-                console.log(
-                    `✅ Updated analytics for ${cluster.competence.code} (${cluster.lowerBound}-${cluster.upperBound}) in cycle "${cycle.title}": ${employeesCount} employees`,
-                );
             } else {
                 // Create new analytics
                 await prisma.clusterScoreAnalytics.create({

@@ -76,6 +76,12 @@ export class CompetenceRepository implements CompetenceRepositoryPort {
                       OR: [
                           { title: { contains: search, mode: 'insensitive' } },
                           { code: { contains: search, mode: 'insensitive' } },
+                          {
+                              description: {
+                                  contains: search,
+                                  mode: 'insensitive',
+                              },
+                          },
                       ],
                   }
                 : {}),

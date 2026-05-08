@@ -17,8 +17,8 @@ import { UserResponse } from '../contexts/identity/presentation/http/models/user
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
+import { AuthResponseDto } from './dto/auth-response.dto';
 import { DevLoginRequestDto } from './dto/dev-login-request.dto';
-import { LoginResponseDto } from './dto/login-response.dto';
 import { AuthSessionGuard } from './guards/auth-session.guard';
 import { RolesGuard } from './guards/roles.guard';
 
@@ -61,7 +61,7 @@ export class AuthController {
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'User successfully logged in',
-        type: LoginResponseDto,
+        type: AuthResponseDto,
     })
     @ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -84,7 +84,7 @@ export class AuthController {
     async googleCallback(
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
-    ): Promise<LoginResponseDto> {
+    ): Promise<AuthResponseDto> {
         return this.authService.handleGoogleCallback(req, res);
     }
 
@@ -117,7 +117,7 @@ export class AuthController {
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'Successfully logged in as the specified user',
-        type: LoginResponseDto,
+        type: AuthResponseDto,
     })
     @ApiResponse({
         status: HttpStatus.UNAUTHORIZED,
@@ -130,7 +130,7 @@ export class AuthController {
     async devLogin(
         @Body() dto: DevLoginRequestDto,
         @Res({ passthrough: true }) res: Response,
-    ): Promise<LoginResponseDto> {
+    ): Promise<AuthResponseDto> {
         return this.authService.devLogin(dto.email, res);
     }
 

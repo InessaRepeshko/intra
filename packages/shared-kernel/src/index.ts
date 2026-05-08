@@ -6,7 +6,10 @@ export { POSITION_CONSTRAINTS } from './organisation/constraints/position.constr
 export { TEAM_CONSTRAINTS } from './organisation/constraints/team.constraints';
 
 export type { CreatePositionPayload } from './organisation/dto/position/create-position-payload.type';
-export type { PositionDto } from './organisation/dto/position/position-dto.interface';
+export type {
+    PositionDto,
+    PositionResponseDto,
+} from './organisation/dto/position/position-dto.interface';
 export type { PositionSearchQuery } from './organisation/dto/position/position-search-query.type';
 export type { UpdatePositionPayload } from './organisation/dto/position/update-position-payload.type';
 export {
@@ -14,11 +17,17 @@ export {
     PositionSortField,
 } from './organisation/enums/position-sort-field.enum';
 
-export type { TeamMemberDto } from './organisation/dto/team-member/team-member-dto.interface';
+export type {
+    TeamMemberDto,
+    TeamMemberResponseDto,
+} from './organisation/dto/team-member/team-member-dto.interface';
 
-export type { AddTeamMemberPayload } from './organisation/dto/team/add-member-payload.type';
+export type { AddTeamMemberPayload } from './organisation/dto/team-member/add-member-payload.type';
 export type { CreateTeamPayload } from './organisation/dto/team/create-team-payload.type';
-export type { TeamDto } from './organisation/dto/team/team-dto.interface';
+export type {
+    TeamDto,
+    TeamResponseDto,
+} from './organisation/dto/team/team-dto.interface';
 export type { TeamSearchQuery } from './organisation/dto/team/team-search-query.type';
 export type { UpdateTeamPayload } from './organisation/dto/team/update-team-payload.type';
 export {
@@ -42,7 +51,10 @@ export type { RoleDto } from './identity/dto/role/role-dto.interface';
 
 export type { CreateUserPayload } from './identity/dto/user/create-user-payload.type';
 export type { UpdateUserPayload } from './identity/dto/user/update-user-payload.type';
-export type { UserDto } from './identity/dto/user/user-dto.interface';
+export type {
+    UserDto,
+    UserResponseDto,
+} from './identity/dto/user/user-dto.interface';
 export type { UserSearchQuery } from './identity/dto/user/user-search-query.type';
 export {
     USER_SORT_FIELDS,
@@ -59,7 +71,10 @@ export {
     QuestionTemplateStatus,
 } from './library/enums/question-template-status.enum';
 
-export type { ClusterDto } from './library/dto/cluster/cluster-dto.interface';
+export type {
+    ClusterDto,
+    ClusterResponseDto,
+} from './library/dto/cluster/cluster-dto.interface';
 export type { ClusterSearchQuery } from './library/dto/cluster/cluster-search-query.type';
 export type { CreateClusterPayload } from './library/dto/cluster/create-cluster-payload.type';
 export type { UpdateClusterPayload } from './library/dto/cluster/update-cluster-payload.type';
@@ -68,7 +83,10 @@ export {
     ClusterSortField,
 } from './library/enums/cluster-sort-field.enum';
 
-export type { CompetenceDto } from './library/dto/competence/competence-dto.interface';
+export type {
+    CompetenceDto,
+    CompetenceResponseDto,
+} from './library/dto/competence/competence-dto.interface';
 export type { CompetenceSearchQuery } from './library/dto/competence/competence-search-query.type';
 export type { CreateCompetencePayload } from './library/dto/competence/create-competence-payload.type';
 export type { UpdateCompetencePayload } from './library/dto/competence/update-competence-payload.type';
@@ -78,7 +96,10 @@ export {
 } from './library/enums/competence-sort-field.enum';
 
 export type { CreateQuestionTemplatePayload } from './library/dto/question-template/create-question-template-payload.type';
-export type { QuestionTemplateDto } from './library/dto/question-template/question-template-dto.interface';
+export type {
+    QuestionTemplateDto,
+    QuestionTemplateResponseDto,
+} from './library/dto/question-template/question-template-dto.interface';
 export type { QuestionTemplateSearchQuery } from './library/dto/question-template/question-template-search-query.type';
 export type { UpdateQuestionTemplatePayload } from './library/dto/question-template/update-question-template-payload.type';
 export {
@@ -111,7 +132,10 @@ export {
 } from './feedback360/enums/review-stage.enum';
 export { isAnonymityThresholdMet } from './feedback360/rules/anonymity.rules';
 
-export type { AnswerDto } from './feedback360/dto/answer/answer-dto.interface';
+export type {
+    AnswerDto,
+    AnswerResponseDto,
+} from './feedback360/dto/answer/answer-dto.interface';
 export type { AnswerSearchQuery } from './feedback360/dto/answer/answer-search-query.type';
 export type { CreateAnswerPayload } from './feedback360/dto/answer/create-answer-payload.type';
 export {
@@ -119,16 +143,25 @@ export {
     AnswerSortField,
 } from './feedback360/enums/answer-sort-field.enum';
 
-export type { ClusterScoreDto } from './feedback360/dto/cluster-score/cluster-score-dto.interface';
+export type {
+    ClusterScoreDto,
+    ClusterScoreResponseDto,
+} from './feedback360/dto/cluster-score/cluster-score-dto.interface';
 export type { ClusterScoreSearchQuery } from './feedback360/dto/cluster-score/cluster-score-search-query.type';
-export type { ClusterScoreWithRelationsDto } from './feedback360/dto/cluster-score/cluster-score-with-relations-dto.interface';
+export type {
+    ClusterScoreWithRelationsDto,
+    ClusterScoreWithRelationsResponseDto,
+} from './feedback360/dto/cluster-score/cluster-score-with-relations-dto.interface';
 export type { UpsertClusterScorePayload } from './feedback360/dto/cluster-score/upsert-cluster-score-payload.type';
 export {
     CLUSTER_SCORE_SORT_FIELDS,
     ClusterScoreSortField,
 } from './feedback360/enums/cluster-score-sort-field.enum';
 
-export type { ClusterScoreAnalyticsDto } from './feedback360/dto/cluster-score-analytics/cluster-score-analytics-dto.interface';
+export type {
+    ClusterScoreAnalyticsDto,
+    ClusterScoreAnalyticsResponseDto,
+} from './feedback360/dto/cluster-score-analytics/cluster-score-analytics-dto.interface';
 export type { ClusterScoreAnalyticsSearchQuery } from './feedback360/dto/cluster-score-analytics/cluster-score-analytics-search-query.type';
 export type { UpdateClusterScoreAnalyticsPayload } from './feedback360/dto/cluster-score-analytics/update-cluster-score-analytics-payload.type';
 export type { UpsertClusterScoreAnalyticsPayload } from './feedback360/dto/cluster-score-analytics/upsert-cluster-score-analytics-payload.type';
@@ -138,8 +171,14 @@ export {
 } from './feedback360/enums/cluster-score-analytics-sort-field.enum';
 
 export type { CreateCyclePayload } from './feedback360/dto/cycle/create-cycle-payload.type';
-export type { CycleDto } from './feedback360/dto/cycle/cycle-dto.interface';
-export type { CycleSearchQuery } from './feedback360/dto/cycle/cycle-search-query.type';
+export type {
+    CycleDto,
+    CycleResponseDto,
+} from './feedback360/dto/cycle/cycle-dto.interface';
+export type {
+    CycleFilterQuery,
+    CycleSearchQuery,
+} from './feedback360/dto/cycle/cycle-search-query.type';
 export type { UpdateCyclePayload } from './feedback360/dto/cycle/update-cycle-payload.type';
 export {
     CYCLE_SORT_FIELDS,
@@ -148,7 +187,10 @@ export {
 
 export type { AddQuestionToReviewPayload } from './feedback360/dto/question/add-question-to-review-payload.type';
 export type { CreateQuestionPayload } from './feedback360/dto/question/create-question-payload.type';
-export type { QuestionDto } from './feedback360/dto/question/question-dto.interface';
+export type {
+    QuestionDto,
+    QuestionResponseDto,
+} from './feedback360/dto/question/question-dto.interface';
 export type { QuestionSearchQuery } from './feedback360/dto/question/question-search-query.type';
 export {
     QUESTION_SORT_FIELDS,
@@ -156,7 +198,10 @@ export {
 } from './feedback360/enums/question-sort-field.enum';
 
 export type { AddRespondentPayload } from './feedback360/dto/respondent/add-respondent-payload.type';
-export type { RespondentDto } from './feedback360/dto/respondent/respondent-dto.interface';
+export type {
+    RespondentDto,
+    RespondentResponseDto,
+} from './feedback360/dto/respondent/respondent-dto.interface';
 export type { RespondentSearchQuery } from './feedback360/dto/respondent/respondent-search-query.type';
 export type { UpdateRespondentPayload } from './feedback360/dto/respondent/update-respondent-playload.type';
 export {
@@ -164,7 +209,10 @@ export {
     RespondentSortField,
 } from './feedback360/enums/respondent-sort-field.enum';
 
-export type { ReviewQuestionRelationDto } from './feedback360/dto/review-qiestion-relation/review-qiestion-relation-dto.interface';
+export type {
+    ReviewQuestionRelationDto,
+    ReviewQuestionRelationResponseDto,
+} from './feedback360/dto/review-qiestion-relation/review-qiestion-relation-dto.interface';
 export type { ReviewQuestionRelationSearchQuery } from './feedback360/dto/review-qiestion-relation/review-qiestion-relation-search-query.type';
 export {
     REVIEW_QUESTION_RELATION_SORT_FIELDS,
@@ -172,7 +220,10 @@ export {
 } from './feedback360/enums/review-qiestion-relation-sort-field.enum';
 
 export type { CreateReviewPayload } from './feedback360/dto/review/create-review-payload.type';
-export type { ReviewDto } from './feedback360/dto/review/review-dto.interface';
+export type {
+    ReviewDto,
+    ReviewResponseDto,
+} from './feedback360/dto/review/review-dto.interface';
 export type { ReviewSearchQuery } from './feedback360/dto/review/review-search-query.type';
 export type { UpdateReviewPayload } from './feedback360/dto/review/update-review-payload.type';
 export {
@@ -181,7 +232,10 @@ export {
 } from './feedback360/enums/review-sort-field.enum';
 
 export type { AddReviewerPayload } from './feedback360/dto/reviewer/add-reviewer-payload.type';
-export type { ReviewerDto } from './feedback360/dto/reviewer/reviewer-dto.interface';
+export type {
+    ReviewerDto,
+    ReviewerResponseDto,
+} from './feedback360/dto/reviewer/reviewer-dto.interface';
 export type { ReviewerSearchQuery } from './feedback360/dto/reviewer/reviewer-search-query.type';
 export {
     REVIEWER_SORT_FIELDS,
@@ -197,19 +251,39 @@ export {
     CommentSentiment,
 } from './reporting/enums/comment-sentiment.enum';
 export { ENTITY_TYPES, EntityType } from './reporting/enums/entity-type.enum';
+export {
+    REPORT_ANALYTICS_SORT_FIELDS,
+    ReportAnalyticsSortField,
+} from './reporting/enums/report-analytics-sort-field.enum';
 
-export type { ReportCommentDto } from './reporting/dto/comment/report-comment-dto.interface';
-export type { ReportCompetenceSummaryDto } from './reporting/dto/competence/report-competence-summary-dto.interface';
-export type { ReportQuestionSummaryDto } from './reporting/dto/question/report-question-summary-dto.interface';
-export type { ReportAnalyticsDto } from './reporting/dto/report/report-analytics-dto.interface';
-export type { ReportDto } from './reporting/dto/report/report-dto.interface';
-export type { ReportTextAnswerDto } from './reporting/dto/report/report-text-answer-dto.interface';
+export type {
+    ReportAnalyticsDto,
+    ReportAnalyticsResponseDto,
+} from './reporting/dto/analytics/report-analytics-dto.interface';
+export type { ReportAnalyticsSearchQuery } from './reporting/dto/analytics/report-analytics-search-query.type';
+export type { ReportCommentDto } from './reporting/dto/report/comment/report-comment-dto.interface';
+export type { ReportCompetenceSummaryDto } from './reporting/dto/report/competence/report-competence-summary-dto.interface';
+export type { ReportQuestionSummaryDto } from './reporting/dto/report/question/report-question-summary-dto.interface';
+export type {
+    ReportDto,
+    ReportResponseDto,
+} from './reporting/dto/report/report-dto.interface';
+export type { ReportSearchQuery } from './reporting/dto/report/report-search-query.type';
+export type { ReportTextAnswerDto } from './reporting/dto/text-answer/report-text-answer-dto.interface';
+export {
+    REPORT_SOFT_FIELDS,
+    ReportSortField,
+} from './reporting/enums/report-sort-field.enum';
 
-export type { CompetenceAccumulator } from './reporting/dto/competence/competence-accumulator.type';
 export type { EntitySummaryMetricsDto } from './reporting/dto/entity-summary-metrics-dto.interface';
 export type { EntitySummaryTotals } from './reporting/dto/entity-summary-totals.type';
-export type { QuestionAccumulator } from './reporting/dto/question/question-accumulator.type';
 export type { ReportEntitySummaryTotalsDto } from './reporting/dto/report-entity-summary-totals-dto.interface';
+export type { CompetenceAccumulator } from './reporting/dto/report/competence/competence-accumulator.type';
+export type { QuestionAccumulator } from './reporting/dto/report/question/question-accumulator.type';
 
 /* Auth */
-export type { AuthResponseDto } from './auth/dto/auth-response-dto.interface';
+export type {
+    AuthDto,
+    AuthSession,
+    AuthUser,
+} from './auth/dto/auth-dto.interface';

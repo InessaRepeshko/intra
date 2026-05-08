@@ -39,17 +39,17 @@
     },
     "dependencies": {
         "@intra/shared-kernel": "workspace:*",
-        "@prisma/adapter-pg": "^7.2.0",
-        "@prisma/client": "^7.2.0",
+        "@prisma/adapter-pg": "^7.4.0",
+        "@prisma/client": "^7.4.0",
         "decimal.js": "^10.6.0"
     },
     "devDependencies": {
-        "@types/node": "^22.19.6",
-        "dotenv": "^17.2.3",
-        "dotenv-cli": "^7.4.4",
-        "prisma": "^7.2.0",
+        "@types/node": "^25.2.3",
+        "dotenv": "^17.3.1",
+        "dotenv-cli": "^11.0.0",
+        "prisma": "^7.4.0",
         "tsx": "^4.21.0",
-        "typescript": "^5.7.3"
+        "typescript": "^5.9.3"
     }
 =======
   "name": "@intra/database",

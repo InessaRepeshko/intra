@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AuthModule } from 'src/auth/auth.module';
 import { DatabaseModule } from 'src/database/database.module';
+import { CYCLE_REPOSITORY } from '../feedback360/application/ports/cycle.repository.port';
 import { Feedback360Module } from '../feedback360/feedback360.module';
+import { CycleRepository } from '../feedback360/infrastructure/prisma-repositories/cycle.repository';
 import { CLUSTER_REPOSITORY } from '../library/application/ports/cluster.repository.port';
 import { ClusterRepository } from '../library/infrastructure/prisma-repositories/cluster.repository';
 import { ReviewStageListener } from './application/listeners/review-stage.listener';
@@ -42,6 +44,7 @@ import { ReportingController } from './presentation/http/controllers/reporting.c
         ReportAnalyticsRepository,
         ReportCommentRepository,
         ClusterRepository,
+        CycleRepository,
         { provide: REPORT_REPOSITORY, useExisting: ReportRepository },
         {
             provide: REPORT_ANALYTICS_REPOSITORY,
@@ -52,6 +55,7 @@ import { ReportingController } from './presentation/http/controllers/reporting.c
             useExisting: ReportCommentRepository,
         },
         { provide: CLUSTER_REPOSITORY, useExisting: ClusterRepository },
+        { provide: CYCLE_REPOSITORY, useExisting: CycleRepository },
     ],
     exports: [
         ReportingService,

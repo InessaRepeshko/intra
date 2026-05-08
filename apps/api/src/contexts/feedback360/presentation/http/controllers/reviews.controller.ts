@@ -1,4 +1,4 @@
-import { IdentityRole, RespondentCategory } from '@intra/shared-kernel';
+import { IdentityRole } from '@intra/shared-kernel';
 import {
     Body,
     ClassSerializerInterceptor,
@@ -37,10 +37,10 @@ import { UserDomain } from 'src/contexts/identity/domain/user.domain';
 import { ReviewService } from '../../../application/services/review.service';
 import { AnswerQueryDto } from '../dto/answers/answer-query.dto';
 import { CreateAnswerDto } from '../dto/answers/create-answer.dto';
-import { AttachQuestionDto } from '../dto/questions/attach-question.dto';
 import { CreateRespondentDto } from '../dto/respondents/create-respondent.dto';
 import { RespondentQueryDto } from '../dto/respondents/respondent-query.dto';
 import { UpdateRespondentDto } from '../dto/respondents/update-respondent.dto';
+import { AttachQuestionToReviewDto } from '../dto/review-question-relations/attach-question.dto';
 import { ReviewQuestionRelationQueryDto } from '../dto/review-question-relations/review-question-relation-query.dto';
 import { CreateReviewerDto } from '../dto/reviewers/create-reviewer.dto';
 import { ReviewerQueryDto } from '../dto/reviewers/reviewer-query.dto';
@@ -136,9 +136,9 @@ export class ReviewController {
     }
 
     @Post(':id/questions')
-    @ApiOperation({ summary: 'Add question from library to Review' })
+    @ApiOperation({ summary: 'Add question template from library to Review' })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
-    @ApiBody({ type: AttachQuestionDto })
+    @ApiBody({ type: AttachQuestionToReviewDto })
     @ApiResponse({
         status: HttpStatus.CREATED,
         type: ReviewQuestionRelationResponse,
@@ -146,11 +146,11 @@ export class ReviewController {
     @ApiCreateAndUpdateErrorResponses()
     async attachQuestion(
         @Param('id') id: string,
-        @Body() dto: AttachQuestionDto,
+        @Body() dto: AttachQuestionToReviewDto,
     ): Promise<ReviewQuestionRelationResponse> {
         const relation = await this.reviews.attachQuestion({
             reviewId: Number(id),
-            questionId: dto.questionId,
+            questionTemplateId: dto.questionTemplateId,
         });
         return ReviewQuestionRelationHttpMapper.toResponse(relation);
     }
@@ -235,7 +235,12 @@ export class ReviewController {
     }
 
     @Get(':id/answers')
-    @Roles(IdentityRole.ADMIN)
+    @Roles(
+        IdentityRole.ADMIN,
+        IdentityRole.HR,
+        IdentityRole.MANAGER,
+        IdentityRole.EMPLOYEE,
+    )
     @ApiOperation({ summary: 'List answers to Review' })
     @ApiParam({ name: 'id', description: 'Review id', type: 'number' })
     @ApiQuery({ type: AnswerQueryDto })
@@ -249,10 +254,12 @@ export class ReviewController {
     async listAnswers(
         @Param('id') id: string,
         @Query() query: AnswerQueryDto,
+        @CurrentUser() actor: UserDomain,
     ): Promise<AnswerResponse[]> {
         const answers = await this.reviews.listAnswers(
             Number(id),
-            query.respondentCategory as RespondentCategory | undefined,
+            query.respondentCategory,
+            actor,
         );
         return answers.map(AnswerHttpMapper.toResponse);
     }
@@ -440,7 +447,7 @@ export class ReviewController {
         @CurrentUser() user: UserDomain,
     ): Promise<{ message: string }> {
         const actorId = user.id!;
-        const actorName = user.fullName!;
+        const actorName = user.fullName;
 
         await this.reviews.forceCompleteReview(Number(id), actorId, actorName);
 

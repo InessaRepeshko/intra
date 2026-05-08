@@ -1,6 +1,6 @@
 import { AnswerType } from '../../../library/enums/answer-type.enum';
 
-export interface QuestionDto {
+export interface QuestionBaseDto<TDate = Date> {
     id: number;
     cycleId?: number | null;
     questionTemplateId?: number | null;
@@ -8,5 +8,9 @@ export interface QuestionDto {
     answerType: AnswerType;
     competenceId?: number | null;
     isForSelfassessment: boolean;
-    createdAt: Date;
+    createdAt: TDate;
 }
+
+export type QuestionDto = QuestionBaseDto<Date>;
+
+export type QuestionResponseDto = QuestionBaseDto<string>;

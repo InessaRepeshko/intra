@@ -1,0 +1,549 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+import type { DateRange } from 'react-day-picker';
+
+import {
+    useClusterScoreAnalyticsClusterScoreTitlesQuery,
+    useClusterScoreAnalyticsCompetenceTitlesQuery,
+    useClusterScoreAnalyticsCycleTitlesQuery,
+    useClusterScoresAnalyticsQuery,
+} from '@entities/reporting/cluster-score-analytics/api/cluster-score-analytics.queries';
+import type { ClusterScoreAnalytics } from '@entities/reporting/cluster-score-analytics/model/mappers';
+import { SortDirection } from '@entities/reporting/cluster-score-analytics/model/types';
+import { ClusterScoreAnalyticsFilters } from '@entities/reporting/cluster-score-analytics/ui/cluster-score-analytics-filters';
+import { ClusterScoreAnalyticsTable } from '@entities/reporting/cluster-score-analytics/ui/cluster-score-analytics-table';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@shared/components/ui/card';
+import { Spinner } from '@shared/components/ui/spinner';
+import { TablePagination } from '@shared/ui/table-pagination';
+
+const ITEMS_PER_PAGE = 6;
+
+export function ClusterScoreAnalyticsList() {
+    const [search, setSearch] = useState('');
+    const [dateRange, setDateRange] = useState<DateRange | undefined>(
+        undefined,
+    );
+    const [clusterScores, setClusterScores] = useState<string[]>([]);
+    const [competences, setCompetences] = useState<string[]>([]);
+    const [cycles, setCycles] = useState<string[]>([]);
+    const [lowerBounds, setLowerBounds] = useState<string[]>([]);
+    const [upperBounds, setUpperBounds] = useState<string[]>([]);
+    const [sortField, setSortField] = useState('createdAt');
+    const [sortDirection, setSortDirection] = useState<SortDirection>(
+        SortDirection.DESC,
+    );
+    const [currentPage, setCurrentPage] = useState(1);
+    const [resetTrigger, setResetTrigger] = useState(0);
+
+    // Feature dialogs state
+    const [deleteClusterScoreAnalytics, setDeleteClusterScoreAnalytics] =
+        useState<ClusterScoreAnalytics | null>(null);
+
+    // Always fetch all clusters - filtering is done client-side
+    const {
+        data: allClusterScoreAnalytics = [],
+        isLoading,
+        isError,
+    } = useClusterScoresAnalyticsQuery({});
+
+    // Use allClusterScoreAnalytics for both display and filter options
+    const allClusterIds = Array.from(
+        new Set(
+            allClusterScoreAnalytics
+                .map((c) => c.clusterId)
+                .filter((id) => id !== undefined && id !== null),
+        ),
+    );
+
+    const {
+        clusterData: clusterScoreTitles,
+        isLoading: isClusterScoreTitlesLoading,
+    } = useClusterScoreAnalyticsClusterScoreTitlesQuery(allClusterIds);
+
+    const competenceIds = Object.values(clusterScoreTitles).map(
+        (c) => c.competenceId,
+    );
+
+    const { competenceTitles, isLoading: isCompetenceTitlesLoading } =
+        useClusterScoreAnalyticsCompetenceTitlesQuery(competenceIds);
+
+    const allCycleIds = Array.from(
+        new Set(
+            allClusterScoreAnalytics
+                .map((c) => c.cycleId)
+                .filter((id) => id !== undefined && id !== null),
+        ),
+    );
+
+    const { cycleTitles, isLoading: isCycleTitlesLoading } =
+        useClusterScoreAnalyticsCycleTitlesQuery(allCycleIds);
+
+    // Filter unique cluster score titles and cycle titles
+    const clusterScoreTitlesOptions = useMemo(() => {
+        const uniqueClusterScoreTitles = new Set<string>();
+
+        allClusterScoreAnalytics.forEach((clusterScoreAnalytics) => {
+            const title = clusterScoreAnalytics.clusterId
+                ? clusterScoreTitles[clusterScoreAnalytics.clusterId]?.title
+                : undefined;
+            if (title && title.trim() !== '') {
+                uniqueClusterScoreTitles.add(title);
+            }
+        });
+
+        return Array.from(uniqueClusterScoreTitles).sort((a, b) =>
+            a.localeCompare(b),
+        );
+    }, [allClusterScoreAnalytics, clusterScoreTitles]);
+
+    const competenceTitlesOptions = useMemo(() => {
+        const uniqueCompetenceTitles = new Set<string>();
+
+        allClusterScoreAnalytics.forEach((clusterScoreAnalytics) => {
+            const title =
+                clusterScoreAnalytics.clusterId &&
+                clusterScoreTitles[clusterScoreAnalytics.clusterId]
+                    ?.competenceId
+                    ? competenceTitles[
+                          clusterScoreTitles[clusterScoreAnalytics.clusterId]
+                              .competenceId
+                      ]?.title
+                    : undefined;
+            if (title && title.trim() !== '') {
+                uniqueCompetenceTitles.add(title);
+            }
+        });
+
+        return Array.from(uniqueCompetenceTitles).sort((a, b) =>
+            a.localeCompare(b),
+        );
+    }, [allClusterScoreAnalytics, competenceTitles]);
+
+    const cycleTitlesOptions = useMemo(() => {
+        const uniqueCycleTitles = new Set<string>();
+
+        allClusterScoreAnalytics.forEach((clusterScoreAnalytics) => {
+            const title = clusterScoreAnalytics.cycleId
+                ? cycleTitles[clusterScoreAnalytics.cycleId]
+                : undefined;
+            if (title && title.trim() !== '') {
+                uniqueCycleTitles.add(title);
+            }
+        });
+
+        return Array.from(uniqueCycleTitles).sort((a, b) => a.localeCompare(b));
+    }, [allClusterScoreAnalytics, cycleTitles]);
+
+    const lowerBoundOptions = useMemo(() => {
+        const uniqueLowerBounds = new Set<number>();
+
+        allClusterScoreAnalytics.forEach((clusterScoreAnalytics) => {
+            if (clusterScoreAnalytics.lowerBound !== null) {
+                uniqueLowerBounds.add(clusterScoreAnalytics.lowerBound);
+            }
+        });
+
+        return Array.from(uniqueLowerBounds)
+            .sort((a, b) => a - b)
+            .map((bound) => String(bound));
+    }, [allClusterScoreAnalytics]);
+
+    const upperBoundOptions = useMemo(() => {
+        const uniqueUpperBounds = new Set<number>();
+
+        allClusterScoreAnalytics.forEach((clusterScoreAnalytics) => {
+            if (clusterScoreAnalytics.upperBound !== null) {
+                uniqueUpperBounds.add(clusterScoreAnalytics.upperBound);
+            }
+        });
+
+        return Array.from(uniqueUpperBounds)
+            .sort((a, b) => a - b)
+            .map((bound) => String(bound));
+    }, [allClusterScoreAnalytics]);
+
+    const handleSort = (field: string) => {
+        if (sortField === field) {
+            setSortDirection((prev) =>
+                prev === SortDirection.ASC
+                    ? SortDirection.DESC
+                    : SortDirection.ASC,
+            );
+        } else {
+            setSortField(field);
+            setSortDirection(SortDirection.ASC);
+        }
+        setCurrentPage(1);
+    };
+
+    const handleReset = () => {
+        setSearch('');
+        setDateRange(undefined);
+        setClusterScores([]);
+        setCompetences([]);
+        setCycles([]);
+        setLowerBounds([]);
+        setUpperBounds([]);
+        setSortField('createdAt');
+        setSortDirection(SortDirection.DESC);
+        setCurrentPage(1);
+        setResetTrigger((prev) => prev + 1);
+    };
+
+    // Client-side filtering for date range, title, competence titles
+    const filteredClusterScoreAnalytics = useMemo(() => {
+        let result = allClusterScoreAnalytics;
+
+        if (search.trim()) {
+            const lowerSearch = search.toLowerCase();
+            result = result.filter(
+                (c) =>
+                    (competenceTitles[
+                        clusterScoreTitles[c.clusterId].competenceId
+                    ] &&
+                        competenceTitles[
+                            clusterScoreTitles[c.clusterId].competenceId
+                        ].title &&
+                        competenceTitles[
+                            clusterScoreTitles[c.clusterId].competenceId
+                        ].title
+                            .toLowerCase()
+                            .includes(lowerSearch)) ||
+                    (competenceTitles[
+                        clusterScoreTitles[c.clusterId].competenceId
+                    ] &&
+                        competenceTitles[
+                            clusterScoreTitles[c.clusterId].competenceId
+                        ].description &&
+                        competenceTitles[
+                            clusterScoreTitles[c.clusterId].competenceId
+                        ].description
+                            ?.toLowerCase()
+                            .includes(lowerSearch)),
+            );
+        }
+
+        if (dateRange?.from) {
+            const from = dateRange.from.getTime();
+            result = result.filter((c) => c.createdAt.getTime() >= from);
+        }
+        if (dateRange?.to) {
+            const to = dateRange.to.getTime();
+            result = result.filter((c) => c.createdAt.getTime() <= to);
+        }
+
+        if (clusterScores.length > 0) {
+            result = result.filter(
+                (c) =>
+                    clusterScoreTitles[c.clusterId] &&
+                    clusterScoreTitles[c.clusterId] !== null &&
+                    clusterScores.includes(
+                        clusterScoreTitles[c.clusterId].title ?? '',
+                    ),
+            );
+        }
+
+        if (competences.length > 0) {
+            result = result.filter(
+                (c) =>
+                    competenceTitles[
+                        clusterScoreTitles[c.clusterId].competenceId
+                    ] &&
+                    competenceTitles[
+                        clusterScoreTitles[c.clusterId].competenceId
+                    ] !== null &&
+                    competences.includes(
+                        competenceTitles[
+                            clusterScoreTitles[c.clusterId].competenceId
+                        ].title ?? '',
+                    ),
+            );
+        }
+
+        if (cycles.length > 0) {
+            result = result.filter(
+                (c) =>
+                    cycleTitles[c.cycleId] &&
+                    cycleTitles[c.cycleId] !== null &&
+                    cycles.includes(cycleTitles[c.cycleId] ?? ''),
+            );
+        }
+        if (lowerBounds.length > 0) {
+            const numericLowerBounds = lowerBounds.map((b) => Number(b));
+            result = result.filter(
+                (c) =>
+                    c.lowerBound !== null &&
+                    numericLowerBounds.includes(c.lowerBound),
+            );
+        }
+        if (upperBounds.length > 0) {
+            const numericUpperBounds = upperBounds.map((b) => Number(b));
+            result = result.filter(
+                (c) =>
+                    c.upperBound !== null &&
+                    numericUpperBounds.includes(c.upperBound),
+            );
+        }
+        return result;
+    }, [
+        allClusterScoreAnalytics,
+        search,
+        dateRange,
+        clusterScoreTitles,
+        cycleTitles,
+        clusterScoreTitlesOptions,
+        cycleTitlesOptions,
+        lowerBounds,
+        upperBounds,
+        lowerBoundOptions,
+        upperBoundOptions,
+    ]);
+
+    // Client-side sorting for all fields
+    const sortedClusterScoreAnalytics = useMemo(() => {
+        return [...filteredClusterScoreAnalytics].sort((a, b) => {
+            switch (sortField) {
+                case 'competenceTitle': {
+                    const nameA =
+                        competenceTitles[
+                            clusterScoreTitles[a.clusterId]?.competenceId
+                        ]?.title ?? '';
+                    const nameB =
+                        competenceTitles[
+                            clusterScoreTitles[b.clusterId]?.competenceId
+                        ]?.title ?? '';
+                    return sortDirection === SortDirection.ASC
+                        ? nameA.localeCompare(nameB)
+                        : nameB.localeCompare(nameA);
+                }
+                case 'clusterTitle': {
+                    const nameA = clusterScoreTitles[a.clusterId]?.title ?? '';
+                    const nameB = clusterScoreTitles[b.clusterId]?.title ?? '';
+                    return sortDirection === SortDirection.ASC
+                        ? nameA.localeCompare(nameB)
+                        : nameB.localeCompare(nameA);
+                }
+                case 'createdAt':
+                    return sortDirection === SortDirection.ASC
+                        ? a.createdAt?.getTime() - b.createdAt?.getTime()
+                        : b.createdAt?.getTime() - a.createdAt?.getTime();
+                case 'cycleTitle': {
+                    const nameA = cycleTitles[a.cycleId] ?? '';
+                    const nameB = cycleTitles[b.cycleId] ?? '';
+                    return sortDirection === SortDirection.ASC
+                        ? nameA.localeCompare(nameB)
+                        : nameB.localeCompare(nameA);
+                }
+                case 'lowerBound': {
+                    const countA = a.lowerBound ?? 0;
+                    const countB = b.lowerBound ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                case 'upperBound': {
+                    const countA = a.upperBound ?? 0;
+                    const countB = b.upperBound ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                case 'employeeCount': {
+                    const countA = a.employeesCount ?? 0;
+                    const countB = b.employeesCount ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                case 'minScore': {
+                    const countA = a.minScore ?? 0;
+                    const countB = b.minScore ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                case 'maxScore': {
+                    const countA = a.maxScore ?? 0;
+                    const countB = b.maxScore ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                case 'averageScore': {
+                    const countA = a.averageScore ?? 0;
+                    const countB = b.averageScore ?? 0;
+                    return sortDirection === SortDirection.ASC
+                        ? countA - countB
+                        : countB - countA;
+                }
+                default:
+                    return 0;
+            }
+        });
+    }, [
+        filteredClusterScoreAnalytics,
+        sortField,
+        sortDirection,
+        clusterScoreTitles,
+        cycleTitles,
+        lowerBounds,
+        upperBounds,
+    ]);
+
+    const totalPages = Math.ceil(
+        sortedClusterScoreAnalytics.length / ITEMS_PER_PAGE,
+    );
+    const paginatedClusterScoreAnalytics = sortedClusterScoreAnalytics.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE,
+    );
+
+    // Summary stats
+    const totalClusterScoreAnalytics = allClusterScoreAnalytics.length;
+
+    return (
+        <main className="min-h-screen">
+            <div className="mx-auto max-w-8xl">
+                {/* Page Header */}
+                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between flex-wrap">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
+                            360° Feedback Cluster Score Analytics
+                        </h1>
+                        <p className="mt-1 text-muted-foreground">
+                            Manage cluster score analytics across your
+                            organization.{' '}
+                            <span className="font-medium text-foreground">
+                                {totalClusterScoreAnalytics}
+                            </span>{' '}
+                            total cluster score analytics.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Main Card */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-lg">
+                            All Cluster Score Analytics
+                        </CardTitle>
+                        <CardDescription>
+                            Search, filter, and manage cluster score analytics.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-6">
+                        {/* Filters */}
+                        <ClusterScoreAnalyticsFilters
+                            search={search}
+                            onSearchChange={(val) => {
+                                setSearch(val);
+                                setCurrentPage(1);
+                            }}
+                            dateRange={dateRange}
+                            onDateRangeChange={(range) => {
+                                setDateRange(range);
+                                setCurrentPage(1);
+                            }}
+                            clusterScores={clusterScores}
+                            onClusterScoresChange={(val) => {
+                                setClusterScores(val);
+                                setCurrentPage(1);
+                            }}
+                            clusterScoreOptions={clusterScoreTitlesOptions}
+                            competences={competences}
+                            onCompetencesChange={(val) => {
+                                setCompetences(val);
+                                setCurrentPage(1);
+                            }}
+                            competenceOptions={competenceTitlesOptions}
+                            cycles={cycles}
+                            onCyclesChange={(val) => {
+                                setCycles(val);
+                                setCurrentPage(1);
+                            }}
+                            cycleOptions={cycleTitlesOptions}
+                            lowerBounds={lowerBounds}
+                            onLowerBoundsChange={(val) => {
+                                setLowerBounds(val);
+                                setCurrentPage(1);
+                            }}
+                            lowerBoundOptions={lowerBoundOptions}
+                            upperBounds={upperBounds}
+                            onUpperBoundsChange={(val) => {
+                                setUpperBounds(val);
+                                setCurrentPage(1);
+                            }}
+                            upperBoundOptions={upperBoundOptions}
+                            onReset={handleReset}
+                        />
+
+                        {/* Loading State */}
+                        {(isLoading ||
+                            isClusterScoreTitlesLoading ||
+                            isCycleTitlesLoading) && (
+                            <div className="flex flex-col items-center justify-center text-center py-16 h-8 w-8 text-muted-foreground">
+                                <Spinner />
+                            </div>
+                        )}
+
+                        {/* Error State */}
+                        {isError && (
+                            <div className="flex flex-col items-center justify-center py-16 text-center">
+                                <h3 className="text-lg font-semibold text-destructive">
+                                    Failed to load cluster score analytics
+                                </h3>
+                                <p className="mt-1 text-sm text-muted-foreground">
+                                    Please try refreshing the page.
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Table */}
+                        {!isLoading && !isError && (
+                            <>
+                                <ClusterScoreAnalyticsTable
+                                    clusterScoreAnalytics={
+                                        paginatedClusterScoreAnalytics
+                                    }
+                                    competenceTitles={competenceTitles}
+                                    clusterScoreTitles={clusterScoreTitles}
+                                    cycleTitles={cycleTitles}
+                                    sortField={sortField}
+                                    sortDirection={sortDirection}
+                                    onSort={handleSort}
+                                    resetTrigger={resetTrigger}
+                                    // onDelete={setDeleteClusterScoreAnalytics}
+                                />
+
+                                {/* Pagination */}
+                                <TablePagination
+                                    entityName="cluster score analytics"
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    totalItems={
+                                        filteredClusterScoreAnalytics.length
+                                    }
+                                    limit={ITEMS_PER_PAGE}
+                                    onPageChange={setCurrentPage}
+                                />
+                            </>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Feature Dialogs */}
+            {/* <DeleteClusterScoreAnalyticsDialog
+                clusterScoreAnalytics={deleteClusterScoreAnalytics}
+                onClose={() => setDeleteClusterScoreAnalytics(null)}
+            /> */}
+        </main>
+    );
+}

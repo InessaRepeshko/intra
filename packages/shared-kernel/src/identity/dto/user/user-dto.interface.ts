@@ -1,7 +1,7 @@
 import { IdentityRole } from '../../enums/identity-role.enum';
 import { IdentityStatus } from '../../enums/identity-status.enum';
 
-export interface UserDto {
+export interface UserBaseDto<TDate = Date> {
     id: number;
     firstName: string;
     secondName: string | null;
@@ -14,6 +14,10 @@ export interface UserDto {
     teamId: number | null;
     managerId: number | null;
     roles: IdentityRole[];
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: TDate;
+    updatedAt: TDate;
 }
+
+export type UserDto = UserBaseDto<Date>;
+
+export type UserResponseDto = UserBaseDto<string>;

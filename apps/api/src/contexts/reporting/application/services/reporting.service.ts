@@ -1,12 +1,13 @@
 import {
     AnswerType,
     CompetenceAccumulator,
+    CYCLE_CONSTRAINTS,
     EntitySummaryTotals,
     EntityType,
     IdentityRole,
     REPORT_ANALYTICS_CONSTRAINTS,
+    ReportSearchQuery,
     RespondentCategory,
-    ResponseStatus,
 } from '@intra/shared-kernel';
 import {
     ForbiddenException,
@@ -16,6 +17,10 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import Decimal from 'decimal.js';
+import {
+    CYCLE_REPOSITORY,
+    CycleRepositoryPort,
+} from 'src/contexts/feedback360/application/ports/cycle.repository.port';
 import {
     REVIEWER_REPOSITORY,
     ReviewerRepositoryPort,
@@ -91,7 +96,37 @@ export class ReportingService {
         private readonly clusters: ClusterRepositoryPort,
         @Inject(CLUSTER_SCORE_REPOSITORY)
         private readonly clusterScores: ClusterScoreRepositoryPort,
+        @Inject(CYCLE_REPOSITORY)
+        private readonly cyclesRepo: CycleRepositoryPort,
     ) {}
+
+    private readonly isProduction = process.env.NODE_ENV === 'production';
+
+    async search(
+        query: ReportSearchQuery,
+        actor?: UserDomain,
+    ): Promise<ReportDomain[]> {
+        await this.checkAccessToAllReports(actor);
+        return await this.reports.search(query);
+    }
+
+    /**
+     * Checks if the actor has access to all reports (HR or Admin only).
+     * @param actor The actor to check access for.
+     */
+    async checkAccessToAllReports(actor?: UserDomain): Promise<void> {
+        if (!actor) return;
+
+        const isAdminOrHr =
+            actor?.roles?.includes(IdentityRole.ADMIN) ||
+            actor?.roles?.includes(IdentityRole.HR);
+
+        if (!isAdminOrHr) {
+            throw new ForbiddenException(
+                'You do not have permission to view this report',
+            );
+        }
+    }
 
     async getById(id: number, actor?: UserDomain): Promise<ReportDomain> {
         const report = await this.reports.findById(id);
@@ -162,7 +197,7 @@ export class ReportingService {
     }
 
     /**
-     * Generates a comprehensive report for a review.
+     * Generates a comprehensive report for a review if anonymity threshold is met.
      * Calculates respondent counts and derives analytics from answers.
      * @param reviewId The ID of the review to generate a report for.
      * @returns The generated report.
@@ -186,12 +221,23 @@ export class ReportingService {
             {},
         );
         const respondentCount = allRespondents.length;
+
+        const allAnswers = await this.answers.list({
+            reviewId,
+        });
+
+        if (this.isProduction) {
+            await this.verifyAnonimityThreshold(review, allAnswers);
+        }
+
         const teamTurnout = this.calculateTurnout(
             allRespondents,
+            allAnswers,
             RespondentCategory.TEAM,
         );
         const otherTurnout = this.calculateTurnout(
             allRespondents,
+            allAnswers,
             RespondentCategory.OTHER,
         );
 
@@ -278,6 +324,68 @@ export class ReportingService {
         });
 
         return fullReport;
+    }
+
+    /**
+     * Verifies that the anonymity threshold is met for the given review.
+     * Anonymity threshold is the minimum number of answers
+     * required for a review to be valid for report generation.
+     * If the threshold is not met, an exception is thrown.
+     * @param review The review.
+     * @param answers The actual answers.
+     */
+    private async verifyAnonimityThreshold(
+        review: ReviewDomain,
+        answers: AnswerDomain[],
+    ) {
+        let anonimityThreshold;
+
+        if (review.cycleId) {
+            const cycle = await this.cyclesRepo.findById(review.cycleId);
+            anonimityThreshold = cycle?.minRespondentsThreshold;
+        } else {
+            anonimityThreshold = CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN;
+        }
+
+        const respondentCategories = new Set(
+            answers.map((answer) => answer.respondentCategory),
+        );
+        let isAnonimityThresholdMet: {
+            category: RespondentCategory;
+            met: boolean;
+        }[] = [];
+
+        if (
+            respondentCategories.size === 1 &&
+            respondentCategories.has(RespondentCategory.SELF_ASSESSMENT)
+        ) {
+            throw new NotFoundException(
+                `Not enough answers in category to meet the anonymity threshold ${anonimityThreshold} for review ${review.id}: only self assessment answers available.`,
+            );
+        }
+
+        respondentCategories.forEach((category) => {
+            if (category === RespondentCategory.SELF_ASSESSMENT) {
+                return;
+            }
+
+            const answerCount = this.calculateActualAnswerCount(
+                answers.filter(
+                    (answer) => answer.respondentCategory === category,
+                ),
+            );
+
+            isAnonimityThresholdMet.push({
+                category,
+                met: answerCount < anonimityThreshold,
+            });
+        });
+
+        if (isAnonimityThresholdMet.some((item) => !item.met)) {
+            throw new NotFoundException(
+                `Not enough answers in category to meet the anonymity threshold ${anonimityThreshold} for review ${review.id}: ${JSON.stringify(isAnonimityThresholdMet)}`,
+            );
+        }
     }
 
     /**
@@ -440,30 +548,36 @@ export class ReportingService {
 
     /**
      * Calculates the turnout percentage for a specific category of respondents.
-     * Formula: (completed / total) * 100
+     * Formula: (actual answers / assigned respondents) * 100
      * @param respondents The list of all respondents.
+     * @param answers The list of all answers.
      * @param category The category to calculate turnout for.
      * @returns The turnout percentage as a Decimal, or null if no respondents in category.
      */
     private calculateTurnout(
         respondents: RespondentDomain[],
+        answers: AnswerDomain[],
         category: RespondentCategory,
     ): Decimal | null {
-        const categoryRespondents = respondents.filter(
+        const assignedRespondents = respondents.filter(
             (respondent) => respondent.category === category,
         );
-        if (categoryRespondents.length === 0) {
+        const actualAnswers = this.calculateActualAnswerCount(
+            answers.filter((answer) => answer.respondentCategory === category),
+        );
+
+        if (assignedRespondents.length === 0 && actualAnswers.greaterThan(0)) {
             return null;
         }
 
-        const completed = categoryRespondents.filter(
-            (respondent) =>
-                respondent.responseStatus === ResponseStatus.COMPLETED,
-        ).length;
+        if (assignedRespondents.length === 0 || actualAnswers.equals(0)) {
+            return new Decimal(0);
+        }
 
-        const turnout = new Decimal(completed)
-            .dividedBy(categoryRespondents.length)
+        const turnout = new Decimal(actualAnswers)
+            .dividedBy(assignedRespondents.length)
             .times(100);
+
         return this.roundDecimal(turnout);
     }
 
@@ -813,6 +927,29 @@ export class ReportingService {
                 deltaPercentageByOther,
             ),
         };
+    }
+
+    /**
+     * Calculates the actual answer count for a specific review.
+     * @param answers The review answers to calculate the actual answer count from.
+     * @returns The actual answer count.
+     */
+    private calculateActualAnswerCount(answers: AnswerDomain[]): Decimal {
+        if (answers.length === 0) return new Decimal(0);
+
+        const questionCounts = answers.reduce(
+            (acc, item) => {
+                acc[item.questionId] = (acc[item.questionId] || 0) + 1;
+                return acc;
+            },
+            {} as Record<number, number>,
+        );
+
+        const mostFrequentId = Object.values(questionCounts).reduce((a, b) =>
+            questionCounts[a] > questionCounts[b] ? a : b,
+        );
+
+        return new Decimal(mostFrequentId);
     }
 
     /**

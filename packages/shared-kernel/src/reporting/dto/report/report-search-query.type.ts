@@ -1,0 +1,29 @@
+import { SortDirection } from '../../../common/enums/sort-direction.enum';
+import { ReportSortField } from '../../enums/report-sort-field.enum';
+
+export type ReportSearchQuery = {
+    reviewId?: number;
+    cycleId?: number;
+    respondentCount?: number;
+    turnoutPctOfTeam?: number;
+    turnoutPctOfOther?: number;
+    questionTotAvgBySelf?: number;
+    questionTotAvgByTeam?: number;
+    questionTotAvgByOthers?: number;
+    questionTotPctBySelf?: number;
+    questionTotPctByTeam?: number;
+    questionTotPctByOthers?: number;
+    questionTotDeltaPctByTeam?: number;
+    questionTotDeltaPctByOthers?: number;
+    competenceTotAvgBySelf?: number;
+    competenceTotAvgByTeam?: number;
+    competenceTotAvgByOthers?: number;
+    competenceTotPctBySelf?: number;
+    competenceTotPctByTeam?: number;
+    competenceTotPctByOthers?: number;
+    competenceTotDeltaPctByTeam?: number;
+    competenceTotDeltaPctByOthers?: number;
+    createdAt?: Date;
+    sortBy?: ReportSortField;
+    sortDirection?: SortDirection;
+};

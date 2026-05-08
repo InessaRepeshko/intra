@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from 'src/auth/auth.module';
+import { POSITION_COMPETENCE_RELATION_REPOSITORY } from 'src/contexts/library/application/ports/position-competence-relation.repository.port';
+import { PositionCompetenceRelationRepository } from 'src/contexts/library/infrastructure/prisma-repositories/position-competence-relation.repository';
 import { DatabaseModule } from 'src/database/database.module';
 import { IdentityModule } from '../identity/identity.module';
 import { ORGANISATION_POSITION_HIERARCHY_REPOSITORY } from './application/ports/position-hierarchy.repository.port';
@@ -24,6 +26,7 @@ import { TeamsController } from './presentation/http/controllers/teams.controlle
         TeamRepository,
         PositionRepository,
         PositionHierarchyRepository,
+        PositionCompetenceRelationRepository,
         { provide: ORGANISATION_TEAM_REPOSITORY, useExisting: TeamRepository },
         {
             provide: ORGANISATION_POSITION_REPOSITORY,
@@ -32,6 +35,10 @@ import { TeamsController } from './presentation/http/controllers/teams.controlle
         {
             provide: ORGANISATION_POSITION_HIERARCHY_REPOSITORY,
             useExisting: PositionHierarchyRepository,
+        },
+        {
+            provide: POSITION_COMPETENCE_RELATION_REPOSITORY,
+            useExisting: PositionCompetenceRelationRepository,
         },
     ],
     exports: [TeamService, PositionService, PositionHierarchyService],

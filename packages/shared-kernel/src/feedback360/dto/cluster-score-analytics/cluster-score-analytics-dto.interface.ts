@@ -1,4 +1,4 @@
-export interface ClusterScoreAnalyticsDto {
+export interface ClusterScoreAnalyticsBaseDto<TDate = Date> {
     id: number;
     cycleId: number;
     clusterId: number;
@@ -8,6 +8,11 @@ export interface ClusterScoreAnalyticsDto {
     minScore: number;
     maxScore: number;
     averageScore: number;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: TDate;
+    updatedAt: TDate;
 }
+
+export type ClusterScoreAnalyticsDto = ClusterScoreAnalyticsBaseDto<Date>;
+
+export type ClusterScoreAnalyticsResponseDto =
+    ClusterScoreAnalyticsBaseDto<string>;

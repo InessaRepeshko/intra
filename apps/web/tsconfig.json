@@ -1,7 +1,12 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -18,8 +23,41 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
+    "rootDir": "./",
+    "outDir": "./dist",
     "paths": {
-      "@/*": ["./src/*"]
+      "@intra/web": [
+        "./src/*"
+      ],
+      "@/*": [
+        "./src/*",
+        "src/*"
+      ],
+      "@public/*": [
+        "./public/*"
+      ],
+      "@src/*": [
+        "./src/*"
+      ],
+      "@entities/*": [
+        "./src/entities/*"
+      ],
+      "@features/*": [
+        "./src/features/*"
+      ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@pages/*": [
+        "./src/pages/*"
+      ],
+      "@shared/*": [
+        "./src/shared/*"
+      ],
+      "@widgets/*": [
+        "./src/widgets/*"
+      ]
     }
   },
   "include": [
@@ -30,5 +68,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }
