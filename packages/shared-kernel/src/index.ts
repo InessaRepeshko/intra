@@ -276,6 +276,7 @@ export {
     ReportSortField,
 } from './reporting/enums/report-sort-field.enum';
 
+<<<<<<< HEAD
 export type {
     StrategicReportDto,
     StrategicReportResponseDto,
@@ -299,11 +300,14 @@ export {
 export { REPORT_INSIGHTS_CONSTRAINTS } from './reporting/constraints/report-insights.constraints';
 export type { EntityAverageInsightsDto } from './reporting/dto/entity-average-insight-dto.interface';
 export type { EntityInsightSummaryDto } from './reporting/dto/entity-insight-summary-dto.interface';
+=======
+>>>>>>> main
 export type { EntitySummaryMetricsDto } from './reporting/dto/entity-summary-metrics-dto.interface';
 export type { EntitySummaryTotals } from './reporting/dto/entity-summary-totals.type';
 export type { ReportEntitySummaryTotalsDto } from './reporting/dto/report-entity-summary-totals-dto.interface';
 export type { CompetenceAccumulator } from './reporting/dto/report/competence/competence-accumulator.type';
 export type { QuestionAccumulator } from './reporting/dto/report/question/question-accumulator.type';
+<<<<<<< HEAD
 export type {
     ReportInsightDto,
     ReportInsightResponseDto,
@@ -313,6 +317,8 @@ export type {
     StrategicReportInsightResponseDto,
 } from './reporting/dto/strategic-report/strategic-report-insight-dto.interface';
 export { INSIGHT_TYPES, InsightType } from './reporting/enums/insight.enum';
+=======
+>>>>>>> main
 
 /* Auth */
 export type {

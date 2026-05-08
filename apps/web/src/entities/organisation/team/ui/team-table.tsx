@@ -9,7 +9,11 @@ import {
     Pencil,
     Trash2,
     UserRound,
+<<<<<<< HEAD
     UsersRound,
+=======
+    Users,
+>>>>>>> main
 } from 'lucide-react';
 
 import { cn } from '@/shared/lib/utils/cn';
@@ -143,10 +147,17 @@ export function TeamTable({
                     isExpanded ? 'bg-muted/30' : 'max-w-[400px]',
                 )}
             >
+<<<<<<< HEAD
                 {isExpanded ? (
                     <div className="flex flex-row items-center justify-center gap-1">
                         <Award className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                         <div className="flex flex-col flex-wrap gap-1 items-start justify-start text-start animate-in fade-in slide-in-from-top-1">
+=======
+                <Award className="h-3.5 w-3.5 shrink-0" />
+                {isExpanded ? (
+                    <div className="flex flex-col flex-wrap gap-1 items-center justify-center animate-in fade-in slide-in-from-top-1">
+                        <div className="flex flex-col items-start justify-start text-start">
+>>>>>>> main
                             {positions.map((p, index) => (
                                 <span
                                     key={p.id}
@@ -157,11 +168,18 @@ export function TeamTable({
                                 </span>
                             ))}
                         </div>
+<<<<<<< HEAD
                         <ChevronUp className="h-3 w-3 text-muted-foreground shrink-0 ml-1" />
                     </div>
                 ) : (
                     <div className="flex items-center justify-center text-center gap-1 overflow-hidden">
                         <Award className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+=======
+                        <ChevronUp className="h-3 w-3 text-muted-foreground ml-1" />
+                    </div>
+                ) : (
+                    <div className="flex items-center justify-center text-center gap-1 overflow-hidden">
+>>>>>>> main
                         <span className="text-sm font-medium truncate text-foreground">
                             {firstPosition}
                         </span>
@@ -194,16 +212,28 @@ export function TeamTable({
                     setIsExpanded(!isExpanded);
                 }}
                 className={cn(
+<<<<<<< HEAD
                     'group flex flex-wrap items-center justify-start gap-1 cursor-pointer transition-all duration-200 p-1 rounded-md hover:bg-muted/50',
+=======
+                    'group flex flex-wrap items-center justify-center gap-1 cursor-pointer transition-all duration-200 p-1 rounded-md hover:bg-muted/50',
+>>>>>>> main
                     isExpanded ? 'bg-muted/30' : 'max-w-[400px]',
                 )}
             >
                 {isExpanded ? (
+<<<<<<< HEAD
                     <div className="flex flex-wrap gap-1 items-center justify-start text-start animate-in fade-in slide-in-from-top-1">
                         <div className="flex items-start justify-start text-start">
                             <AvatarGroupList users={users} />
                         </div>
                         <ChevronUp className="h-3 w-3 text-muted-foreground shrink-0" />
+=======
+                    <div className="flex flex-wrap gap-1 items-center justify-center text-center animate-in fade-in slide-in-from-top-1">
+                        <div className="flex items-start justify-start text-start">
+                            <AvatarGroupList users={users} />
+                        </div>
+                        <ChevronUp className="h-3 w-3 text-muted-foreground ml-1" />
+>>>>>>> main
                     </div>
                 ) : (
                     <div className="flex items-center justify-center gap-1 overflow-hidden">
@@ -261,7 +291,11 @@ export function TeamTable({
                 />
             ),
             headerClassName:
+<<<<<<< HEAD
                 'min-w-[200px] w-[250px] whitespace-nowrap text-start align-bottom cursor-grab active:cursor-grabbing',
+=======
+                'min-w-[200px] w-[250px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+>>>>>>> main
             cell: (team) => (
                 <ExpandablePositions positions={positions[team.id] || []} />
             ),
@@ -278,7 +312,11 @@ export function TeamTable({
                 />
             ),
             headerClassName:
+<<<<<<< HEAD
                 'min-w-[200px] w-[300px] whitespace-nowrap text-start align-bottom cursor-grab active:cursor-grabbing',
+=======
+                'min-w-[200px] w-[300px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+>>>>>>> main
             cell: (team) => {
                 const teamUsers =
                     users.find((u) => u.teamId === team.id)?.users || [];
@@ -315,7 +353,11 @@ export function TeamTable({
                 />
             ),
             headerClassName:
+<<<<<<< HEAD
                 'min-w-[200px] w-[300px] whitespace-nowrap text-start align-bottom cursor-grab active:cursor-grabbing',
+=======
+                'min-w-[200px] w-[300px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+>>>>>>> main
             cell: (team) => {
                 const teamUsers =
                     users
@@ -360,7 +402,11 @@ export function TeamTable({
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="rounded-full bg-muted p-4">
+<<<<<<< HEAD
                     <UsersRound className="h-8 w-8 text-muted-foreground" />
+=======
+                    <Users className="h-8 w-8 text-muted-foreground" />
+>>>>>>> main
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
                     No teams found

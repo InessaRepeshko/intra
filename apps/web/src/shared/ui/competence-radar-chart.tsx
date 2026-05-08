@@ -8,8 +8,12 @@ import {
     RadarChart,
 } from 'recharts';
 
+<<<<<<< HEAD
 import { ReportAnalytics } from '@entities/reporting/individual-report/model/mappers';
 import { StrategicReportAnalytics } from '@entities/reporting/strategic-report/model/mappers';
+=======
+import { ReportAnalytics } from '@entities/reporting/report/model/mappers';
+>>>>>>> main
 import {
     Card,
     CardContent,
@@ -25,7 +29,10 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from '@shared/components/ui/chart';
+<<<<<<< HEAD
 import { formatNumber } from '@shared/lib/utils/format-number';
+=======
+>>>>>>> main
 
 interface CompetenceRadarCharData {
     competence: string;
@@ -36,6 +43,7 @@ interface CompetenceRadarCharData {
 
 const chartConfig = {
     self: {
+<<<<<<< HEAD
         label: 'Self rating',
         color: 'var(--color-amber-400)',
     },
@@ -45,10 +53,22 @@ const chartConfig = {
     },
     others: {
         label: 'Others rating',
+=======
+        label: 'Self',
+        color: 'var(--color-amber-400)',
+    },
+    team: {
+        label: 'Team',
+        color: 'var(--color-blue-400)',
+    },
+    others: {
+        label: 'Others',
+>>>>>>> main
         color: 'var(--color-violet-400)',
     },
 } satisfies ChartConfig;
 
+<<<<<<< HEAD
 export function CompetenceRadarChart({
     reportAnalytics,
     title,
@@ -69,6 +89,16 @@ export function CompetenceRadarChart({
         if (a.percentageByTeam != null) hasTeamData = true;
         if (a.percentageByOther != null) hasOthersData = true;
 
+=======
+export function CompetenciesRadarChart({
+    reportAnalytics,
+}: {
+    reportAnalytics: ReportAnalytics[];
+}) {
+    const data: CompetenceRadarCharData[] = [];
+
+    reportAnalytics?.forEach((a) => {
+>>>>>>> main
         return data.push({
             competence: a.competenceTitle ?? 'Competence',
             self: a.percentageBySelfAssessment ?? 0,
@@ -77,6 +107,7 @@ export function CompetenceRadarChart({
         });
     });
 
+<<<<<<< HEAD
     data.sort((a, b) => a.competence.localeCompare(b.competence));
     return (
         <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
@@ -87,6 +118,16 @@ export function CompetenceRadarChart({
                 <CardDescription>
                     {description ||
                         'Multi-source evaluation of key skill clusters showing the alignment between internal and external performance perspectives.'}
+=======
+    return (
+        <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
+            <CardHeader className="items-center">
+                <CardTitle>Competence Alignment Overview</CardTitle>
+                <CardDescription>
+                    Multi-source evaluation of key skill clusters showing the
+                    alignment between internal and external performance
+                    perspectives.
+>>>>>>> main
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -96,6 +137,7 @@ export function CompetenceRadarChart({
                 >
                     <RadarChart
                         data={data}
+<<<<<<< HEAD
                         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
                         cx="50%"
                         cy="50%"
@@ -159,6 +201,19 @@ export function CompetenceRadarChart({
                                     }}
                                 />
                             }
+=======
+                        margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
+                    >
+                        <PolarRadiusAxis
+                            angle={30}
+                            domain={[0, 100]}
+                            tick={false}
+                            axisLine={false}
+                        />
+                        <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent indicator="line" />}
+>>>>>>> main
                         />
                         <PolarAngleAxis
                             dataKey="competence"
@@ -174,12 +229,34 @@ export function CompetenceRadarChart({
                                 return (
                                     <text
                                         x={x}
+<<<<<<< HEAD
                                         y={index === 0 ? y - 12 : y}
+=======
+                                        y={index === 0 ? y - 10 : y}
+>>>>>>> main
                                         textAnchor={textAnchor}
                                         fontSize={14}
                                         fontWeight={500}
                                         {...props}
                                     >
+<<<<<<< HEAD
+=======
+                                        {/* <tspan className="fill-amber-500">
+                                            {formatNumber(record.self) + '%'}
+                                        </tspan>
+                                        <tspan className="fill-muted-foreground">
+                                            {' / '}
+                                        </tspan>
+                                        <tspan className="fill-blue-500">
+                                            {formatNumber(record.team) + '%'}
+                                        </tspan>
+                                        <tspan className="fill-muted-foreground">
+                                            {' / '}
+                                        </tspan>
+                                        <tspan className="fill-violet-500">
+                                            {formatNumber(record.others) + '%'}
+                                        </tspan> */}
+>>>>>>> main
                                         <tspan
                                             x={x}
                                             dy={'1rem'}
@@ -193,6 +270,7 @@ export function CompetenceRadarChart({
                             }}
                         />
                         <PolarGrid />
+<<<<<<< HEAD
                         {hasSelfData && (
                             <Radar
                                 dataKey="self"
@@ -225,6 +303,34 @@ export function CompetenceRadarChart({
                         )}
                         <ChartLegend
                             className="m-0 text-sm text-muted-foreground"
+=======
+                        <Radar
+                            dataKey="self"
+                            fill="var(--color-self)"
+                            fillOpacity={0.1}
+                            dot={{ r: 4, fillOpacity: 1 }}
+                            stroke="var(--color-self)"
+                            strokeWidth={2}
+                        />
+                        <Radar
+                            dataKey="team"
+                            fill="var(--color-team)"
+                            fillOpacity={0.1}
+                            dot={{ r: 4, fillOpacity: 1 }}
+                            stroke="var(--color-team)"
+                            strokeWidth={2}
+                        />
+                        <Radar
+                            dataKey="others"
+                            fill="var(--color-others)"
+                            fillOpacity={0.1}
+                            dot={{ r: 4, fillOpacity: 1 }}
+                            stroke="var(--color-others)"
+                            strokeWidth={2}
+                        />
+                        <ChartLegend
+                            className="mt-8 text-sm text-muted-foreground"
+>>>>>>> main
                             content={<ChartLegendContent />}
                         />
                     </RadarChart>

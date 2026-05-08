@@ -2,15 +2,21 @@ import {
     AnswerType,
     CompetenceAccumulator,
     CYCLE_CONSTRAINTS,
+<<<<<<< HEAD:apps/api/src/contexts/reporting/application/services/reports.service.ts
     EntityAverageInsightsDto,
     EntityInsightSummaryDto,
+=======
+>>>>>>> main:apps/api/src/contexts/reporting/application/services/reporting.service.ts
     EntitySummaryTotals,
     EntityType,
     IdentityRole,
     InsightType,
     REPORT_ANALYTICS_CONSTRAINTS,
     ReportSearchQuery,
+<<<<<<< HEAD:apps/api/src/contexts/reporting/application/services/reports.service.ts
     RESPONDENT_CATEGORIES,
+=======
+>>>>>>> main:apps/api/src/contexts/reporting/application/services/reporting.service.ts
     RespondentCategory,
 } from '@intra/shared-kernel';
 import {
@@ -232,6 +238,7 @@ export class ReportingService {
             {},
         );
         const respondentCount = allRespondents.length;
+<<<<<<< HEAD:apps/api/src/contexts/reporting/application/services/reports.service.ts
         const respondentCategories: RespondentCategory[] = [
             ...new Set(
                 allRespondents
@@ -266,11 +273,29 @@ export class ReportingService {
         const teamTurnout = this.calculateTurnout(
             allRespondents,
             actualAnswersByCategory[RespondentCategory.TEAM] || 0,
+=======
+
+        const allAnswers = await this.answers.list({
+            reviewId,
+        });
+
+        if (this.isProduction) {
+            await this.verifyAnonimityThreshold(review, allAnswers);
+        }
+
+        const teamTurnout = this.calculateTurnout(
+            allRespondents,
+            allAnswers,
+>>>>>>> main:apps/api/src/contexts/reporting/application/services/reporting.service.ts
             RespondentCategory.TEAM,
         );
         const otherTurnout = this.calculateTurnout(
             allRespondents,
+<<<<<<< HEAD:apps/api/src/contexts/reporting/application/services/reports.service.ts
             actualAnswersByCategory[RespondentCategory.OTHER] || 0,
+=======
+            allAnswers,
+>>>>>>> main:apps/api/src/contexts/reporting/application/services/reporting.service.ts
             RespondentCategory.OTHER,
         );
 
@@ -425,6 +450,68 @@ export class ReportingService {
             isAnonimityThresholdMet.push({
                 category: stat.respondentCategory,
                 met: stat.answers >= anonimityThreshold,
+            });
+        });
+
+        if (isAnonimityThresholdMet.some((item) => !item.met)) {
+            throw new NotFoundException(
+                `Not enough answers in category to meet the anonymity threshold ${anonimityThreshold} for review ${review.id}: ${JSON.stringify(isAnonimityThresholdMet)}`,
+            );
+        }
+    }
+
+    /**
+     * Verifies that the anonymity threshold is met for the given review.
+     * Anonymity threshold is the minimum number of answers
+     * required for a review to be valid for report generation.
+     * If the threshold is not met, an exception is thrown.
+     * @param review The review.
+     * @param answers The actual answers.
+     */
+    private async verifyAnonimityThreshold(
+        review: ReviewDomain,
+        answers: AnswerDomain[],
+    ) {
+        let anonimityThreshold;
+
+        if (review.cycleId) {
+            const cycle = await this.cyclesRepo.findById(review.cycleId);
+            anonimityThreshold = cycle?.minRespondentsThreshold;
+        } else {
+            anonimityThreshold = CYCLE_CONSTRAINTS.ANONYMITY_THRESHOLD.MIN;
+        }
+
+        const respondentCategories = new Set(
+            answers.map((answer) => answer.respondentCategory),
+        );
+        let isAnonimityThresholdMet: {
+            category: RespondentCategory;
+            met: boolean;
+        }[] = [];
+
+        if (
+            respondentCategories.size === 1 &&
+            respondentCategories.has(RespondentCategory.SELF_ASSESSMENT)
+        ) {
+            throw new NotFoundException(
+                `Not enough answers in category to meet the anonymity threshold ${anonimityThreshold} for review ${review.id}: only self assessment answers available.`,
+            );
+        }
+
+        respondentCategories.forEach((category) => {
+            if (category === RespondentCategory.SELF_ASSESSMENT) {
+                return;
+            }
+
+            const answerCount = this.calculateActualAnswerCount(
+                answers.filter(
+                    (answer) => answer.respondentCategory === category,
+                ),
+            );
+
+            isAnonimityThresholdMet.push({
+                category,
+                met: answerCount < anonimityThreshold,
             });
         });
 
@@ -597,24 +684,44 @@ export class ReportingService {
      * Calculates the turnout percentage for a specific category of respondents.
      * Formula: (actual answers / assigned respondents) * 100
      * @param respondents The list of all respondents.
+<<<<<<< HEAD:apps/api/src/contexts/reporting/application/services/reports.service.ts
      * @param actualAnswers The count of actual answers for the category.
+=======
+     * @param answers The list of all answers.
+>>>>>>> main:apps/api/src/contexts/reporting/application/services/reporting.service.ts
      * @param category The category to calculate turnout for.
      * @returns The turnout percentage as a Decimal, or null if no respondents in category.
      */
     private calculateTurnout(
         respondents: RespondentDomain[],
+<<<<<<< HEAD:apps/api/src/contexts/reporting/application/services/reports.service.ts
         actualAnswers: number,
+=======
+        answers: AnswerDomain[],
+>>>>>>> main:apps/api/src/contexts/reporting/application/services/reporting.service.ts
         category: RespondentCategory,
     ): Decimal | null {
         const assignedRespondents = respondents.filter(
             (respondent) => respondent.category === category,
         );
+<<<<<<< HEAD:apps/api/src/contexts/reporting/application/services/reports.service.ts
 
         if (assignedRespondents.length === 0) {
             return null;
         }
 
         if (actualAnswers === 0) {
+=======
+        const actualAnswers = this.calculateActualAnswerCount(
+            answers.filter((answer) => answer.respondentCategory === category),
+        );
+
+        if (assignedRespondents.length === 0 && actualAnswers.greaterThan(0)) {
+            return null;
+        }
+
+        if (assignedRespondents.length === 0 || actualAnswers.equals(0)) {
+>>>>>>> main:apps/api/src/contexts/reporting/application/services/reporting.service.ts
             return new Decimal(0);
         }
 
@@ -969,6 +1076,29 @@ export class ReportingService {
                 deltaPercentageByOther,
             ),
         };
+    }
+
+    /**
+     * Calculates the actual answer count for a specific review.
+     * @param answers The review answers to calculate the actual answer count from.
+     * @returns The actual answer count.
+     */
+    private calculateActualAnswerCount(answers: AnswerDomain[]): Decimal {
+        if (answers.length === 0) return new Decimal(0);
+
+        const questionCounts = answers.reduce(
+            (acc, item) => {
+                acc[item.questionId] = (acc[item.questionId] || 0) + 1;
+                return acc;
+            },
+            {} as Record<number, number>,
+        );
+
+        const mostFrequentId = Object.values(questionCounts).reduce((a, b) =>
+            questionCounts[a] > questionCounts[b] ? a : b,
+        );
+
+        return new Decimal(mostFrequentId);
     }
 
     /**

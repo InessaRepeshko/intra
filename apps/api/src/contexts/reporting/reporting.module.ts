@@ -93,6 +93,7 @@ import { LibraryModule } from '../library/library.module';
         ReportCommentRepository,
         ClusterRepository,
         CycleRepository,
+<<<<<<< HEAD
         RespondentRepository,
         ReviewerRepository,
         AnswerRepository,
@@ -102,6 +103,8 @@ import { LibraryModule } from '../library/library.module';
         TeamRepository,
         PositionRepository,
         CompetenceRepository,
+=======
+>>>>>>> main
         { provide: REPORT_REPOSITORY, useExisting: ReportRepository },
         {
             provide: REPORT_INSIGHT_REPOSITORY,
@@ -129,6 +132,7 @@ import { LibraryModule } from '../library/library.module';
         },
         { provide: CLUSTER_REPOSITORY, useExisting: ClusterRepository },
         { provide: CYCLE_REPOSITORY, useExisting: CycleRepository },
+<<<<<<< HEAD
         { provide: RESPONDENT_REPOSITORY, useExisting: RespondentRepository },
         { provide: REVIEWER_REPOSITORY, useExisting: ReviewerRepository },
         { provide: ANSWER_REPOSITORY, useExisting: AnswerRepository },
@@ -141,6 +145,8 @@ import { LibraryModule } from '../library/library.module';
             useExisting: PositionRepository,
         },
         { provide: COMPETENCE_REPOSITORY, useExisting: CompetenceRepository },
+=======
+>>>>>>> main
     ],
     exports: [
         ReportingService,

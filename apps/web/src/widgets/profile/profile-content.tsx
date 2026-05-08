@@ -40,7 +40,11 @@ export function ProfileContent() {
     >;
 
     const myReportsAsRatee = mockReviews.filter(
+<<<<<<< HEAD
         (r) => r.rateeId === user.id && r.stage === 'PROCESSING_BY_HR',
+=======
+        (r) => r.rateeId === user.id && r.stage === 'REPORT_READY',
+>>>>>>> main
     );
 
     return (

@@ -70,8 +70,11 @@ export class ReportRepository implements ReportRepositoryPort {
             reviewId,
             cycleId,
             respondentCount,
+<<<<<<< HEAD
             respondentCategories,
             answerCount,
+=======
+>>>>>>> main
             turnoutPctOfTeam,
             turnoutPctOfOther,
             questionTotAvgBySelf,
@@ -96,6 +99,7 @@ export class ReportRepository implements ReportRepositoryPort {
             ...(reviewId ? { reviewId } : {}),
             ...(cycleId ? { cycleId } : {}),
             ...(respondentCount ? { respondentCount } : {}),
+<<<<<<< HEAD
             ...(respondentCategories
                 ? {
                       respondentCategories: {
@@ -106,6 +110,8 @@ export class ReportRepository implements ReportRepositoryPort {
                   }
                 : {}),
             ...(answerCount ? { answerCount } : {}),
+=======
+>>>>>>> main
             ...(turnoutPctOfTeam ? { turnoutPctOfTeam } : {}),
             ...(turnoutPctOfOther ? { turnoutPctOfOther } : {}),
             ...(questionTotAvgBySelf ? { questionTotAvgBySelf } : {}),

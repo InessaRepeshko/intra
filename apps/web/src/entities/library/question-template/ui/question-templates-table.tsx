@@ -6,11 +6,18 @@ import {
     Bookmark,
     Calendar,
     Eye,
+<<<<<<< HEAD
     FileQuestionMark,
+=======
+>>>>>>> main
     MoreHorizontal,
     Pencil,
     StopCircle,
     Trash2,
+<<<<<<< HEAD
+=======
+    Users,
+>>>>>>> main
 } from 'lucide-react';
 
 import { cn } from '@/shared/lib/utils/cn';
@@ -173,11 +180,16 @@ export function QuestionTemplatesTable({
                     setIsExpanded(!isExpanded);
                 }}
                 className={cn(
+<<<<<<< HEAD
                     'group flex flex-wrap items-center justify-start gap-1 cursor-pointer transition-all duration-200 p-1 rounded-md hover:bg-muted/50',
+=======
+                    'group flex flex-wrap items-center justify-center gap-1 cursor-pointer transition-all duration-200 p-1 rounded-md hover:bg-muted/50',
+>>>>>>> main
                     isExpanded ? 'bg-muted/30' : 'max-w-[220px]',
                 )}
             >
                 {isExpanded ? (
+<<<<<<< HEAD
                     <div className="flex flex-row items-center justify-center gap-1">
                         <Award className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                         <div className="flex flex-wrap flex-col gap-1 items-start justify-start animate-in fade-in slide-in-from-top-1">
@@ -196,6 +208,24 @@ export function QuestionTemplatesTable({
                 ) : (
                     <div className="flex items-center justify-center gap-1">
                         <Award className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+=======
+                    <div className="flex flex-wrap gap-1 items-center justify-center animate-in fade-in slide-in-from-top-1">
+                        <Award className="h-3.5 w-3.5 shrink-0" />
+                        {positions.map((p, index) => (
+                            <span
+                                key={p.id}
+                                className="text-sm font-medium text-foreground"
+                            >
+                                {p.title}
+                                {index < positions.length - 1 ? ',' : ''}
+                            </span>
+                        ))}
+                        <ChevronUp className="h-3 w-3 text-muted-foreground ml-1" />
+                    </div>
+                ) : (
+                    <div className="flex items-center justify-center text-center gap-1 overflow-hidden">
+                        <Award className="h-3.5 w-3.5 shrink-0" />
+>>>>>>> main
                         <span className="text-sm font-medium truncate text-foreground">
                             {firstPosition}
                         </span>
@@ -303,6 +333,7 @@ export function QuestionTemplatesTable({
                 />
             ),
             headerClassName:
+<<<<<<< HEAD
                 'min-w-[150px] w-[200px] whitespace-nowrap cursor-grab active:cursor-grabbing',
             cell: (questionTemplate) => (
                 <div className="flex items-center justify-start gap-1.5 w-full">
@@ -319,6 +350,18 @@ export function QuestionTemplatesTable({
                         ) : (
                             <span className="text-muted-foreground">None</span>
                         )}
+=======
+                'min-w-[200px] w-[200px] whitespace-nowrap cursor-grab active:cursor-grabbing',
+            cell: (questionTemplate) => (
+                <div className="flex items-center justify-center gap-1.5 w-full">
+                    <Bookmark className="h-3.5 w-3.5 shrink-0" />
+                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
+                        {questionTemplate.competenceId
+                            ? (competenceTitles[
+                                  questionTemplate.competenceId
+                              ] ?? `None`)
+                            : 'None'}
+>>>>>>> main
                     </span>
                 </div>
             ),
@@ -335,7 +378,11 @@ export function QuestionTemplatesTable({
                 />
             ),
             headerClassName:
+<<<<<<< HEAD
                 'min-w-[150px] w-[200px] whitespace-nowrap text-start align-bottom cursor-grab active:cursor-grabbing',
+=======
+                'min-w-[150px] w-[150px] whitespace-nowrap text-center align-bottom cursor-grab active:cursor-grabbing',
+>>>>>>> main
             cell: (questionTemplate) => (
                 <ExpandablePositions
                     positions={positionTitles[questionTemplate.id] || []}
@@ -403,7 +450,11 @@ export function QuestionTemplatesTable({
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="rounded-full bg-muted p-4">
+<<<<<<< HEAD
                     <FileQuestionMark className="h-8 w-8 text-muted-foreground" />
+=======
+                    <Users className="h-8 w-8 text-muted-foreground" />
+>>>>>>> main
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
                     No question templates found
@@ -438,9 +489,13 @@ export function QuestionTemplatesTable({
                                                 status={questionTemplate.status}
                                             />
                                         ) : (
+<<<<<<< HEAD
                                             <span className="text-muted-foreground">
                                                 None
                                             </span>
+=======
+                                            `None`
+>>>>>>> main
                                         )}
                                     </span>
                                 </p>
@@ -454,12 +509,15 @@ export function QuestionTemplatesTable({
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                             <span className="flex items-center">
+<<<<<<< HEAD
                                 <AnswerTypeBadge
                                     key={questionTemplate.id}
                                     answerType={questionTemplate.answerType}
                                 />
                             </span>
                             <span className="flex items-center justify-start">
+=======
+>>>>>>> main
                                 <ForSelfAssessmentBadge
                                     key={questionTemplate.id}
                                     forSelfassessment={
@@ -474,6 +532,7 @@ export function QuestionTemplatesTable({
                                         : 'Not for self-assessment'}
                                 </span>
                             </span>
+<<<<<<< HEAD
                         </div>
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                             <span className="flex items-center gap-1 text-muted-foreground">
@@ -492,6 +551,24 @@ export function QuestionTemplatesTable({
                                             None
                                         </span>
                                     )}
+=======
+
+                            <span className="flex items-center">
+                                <AnswerTypeBadge
+                                    key={questionTemplate.id}
+                                    answerType={questionTemplate.answerType}
+                                />
+                            </span>
+
+                            <span className="flex items-center gap-1 text-muted-foreground">
+                                <Bookmark className="shrink-0 h-3.5 w-3.5" />
+                                <span className="font-medium text-foreground break-words">
+                                    {questionTemplate.competenceId
+                                        ? (competenceTitles[
+                                              questionTemplate.competenceId
+                                          ] ?? `None`)
+                                        : 'None'}
+>>>>>>> main
                                 </span>
                             </span>
 
@@ -500,9 +577,13 @@ export function QuestionTemplatesTable({
                                 <span className="font-medium text-foreground">
                                     {positionCounts[questionTemplate.id] ?? `—`}
                                 </span>
+<<<<<<< HEAD
                                 {positionCounts[questionTemplate.id] === 1
                                     ? ' position'
                                     : ' positions'}
+=======
+                                {' positions'}
+>>>>>>> main
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">

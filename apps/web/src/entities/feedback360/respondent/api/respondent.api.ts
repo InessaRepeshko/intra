@@ -1,9 +1,17 @@
 import {
     type AddRespondentToReviewPayload,
+<<<<<<< HEAD
+=======
+    type RespondentCategory,
+>>>>>>> main
     type RespondentDto,
     type RespondentFilterQuery,
     type ResponseStatus,
     type UpdateRespondentPayload,
+<<<<<<< HEAD
+=======
+    RESPONDENT_CATEGORIES_ENUM_VALUES,
+>>>>>>> main
 } from '@entities/feedback360/respondent/model/types';
 import { apiClient } from '@shared/api/api-client';
 
@@ -72,3 +80,23 @@ export async function deleteReviewRespondent(
 ): Promise<void> {
     await apiClient.delete(`${RESPONDENT_RELATION_BASE(relationId)}`);
 }
+<<<<<<< HEAD
+=======
+
+export async function fetchRespondentCategoriesByReviewId(
+    reviewId: number,
+): Promise<RespondentCategory[]> {
+    const { data } = await apiClient.get<RespondentDto[]>(
+        `${RESPONDENTS_BASE(reviewId)}`,
+    );
+
+    const categories: RespondentCategory[] = data
+        .map((respondent) => respondent.category)
+        .sort(
+            (a, b) =>
+                RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(a) -
+                RESPONDENT_CATEGORIES_ENUM_VALUES.indexOf(b),
+        );
+    return [...new Set(categories)];
+}
+>>>>>>> main

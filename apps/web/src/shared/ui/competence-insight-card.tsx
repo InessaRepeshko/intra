@@ -1,4 +1,8 @@
 import { Card } from '@shared/components/ui/card';
+<<<<<<< HEAD
+=======
+import { formatNumber } from '@shared/lib/utils/format-number';
+>>>>>>> main
 import { Percent } from 'lucide-react';
 
 interface CompetenceInsightCardProps {
@@ -18,7 +22,11 @@ export function CompetenceInsightCard({
     textColor,
 }: {
     competenceTitle: string | null | undefined;
+<<<<<<< HEAD
     competenceRating: string | null | undefined;
+=======
+    competenceRating: number | null | undefined;
+>>>>>>> main
     insightTitle?: string;
     icon?: React.ElementType;
     textColor?: string;
@@ -28,8 +36,13 @@ export function CompetenceInsightCard({
     }
 
     return (
+<<<<<<< HEAD
         <Card className="flex flex-row flex-wrap items-start text-center sm:text-left justify-center gap-3 p-4 w-full max-w-[350px] overflow-hidden">
             <div className="flex h-20 w-20 p-0 m-0 bg-neutral-400/5 border-1 border-foreground-500/10 rounded-xl items-center justify-center">
+=======
+        <Card className="flex flex-row flex-wrap items-start text-center sm:text-left justify-center gap-3 p-4 w-full max-w-[400px] overflow-hidden">
+            <div className="flex h-20 w-20 p-0 m-0 bg-neutral-500/5 border-1 border-foreground-500/10 rounded-xl items-center justify-center">
+>>>>>>> main
                 {Icon && (
                     <Icon
                         className={`shrink-0 h-1/2 w-1/2 ${textColor ?? 'text-muted-foreground'}`}
@@ -45,6 +58,7 @@ export function CompetenceInsightCard({
                             {competenceTitle ?? 'None'}
                         </span>
                     </div>
+<<<<<<< HEAD
                     {competenceRating !== null &&
                         competenceRating !== undefined && (
                             <div className="flex flex-row items-center gap-1 text-sm">
@@ -56,6 +70,18 @@ export function CompetenceInsightCard({
                                 </span>
                             </div>
                         )}
+=======
+                    {competenceRating && (
+                        <div className="flex flex-row items-center gap-1 text-sm">
+                            <span className="flex items-center gap-1">
+                                <span className="font-medium">
+                                    {formatNumber(competenceRating)}
+                                </span>
+                                <Percent className="h-3.5 w-3.5 shrink-0" />
+                            </span>
+                        </div>
+                    )}
+>>>>>>> main
                     <div className="flex flex-row items-center gap-1 break-words text-muted-foreground text-sm">
                         {insightTitle ?? 'Competence Insight'}
                     </div>

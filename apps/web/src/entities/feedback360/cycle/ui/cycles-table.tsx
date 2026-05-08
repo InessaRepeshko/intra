@@ -116,9 +116,14 @@ export function CyclesTable({
         handleDragEnd,
         resetOrder,
     } = useDraggableColumns<
+<<<<<<< HEAD
         'id' | 'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions'
     >('cycles-table', [
         'id',
+=======
+        'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions'
+    >('cycles-table', [
+>>>>>>> main
         'name',
         'dates',
         'anonymity',
@@ -134,7 +139,11 @@ export function CyclesTable({
     }, [resetTrigger, resetOrder]);
 
     const COLUMNS: Record<
+<<<<<<< HEAD
         'id' | 'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions',
+=======
+        'name' | 'dates' | 'anonymity' | 'stage' | 'reviews' | 'actions',
+>>>>>>> main
         {
             header: React.ReactNode;
             headerClassName: string;
@@ -142,6 +151,7 @@ export function CyclesTable({
             cellClassName: string;
         }
     > = {
+<<<<<<< HEAD
         id: {
             header: (
                 <SortableHeader
@@ -163,6 +173,8 @@ export function CyclesTable({
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
+=======
+>>>>>>> main
         name: {
             header: (
                 <SortableHeader
@@ -216,7 +228,11 @@ export function CyclesTable({
         anonymity: {
             header: (
                 <SortableHeader
+<<<<<<< HEAD
                     label="Anonymity Threshold"
+=======
+                    label="Anonymity"
+>>>>>>> main
                     field="minRespondentsThreshold"
                     currentField={sortField}
                     currentDirection={sortDirection}
@@ -315,9 +331,12 @@ export function CyclesTable({
                         <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0 flex-1">
                                 <p className="flex items-center gap-2 font-medium text-foreground flex-wrap">
+<<<<<<< HEAD
                                     <span className="text-muted-foreground">
                                         #{cycle.id}
                                     </span>
+=======
+>>>>>>> main
                                     <span className="break-words">
                                         {cycle.title}
                                     </span>

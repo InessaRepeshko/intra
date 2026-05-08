@@ -30,11 +30,17 @@ export function ProfileContent() {
     const activeCycles = mockCycles.filter(
         (c) => c.stage === CycleStage.ACTIVE,
     );
+<<<<<<< HEAD
     const activeReviews = mockReviews.filter(
         (r) => r.stage !== 'PROCESSING_BY_HR',
     );
     const completedReviews = mockReviews.filter(
         (r) => r.stage === 'PROCESSING_BY_HR',
+=======
+    const activeReviews = mockReviews.filter((r) => r.stage !== 'REPORT_READY');
+    const completedReviews = mockReviews.filter(
+        (r) => r.stage === 'REPORT_READY',
+>>>>>>> main
     );
     const totalRespondents = mockReviews.reduce(
         (acc, r) => acc + (r.respondentsCount || 0),

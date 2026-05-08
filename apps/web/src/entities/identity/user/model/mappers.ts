@@ -3,6 +3,12 @@ import type {
     UserResponseDto,
 } from '@entities/identity/user/model/types';
 
+<<<<<<< HEAD
+=======
+/**
+ * Frontend User model with Date objects instead of ISO strings.
+ */
+>>>>>>> main
 export interface User extends Omit<
     UserResponseDto,
     'fullName' | 'createdAt' | 'updatedAt'
@@ -15,6 +21,13 @@ export interface User extends Omit<
     managerName?: string | null;
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * Maps a backend UserResponseDto (dates as ISO strings) to
+ * the frontend User model (dates as Date objects).
+ */
+>>>>>>> main
 export function mapUserResponseDtoToModel(dto: UserResponseDto): User {
     return {
         ...dto,

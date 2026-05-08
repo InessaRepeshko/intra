@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "name": "@intra/database",
     "version": "1.0.0",
     "description": "Shared Prisma schema, migrations and seeders for Intra database",
@@ -50,4 +51,39 @@
         "tsx": "^4.21.0",
         "typescript": "^5.9.3"
     }
+=======
+  "name": "@intra/database",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Shared Prisma schema + migrations for Intra monorepo",
+  "license": "MIT",
+  "main": "./src/generated/index.js",
+  "types": "./src/generated/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/generated/index.d.ts",
+      "import": "./src/generated/index.js",
+      "default": "./src/generated/index.js",
+      "require": "./src/generated/index.js"
+    }
+  },
+  "scripts": {
+    "prisma:config": "prisma --config ./prisma.config.ts",
+    "prisma:dev": "dotenv -e ../../.env.development.local -- pnpm prisma:config",
+    "prisma:test": "dotenv -e ../../.env.test -- pnpm prisma:config",
+    "db:deploy": "pnpm prisma:dev -- migrate deploy",
+    "db:create": "pnpm prisma:dev -- migrate dev",
+    "db:generate": "pnpm prisma:dev -- generate",
+    "db:seed": "pnpm prisma:dev -- db seed",
+    "db:reset": "pnpm prisma:dev -- migrate reset --force",
+    "db:refresh": "pnpm db:reset && pnpm db:generate && pnpm db:seed",
+    "db:test:deploy": "pnpm prisma:test -- migrate deploy",
+    "db:test:generate": "pnpm prisma:test -- generate",
+    "db:test:reset": "pnpm prisma:test -- migrate reset --force",
+    "db:test:seed": "pnpm prisma:test -- db seed",
+    "db:test:refresh": "pnpm db:test:reset && pnpm db:test:generate && pnpm db:test:seed",
+    "migrate": "pnpm db:create",
+    "db:migrate": "pnpm db:create"
+  }
+>>>>>>> origin/main
 }

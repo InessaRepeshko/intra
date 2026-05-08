@@ -85,7 +85,11 @@ function ReviewActionsMenu({
                             size="sm"
                             onClick={() =>
                                 router.push(
+<<<<<<< HEAD
                                     `/reporting/individual-reports/${review.reportId}`,
+=======
+                                    `/reporting/reports/${review.reportId}`,
+>>>>>>> main
                                 )
                             }
                         >
@@ -145,7 +149,10 @@ export function ReviewsTable({
         handleDragEnd,
         resetOrder,
     } = useDraggableColumns<
+<<<<<<< HEAD
         | 'id'
+=======
+>>>>>>> main
         | 'ratee'
         | 'cycle'
         | 'date'
@@ -156,7 +163,10 @@ export function ReviewsTable({
         | 'reviewers'
         | 'actions'
     >('reviews-table', [
+<<<<<<< HEAD
         'id',
+=======
+>>>>>>> main
         'ratee',
         'cycle',
         'date',
@@ -175,7 +185,10 @@ export function ReviewsTable({
     }, [resetTrigger, resetOrder]);
 
     const COLUMNS: Record<
+<<<<<<< HEAD
         | 'id'
+=======
+>>>>>>> main
         | 'ratee'
         | 'cycle'
         | 'date'
@@ -192,6 +205,7 @@ export function ReviewsTable({
             cellClassName: string;
         }
     > = {
+<<<<<<< HEAD
         id: {
             header: (
                 <SortableHeader
@@ -213,6 +227,8 @@ export function ReviewsTable({
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
+=======
+>>>>>>> main
         ratee: {
             header: (
                 <SortableHeader
@@ -370,7 +386,11 @@ export function ReviewsTable({
                 <div className="flex items-center justify-center gap-1.5">
                     <FileText className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium text-foreground">
+<<<<<<< HEAD
                         {answerCounts[review.id]?.toString() ?? `—`}
+=======
+                        {answerCounts[review.id] ?? `—`}
+>>>>>>> main
                     </span>
                 </div>
             ),
@@ -441,9 +461,12 @@ export function ReviewsTable({
                         <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0 flex-1">
                                 <p className="flex items-center gap-x-2 gap-y-1 font-medium text-foreground flex-wrap">
+<<<<<<< HEAD
                                     <span className="text-muted-foreground">
                                         #{review.id}
                                     </span>
+=======
+>>>>>>> main
                                     <span className="break-words">
                                         {review.rateeFullName}
                                     </span>
@@ -523,7 +546,11 @@ export function ReviewsTable({
                             </span>
 
                             <span className="flex items-center gap-1 text-muted-foreground">
+<<<<<<< HEAD
                                 <Eye className="h-3.5 w-3.5" />
+=======
+                                <Users className="h-3.5 w-3.5" />
+>>>>>>> main
                                 <span className="font-medium text-foreground">
                                     {reviewerCounts[review.id] ?? `—`}
                                 </span>

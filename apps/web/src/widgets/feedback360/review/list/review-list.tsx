@@ -3,9 +3,15 @@
 import { useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
+<<<<<<< HEAD
 import {
     useReviewAnswersCountsQuery,
     useReviewCycleTitlesQuery,
+=======
+import { useCycleTitlesQuery } from '@entities/feedback360/cycle/api/cycle.queries';
+import {
+    useReviewAnswersCountsQuery,
+>>>>>>> main
     useReviewQuestionCountsQuery,
     useReviewRespondentCountsQuery,
     useReviewReviewerCountsQuery,
@@ -129,7 +135,11 @@ export function ReviewsList() {
     const { reviewerCounts, isLoading: isReviewerCountsLoading } =
         useReviewReviewerCountsQuery(reviewIds);
     const { cycleTitles, isLoading: isCycleTitlesLoading } =
+<<<<<<< HEAD
         useReviewCycleTitlesQuery(reviewIds, cycleIds);
+=======
+        useCycleTitlesQuery(cycleIds);
+>>>>>>> main
 
     const cycleOptions = useMemo(() => {
         const titles = new Set(
@@ -200,9 +210,14 @@ export function ReviewsList() {
             const lowerSearch = search.toLowerCase();
             result = result.filter(
                 (c) =>
+<<<<<<< HEAD
                     c.id.toString().includes(lowerSearch) ||
                     (c.rateeFullName &&
                         c.rateeFullName.toLowerCase().includes(lowerSearch)),
+=======
+                    c.rateeFullName &&
+                    c.rateeFullName.toLowerCase().includes(lowerSearch),
+>>>>>>> main
             );
         }
 
@@ -259,10 +274,13 @@ export function ReviewsList() {
     const sortedReviews = useMemo(() => {
         return [...filteredReviews].sort((a, b) => {
             switch (sortField) {
+<<<<<<< HEAD
                 case 'id':
                     return sortDirection === SortDirection.ASC
                         ? a.id - b.id
                         : b.id - a.id;
+=======
+>>>>>>> main
                 case 'title':
                     return sortDirection === SortDirection.ASC
                         ? (a.rateeFullName ?? '').localeCompare(

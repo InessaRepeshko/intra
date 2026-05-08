@@ -7,10 +7,17 @@ import {
     Bookmark,
     Calendar,
     Eye,
+<<<<<<< HEAD
     Layers2,
     MoreHorizontal,
     Pencil,
     Trash2,
+=======
+    MoreHorizontal,
+    Pencil,
+    Trash2,
+    Users,
+>>>>>>> main
 } from 'lucide-react';
 
 import type { Cluster } from '@entities/library/cluster/model/mappers';
@@ -221,6 +228,7 @@ export function ClusterTable({
                 'min-w-[200px] w-[200px] whitespace-nowrap text-center cursor-grab active:cursor-grabbing',
             cell: (cluster) => (
                 <div className="flex items-center justify-center gap-1.5 w-full">
+<<<<<<< HEAD
                     <Bookmark className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
                         {cluster.competenceId ? (
@@ -232,6 +240,12 @@ export function ClusterTable({
                         ) : (
                             <span className="text-muted-foreground">None</span>
                         )}
+=======
+                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
+                        {cluster.competenceId
+                            ? (competenceTitles[cluster.competenceId] ?? `None`)
+                            : 'None'}
+>>>>>>> main
                     </span>
                 </div>
             ),
@@ -273,7 +287,11 @@ export function ClusterTable({
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="rounded-full bg-muted p-4">
+<<<<<<< HEAD
                     <Layers2 className="h-8 w-8 text-muted-foreground" />
+=======
+                    <Users className="h-8 w-8 text-muted-foreground" />
+>>>>>>> main
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
                     No clusters found

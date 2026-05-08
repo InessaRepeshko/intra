@@ -100,6 +100,7 @@ export function CyclesList() {
     const filteredCycles = useMemo(() => {
         let result = cycles;
 
+<<<<<<< HEAD
         if (search.trim()) {
             const lowerSearch = search.toLowerCase();
             result = result.filter(
@@ -110,6 +111,8 @@ export function CyclesList() {
             );
         }
 
+=======
+>>>>>>> main
         if (dateRange?.from) {
             const from = dateRange.from.getTime();
             result = result.filter((c) => c.startDate.getTime() >= from);
@@ -130,10 +133,13 @@ export function CyclesList() {
     const sortedCycles = useMemo(() => {
         return [...filteredCycles].sort((a, b) => {
             switch (sortField) {
+<<<<<<< HEAD
                 case 'id':
                     return sortDirection === SortDirection.ASC
                         ? a.id - b.id
                         : b.id - a.id;
+=======
+>>>>>>> main
                 case 'title':
                     return sortDirection === SortDirection.ASC
                         ? (a.title ?? '').localeCompare(b.title ?? '')

@@ -4,12 +4,18 @@ import { format } from 'date-fns';
 import {
     ArrowUpFromLine,
     ArrowUpToLine,
+<<<<<<< HEAD
     Boxes,
+=======
+>>>>>>> main
     Calendar,
     Eye,
     MoreHorizontal,
     Pencil,
+<<<<<<< HEAD
     Percent,
+=======
+>>>>>>> main
     RefreshCcw,
     SeparatorHorizontal,
     Trash2,
@@ -37,7 +43,10 @@ import {
     TableRow,
 } from '@shared/components/ui/table';
 import { useDraggableColumns } from '@shared/lib/hooks/use-draggable-columns';
+<<<<<<< HEAD
 import { formatNumber } from '@shared/lib/utils/format-number';
+=======
+>>>>>>> main
 import { SortableHeader } from '@shared/ui/sortable-table-column-header';
 import { useEffect } from 'react';
 import { SortDirection } from '../model/types';
@@ -122,27 +131,41 @@ export function ClusterScoreAnalyticsTable({
     } = useDraggableColumns<
         | 'competence'
         | 'cluster'
+<<<<<<< HEAD
         | 'cycle'
+=======
+>>>>>>> main
         | 'lowerBound'
         | 'upperBound'
         | 'minScore'
         | 'maxScore'
         | 'averageScore'
         | 'employeeCount'
+<<<<<<< HEAD
         | 'employeeDensity'
+=======
+        | 'cycle'
+>>>>>>> main
         | 'date'
         | 'actions'
     >('competence-table', [
         'competence',
         'cluster',
+<<<<<<< HEAD
         'cycle',
+=======
+>>>>>>> main
         'lowerBound',
         'upperBound',
         'minScore',
         'maxScore',
         'averageScore',
         'employeeCount',
+<<<<<<< HEAD
         'employeeDensity',
+=======
+        'cycle',
+>>>>>>> main
         'date',
         'actions',
     ]);
@@ -156,14 +179,21 @@ export function ClusterScoreAnalyticsTable({
     const COLUMNS: Record<
         | 'competence'
         | 'cluster'
+<<<<<<< HEAD
         | 'cycle'
+=======
+>>>>>>> main
         | 'lowerBound'
         | 'upperBound'
         | 'minScore'
         | 'maxScore'
         | 'averageScore'
         | 'employeeCount'
+<<<<<<< HEAD
         | 'employeeDensity'
+=======
+        | 'cycle'
+>>>>>>> main
         | 'date'
         | 'actions',
         {
@@ -193,19 +223,27 @@ export function ClusterScoreAnalyticsTable({
                         {(competenceTitles[
                             clusterScoreTitles[clusterScoreAnalytics.clusterId]
                                 ?.competenceId
+<<<<<<< HEAD
                         ]?.title ?? (
                             <span className="text-muted-foreground">None</span>
                         )) +
+=======
+                        ]?.title ?? 'None') +
+>>>>>>> main
                             `, ` +
                             (competenceTitles[
                                 clusterScoreTitles[
                                     clusterScoreAnalytics.clusterId
                                 ]?.competenceId
+<<<<<<< HEAD
                             ]?.code ?? (
                                 <span className="text-muted-foreground">
                                     None
                                 </span>
                             ))}
+=======
+                            ]?.code ?? 'None')}
+>>>>>>> main
                     </span>
                     {competenceTitles[
                         clusterScoreTitles[clusterScoreAnalytics.clusterId]
@@ -216,11 +254,15 @@ export function ClusterScoreAnalyticsTable({
                                 clusterScoreTitles[
                                     clusterScoreAnalytics.clusterId
                                 ]?.competenceId
+<<<<<<< HEAD
                             ]?.description ?? (
                                 <span className="text-muted-foreground">
                                     None
                                 </span>
                             )}
+=======
+                            ]?.description ?? 'None'}
+>>>>>>> main
                         </span>
                     )}
                 </div>
@@ -297,7 +339,11 @@ export function ClusterScoreAnalyticsTable({
         minScore: {
             header: (
                 <SortableHeader
+<<<<<<< HEAD
                     label="Lowest Score"
+=======
+                    label="Lowest rating"
+>>>>>>> main
                     field="minScore"
                     currentField={sortField}
                     currentDirection={sortDirection}
@@ -319,7 +365,11 @@ export function ClusterScoreAnalyticsTable({
         maxScore: {
             header: (
                 <SortableHeader
+<<<<<<< HEAD
                     label="Highest Score"
+=======
+                    label="Highest rating"
+>>>>>>> main
                     field="maxScore"
                     currentField={sortField}
                     currentDirection={sortDirection}
@@ -341,7 +391,11 @@ export function ClusterScoreAnalyticsTable({
         averageScore: {
             header: (
                 <SortableHeader
+<<<<<<< HEAD
                     label="Average Score"
+=======
+                    label="Average rating"
+>>>>>>> main
                     field="averageScore"
                     currentField={sortField}
                     currentDirection={sortDirection}
@@ -382,6 +436,7 @@ export function ClusterScoreAnalyticsTable({
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
+<<<<<<< HEAD
         employeeDensity: {
             header: (
                 <SortableHeader
@@ -407,6 +462,8 @@ export function ClusterScoreAnalyticsTable({
             ),
             cellClassName: 'whitespace-nowrap text-center',
         },
+=======
+>>>>>>> main
         cycle: {
             header: (
                 <SortableHeader
@@ -418,6 +475,7 @@ export function ClusterScoreAnalyticsTable({
                 />
             ),
             headerClassName:
+<<<<<<< HEAD
                 'min-w-[250px] w-[300px] whitespace-nowrap cursor-grab active:cursor-grabbing',
             cell: (clusterScoreAnalytics) => (
                 <div className="flex flex-row items-center gap-1.5 w-full">
@@ -426,6 +484,13 @@ export function ClusterScoreAnalyticsTable({
                         {cycleTitles[clusterScoreAnalytics.cycleId] ?? (
                             <span className="text-muted-foreground">None</span>
                         )}
+=======
+                'min-w-[200px] w-[250px] whitespace-nowrap cursor-grab active:cursor-grabbing',
+            cell: (clusterScoreAnalytics) => (
+                <div className="flex flex-col gap-0.5 w-full">
+                    <span className="font-medium text-foreground break-words overflow-wrap-anywhere">
+                        {cycleTitles[clusterScoreAnalytics.cycleId] ?? 'None'}
+>>>>>>> main
                     </span>
                 </div>
             ),
@@ -473,7 +538,11 @@ export function ClusterScoreAnalyticsTable({
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div className="rounded-full bg-muted p-4">
+<<<<<<< HEAD
                     <Boxes className="h-8 w-8 text-muted-foreground" />
+=======
+                    <Users className="h-8 w-8 text-muted-foreground" />
+>>>>>>> main
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground">
                     No cluster score analytics found
@@ -502,22 +571,30 @@ export function ClusterScoreAnalyticsTable({
                                             clusterScoreTitles[
                                                 clusterScoreAnalytics.clusterId
                                             ]?.competenceId
+<<<<<<< HEAD
                                         ]?.title ?? (
                                             <span className="text-muted-foreground">
                                                 None
                                             </span>
                                         )) +
+=======
+                                        ]?.title ?? 'None') +
+>>>>>>> main
                                             ', ' +
                                             (competenceTitles[
                                                 clusterScoreTitles[
                                                     clusterScoreAnalytics
                                                         .clusterId
                                                 ]?.competenceId
+<<<<<<< HEAD
                                             ]?.code ?? (
                                                 <span className="text-muted-foreground">
                                                     None
                                                 </span>
                                             ))}
+=======
+                                            ]?.code ?? 'None')}
+>>>>>>> main
                                     </span>
                                     <span className="whitespace-nowrap">
                                         {clusterScoreTitles[
@@ -533,9 +610,13 @@ export function ClusterScoreAnalyticsTable({
                                                 }
                                             />
                                         ) : (
+<<<<<<< HEAD
                                             <span className="text-muted-foreground">
                                                 None
                                             </span>
+=======
+                                            `None`
+>>>>>>> main
                                         )}
                                     </span>
                                 </p>
@@ -573,6 +654,7 @@ export function ClusterScoreAnalyticsTable({
                             />
                         </div>
 
+<<<<<<< HEAD
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                             <span className="flex items-center gap-1 text-muted-foreground">
                                 <RefreshCcw className="shrink-0 h-3.5 w-3.5" />
@@ -598,6 +680,8 @@ export function ClusterScoreAnalyticsTable({
                             </span>
                         </div>
 
+=======
+>>>>>>> main
                         <div className="mt-3 flex flex-wrap items-center gap-x-10 gap-y-2 text-sm">
                             <span className="flex flex-wrap items-center gap-1 text-muted-foreground break-words">
                                 {'Bounds from'}
@@ -618,11 +702,15 @@ export function ClusterScoreAnalyticsTable({
                                     {clusterScoreAnalytics.employeesCount ??
                                         `—`}
                                 </span>
+<<<<<<< HEAD
                                 <span className="text-muted-foreground">
                                     {clusterScoreAnalytics.employeesCount === 1
                                         ? ' ratee'
                                         : ' ratees'}
                                 </span>
+=======
+                                {' ratees'}
+>>>>>>> main
                             </span>
                         </div>
 
@@ -646,6 +734,30 @@ export function ClusterScoreAnalyticsTable({
                                 {' avg'}
                             </span>
                         </div>
+<<<<<<< HEAD
+=======
+
+                        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                            <span className="flex items-center gap-1 text-muted-foreground">
+                                <RefreshCcw className="shrink-0 h-3.5 w-3.5" />
+                                <span className="font-medium text-foreground break-words">
+                                    {cycleTitles[
+                                        clusterScoreAnalytics.cycleId
+                                    ] ?? 'None'}
+                                </span>
+                            </span>
+
+                            <span className="flex items-center gap-1 text-muted-foreground">
+                                <Calendar className="h-3.5 w-3.5" />
+                                <span className="font-medium text-muted-foreground break-words">
+                                    {format(
+                                        clusterScoreAnalytics.createdAt,
+                                        'MMM dd, yyyy',
+                                    )}
+                                </span>
+                            </span>
+                        </div>
+>>>>>>> main
                     </div>
                 ))}
             </div>

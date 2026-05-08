@@ -16,7 +16,11 @@ import { cn } from '@shared/lib/utils/cn';
 import { DateRangePicker } from '@shared/ui/date-range-picker';
 import { MultiSelect } from '@shared/ui/multi-select';
 import { RotateCcw } from 'lucide-react';
+<<<<<<< HEAD
 import { getColorForLabel } from './cluster-badge';
+=======
+import { getHashColor } from './cluster-badge';
+>>>>>>> main
 
 interface ClusterScoreAnalyticsFiltersProps {
     search: string;
@@ -81,6 +85,7 @@ export function ClusterScoreAnalyticsFilters({
             </div>
 
             <MultiSelect
+<<<<<<< HEAD
                 options={cycleOptions.map((opt) => ({
                     label: opt,
                     value: opt,
@@ -95,6 +100,8 @@ export function ClusterScoreAnalyticsFilters({
             />
 
             <MultiSelect
+=======
+>>>>>>> main
                 options={competenceOptions.map((opt) => ({
                     label: opt,
                     value: opt,
@@ -112,7 +119,11 @@ export function ClusterScoreAnalyticsFilters({
                 options={clusterScoreOptions.map((opt) => ({
                     label: opt,
                     value: opt,
+<<<<<<< HEAD
                     badgeClassName: getColorForLabel(opt),
+=======
+                    badgeClassName: getHashColor(opt),
+>>>>>>> main
                 }))}
                 value={clusterScores}
                 onValueChange={onClusterScoresChange}
@@ -151,6 +162,23 @@ export function ClusterScoreAnalyticsFilters({
                 icon={<ArrowUpToLine className="h-4 w-4" />}
             />
 
+<<<<<<< HEAD
+=======
+            <MultiSelect
+                options={cycleOptions.map((opt) => ({
+                    label: opt,
+                    value: opt,
+                }))}
+                value={cycles}
+                onValueChange={onCyclesChange}
+                placeholder="All Cycles"
+                emptyText="No cycles found"
+                className="w-full lg:max-w-[300px] lg:w-auto min-w-[150px]"
+                showClear
+                icon={<RefreshCcw className="h-4 w-4" />}
+            />
+
+>>>>>>> main
             <DateRangePicker
                 dateRange={dateRange}
                 onDateRangeChange={onDateRangeChange}

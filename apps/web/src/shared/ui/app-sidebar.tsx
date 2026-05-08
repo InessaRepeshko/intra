@@ -19,7 +19,10 @@ import {
     Cat,
     ChevronDown,
     FileChartColumn,
+<<<<<<< HEAD
     FileChartLine,
+=======
+>>>>>>> main
     FileQuestionMark,
     FileText,
     Layers2,
@@ -100,6 +103,7 @@ const navItems: NavItem[] = [
         roles: [IdentityRole.HR, IdentityRole.ADMIN],
         children: [
             {
+<<<<<<< HEAD
                 title: 'Individual Reports',
                 href: '/reporting/individual-reports',
                 icon: FileText,
@@ -109,6 +113,17 @@ const navItems: NavItem[] = [
                 href: '/reporting/strategic-reports',
                 icon: FileChartLine,
             },
+=======
+                title: 'Reports',
+                href: '/reporting/reports',
+                icon: FileText,
+            },
+            // {
+            //     title: 'Analytics',
+            //     href: '/reporting/analytics',
+            //     icon: ChartColumnBig,
+            // },
+>>>>>>> main
             {
                 title: 'Cluster Score Analytics',
                 href: '/reporting/cluster-score-analytics',
@@ -154,6 +169,7 @@ const navItems: NavItem[] = [
                 href: '/organisation/positions',
                 icon: Award,
             },
+<<<<<<< HEAD
             {
                 title: 'Users',
                 href: '/identity/users',
@@ -163,6 +179,17 @@ const navItems: NavItem[] = [
         ],
     },
     {
+=======
+        ],
+    },
+    {
+        title: 'Users',
+        href: '/users',
+        icon: UserRound,
+        roles: [IdentityRole.HR, IdentityRole.ADMIN],
+    },
+    {
+>>>>>>> main
         title: 'Profile',
         href: '/profile',
         icon: Cat,

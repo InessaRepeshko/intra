@@ -205,15 +205,23 @@
             "name": "search",
             "required": false,
             "in": "query",
+<<<<<<< HEAD
             "description": "Search by first name or last name or email (contains, case insensitive)",
             "schema": {
               "minimum": 1,
               "maximum": 302,
+=======
+            "description": "Search by first name or last name or email",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+>>>>>>> origin/main
               "example": "Valerii",
               "type": "string"
             }
           },
           {
+<<<<<<< HEAD
             "name": "firstName",
             "required": false,
             "in": "query",
@@ -274,17 +282,28 @@
             }
           },
           {
+=======
+>>>>>>> origin/main
             "name": "status",
             "required": false,
             "in": "query",
             "description": "User's status",
             "schema": {
+<<<<<<< HEAD
               "default": "ACTIVE",
               "example": "ACTIVE",
               "type": "string",
               "enum": [
                 "ACTIVE",
                 "INACTIVE"
+=======
+              "default": "active",
+              "example": "active",
+              "type": "string",
+              "enum": [
+                "active",
+                "inactive"
+>>>>>>> origin/main
               ]
             }
           },
@@ -319,6 +338,7 @@
             }
           },
           {
+<<<<<<< HEAD
             "name": "roles",
             "required": false,
             "in": "query",
@@ -341,6 +361,8 @@
             }
           },
           {
+=======
+>>>>>>> origin/main
             "name": "sortBy",
             "required": false,
             "in": "query",
@@ -352,7 +374,10 @@
               "enum": [
                 "id",
                 "firstName",
+<<<<<<< HEAD
                 "secondName",
+=======
+>>>>>>> origin/main
                 "lastName",
                 "fullName",
                 "email",
@@ -361,8 +386,12 @@
                 "teamId",
                 "managerId",
                 "createdAt",
+<<<<<<< HEAD
                 "updatedAt",
                 "roles"
+=======
+                "updatedAt"
+>>>>>>> origin/main
               ]
             }
           },
@@ -380,6 +409,7 @@
                 "desc"
               ]
             }
+<<<<<<< HEAD
           },
           {
             "description": "Search by first name or last name or email (contains, case insensitive)",
@@ -537,6 +567,8 @@
               "example": "desc",
               "type": "string"
             }
+=======
+>>>>>>> origin/main
           }
         ],
         "responses": {
@@ -557,7 +589,11 @@
             "description": "Unauthorized"
           }
         },
+<<<<<<< HEAD
         "summary": "Search users (default sort ascending by id)",
+=======
+        "summary": "Search users",
+>>>>>>> origin/main
         "tags": [
           "Identity / Users"
         ]
@@ -571,9 +607,14 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of user",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -607,9 +648,14 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of user",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -659,9 +705,14 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of user",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -696,9 +747,14 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of user",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -770,7 +826,11 @@
         ]
       }
     },
+<<<<<<< HEAD
     "/organisation/teams": {
+=======
+    "/org/teams": {
+>>>>>>> origin/main
       "post": {
         "operationId": "TeamsController_create",
         "parameters": [],
@@ -810,13 +870,18 @@
         },
         "summary": "Create a team",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Teams"
+=======
+          "Org Structure / Teams"
+>>>>>>> origin/main
         ]
       },
       "get": {
         "operationId": "TeamsController_search",
         "parameters": [
           {
+<<<<<<< HEAD
             "name": "title",
             "required": false,
             "in": "query",
@@ -848,6 +913,15 @@
             "schema": {
               "minimum": 1,
               "maximum": 1000,
+=======
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by title or description",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+>>>>>>> origin/main
               "example": "Engineering Team",
               "type": "string"
             }
@@ -888,13 +962,18 @@
             "description": "Sorting direction",
             "schema": {
               "default": "asc",
+<<<<<<< HEAD
               "example": "asc",
+=======
+              "example": "desc",
+>>>>>>> origin/main
               "type": "string",
               "enum": [
                 "asc",
                 "desc"
               ]
             }
+<<<<<<< HEAD
           },
           {
             "description": "Title of team (contains, case-insensitive)",
@@ -963,6 +1042,8 @@
               "example": "asc",
               "type": "string"
             }
+=======
+>>>>>>> origin/main
           }
         ],
         "responses": {
@@ -985,11 +1066,19 @@
         },
         "summary": "Search teams",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Teams"
         ]
       }
     },
     "/organisation/teams/{id}": {
+=======
+          "Org Structure / Teams"
+        ]
+      }
+    },
+    "/org/teams/{id}": {
+>>>>>>> origin/main
       "get": {
         "operationId": "TeamsController_getById",
         "parameters": [
@@ -997,9 +1086,14 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of team",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1023,7 +1117,11 @@
         },
         "summary": "Get a team by id",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Teams"
+=======
+          "Org Structure / Teams"
+>>>>>>> origin/main
         ]
       },
       "patch": {
@@ -1033,9 +1131,14 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of team",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1075,7 +1178,11 @@
         },
         "summary": "Update a team",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Teams"
+=======
+          "Org Structure / Teams"
+>>>>>>> origin/main
         ]
       },
       "delete": {
@@ -1085,9 +1192,14 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of team",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1110,11 +1222,19 @@
         },
         "summary": "Delete a team",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Teams"
         ]
       }
     },
     "/organisation/teams/{id}/members": {
+=======
+          "Org Structure / Teams"
+        ]
+      }
+    },
+    "/org/teams/{id}/members": {
+>>>>>>> origin/main
       "post": {
         "operationId": "TeamsController_addMember",
         "parameters": [
@@ -1122,9 +1242,14 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of team",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1164,7 +1289,11 @@
         },
         "summary": "Add a member to a team",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Teams"
+=======
+          "Org Structure / Teams"
+>>>>>>> origin/main
         ]
       },
       "get": {
@@ -1174,9 +1303,14 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of team",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1200,11 +1334,19 @@
         },
         "summary": "Get the team members",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Teams"
         ]
       }
     },
     "/organisation/teams/{id}/members/{memberId}": {
+=======
+          "Org Structure / Teams"
+        ]
+      }
+    },
+    "/org/teams/{id}/members/{userId}": {
+>>>>>>> origin/main
       "delete": {
         "operationId": "TeamsController_removeMember",
         "parameters": [
@@ -1212,6 +1354,7 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of team",
             "schema": {
               "type": "number"
@@ -1224,6 +1367,18 @@
             "description": "Id of member",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1246,11 +1401,19 @@
         },
         "summary": "Delete a member from a team",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Teams"
         ]
       }
     },
     "/organisation/positions": {
+=======
+          "Org Structure / Teams"
+        ]
+      }
+    },
+    "/org/positions": {
+>>>>>>> origin/main
       "post": {
         "operationId": "PositionsController_create",
         "parameters": [],
@@ -1290,13 +1453,18 @@
         },
         "summary": "Create a position",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Positions"
+=======
+          "Org Structure / Positions"
+>>>>>>> origin/main
         ]
       },
       "get": {
         "operationId": "PositionsController_search",
         "parameters": [
           {
+<<<<<<< HEAD
             "name": "title",
             "required": false,
             "in": "query",
@@ -1329,6 +1497,16 @@
               "minimum": 1,
               "maximum": 1000,
               "example": "Senior",
+=======
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by title or description",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 255,
+              "example": "Senior Backend Engineer",
+>>>>>>> origin/main
               "type": "string"
             }
           },
@@ -1364,6 +1542,7 @@
                 "desc"
               ]
             }
+<<<<<<< HEAD
           },
           {
             "description": "Search by title (contains, case-insensitive)",
@@ -1422,6 +1601,8 @@
               "example": "desc",
               "type": "string"
             }
+=======
+>>>>>>> origin/main
           }
         ],
         "responses": {
@@ -1444,11 +1625,19 @@
         },
         "summary": "Search positions",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Positions"
         ]
       }
     },
     "/organisation/positions/{id}": {
+=======
+          "Org Structure / Positions"
+        ]
+      }
+    },
+    "/org/positions/{id}": {
+>>>>>>> origin/main
       "get": {
         "operationId": "PositionsController_getById",
         "parameters": [
@@ -1456,9 +1645,14 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of position",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1482,7 +1676,11 @@
         },
         "summary": "Get a position by id",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Positions"
+=======
+          "Org Structure / Positions"
+>>>>>>> origin/main
         ]
       },
       "patch": {
@@ -1492,9 +1690,14 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of position",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1534,7 +1737,11 @@
         },
         "summary": "Update a position",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Positions"
+=======
+          "Org Structure / Positions"
+>>>>>>> origin/main
         ]
       },
       "delete": {
@@ -1544,9 +1751,14 @@
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of position",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1569,6 +1781,7 @@
         },
         "summary": "Delete a position",
         "tags": [
+<<<<<<< HEAD
           "Organisation / Positions"
         ]
       }
@@ -1576,14 +1789,28 @@
     "/organisation/positions/{id}/subordinates": {
       "post": {
         "operationId": "PositionsController_linkSubordinate",
+=======
+          "Org Structure / Positions"
+        ]
+      }
+    },
+    "/org/positions/{id}/children": {
+      "post": {
+        "operationId": "PositionsController_linkChild",
+>>>>>>> origin/main
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of position",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1621,6 +1848,7 @@
             "description": "Conflict"
           }
         },
+<<<<<<< HEAD
         "summary": "Add a subordinate position",
         "tags": [
           "Organisation / Positions"
@@ -1628,14 +1856,28 @@
       },
       "get": {
         "operationId": "PositionsController_listSubordinates",
+=======
+        "summary": "Add a child position",
+        "tags": [
+          "Org Structure / Positions"
+        ]
+      },
+      "get": {
+        "operationId": "PositionsController_listChildren",
+>>>>>>> origin/main
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of superior position",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1657,6 +1899,7 @@
             "description": "Unauthorized"
           }
         },
+<<<<<<< HEAD
         "summary": "List subordinate positions",
         "tags": [
           "Organisation / Positions"
@@ -1666,11 +1909,23 @@
     "/organisation/positions/{id}/subordinates/{subordinateId}": {
       "delete": {
         "operationId": "PositionsController_unlinkSubordinate",
+=======
+        "summary": "List child positions",
+        "tags": [
+          "Org Structure / Positions"
+        ]
+      }
+    },
+    "/org/positions/{id}/children/{childId}": {
+      "delete": {
+        "operationId": "PositionsController_unlinkChild",
+>>>>>>> origin/main
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of position",
             "schema": {
               "type": "number"
@@ -1683,6 +1938,18 @@
             "description": "Id of subordinate position",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "childId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1703,6 +1970,7 @@
             "description": "Not found"
           }
         },
+<<<<<<< HEAD
         "summary": "Delete a subordinate position",
         "tags": [
           "Organisation / Positions"
@@ -1712,14 +1980,30 @@
     "/organisation/positions/{id}/superiors": {
       "get": {
         "operationId": "PositionsController_listSuperiors",
+=======
+        "summary": "Delete a child position",
+        "tags": [
+          "Org Structure / Positions"
+        ]
+      }
+    },
+    "/org/positions/{id}/parents": {
+      "get": {
+        "operationId": "PositionsController_listParents",
+>>>>>>> origin/main
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
+<<<<<<< HEAD
             "description": "Id of subordinate position",
             "schema": {
               "type": "number"
+=======
+            "schema": {
+              "type": "string"
+>>>>>>> origin/main
             }
           }
         ],
@@ -1741,6 +2025,7 @@
             "description": "Unauthorized"
           }
         },
+<<<<<<< HEAD
         "summary": "List superior positions",
         "tags": [
           "Organisation / Positions"
@@ -3569,8 +3854,11 @@
                 "NEW",
                 "ACTIVE",
                 "FINISHED",
+<<<<<<< HEAD
                 "PREPARING_REPORT",
                 "PUBLISHED",
+=======
+>>>>>>> main
                 "CANCELED",
                 "ARCHIVED"
               ]
@@ -7398,6 +7686,11 @@
         "summary": "Delete cluster score analytics",
         "tags": [
           "Feedback360 / Cluster Score Analytics"
+=======
+        "summary": "List parent positions",
+        "tags": [
+          "Org Structure / Positions"
+>>>>>>> origin/main
         ]
       }
     },
@@ -7474,6 +7767,7 @@
             }
           },
           {
+<<<<<<< HEAD
             "name": "respondentCategories",
             "required": false,
             "in": "query",
@@ -7507,6 +7801,8 @@
             }
           },
           {
+=======
+>>>>>>> main
             "name": "turnoutPctOfTeam",
             "required": false,
             "in": "query",
@@ -7711,8 +8007,11 @@
                 "reviewId",
                 "cycleId",
                 "respondentCount",
+<<<<<<< HEAD
                 "respondentCategories",
                 "answerCount",
+=======
+>>>>>>> main
                 "turnoutPctOfTeam",
                 "turnoutPctOfOther",
                 "questionTotAvgBySelf",
@@ -7781,6 +8080,7 @@
             }
           },
           {
+<<<<<<< HEAD
             "description": "Filter by Feedback360 respondent categories",
             "required": false,
             "name": "respondentCategories",
@@ -7814,6 +8114,8 @@
             }
           },
           {
+=======
+>>>>>>> main
             "description": "Filter by team turnout percentage",
             "required": false,
             "name": "turnoutPctOfTeam",
@@ -8247,6 +8549,7 @@
         ]
       }
     },
+<<<<<<< HEAD
     "/reporting/reports/{id}/insights": {
       "get": {
         "operationId": "ReportingController_listReportInsights",
@@ -8332,6 +8635,14 @@
         "parameters": [
           {
             "name": "id",
+=======
+    "/reporting/reports/{id}/comments": {
+      "get": {
+        "operationId": "ReportingController_listReportComments",
+        "parameters": [
+          {
+            "name": "id",
+>>>>>>> main
             "required": true,
             "in": "path",
             "description": "Report identifier",
@@ -8442,6 +8753,7 @@
         "summary": "Get report comment by id",
         "tags": [
           "Reporting / Reports"
+<<<<<<< HEAD
         ]
       }
     },
@@ -9409,6 +9721,8 @@
         "summary": "Get strategic report insight by id",
         "tags": [
           "Reporting / Strategic Reports"
+=======
+>>>>>>> main
         ]
       }
     }
@@ -9535,6 +9849,7 @@
         "properties": {
           "id": {
             "type": "number",
+<<<<<<< HEAD
             "example": 1,
             "description": "User ID"
           },
@@ -9584,11 +9899,18 @@
           "status": {
             "type": "string",
             "enum": [
+<<<<<<< HEAD
               "ACTIVE",
               "INACTIVE"
             ],
             "example": "ACTIVE",
             "description": "User status"
+=======
+              "active",
+              "inactive"
+            ],
+            "example": "active"
+>>>>>>> origin/main
           },
           "positionId": {
             "type": "number",
@@ -9599,18 +9921,27 @@
           "teamId": {
             "type": "number",
             "example": 10,
+<<<<<<< HEAD
             "nullable": true,
             "description": "User team ID"
+=======
+            "nullable": true
+>>>>>>> origin/main
           },
           "managerId": {
             "type": "number",
             "example": 2,
+<<<<<<< HEAD
             "nullable": true,
             "description": "User manager ID"
+=======
+            "nullable": true
+>>>>>>> origin/main
           },
           "roles": {
             "type": "array",
             "example": [
+<<<<<<< HEAD
               "EMPLOYEE"
             ],
             "description": "User roles",
@@ -9621,11 +9952,23 @@
                 "HR",
                 "MANAGER",
                 "EMPLOYEE"
+=======
+              "manager"
+            ],
+            "items": {
+              "type": "string",
+              "enum": [
+                "admin",
+                "hr",
+                "manager",
+                "employee"
+>>>>>>> origin/main
               ]
             }
           },
           "createdAt": {
             "type": "string",
+<<<<<<< HEAD
             "example": "2024-01-01T10:00:00.000Z",
             "description": "User creation date",
             "format": "date-time"
@@ -9635,6 +9978,13 @@
             "example": "2024-01-02T10:00:00.000Z",
             "description": "User update date",
             "format": "date-time"
+=======
+            "example": "2024-01-01T10:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-01-02T10:00:00.000Z"
+>>>>>>> origin/main
           }
         },
         "required": [
@@ -9766,6 +10116,7 @@
           "firstName": {
             "type": "string",
             "description": "User's first name",
+<<<<<<< HEAD
             "minimum": 1,
             "maximum": 100,
             "example": "Valerii"
@@ -9776,10 +10127,23 @@
             "minimum": 1,
             "maximum": 100,
             "example": "Valeriiovych"
+=======
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Valerii"
+          },
+          "secondName": {
+            "type": "object",
+            "description": "User's second name",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Velychko"
+>>>>>>> origin/main
           },
           "lastName": {
             "type": "string",
             "description": "User's last name",
+<<<<<<< HEAD
             "minimum": 1,
             "maximum": 100,
             "example": "Velychko"
@@ -9790,12 +10154,22 @@
             "minimum": 1,
             "maximum": 302,
             "example": "Valerii Velychko"
+=======
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Valeriiovych"
+>>>>>>> origin/main
           },
           "email": {
             "type": "string",
             "description": "User's email",
+<<<<<<< HEAD
             "minimum": 1,
             "maximum": 100,
+=======
+            "minLength": 1,
+            "maxLength": 100,
+>>>>>>> origin/main
             "example": "valerii.velychko@example.com"
           },
           "avatarUrl": {
@@ -9807,11 +10181,19 @@
             "type": "string",
             "description": "User's status",
             "enum": [
+<<<<<<< HEAD
               "ACTIVE",
               "INACTIVE"
             ],
             "default": "ACTIVE",
             "example": "ACTIVE"
+=======
+              "active",
+              "inactive"
+            ],
+            "default": "active",
+            "example": "active"
+>>>>>>> origin/main
           },
           "positionId": {
             "type": "number",
@@ -9822,12 +10204,17 @@
           "teamId": {
             "type": "number",
             "description": "Team ID",
+<<<<<<< HEAD
             "example": 10,
             "nullable": true
+=======
+            "example": 10
+>>>>>>> origin/main
           },
           "managerId": {
             "type": "number",
             "description": "Manager ID",
+<<<<<<< HEAD
             "example": 2,
             "nullable": true
           },
@@ -9840,6 +10227,9 @@
             "items": {
               "type": "string"
             }
+=======
+            "example": 2
+>>>>>>> origin/main
           }
         }
       },
@@ -9850,16 +10240,28 @@
             "type": "array",
             "description": "Role codes to assign to the user (replace existing)",
             "example": [
+<<<<<<< HEAD
               "MANAGER",
               "HR"
+=======
+              "manager",
+              "hr"
+>>>>>>> origin/main
             ],
             "items": {
               "type": "string",
               "enum": [
+<<<<<<< HEAD
                 "ADMIN",
                 "HR",
                 "MANAGER",
                 "EMPLOYEE"
+=======
+                "admin",
+                "hr",
+                "manager",
+                "employee"
+>>>>>>> origin/main
               ]
             }
           }
@@ -9871,6 +10273,7 @@
       "RoleResponse": {
         "type": "object",
         "properties": {
+<<<<<<< HEAD
           "id": {
             "type": "number",
             "example": 1,
@@ -9922,6 +10325,32 @@
           "description",
           "createdAt",
           "updatedAt"
+=======
+          "code": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "hr",
+              "manager",
+              "employee"
+            ],
+            "example": "manager"
+          },
+          "title": {
+            "type": "string",
+            "example": "Manager"
+          },
+          "description": {
+            "type": "object",
+            "example": "Responsible for managing the team",
+            "nullable": true
+          }
+        },
+        "required": [
+          "code",
+          "title",
+          "description"
+>>>>>>> origin/main
         ]
       },
       "CreateTeamDto": {
@@ -9931,6 +10360,7 @@
             "type": "string",
             "description": "Team title",
             "example": "Engineering Team",
+<<<<<<< HEAD
             "maximum": 255,
             "minimum": 1
           },
@@ -9944,6 +10374,21 @@
           },
           "headId": {
             "type": "number",
+=======
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "description": {
+            "type": "object",
+            "description": "Team description",
+            "example": "Responsible for product development",
+            "nullable": true,
+            "maxLength": 1000,
+            "minLength": 1
+          },
+          "headId": {
+            "type": "object",
+>>>>>>> origin/main
             "description": "Id of team leader",
             "example": 12,
             "nullable": true
@@ -9958,6 +10403,7 @@
         "properties": {
           "id": {
             "type": "number",
+<<<<<<< HEAD
             "example": 1,
             "description": "Id of team"
           },
@@ -9993,6 +10439,31 @@
             "format": "date-time",
             "example": "2024-01-02T10:00:00.000Z",
             "description": "Date of team update"
+=======
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "example": "Engineering Team"
+          },
+          "description": {
+            "type": "object",
+            "example": "Responsible for product development",
+            "nullable": true
+          },
+          "headId": {
+            "type": "object",
+            "example": 10,
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T10:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-01-02T10:00:00.000Z"
+>>>>>>> origin/main
           }
         },
         "required": [
@@ -10011,6 +10482,7 @@
             "type": "string",
             "description": "Team title",
             "example": "Engineering Team",
+<<<<<<< HEAD
             "maximum": 255,
             "minimum": 1
           },
@@ -10024,6 +10496,21 @@
           },
           "headId": {
             "type": "number",
+=======
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "description": {
+            "type": "object",
+            "description": "Team description",
+            "example": "Responsible for product development",
+            "nullable": true,
+            "maxLength": 1000,
+            "minLength": 1
+          },
+          "headId": {
+            "type": "object",
+>>>>>>> origin/main
             "description": "Id of team leader",
             "example": 12,
             "nullable": true
@@ -10033,9 +10520,15 @@
       "AddTeamMemberDto": {
         "type": "object",
         "properties": {
+<<<<<<< HEAD
           "memberId": {
             "type": "number",
             "description": "Member id",
+=======
+          "userId": {
+            "type": "number",
+            "description": "User id",
+>>>>>>> origin/main
             "example": 15
           },
           "isPrimary": {
@@ -10045,7 +10538,11 @@
           }
         },
         "required": [
+<<<<<<< HEAD
           "memberId"
+=======
+          "userId"
+>>>>>>> origin/main
         ]
       },
       "TeamMemberResponse": {
@@ -10053,6 +10550,7 @@
         "properties": {
           "id": {
             "type": "number",
+<<<<<<< HEAD
             "example": 101,
             "description": "Team member id"
           },
@@ -10084,12 +10582,38 @@
                 "$ref": "#/components/schemas/UserResponse"
               }
             ]
+=======
+            "example": 101
+          },
+          "teamId": {
+            "type": "number",
+            "example": 3
+          },
+          "userId": {
+            "type": "number",
+            "example": 42
+          },
+          "isPrimary": {
+            "type": "boolean",
+            "example": false
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-02T10:00:00.000Z"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserResponse"
+>>>>>>> origin/main
           }
         },
         "required": [
           "id",
           "teamId",
+<<<<<<< HEAD
           "memberId",
+=======
+          "userId",
+>>>>>>> origin/main
           "isPrimary",
           "createdAt"
         ]
@@ -10101,6 +10625,7 @@
             "type": "string",
             "description": "Position title",
             "example": "Senior Backend Engineer",
+<<<<<<< HEAD
             "maximum": 255,
             "minimum": 1
           },
@@ -10111,6 +10636,18 @@
             "nullable": true,
             "maximum": 1000,
             "minimum": 1
+=======
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "description": {
+            "type": "object",
+            "description": "Position description",
+            "example": "Backend development, architecture design, code reviews",
+            "nullable": true,
+            "maxLength": 1000,
+            "minLength": 1
+>>>>>>> origin/main
           }
         },
         "required": [
@@ -10122,6 +10659,7 @@
         "properties": {
           "id": {
             "type": "number",
+<<<<<<< HEAD
             "example": 1,
             "description": "Position id"
           },
@@ -10151,6 +10689,26 @@
             "format": "date-time",
             "example": "2024-01-02T10:00:00.000Z",
             "description": "Position updated at"
+=======
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "example": "Senior Backend Engineer"
+          },
+          "description": {
+            "type": "object",
+            "example": "Backend development, architecture design, code reviews",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T10:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-01-02T10:00:00.000Z"
+>>>>>>> origin/main
           }
         },
         "required": [
@@ -10168,6 +10726,7 @@
             "type": "string",
             "description": "Position title",
             "example": "Senior Backend Engineer",
+<<<<<<< HEAD
             "maximum": 255,
             "minimum": 1
           },
@@ -10178,19 +10737,38 @@
             "nullable": true,
             "maximum": 1000,
             "minimum": 1
+=======
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "description": {
+            "type": "object",
+            "description": "Position description",
+            "example": "Backend development, architecture design, code reviews",
+            "nullable": true,
+            "maxLength": 1000,
+            "minLength": 1
+>>>>>>> origin/main
           }
         }
       },
       "CreatePositionLinkDto": {
         "type": "object",
         "properties": {
+<<<<<<< HEAD
           "subordinateId": {
             "type": "number",
             "description": "Id of subordinate position",
+=======
+          "childId": {
+            "type": "number",
+            "description": "Id of child position",
+>>>>>>> origin/main
             "example": 5
           }
         },
         "required": [
+<<<<<<< HEAD
           "subordinateId"
         ]
       },
@@ -10720,8 +11298,11 @@
               "NEW",
               "ACTIVE",
               "FINISHED",
+<<<<<<< HEAD
               "PREPARING_REPORT",
               "PUBLISHED",
+=======
+>>>>>>> main
               "CANCELED",
               "ARCHIVED"
             ],
@@ -10814,8 +11395,11 @@
               "NEW",
               "ACTIVE",
               "FINISHED",
+<<<<<<< HEAD
               "PREPARING_REPORT",
               "PUBLISHED",
+=======
+>>>>>>> main
               "CANCELED",
               "ARCHIVED"
             ],
@@ -10920,8 +11504,11 @@
               "NEW",
               "ACTIVE",
               "FINISHED",
+<<<<<<< HEAD
               "PREPARING_REPORT",
               "PUBLISHED",
+=======
+>>>>>>> main
               "CANCELED",
               "ARCHIVED"
             ],

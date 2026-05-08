@@ -71,6 +71,7 @@ export function useTeamAllUsersQuery(teamIds: number[]) {
 
     uniqueTeamIds.forEach((teamId, index) => {
         const result = queries[index];
+<<<<<<< HEAD
         if (result.isSuccess && result.data !== undefined) {
             users.push({
                 teamId,
@@ -82,6 +83,17 @@ export function useTeamAllUsersQuery(teamIds: number[]) {
                     ) ?? [],
             });
         }
+=======
+        users.push({
+            teamId,
+            users:
+                result.data?.sort((a, b) =>
+                    (a.user?.fullName ?? '').localeCompare(
+                        b.user?.fullName ?? '',
+                    ),
+                ) ?? [],
+        });
+>>>>>>> main
     });
 
     const isLoading = queries.some((q) => q.isLoading);
