@@ -52,19 +52,19 @@
         "db:refresh": {
             "cache": false
         },
-        "db:test:deploy": {
+        "db:deploy:prod": {
             "cache": false
         },
-        "db:test:generate": {
+        "db:generate:prod": {
             "cache": false
         },
-        "db:test:seed": {
+        "db:seed:prod": {
             "cache": false
         },
-        "db:test:reset": {
+        "db:reset:prod": {
             "cache": false
         },
-        "db:test:refresh": {
+        "db:refresh:prod": {
             "cache": false
         },
         "format": {
