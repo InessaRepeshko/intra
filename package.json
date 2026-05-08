@@ -51,6 +51,8 @@
         "start:test": "turbo run start:test --filter=@intra/api",
         "start:debug": "turbo run start:debug --filter=@intra/api",
         "start:prod": "turbo run start:prod",
+        "start:prod:api": "turbo run start:prod --filter=@intra/api",
+        "start:prod:web": "turbo run start:prod --filter=@intra/web",
         "start:web": "turbo run start:dev --filter=@intra/web",
         "start:api": "pnpm run docker:up && turbo run start:dev --filter=@intra/api",
         "refresh": "turbo run refresh --filter=@intra/api",
