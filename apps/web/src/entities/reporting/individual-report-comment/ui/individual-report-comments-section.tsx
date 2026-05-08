@@ -23,14 +23,13 @@ export function IndividualReportCommentsSection({
         data: reportComments,
         isLoading,
         isError,
+        error,
     } = useReportCommentsQuery(reportId);
 
     const grouped = useMemo(
         () => groupCommentsBySentiment(reportComments ?? []),
         [reportComments],
     );
-
-    console.log(reportComments);
 
     return (
         <Card>
@@ -52,7 +51,15 @@ export function IndividualReportCommentsSection({
                     </div>
                 )}
 
-                {isError && (
+                {isError && error.message.includes('404') && (
+                    <div className="flex flex-col items-center justify-center py-5 text-center">
+                        <h3 className="text-sm text-muted-foreground">
+                            No report comments found
+                        </h3>
+                    </div>
+                )}
+
+                {isError && !error.message.includes('404') && (
                     <div className="flex flex-col items-center justify-center py-16 text-center">
                         <h3 className="text-lg font-semibold text-destructive">
                             Failed to load report comments

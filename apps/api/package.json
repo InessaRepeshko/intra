@@ -19,6 +19,8 @@
         "// Database Commands": "",
         "refresh": "pnpm db:refresh -w @intra/database && pnpm start:dev",
         "refresh:test": "pnpm db:test:refresh -w @intra/database && pnpm start:test",
+        "seed:individual-reports": "pnpm env:dev -- node -r ts-node/register -r tsconfig-paths/register ./src/scripts/seed-individual-reports.ts",
+        "seed:strategic-reports": "pnpm env:dev -- node -r ts-node/register -r tsconfig-paths/register ./src/scripts/seed-strategic-reports.ts",
         "// Build Commands": "",
         "dev": "pnpm start:dev",
         "build": "nest build",
@@ -46,6 +48,8 @@
     },
     "devDependencies": {
         "@nestjs/schedule": "^6.1.1",
-        "@types/nodemailer": "^8.0.0"
+        "@types/nodemailer": "^8.0.0",
+        "ts-node": "^10.9.2",
+        "tsconfig-paths": "^4.2.0"
     }
 }

@@ -20,6 +20,9 @@ import seedPositionHierarchy from './organisation/position-hierarchy';
 import seedPositions from './organisation/positions';
 import seedTeamHeads from './organisation/team-heads';
 import seedTeams from './organisation/teams';
+import seedIndividualReports from './reporting/individual-reports';
+import seedReportComments from './reporting/report-comments';
+import seedStrategicReports from './reporting/startegic-reports';
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({
@@ -96,6 +99,17 @@ async function main() {
 
     await seedAnswers(prisma, reviews);
     console.info('💬 Answers');
+
+    /* Reporting */
+    console.info('\n📊 Reporting seeding:');
+    await seedIndividualReports();
+    console.info('📄 Individual reports');
+
+    await seedStrategicReports();
+    console.info('📈 Strategic reports');
+
+    await seedReportComments(prisma);
+    console.info('🗒️  Report comments');
 
     // await seedClusterScores(prisma, reviews, cycles);
     // console.info('📊 Cluster scores');

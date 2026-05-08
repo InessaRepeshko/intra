@@ -329,7 +329,7 @@ export function ProcessReportCommentsForm({
                 onSubmit={form.handleSubmit(onPublish)}
                 className="flex min-h-full flex-col bg-background rounded-xl"
             >
-                <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background rounded-t-xl px-4 py-4 flex-wrap">
+                <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background rounded-t-xl px-4 py-2.5 flex-wrap">
                     <div className="flex items-center gap-4 min-w-[100px]">
                         <button
                             type="button"

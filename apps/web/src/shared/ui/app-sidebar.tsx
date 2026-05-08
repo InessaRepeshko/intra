@@ -40,7 +40,13 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { createContext, useContext, useEffect, useState } from 'react';
+import {
+    createContext,
+    useContext,
+    useEffect,
+    useState,
+    type ReactNode,
+} from 'react';
 
 interface SidebarContextType {
     collapsed: boolean;
@@ -576,24 +582,35 @@ export function AppSidebar() {
     );
 }
 
-export function PageHeader({ title }: { title: string }) {
+export function PageHeader({
+    title,
+    actions,
+}: {
+    title: string;
+    actions?: ReactNode;
+}) {
     const { toggle } = useSidebar();
 
     return (
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background rounded-t-xl px-4 py-4">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background rounded-t-xl px-4 py-4 print:static print:border-0">
             <div className="flex items-center gap-4">
                 <button
                     onClick={toggle}
-                    className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:text-accent-foreground transition-colors"
+                    className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:text-accent-foreground transition-colors print:hidden"
                     aria-label="Toggle sidebar"
                 >
                     <PanelLeft className="h-6 w-6" />
                 </button>
-                <div className="h-6 w-px bg-border" />
+                <div className="h-6 w-px bg-border print:hidden" />
                 <h1 className="text-xl font-semibold tracking-tight text-foreground">
                     {title}
                 </h1>
             </div>
+            {actions && (
+                <div className="flex items-center gap-2 print:hidden">
+                    {actions}
+                </div>
+            )}
         </header>
     );
 }
