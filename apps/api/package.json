@@ -15,7 +15,7 @@
         "start:dev": "pnpm env:dev -- nest start --watch",
         "start:test": "pnpm env:test -- nest start",
         "start:debug": "pnpm env:dev -- nest start --debug --watch",
-        "start:prod": "pnpm env:prod -- node ./dist/src/main.js",
+        "start:prod": "node ./dist/apps/api/src/main.js",
         "// Database Commands": "",
         "refresh": "pnpm db:refresh -w @intra/database && pnpm start:dev",
         "refresh:test": "pnpm db:test:refresh -w @intra/database && pnpm start:test",
