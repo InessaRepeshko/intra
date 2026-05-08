@@ -10,8 +10,8 @@ export default () => ({
         password: getEnvVarAsStr('DATABASE_PASSWORD'),
         name: getEnvVarAsStr('DATABASE_NAME'),
         url: getEnvVarAsStr('DATABASE_URL'),
-        shadowName: getEnvVarAsStr('SHADOW_DATABASE_NAME'),
-        shadowUrl: getEnvVarAsStr('SHADOW_DATABASE_URL'),
+        // shadowName: getEnvVarAsStr('SHADOW_DATABASE_NAME'),
+        // shadowUrl: getEnvVarAsStr('SHADOW_DATABASE_URL'),
         connectionLimit: CONNECTION_LIMIT,
     },
 });

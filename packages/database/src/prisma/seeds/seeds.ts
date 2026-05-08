@@ -1,5 +1,6 @@
 import { PrismaClient } from '@intra/database';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 import seedAnswers from './feedback360/answers';
 import seedCycles from './feedback360/cycles';
 import seedQuestions from './feedback360/questions';
@@ -24,10 +25,19 @@ import seedIndividualReports from './reporting/individual-reports';
 import seedReportComments from './reporting/report-comments';
 import seedStrategicReports from './reporting/startegic-reports';
 
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false,
+    },
+});
+
 const prisma = new PrismaClient({
-    adapter: new PrismaPg({
-        connectionString: process.env.DATABASE_URL ?? null,
-    }),
+    adapter: new PrismaPg(pool),
+    //     {
+    //     connectionString: process.env.DATABASE_URL ?? null,
+    // }
+    // ),
 });
 
 async function main() {
