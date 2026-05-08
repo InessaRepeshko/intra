@@ -1,11 +1,16 @@
+<<<<<<< HEAD
 import {
     mapUserResponseDtoToModel,
     type User,
 } from '@entities/identity/user/model/mappers';
+=======
+import { mapUserDtoToModel, User } from '@entities/identity/user/model/mappers';
+>>>>>>> main
 import type {
     CreateUserPayload,
     IdentityRole,
     UpdateUserPayload,
+<<<<<<< HEAD
     UserResponseDto,
     UserSearchQuery,
 } from '@entities/identity/user/model/types';
@@ -40,14 +45,51 @@ export async function createUser(
     payload: CreateUserPayload,
 ): Promise<UserResponseDto> {
     const { data } = await apiClient.post<UserResponseDto>(USERS_BASE, payload);
+=======
+    UserDto,
+    UserSearchQuery,
+} from '@entities/identity/user/model/types';
+import { PositionDto } from '@entities/organisation/position/model/types';
+import { TeamDto } from '@entities/organisation/team/model/types';
+import { apiClient } from '@shared/api/api-client';
+import { compareStringArrays } from '@shared/lib/utils/compare-arrays';
+
+const USERS_BASE = 'identity/users';
+const POSITIONS_BASE = 'organisation/positions';
+const TEAMS_BASE = 'organisation/teams';
+const AUTH_BASE = 'auth';
+
+export async function fetchCurrentUser(): Promise<UserDto> {
+    const response = await apiClient.get<UserDto>(`${AUTH_BASE}/me`);
+    return response.data;
+}
+
+export async function fetchUserById(id: number): Promise<UserDto> {
+    const response = await apiClient.get<UserDto>(`${USERS_BASE}/${id}`);
+    return response.data;
+}
+
+export async function fetchUsers(params?: UserSearchQuery): Promise<UserDto[]> {
+    const { data } = await apiClient.get<UserDto[]>(USERS_BASE, { params });
+    return data;
+}
+
+export async function createUser(payload: CreateUserPayload): Promise<UserDto> {
+    const { data } = await apiClient.post<UserDto>(USERS_BASE, payload);
+>>>>>>> main
     return data;
 }
 
 export async function updateUser(
     id: number,
     payload: UpdateUserPayload,
+<<<<<<< HEAD
 ): Promise<UserResponseDto> {
     const { data } = await apiClient.patch<UserResponseDto>(
+=======
+): Promise<UserDto> {
+    const { data } = await apiClient.patch<UserDto>(
+>>>>>>> main
         `${USERS_BASE}/${id}`,
         payload,
     );
@@ -66,21 +108,46 @@ export async function changeUserRoles(
 }
 
 export async function fetchFullNameByUserId(userId: number): Promise<string> {
+<<<<<<< HEAD
     const response = await apiClient.get<UserResponseDto>(
         `${USERS_BASE}/${userId}`,
     );
+=======
+    const response = await apiClient.get<UserDto>(`${USERS_BASE}/${userId}`);
+>>>>>>> main
     return (
         response.data?.fullName ??
         `${response.data?.lastName} ${response.data?.firstName}`
     );
 }
 
+<<<<<<< HEAD
 export async function fetchManagerNameByManagerId(
     managerId: number,
 ): Promise<string> {
     const response = await apiClient.get<UserResponseDto>(
         `${USERS_BASE}/${managerId}`,
     );
+=======
+export async function fetchPositionTitleById(
+    positionId: number,
+): Promise<string> {
+    const response = await apiClient.get<PositionDto>(
+        `${POSITIONS_BASE}/${positionId}`,
+    );
+    return response.data?.title;
+}
+
+export async function fetchTeamTitleByTeamId(teamId: number): Promise<string> {
+    const response = await apiClient.get<TeamDto>(`${TEAMS_BASE}/${teamId}`);
+    return response.data?.title;
+}
+
+export async function fetchManagerNameByManagerId(
+    managerId: number,
+): Promise<string> {
+    const response = await apiClient.get<UserDto>(`${USERS_BASE}/${managerId}`);
+>>>>>>> main
     return (
         response.data?.fullName ??
         `${response.data?.lastName} ${response.data?.firstName}`
@@ -94,6 +161,7 @@ export async function fetchUsersByPositionIds(
 
     const results = await Promise.all(
         uniqueIds.map(async (positionId) => {
+<<<<<<< HEAD
             const { data } = await apiClient.get<UserResponseDto[]>(
                 `${USERS_BASE}`,
                 {
@@ -101,6 +169,12 @@ export async function fetchUsersByPositionIds(
                 },
             );
             return { positionId, users: data.map(mapUserResponseDtoToModel) };
+=======
+            const { data } = await apiClient.get<UserDto[]>(`${USERS_BASE}`, {
+                params: { positionId },
+            });
+            return { positionId, users: data.map(mapUserDtoToModel) };
+>>>>>>> main
         }),
     );
 

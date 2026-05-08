@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import { RespondentCategory } from '../../../feedback360/enums/respondent-category.enum';
+=======
+>>>>>>> main
 import { ReportEntitySummaryTotalsDto } from '../report-entity-summary-totals-dto.interface';
 
 export interface ReportBaseDto<TDate = Date> {

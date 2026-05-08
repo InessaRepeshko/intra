@@ -1,4 +1,5 @@
 import { UserSearchQuery } from '@entities/identity/user/model/types';
+<<<<<<< HEAD
 import { fetchPositionTitleById } from '@entities/organisation/position/api/position.api';
 import { fetchTeamTitleById } from '@entities/organisation/team/api/team.api';
 import { useQueries, useQuery } from '@tanstack/react-query';
@@ -6,6 +7,15 @@ import { type User, mapUserResponseDtoToModel } from '../model/mappers';
 import {
     fetchCurrentUser,
     fetchManagerNameByManagerId,
+=======
+import { useQuery } from '@tanstack/react-query';
+import { type User, mapUserDtoToModel } from '../model/mappers';
+import {
+    fetchCurrentUser,
+    fetchManagerNameByManagerId,
+    fetchPositionTitleById,
+    fetchTeamTitleByTeamId,
+>>>>>>> main
     fetchUserById,
     fetchUsers,
 } from './user.api';
@@ -41,7 +51,11 @@ async function enrichUserWithPositionTitle(user: User): Promise<User> {
 async function enrichUserWithTeamTitle(user: User): Promise<User> {
     if (!user.teamId) return user;
     try {
+<<<<<<< HEAD
         const teamTitle = await fetchTeamTitleById(user.teamId);
+=======
+        const teamTitle = await fetchTeamTitleByTeamId(user.teamId);
+>>>>>>> main
         return { ...user, teamTitle };
     } catch {
         return user;
@@ -70,7 +84,11 @@ export function useUsersQuery(params?: UserSearchQuery) {
         queryKey: userKeys.list(params),
         queryFn: async () => {
             const dtos = await fetchUsers(params);
+<<<<<<< HEAD
             return dtos.map(mapUserResponseDtoToModel);
+=======
+            return dtos.map(mapUserDtoToModel);
+>>>>>>> main
         },
     });
 }
@@ -149,7 +167,11 @@ export function useUserQuery(id: number) {
         queryKey: userKeys.detail(id),
         queryFn: async () => {
             const dto = await fetchUserById(id);
+<<<<<<< HEAD
             const user = mapUserResponseDtoToModel(dto);
+=======
+            const user = mapUserDtoToModel(dto);
+>>>>>>> main
             return enrichUserWithOrgData(user);
         },
         enabled: id > 0,
@@ -161,11 +183,16 @@ export function useMeQuery() {
         queryKey: userKeys.me(),
         queryFn: async () => {
             const dto = await fetchCurrentUser();
+<<<<<<< HEAD
             const user = mapUserResponseDtoToModel(dto);
+=======
+            const user = mapUserDtoToModel(dto);
+>>>>>>> main
             return enrichUserWithOrgData(user);
         },
     });
 }
+<<<<<<< HEAD
 
 export function useUserPositionTitleQuery(userId: number, positionId: number) {
     return useQuery<string>({
@@ -253,3 +280,5 @@ export function useUserManagerFullNamesQuery(managerIds: number[]) {
 
     return { managerNames, isLoading };
 }
+=======
+>>>>>>> main
