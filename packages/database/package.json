@@ -16,9 +16,12 @@
         }
     },
     "scripts": {
+        "// --- Prisma Config Commands ---": "",
         "prisma:config": "prisma --config ./src/prisma/prisma.config.ts",
         "prisma:dev": "dotenv -e ../../.env.development.local -- pnpm prisma:config",
         "prisma:test": "dotenv -e ../../.env.test -- pnpm prisma:config",
+        "prisma:prod": "dotenv -e ../../.env.production -- pnpm prisma:config",
+        "// --- Prisma Commands for DEV environment ---": "",
         "db:deploy": "pnpm prisma:dev -- migrate deploy",
         "db:schema": "pnpm prisma validate --schema ./src/prisma/schema.prisma && pnpm prisma format --schema ./src/prisma/schema.prisma",
         "db:create": "pnpm prisma:dev -- migrate dev",
@@ -33,6 +36,12 @@
         "db:test:refresh": "pnpm db:test:reset && pnpm db:test:generate && pnpm db:test:seed",
         "migrate": "pnpm db:create",
         "db:migrate": "pnpm db:create",
+        "// --- Prisma Commands for PROD environment ---": "",
+        "db:deploy:prod": "pnpm prisma:prod -- migrate deploy",
+        "db:generate:prod": "pnpm prisma:prod -- generate",
+        "db:reset:prod": "pnpm prisma:prod -- migrate reset --force",
+        "db:seed:prod": "pnpm prisma:prod -- db seed",
+        "db:refresh:prod": "pnpm db:reset:prod && pnpm db:generate:prod && pnpm db:seed:prod",
         "format": "pnpm db:schema && pnpm prettier --write \"src/**/*.ts\"",
         "build": "pnpm tsc && pnpm prisma:config -- generate"
     },
@@ -40,10 +49,12 @@
         "@intra/shared-kernel": "workspace:*",
         "@prisma/adapter-pg": "^7.4.0",
         "@prisma/client": "^7.4.0",
-        "decimal.js": "^10.6.0"
+        "decimal.js": "^10.6.0",
+        "pg": "^8.18.0"
     },
     "devDependencies": {
         "@types/node": "^25.2.3",
+        "@types/pg": "^8.20.0",
         "axios": "^1.13.5",
         "dotenv": "^17.3.1",
         "dotenv-cli": "^11.0.0",

@@ -13,7 +13,7 @@
     "// Next.js Commands": "",
     "start:dev": "pnpm env:dev -- next dev",
     "build": "pnpm env:prod -- next build",
-    "start:prod": "pnpm env:prod -- next start",
+    "start:prod": "pnpm next start",
     "lint": "eslint . --cache",
     "format": "prettier --write \"**/*.{ts,tsx,css,js}\" --ignore-path ../../.prettierignore --no-error-on-unmatched-pattern"
   },

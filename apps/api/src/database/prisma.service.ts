@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool, type PoolConfig } from 'pg';
 
 @Injectable()
 export class PrismaService
@@ -16,9 +17,20 @@ export class PrismaService
     private readonly logger = new Logger(PrismaService.name);
 
     constructor(private readonly configService: ConfigService) {
-        const adapter = new PrismaPg({
+        // const adapter = new PrismaPg({
+        //     connectionString: configService.get<string>('database.url'),
+        // });
+
+        const isProduction =
+            configService.get<string>('APP_NODE_ENV') === 'production';
+        const poolConfig: PoolConfig = {
             connectionString: configService.get<string>('database.url'),
-        });
+        };
+        if (isProduction) {
+            poolConfig.ssl = { rejectUnauthorized: false };
+        }
+        const pool = new Pool(poolConfig);
+        const adapter = new PrismaPg(pool);
         super({ adapter });
     }
 
