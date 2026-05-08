@@ -7,6 +7,7 @@ import { join } from 'path';
 import { DatabaseModule } from 'src/database/database.module';
 import { Feedback360Module } from '../feedback360/feedback360.module';
 import { IdentityModule } from '../identity/identity.module';
+import { ReportingModule } from '../reporting/reporting.module';
 import { CycleStageNotificationListener } from './application/listeners/cycle-stage-notification.listener';
 import { ReviewStageNotificationListener } from './application/listeners/review-stage-notification.listener';
 import { UserCreatedNotificationListener } from './application/listeners/user-created-notification.listener';
@@ -22,6 +23,7 @@ import { NotificationLogRepository } from './infrastructure/prisma-repositories/
         DatabaseModule,
         IdentityModule,
         Feedback360Module,
+        ReportingModule,
         MailerModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],

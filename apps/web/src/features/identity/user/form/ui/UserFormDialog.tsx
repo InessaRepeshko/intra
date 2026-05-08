@@ -481,7 +481,7 @@ export function UserFormDialog({
                                             </Label>
                                             <Input
                                                 id="firstName"
-                                                placeholder="Ліна"
+                                                placeholder="Lina"
                                                 disabled={fieldsDisabled}
                                                 className={inputClassName}
                                                 {...form.register('firstName')}
@@ -507,7 +507,7 @@ export function UserFormDialog({
                                             </Label>
                                             <Input
                                                 id="lastName"
-                                                placeholder="Костенко"
+                                                placeholder="Kostenko"
                                                 disabled={fieldsDisabled}
                                                 className={inputClassName}
                                                 {...form.register('lastName')}
@@ -529,7 +529,7 @@ export function UserFormDialog({
                                         </Label>
                                         <Input
                                             id="secondName"
-                                            placeholder="Василівна"
+                                            placeholder="Vasylivna"
                                             disabled={fieldsDisabled}
                                             className={inputClassName}
                                             {...form.register('secondName')}

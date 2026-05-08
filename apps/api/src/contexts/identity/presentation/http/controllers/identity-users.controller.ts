@@ -51,6 +51,7 @@ export class IdentityUsersController {
     constructor(private readonly service: IdentityUserService) {}
 
     @Post()
+    @Roles(IdentityRole.ADMIN, IdentityRole.HR)
     @ApiOperation({ summary: 'Create a user' })
     @ApiBody({ type: CreateUserDto })
     @ApiResponse({ status: HttpStatus.CREATED, type: UserResponse })

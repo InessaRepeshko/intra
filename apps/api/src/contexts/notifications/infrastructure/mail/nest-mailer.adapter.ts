@@ -18,6 +18,12 @@ export class NestMailerAdapter implements MailerPort {
             subject: options.subject,
             template: options.template,
             context: options.context,
+            attachments: options.attachments?.map((a) => ({
+                filename: a.filename,
+                content: a.content,
+                contentType: a.contentType,
+                cid: a.cid,
+            })),
         });
     }
 }

@@ -18,8 +18,18 @@ import {
     UserRepositoryPort,
 } from 'src/contexts/identity/application/ports/user.repository.port';
 import { UserDomain } from 'src/contexts/identity/domain/user.domain';
+import {
+    STRATEGIC_REPORT_REPOSITORY,
+    StrategicReportRepositoryPort,
+} from 'src/contexts/reporting/application/ports/strategic-report.repository.port';
 import { NotificationKind } from '../../domain/notification-kind.enum';
 import { NotificationLogDomain } from '../../domain/notification-log.domain';
+import {
+    LOGO_BUFFER,
+    LOGO_CID,
+    LOGO_CONTENT_TYPE,
+    LOGO_FILENAME,
+} from '../../infrastructure/templates/logo-data-uri';
 import { MAILER, MailerPort } from '../ports/mailer.port';
 import {
     NOTIFICATION_LOG_REPOSITORY,
@@ -42,6 +52,8 @@ export class ReviewEmailNotificationService {
         private readonly reviewerRepo: ReviewerRepositoryPort,
         @Inject(IDENTITY_USER_REPOSITORY)
         private readonly userRepo: UserRepositoryPort,
+        @Inject(STRATEGIC_REPORT_REPOSITORY)
+        private readonly strategicReportRepo: StrategicReportRepositoryPort,
         private readonly cycleService: CycleService,
         private readonly configService: ConfigService,
     ) {}
@@ -83,6 +95,8 @@ export class ReviewEmailNotificationService {
      */
     async notifyCycleStrategicReportReady(cycleId: number): Promise<number> {
         const cycle = await this.cycleService.getById(cycleId);
+        const strategicReport =
+            await this.strategicReportRepo.findByCycleId(cycleId);
 
         const hr = await this.userRepo.findById(cycle.hrId);
         if (!hr) {
@@ -96,7 +110,9 @@ export class ReviewEmailNotificationService {
             recipient: hr,
             subject: `Strategic report ready: ${cycle.title}`,
             template: 'cycle-strategic-report-ready',
-            actionUrl: this.buildUrl(`hr/cycles/${cycleId}/strategic-report`),
+            actionUrl: this.buildUrl(
+                `reporting/strategic-reports/${strategicReport?.id}`,
+            ),
             extraContext: {
                 hrFirstName: hr.firstName,
                 cycleTitle: cycle.title,
@@ -127,7 +143,7 @@ export class ReviewEmailNotificationService {
             recipient: ratee,
             subject: 'A new 360° review has been created for you',
             template: 'ratee-self-assessment',
-            actionUrl: this.buildUrl(`reviews/${review.id}/self-assessment`),
+            actionUrl: this.buildUrl(`feedback360/surveys/${review.id}`),
             extraContext: {
                 rateeFirstName: ratee.firstName,
             },
@@ -165,7 +181,7 @@ export class ReviewEmailNotificationService {
                 recipient: user,
                 subject: `Your feedback is requested for ${review.rateeFullName}`,
                 template: 'respondent-invitation',
-                actionUrl: this.buildUrl(`respondents/${respondent.id}`),
+                actionUrl: this.buildUrl(`feedback360/surveys/${review.id}`),
                 extraContext: {
                     respondentFirstName: user.firstName,
                     rateeFullName: review.rateeFullName,
@@ -202,7 +218,9 @@ export class ReviewEmailNotificationService {
             recipient: hr,
             subject: `Review report ready: ${review.rateeFullName}`,
             template: 'hr-report-ready',
-            actionUrl: this.buildUrl(`hr/reviews/${review.id}/comments`),
+            actionUrl: this.buildUrl(
+                `reporting/individual-reports/${review.reportId}/comments`,
+            ),
             extraContext: {
                 hrFirstName: hr.firstName,
                 rateeFullName: review.rateeFullName,
@@ -238,7 +256,9 @@ export class ReviewEmailNotificationService {
                 recipient: user,
                 subject: `Individual report ready: ${review.rateeFullName}`,
                 template: 'reviewer-report-ready',
-                actionUrl: this.buildUrl(`reports/${review.id}`),
+                actionUrl: this.buildUrl(
+                    `reporting/individual-reports/${review.reportId}`,
+                ),
                 extraContext: {
                     reviewerFirstName: user.firstName,
                     rateeFullName: review.rateeFullName,
@@ -328,6 +348,8 @@ export class ReviewEmailNotificationService {
             actionUrl,
             subject,
             supportEmail: this.configService.get<string>('app.supportEmail'),
+            logoCid: LOGO_CID,
+            appName: 'Intra',
         };
 
         try {
@@ -336,6 +358,14 @@ export class ReviewEmailNotificationService {
                 subject,
                 template,
                 context,
+                attachments: [
+                    {
+                        filename: LOGO_FILENAME,
+                        content: LOGO_BUFFER,
+                        contentType: LOGO_CONTENT_TYPE,
+                        cid: LOGO_CID,
+                    },
+                ],
             });
             await this.notificationLogRepo.markSent(log.id!);
             this.logger.log(

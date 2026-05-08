@@ -52,6 +52,16 @@ export class IdentityUserService {
             roles: payload.roles ?? [],
         });
 
+        const existing = await this.users.findByEmail(payload.email, {
+            withRoles: true,
+        });
+
+        if (existing) {
+            throw new BadRequestException(
+                `User with email ${payload.email} already exists`,
+            );
+        }
+
         const created = await this.users.create(user);
 
         if (created.id) {
