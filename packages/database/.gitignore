@@ -1,3 +1,7 @@
 .turbo
+<<<<<<< HEAD
 dist
 node_modules
+=======
+src/generated
+>>>>>>> origin/main

@@ -67,7 +67,11 @@ export function ReviewsFilters({
                     )}
                 />
                 <Input
+<<<<<<< HEAD
                     placeholder="Search by id or ratee full name..."
+=======
+                    placeholder="Search by ratee full name..."
+>>>>>>> main
                     value={search}
                     onChange={(e) => onSearchChange(e.target.value)}
                     className="pl-9 truncate text-sm"

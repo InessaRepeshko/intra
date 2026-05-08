@@ -1,13 +1,19 @@
 import { SortDirection } from '../../../common/enums/sort-direction.enum';
+<<<<<<< HEAD
 import { RespondentCategory } from '../../../feedback360/enums/respondent-category.enum';
+=======
+>>>>>>> main
 import { ReportSortField } from '../../enums/report-sort-field.enum';
 
 export type ReportSearchQuery = {
     reviewId?: number;
     cycleId?: number;
     respondentCount?: number;
+<<<<<<< HEAD
     respondentCategories?: RespondentCategory[];
     answerCount?: number;
+=======
+>>>>>>> main
     turnoutPctOfTeam?: number;
     turnoutPctOfOther?: number;
     questionTotAvgBySelf?: number;

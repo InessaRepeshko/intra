@@ -459,6 +459,7 @@ export class ReviewService {
     async attachQuestion(
         payload: AddQuestionToReviewPayload,
     ): Promise<ReviewQuestionRelationDomain> {
+<<<<<<< HEAD
         const review = await this.getById(payload.reviewId);
 
         if (review.stage !== ReviewStage.NEW) {
@@ -470,6 +471,9 @@ export class ReviewService {
             );
         }
 
+=======
+        await this.getById(payload.reviewId);
+>>>>>>> main
         const questionTemplate = await this.questionTemplates.getById(
             payload.questionTemplateId,
         );

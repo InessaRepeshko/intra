@@ -1,7 +1,13 @@
 'use client';
 
+<<<<<<< HEAD
 import { ReportAnalytics } from '@entities/reporting/individual-report/model/mappers';
 import { StrategicReportAnalytics } from '@entities/reporting/strategic-report/model/mappers';
+=======
+import { LabelList, PolarAngleAxis, RadialBar, RadialBarChart } from 'recharts';
+
+import { ReportAnalytics } from '@entities/reporting/report/model/mappers';
+>>>>>>> main
 import {
     Card,
     CardContent,
@@ -11,13 +17,17 @@ import {
 } from '@shared/components/ui/card';
 import {
     ChartContainer,
+<<<<<<< HEAD
     ChartLegend,
     ChartLegendContent,
+=======
+>>>>>>> main
     ChartTooltip,
     ChartTooltipContent,
     type ChartConfig,
 } from '@shared/components/ui/chart';
 import { calculateAverageNumberForArray } from '@shared/lib/utils/calculate-average';
+<<<<<<< HEAD
 import { formatNumber } from '@shared/lib/utils/format-number';
 import {
     Cell,
@@ -30,6 +40,11 @@ import {
 interface CompetenceRadialChartData {
     category: string;
     name: string;
+=======
+
+interface CompetenceRadialChartData {
+    category: string;
+>>>>>>> main
     rating: number;
     fill: string;
 }
@@ -39,6 +54,7 @@ const chartConfig = {
         label: 'Rating %',
     },
     self: {
+<<<<<<< HEAD
         label: 'Self average rating',
         color: 'var(--color-amber-400)',
     },
@@ -48,10 +64,22 @@ const chartConfig = {
     },
     others: {
         label: 'Others average rating',
+=======
+        label: 'Self',
+        color: 'var(--color-amber-400)',
+    },
+    team: {
+        label: 'Team',
+        color: 'var(--color-blue-400)',
+    },
+    others: {
+        label: 'Others',
+>>>>>>> main
         color: 'var(--color-violet-400)',
     },
 } satisfies ChartConfig;
 
+<<<<<<< HEAD
 export function CompetenceRadialChart({
     reportAnalytics,
     title,
@@ -109,14 +137,52 @@ export function CompetenceRadialChart({
             fill: 'var(--color-others)',
         });
     }
+=======
+export function CompetenciesRadialChart({
+    reportAnalytics,
+}: {
+    reportAnalytics: ReportAnalytics[];
+}) {
+    const data: CompetenceRadialChartData[] = [
+        {
+            category: 'self',
+            rating: calculateAverageNumberForArray(
+                reportAnalytics.map((a) => a.percentageBySelfAssessment ?? 0),
+            ),
+            fill: 'var(--color-self)',
+        },
+        {
+            category: 'team',
+            rating: calculateAverageNumberForArray(
+                reportAnalytics.map((a) => a.percentageByTeam ?? 0),
+            ),
+            fill: 'var(--color-team)',
+        },
+        {
+            category: 'others',
+            rating: calculateAverageNumberForArray(
+                reportAnalytics.map((a) => a.percentageByOther ?? 0),
+            ),
+            fill: 'var(--color-others)',
+        },
+    ];
+>>>>>>> main
 
     return (
         <Card className="flex-1 min-w-[95px] w-full overflow-hidden">
             <CardHeader className="items-center pb-0">
+<<<<<<< HEAD
                 <CardTitle>{title || 'Rating Alignment Overview'}</CardTitle>
                 <CardDescription>
                     {description ||
                         'A comparative analysis of skill proficiency levels across all competencies, segmented by rater category (self, team, and others).'}
+=======
+                <CardTitle>Rating Alignment Overview</CardTitle>
+                <CardDescription>
+                    A comparative analysis of skill proficiency levels across
+                    all competencies, segmented by rater category (self, team,
+                    and others).
+>>>>>>> main
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -141,6 +207,7 @@ export function CompetenceRadialChart({
                             cursor={false}
                             content={
                                 <ChartTooltipContent
+<<<<<<< HEAD
                                     indicator="line"
                                     labelKey="name"
                                     formatter={(value, name, item) => (
@@ -164,6 +231,10 @@ export function CompetenceRadialChart({
                                             </div>
                                         </div>
                                     )}
+=======
+                                    hideLabel
+                                    nameKey="category"
+>>>>>>> main
                                 />
                             }
                         />
@@ -171,17 +242,23 @@ export function CompetenceRadialChart({
                             dataKey="rating"
                             background
                             fillOpacity={0.6}
+<<<<<<< HEAD
                             cornerRadius={50}
                         >
                             {data.map((entry) => (
                                 <Cell key={entry.category} fill={entry.fill} />
                             ))}
+=======
+                            cornerRadius={10}
+                        >
+>>>>>>> main
                             <LabelList
                                 position="insideStart"
                                 dataKey="category"
                                 className="fill-white capitalize mix-blend-luminosity"
                                 fontSize={13}
                             />
+<<<<<<< HEAD
                             <LabelList
                                 position="insideEnd"
                                 dataKey="rating"
@@ -196,6 +273,9 @@ export function CompetenceRadialChart({
                             className="m-0 text-sm text-muted-foreground"
                             content={<ChartLegendContent nameKey="category" />}
                         />
+=======
+                        </RadialBar>
+>>>>>>> main
                     </RadialBarChart>
                 </ChartContainer>
             </CardContent>
