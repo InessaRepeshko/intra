@@ -374,7 +374,11 @@ export const mockReviews: Review[] = [
         managerPositionTitle: 'Engineering Manager',
         cycleId: 1,
         cycleTitle: 'Q1 2026 Performance Review',
+<<<<<<< HEAD
         stage: ReviewStage.IN_PROGRESS,
+=======
+        stage: ReviewStage.COLLECTING_RESPONSES,
+>>>>>>> main
         respondentsCount: 5,
         respondedCount: 3,
         createdAt: '2026-01-05T10:00:00Z',
@@ -396,7 +400,11 @@ export const mockReviews: Review[] = [
         managerPositionTitle: 'Engineering Manager',
         cycleId: 1,
         cycleTitle: 'Q1 2026 Performance Review',
+<<<<<<< HEAD
         stage: ReviewStage.NEW,
+=======
+        stage: ReviewStage.VERIFICATION_BY_HR,
+>>>>>>> main
         respondentsCount: 4,
         respondedCount: 0,
         createdAt: '2026-01-05T10:00:00Z',
@@ -418,7 +426,11 @@ export const mockReviews: Review[] = [
         managerPositionTitle: 'Design Lead',
         cycleId: 1,
         cycleTitle: 'Q1 2026 Performance Review',
+<<<<<<< HEAD
         stage: ReviewStage.NEW,
+=======
+        stage: ReviewStage.DRAFT,
+>>>>>>> main
         respondentsCount: 3,
         respondedCount: 0,
         createdAt: '2026-01-06T10:00:00Z',
@@ -436,7 +448,11 @@ export const mockReviews: Review[] = [
         teamTitle: 'Engineering',
         cycleId: 1,
         cycleTitle: 'Q1 2026 Performance Review',
+<<<<<<< HEAD
         stage: ReviewStage.IN_PROGRESS,
+=======
+        stage: ReviewStage.COLLECTING_RESPONSES,
+>>>>>>> main
         respondentsCount: 6,
         respondedCount: 4,
         createdAt: '2026-01-05T10:00:00Z',
@@ -458,7 +474,11 @@ export const mockReviews: Review[] = [
         managerPositionTitle: 'Engineering Manager',
         cycleId: 1,
         cycleTitle: 'Q1 2026 Performance Review',
+<<<<<<< HEAD
         stage: ReviewStage.PROCESSING_BY_HR,
+=======
+        stage: ReviewStage.REPORT_READY,
+>>>>>>> main
         respondentsCount: 4,
         respondedCount: 4,
         reportId: 1,
@@ -481,7 +501,11 @@ export const mockReviews: Review[] = [
         managerPositionTitle: 'Engineering Manager',
         cycleId: 2,
         cycleTitle: 'Q4 2025 Year-End Review',
+<<<<<<< HEAD
         stage: ReviewStage.PROCESSING_BY_HR,
+=======
+        stage: ReviewStage.REPORT_READY,
+>>>>>>> main
         respondentsCount: 5,
         respondedCount: 5,
         reportId: 2,

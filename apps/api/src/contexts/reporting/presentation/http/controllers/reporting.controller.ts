@@ -30,21 +30,33 @@ import {
     ApiReadErrorResponses,
 } from 'src/common/documentation/api.error.responses.decorator';
 import { UserDomain } from 'src/contexts/identity/domain/user.domain';
+<<<<<<< HEAD
 import { ReportInsightService } from 'src/contexts/reporting/application/services/report-insight.service';
 import { ReportAnalyticsService } from '../../../application/services/report-analytics.service';
 import { ReportCommentService } from '../../../application/services/report-comment.service';
 import { ReportingService } from '../../../application/services/reports.service';
+=======
+import { ReportAnalyticsService } from '../../../application/services/report-analytics.service';
+import { ReportCommentService } from '../../../application/services/report-comment.service';
+import { ReportingService } from '../../../application/services/reporting.service';
+>>>>>>> main
 import { TextAnswerService } from '../../../application/services/text-answer.service';
 import { ReportCommentDomain } from '../../../domain/report-comment.domain';
 import { CreateReportCommentDto } from '../dto/create-report-comment.dto';
 import { ReportQueryDto } from '../dto/report-query.dto';
 import { ReportAnalyticsHttpMapper } from '../mappers/report-analytics.http.mapper';
 import { ReportCommentHttpMapper } from '../mappers/report-comment.http.mapper';
+<<<<<<< HEAD
 import { ReportInsightHttpMapper } from '../mappers/report-insight.http.mapper';
 import { ReportHttpMapper } from '../mappers/report.http.mapper';
 import { ReportAnalyticsResponse } from '../models/report-analytics.response';
 import { ReportCommentResponse } from '../models/report-comment.response';
 import { ReportInsightResponse } from '../models/report-insight.response';
+=======
+import { ReportHttpMapper } from '../mappers/report.http.mapper';
+import { ReportAnalyticsResponse } from '../models/report-analytics.response';
+import { ReportCommentResponse } from '../models/report-comment.response';
+>>>>>>> main
 import { ReportResponse } from '../models/report.response';
 import { TextAnswerResponse } from '../models/text-answer.response';
 
@@ -64,7 +76,10 @@ export class ReportingController {
         private readonly reporting: ReportingService,
         private readonly textAnswerService: TextAnswerService,
         private readonly analyticsService: ReportAnalyticsService,
+<<<<<<< HEAD
         private readonly insightService: ReportInsightService,
+=======
+>>>>>>> main
         private readonly commentService: ReportCommentService,
     ) {}
 
@@ -185,6 +200,7 @@ export class ReportingController {
         return ReportAnalyticsHttpMapper.toResponse(analytics);
     }
 
+<<<<<<< HEAD
     @Get(':id/insights')
     @ApiOperation({ summary: 'List report insights by report id' })
     @ApiParam({
@@ -225,6 +241,8 @@ export class ReportingController {
         return ReportInsightHttpMapper.toResponse(insight);
     }
 
+=======
+>>>>>>> main
     @Get(':id/comments')
     @ApiOperation({ summary: 'Get report comments by report id' })
     @ApiParam({

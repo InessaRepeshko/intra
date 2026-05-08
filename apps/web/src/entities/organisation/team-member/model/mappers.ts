@@ -1,8 +1,12 @@
+<<<<<<< HEAD
 import {
     User,
     mapUserResponseDtoToModel,
 } from '@entities/identity/user/model/mappers';
 import { TeamMemberResponseDto, UserResponseDto } from './types';
+=======
+import { TeamMemberResponseDto } from './types';
+>>>>>>> main
 
 export interface TeamMember extends Omit<TeamMemberResponseDto, 'createdAt'> {
     createdAt: Date;
@@ -16,6 +20,7 @@ export function mapTeamMemberDtoToModel(
         createdAt: new Date(dto.createdAt),
     };
 }
+<<<<<<< HEAD
 
 export interface UserTeamMember extends Omit<
     TeamMemberResponseDto,
@@ -37,3 +42,5 @@ export function mapUserTeamMemberDtoToModel(
         user: dto.user ? mapUserResponseDtoToModel(dto.user) : null,
     };
 }
+=======
+>>>>>>> main

@@ -19,10 +19,13 @@ export class ReportMapper {
             reviewId: report.reviewId,
             cycleId: report.cycleId,
             respondentCount: report.respondentCount,
+<<<<<<< HEAD
             respondentCategories: report.respondentCategories.map((c) =>
                 ReportMapper.toDomainRespondentCategory(c),
             ),
             answerCount: report.answerCount,
+=======
+>>>>>>> main
             turnoutPctOfTeam: report.turnoutPctOfTeam,
             turnoutPctOfOther: report.turnoutPctOfOther,
             questionTotAvgBySelf: report.questionTotAvgBySelf,
@@ -44,7 +47,10 @@ export class ReportMapper {
             createdAt: report.createdAt,
             analytics: [],
             comments: [],
+<<<<<<< HEAD
             insights: [],
+=======
+>>>>>>> main
         });
     }
 

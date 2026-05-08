@@ -16,6 +16,7 @@ export enum CycleStage {
     NEW = 'NEW',
     ACTIVE = 'ACTIVE',
     FINISHED = 'FINISHED',
+<<<<<<< HEAD
     PREPARING_REPORT = 'PREPARING_REPORT',
     PUBLISHED = 'PUBLISHED',
     CANCELED = 'CANCELED',
@@ -34,6 +35,16 @@ export enum ReviewStage {
     ANALYSIS = 'ANALYSIS',
     CANCELED = 'CANCELED',
     ARCHIVED = 'ARCHIVED',
+=======
+}
+
+export enum ReviewStage {
+    DRAFT = 'DRAFT',
+    VERIFICATION_BY_HR = 'VERIFICATION_BY_HR',
+    COLLECTING_RESPONSES = 'COLLECTING_RESPONSES',
+    PREPARING_REPORT = 'PREPARING_REPORT',
+    REPORT_READY = 'REPORT_READY',
+>>>>>>> main
 }
 
 export enum RespondentCategory {
