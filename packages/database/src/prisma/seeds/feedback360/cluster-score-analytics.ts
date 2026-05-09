@@ -50,6 +50,7 @@ export default async function seedClusterScoreAnalytics(
                 .reduce((a, b) => a.plus(b), new Decimal(0))
                 .dividedBy(scores.length);
             const employeesCount = clusterScores.length;
+            const employeeDensity = new Decimal(100);
 
             // Check if analytics already exist
             const existing = await prisma.clusterScoreAnalytics.findUnique({
@@ -81,6 +82,7 @@ export default async function seedClusterScoreAnalytics(
                         cycleId: cycle.id,
                         clusterId: cluster.id,
                         employeesCount,
+                        employeeDensity,
                         lowerBound: cluster.lowerBound,
                         upperBound: cluster.upperBound,
                         minScore: minScore.toDecimalPlaces(4).toString(),

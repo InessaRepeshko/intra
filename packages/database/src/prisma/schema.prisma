@@ -584,7 +584,7 @@ model ClusterScoreAnalytics {
   cycleId         Int      @map("cycle_id")
   clusterId       Int      @map("cluster_id")
   employeesCount  Decimal  @default(0) @map("employees_count") @db.Decimal(10, 4)
-  employeeDensity Decimal? @map("employees_density") @db.Decimal(10, 4)
+  employeeDensity Decimal  @map("employees_density") @db.Decimal(10, 4)
   lowerBound      Decimal  @map("lower_bound") @db.Decimal(10, 4)
   upperBound      Decimal  @map("upper_bound") @db.Decimal(10, 4)
   minScore        Decimal  @map("min_score") @db.Decimal(10, 4)

@@ -6,8 +6,8 @@ export class ClusterMapper {
         return ClusterDomain.create({
             id: cluster.id,
             competenceId: cluster.competenceId,
-            lowerBound: cluster.lowerBound,
-            upperBound: cluster.upperBound,
+            lowerBound: cluster.lowerBound?.toNumber(),
+            upperBound: cluster.upperBound?.toNumber(),
             title: cluster.title,
             description: cluster.description,
             createdAt: cluster.createdAt,

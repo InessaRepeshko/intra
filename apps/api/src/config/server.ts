@@ -6,7 +6,8 @@ export async function setupServer(
     configService: ConfigService,
 ): Promise<void> {
     const port = configService.getOrThrow<number>('app.port');
-    await app.listen(port);
+    const host = configService.get<string>('app.host') ?? '0.0.0.0';
+    await app.listen(port, host);
 
     const appUrl = `${configService.getOrThrow<string>('app.protocol')}://${configService.getOrThrow<string>('app.host')}:${port}`;
     const globalPrefix = configService.getOrThrow<string>('app.globalPrefix');

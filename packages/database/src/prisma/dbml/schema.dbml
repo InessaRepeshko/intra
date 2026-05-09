@@ -375,7 +375,7 @@ Table feedback360_cluster_score_analytics {
   cycleId Int [not null]
   clusterId Int [not null]
   employeesCount Decimal [not null, default: 0]
-  employeeDensity Decimal
+  employeeDensity Decimal [not null]
   lowerBound Decimal [not null]
   upperBound Decimal [not null]
   minScore Decimal [not null]
