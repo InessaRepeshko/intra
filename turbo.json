@@ -120,7 +120,8 @@
             "persistent": true
         },
         "start:prod": {
-            "cache": false
+            "cache": false,
+            "passThroughEnv": ["*"]
         },
         "refresh": {
             "cache": false

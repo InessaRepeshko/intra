@@ -24,7 +24,10 @@ export default () => {
             domain: getEnvVarAsStr('APP_DOMAIN'),
             supportEmail: getEnvVarAsStr('APP_SUPPORT_EMAIL'),
             protocol: getEnvVarAsStr('APP_PROTOCOL'),
-            port: getEnvVarAsInt('APP_PORT'),
+            port:
+                nodeEnv === 'production'
+                    ? (getEnvVarAsInt('PORT') ?? getEnvVarAsInt('APP_PORT'))
+                    : getEnvVarAsInt('APP_PORT'),
             host: getEnvVarAsStr('APP_HOST'),
             globalPrefix: DOCUMENTATION_PREFIX,
             frontendProtocol,

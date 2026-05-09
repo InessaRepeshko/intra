@@ -5,8 +5,10 @@ export async function setupServer(
     app: INestApplication,
     configService: ConfigService,
 ): Promise<void> {
-    const port = configService.getOrThrow<number>('app.port');
-    const host = configService.get<string>('app.host') ?? '0.0.0.0';
+    const port =
+        parseInt(process.env.PORT ?? '') ||
+        configService.getOrThrow<number>('app.port');
+    const host = '0.0.0.0';
     await app.listen(port, host);
 
     const appUrl = `${configService.getOrThrow<string>('app.protocol')}://${configService.getOrThrow<string>('app.host')}:${port}`;
