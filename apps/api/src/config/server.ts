@@ -11,7 +11,11 @@ export async function setupServer(
     const host = '0.0.0.0';
     await app.listen(port, host);
 
-    const appUrl = `${configService.getOrThrow<string>('app.protocol')}://${configService.getOrThrow<string>('app.host')}:${port}`;
+    const isProd = configService.get<string>('app.node.env') === 'production' || process.env.NODE_ENV === 'production';
+    let appUrl = `${configService.getOrThrow<string>('app.protocol')}://${configService.getOrThrow<string>('app.host')}`;
+    if (!isProd) {
+        appUrl = appUrl + `:${port}`;
+    }
     const globalPrefix = configService.getOrThrow<string>('app.globalPrefix');
     const docsUrl = `${appUrl}/${globalPrefix}`;
 
