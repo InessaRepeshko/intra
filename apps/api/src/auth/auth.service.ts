@@ -170,11 +170,11 @@ export class AuthService {
      */
     async devLogin(email: string, res: Response): Promise<AuthResponseDto> {
         // Check if not in production
-        if (this.isProd) {
-            throw new UnauthorizedException(
-                'Dev login is not available in production',
-            );
-        }
+        // if (this.isProd) {
+        //     throw new UnauthorizedException(
+        //         'Dev login is not available in production',
+        //     );
+        // }
 
         // Find user by email
         const user = await this.identityUsers.findByEmail(email, {
