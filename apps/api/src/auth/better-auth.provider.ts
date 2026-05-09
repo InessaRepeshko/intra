@@ -11,9 +11,14 @@ export type BetterAuthInstance = ReturnType<typeof betterAuth>;
 const buildBaseUrl = (config: ConfigService): string => {
     const explicit = config.get<string>('BETTER_AUTH_URL');
     if (explicit) return explicit;
+    const isProd =
+        config.get<string>('APP_NODE_ENV') === 'production' ||
+        process.env.NODE_ENV === 'production';
     const protocol = config.get<string>('APP_PROTOCOL') ?? 'http';
     const host = config.get<string>('APP_HOST') ?? 'localhost';
-    const port = config.get<string>('APP_PORT') ?? '8080';
+    const port = isProd
+        ? config.get<string>('PORT')
+        : (config.get<string>('APP_PORT') ?? '8080');
     if (!port || protocol === 'https') {
         return `${protocol}://${host}`;
     }

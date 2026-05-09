@@ -51,7 +51,9 @@ export class AuthService {
         this.clientSecret = this.config.getOrThrow<string>(
             'GOOGLE_CLIENT_SECRET',
         );
-        this.isProd = this.config.get<string>('APP_NODE_ENV') === 'production';
+        this.isProd =
+            this.config.get<string>('APP_NODE_ENV') === 'production' ||
+            process.env.NODE_ENV === 'production';
     }
 
     getGoogleRedirectUrl(res: Response): string {
@@ -257,7 +259,9 @@ export class AuthService {
             this.config.get<string>('APP_FRONTEND_PROTOCOL') ?? 'http';
         const host =
             this.config.get<string>('APP_FRONTEND_HOST') ?? 'localhost';
-        const port = this.config.get<string>('APP_FRONTEND_PORT');
+        const port = this.isProd
+            ? this.config.get<string>('PORT')
+            : this.config.get<string>('APP_FRONTEND_PORT');
         if (!port || protocol === 'https') {
             return `${protocol}://${host}/google/callback`;
         }
@@ -273,7 +277,9 @@ export class AuthService {
             this.config.get<string>('APP_FRONTEND_HOST') ??
             this.config.get<string>('APP_HOST') ??
             'localhost';
-        const port = this.config.get<string>('APP_FRONTEND_PORT');
+        const port = this.isProd
+            ? this.config.get<string>('PORT')
+            : this.config.get<string>('APP_FRONTEND_PORT');
         if (!port || protocol === 'https') {
             return `${protocol}://${host}`;
         }

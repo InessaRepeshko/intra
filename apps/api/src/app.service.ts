@@ -23,10 +23,15 @@ export class AppService {
         const protocol = this.configService.get<string>('app.protocol', 'http');
         const host = this.configService.get<string>('app.host', 'localhost');
         const port = this.configService.get<number>('app.port', 8080);
+        const isProduction =
+            this.configService.get<string>('app.node.env') === 'production' ||
+            process.env.NODE_ENV === 'production';
         const globalPrefix = this.configService.get<string>(
             'app.globalPrefix',
             DOCUMENTATION_PREFIX,
         );
-        return `${protocol}://${host}:${port}/${globalPrefix}`;
+        return isProduction
+            ? `${protocol}://${host}/${globalPrefix}`
+            : `${protocol}://${host}:${port}/${globalPrefix}`;
     }
 }

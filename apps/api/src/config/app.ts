@@ -26,7 +26,7 @@ export default () => {
             protocol: getEnvVarAsStr('APP_PROTOCOL'),
             port:
                 nodeEnv === 'production'
-                    ? (getEnvVarAsInt('PORT') ?? getEnvVarAsInt('APP_PORT'))
+                    ? getEnvVarAsInt('PORT')
                     : getEnvVarAsInt('APP_PORT'),
             host: getEnvVarAsStr('APP_HOST'),
             globalPrefix: DOCUMENTATION_PREFIX,
