@@ -73,7 +73,7 @@ describe('ReviewSchedulerService', () => {
     });
 
     describe('checkReviewDeadlines', () => {
-        it('transitions IN_PROGRESS reviews to PREPARING_REPORT when the cycle deadline has passed', async () => {
+        it('transitions IN_PROGRESS reviews to FINISHED when the cycle deadline has passed', async () => {
             const cycle = buildCycle({
                 responseDeadline: new Date('2024-01-01T00:00:00.000Z'),
             });
@@ -88,15 +88,18 @@ describe('ReviewSchedulerService', () => {
             expect(cycleService.search).toHaveBeenCalledWith({
                 isActive: true,
             });
-            expect(reviewService.search).toHaveBeenCalledWith({
-                cycleId: cycle.id,
-                stage: ReviewStage.IN_PROGRESS,
-            });
+            expect(reviewService.search).toHaveBeenCalledWith(
+                {
+                    cycleId: cycle.id,
+                    stage: ReviewStage.IN_PROGRESS,
+                },
+                expect.anything(),
+            );
             expect(reviewService.changeReviewStage).toHaveBeenCalledTimes(2);
             expect(reviewService.changeReviewStage).toHaveBeenNthCalledWith(
                 1,
                 11,
-                ReviewStage.PREPARING_REPORT,
+                ReviewStage.FINISHED,
                 SYSTEM_ACTOR.ID,
                 SYSTEM_ACTOR.NAME,
                 TRANSITION_REASONS.DEADLINE_REACHED,

@@ -59,9 +59,12 @@
         "refresh": "turbo run refresh --filter=@intra/api",
         "refresh:test": "turbo run refresh:test --filter=@intra/api",
         "// --- Testing Commands ---": "",
-        "test": "turbo run test",
-        "test:unit": "pnpm jest",
-        "test:unit:cov": "pnpm jest --coverage &&  open apps/api/test/unit/coverage/lcov-report/index.html"
+        "test": "pnpm --filter @intra/api test:unit",
+        "test:unit": "pnpm --filter @intra/api test:unit",
+        "test:unit:cov": "pnpm --filter @intra/api test:unit:cov && open apps/api/test/unit/coverage/lcov-report/index.html",
+        "test:integ": "pnpm --filter @intra/api test:integ",
+        "test:integ:refresh": "pnpm docker:up && pnpm --filter @intra/api test:integ:refresh",
+        "test:integ:cov": "pnpm --filter @intra/api test:integ:cov && open apps/api/test/integration/coverage/lcov-report/index.html"
     },
     "dependencies": {
         "@nestjs/common": "^11.1.13",
@@ -118,29 +121,6 @@
         "turbo": "^2.8.9",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.55.0"
-    },
-    "jest": {
-        "moduleFileExtensions": [
-            "js",
-            "json",
-            "ts"
-        ],
-        "rootDir": "apps/api",
-        "moduleNameMapper": {
-            "^src/(.*)$": "<rootDir>/src/$1"
-        },
-        "testRegex": ".*\\.spec\\.ts$",
-        "transform": {
-            "^.+\\.(t|j)s$": "ts-jest"
-        },
-        "testEnvironment": "node",
-        "verbose": false,
-        "coverage": true,
-        "coverageDirectory": "test/unit/coverage",
-        "collectCoverageFrom": [
-            "src/contexts/*/application/**/*.ts",
-            "!src/contexts/*/application/**/*.spec.ts"
-        ]
     },
     "overrides": {
         "cross-spawn": "^7.0.5",
