@@ -55,6 +55,7 @@
         "start:prod:web": "turbo run start:prod --filter=@intra/web",
         "start:web": "turbo run start:dev --filter=@intra/web",
         "start:api": "pnpm run docker:up && turbo run start:dev --filter=@intra/api",
+        "start:db": "dotenv -e .env.development.local -- sh -c 'prisma studio --url $RENDER_DATABASE_URL'",
         "refresh": "turbo run refresh --filter=@intra/api",
         "refresh:test": "turbo run refresh:test --filter=@intra/api",
         "// --- Testing Commands ---": "",
@@ -139,7 +140,8 @@
             "**/*.(t|j)s"
         ],
         "coverageDirectory": "../../coverage",
-        "testEnvironment": "node"
+        "testEnvironment": "node",
+        "verbose": false
     },
     "overrides": {
         "cross-spawn": "^7.0.5",

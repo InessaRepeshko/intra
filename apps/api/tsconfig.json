@@ -19,15 +19,21 @@
             ],
             "@intra/api/*": [
                 "src/contexts/*"
+            ],
+            "@intra/test": [
+                "test"
+            ],
+            "@intra/test/*": [
+                "test/*"
             ]
         }
     },
     "include": [
         "src/**/*",
+        "test/**/*"
     ],
     "exclude": [
         "node_modules",
-        "dist",
-        "**/*spec.ts"
+        "dist"
     ]
 }
