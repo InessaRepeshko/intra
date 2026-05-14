@@ -60,11 +60,8 @@
         "refresh:test": "turbo run refresh:test --filter=@intra/api",
         "// --- Testing Commands ---": "",
         "test": "turbo run test",
-        "test:unit": "turbo run test:unit --filter=@intra/api",
-        "test:e2e": "turbo run test:e2e --filter=@intra/api",
-        "test:watch": "turbo run test:watch --filter=@intra/api",
-        "test:cov": "turbo run test:cov --filter=@intra/api",
-        "test:debug": "turbo run test:debug --filter=@intra/api"
+        "test:unit": "pnpm jest",
+        "test:unit:cov": "pnpm jest --coverage &&  open apps/api/test/unit/coverage/lcov-report/index.html"
     },
     "dependencies": {
         "@nestjs/common": "^11.1.13",
@@ -136,12 +133,14 @@
         "transform": {
             "^.+\\.(t|j)s$": "ts-jest"
         },
-        "collectCoverageFrom": [
-            "**/*.(t|j)s"
-        ],
-        "coverageDirectory": "../../coverage",
         "testEnvironment": "node",
-        "verbose": false
+        "verbose": false,
+        "coverage": true,
+        "coverageDirectory": "test/unit/coverage",
+        "collectCoverageFrom": [
+            "src/contexts/*/application/**/*.ts",
+            "!src/contexts/*/application/**/*.spec.ts"
+        ]
     },
     "overrides": {
         "cross-spawn": "^7.0.5",
