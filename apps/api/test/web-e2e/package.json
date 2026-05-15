@@ -1,0 +1,29 @@
+{
+    "name": "@intra/web-e2e",
+    "version": "1.0.0",
+    "description": "Cypress E2E usability tests for the Intra web application",
+    "private": true,
+    "license": "MIT",
+    "author": "Inessa Repeshko",
+    "scripts": {
+        "// Lifecycle": "",
+        "postinstall": "cypress install",
+        "// Environment variables": "",
+        "env:test": "dotenv -e ../../../../.env.test -e ../../../../.env.test.local -v NODE_ENV=test",
+        "// Cypress Commands": "",
+        "open": "pnpm env:test -- cypress open --e2e",
+        "run": "pnpm env:test -- cypress run --e2e",
+        "run:headed": "pnpm env:test -- cypress run --e2e --headed",
+        "run:record": "pnpm env:test -- cypress run --e2e --record",
+        "// Database lifecycle (delegates to @intra/database)": "",
+        "db:refresh": "pnpm --filter @intra/database db:test:refresh",
+        "// Full pipelines": "",
+        "test:e2e": "pnpm db:refresh && pnpm run",
+        "report:metrics": "node ./cypress/scripts/print-metrics.mjs"
+    },
+    "devDependencies": {
+        "@types/node": "^25.2.3",
+        "cypress": "^15.4.0",
+        "typescript": "^5.9.3"
+    }
+}

@@ -110,3 +110,5 @@ src/generated
 tsconfig.tsbuildinfo
 
 .eslintcache
+.vscode
+.postman
