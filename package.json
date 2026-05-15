@@ -75,7 +75,13 @@
         "test:e2e:open": "pnpm --filter @intra/web-e2e open",
         "test:e2e:record": "pnpm --filter @intra/web-e2e run:record",
         "test:e2e:refresh": "pnpm --filter @intra/database db:test:refresh && pnpm --filter @intra/web-e2e run",
-        "test:e2e:report": "pnpm --filter @intra/web-e2e report:metrics"
+        "test:e2e:report": "pnpm --filter @intra/web-e2e report:metrics",
+        "// --- Load / Performance (k6 in Docker) ---": "",
+        "test:perf:smoke": "K6_REPORT_NAME=smoke docker compose -f apps/api/test/load/docker-compose.k6.yml run --rm k6 run /scripts/scenarios/smoke.js",
+        "test:perf:baseline": "K6_REPORT_NAME=baseline-p95 docker compose -f apps/api/test/load/docker-compose.k6.yml run --rm k6 run /scripts/scenarios/baseline-p95.js",
+        "test:perf:load": "K6_REPORT_NAME=load-500vu docker compose -f apps/api/test/load/docker-compose.k6.yml run --rm k6 run /scripts/scenarios/load-500vu.js",
+        "test:perf:stress": "K6_REPORT_NAME=stress-1000vu docker compose -f apps/api/test/load/docker-compose.k6.yml run --rm k6 run /scripts/scenarios/stress-1000vu.js",
+        "test:perf:pdf": "K6_REPORT_NAME=pdf-15s docker compose -f apps/api/test/load/docker-compose.k6.yml run --rm k6 run /scripts/scenarios/pdf-15s.js"
     },
     "dependencies": {
         "@nestjs/common": "^11.1.13",
