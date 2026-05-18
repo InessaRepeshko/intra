@@ -31,8 +31,10 @@
         "test:unit": "pnpm jest --config test/unit/jest.unit.config.ts",
         "test:unit:cov": "pnpm jest --config test/unit/jest.unit.config.ts --coverage",
         "test:unit:watch": "pnpm jest --config test/unit/jest.unit.config.ts --watch",
+        "test:unit:dashboard": "JEST_RESULTS_OUTPUT=test/unit/results.json pnpm jest --config test/unit/jest.unit.config.ts --reporters=default --reporters=./test/scripts/json-results.reporter.js; tsx test/scripts/generate-test-dashboard.ts test/unit/results.json test/unit/dashboard.html 'Unit suite'",
         "test:integ": "pnpm env:test -- pnpm jest --config test/integration/jest.integration.config.ts",
         "test:integ:cov": "pnpm env:test -- pnpm jest --config test/integration/jest.integration.config.ts --coverage",
+        "test:integ:dashboard": "JEST_RESULTS_OUTPUT=test/integration/results.json pnpm env:test -- pnpm jest --config test/integration/jest.integration.config.ts --reporters=default --reporters=./test/scripts/json-results.reporter.js; tsx test/scripts/generate-test-dashboard.ts test/integration/results.json test/integration/dashboard.html 'Integration suite'",
         "test:integ:refresh": "pnpm --filter @intra/database db:test:refresh",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --config test/unit/jest.unit.config.ts"
     },
