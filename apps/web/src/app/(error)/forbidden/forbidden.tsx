@@ -10,7 +10,7 @@ export default function ForbiddenPage() {
             title="Forbidden"
             description={[
                 'You do not have permission to access this page.',
-                'If you think this is a mistake, please contact your manager or system administrator.',
+                'If you think this is a mistake, please contact us at <a href="mailto:intra.feedback360.service@gmail.com" className="underline underline-offset-2 hover:text-foreground">intra.feedback360.service@gmail.com</a>.',
             ]}
             icon={FileKey}
         />

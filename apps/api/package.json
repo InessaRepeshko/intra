@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "description": "Intra REST API",
     "private": true,
-    "license": "MIT",
     "author": "Inessa Repeshko",
     "scripts": {
         "// Environment variables": "",
@@ -27,12 +26,16 @@
         "lint": "eslint \"{src,test}/**/*.ts\" --fix",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
         "// Testing Commands": "",
-        "test": "pnpm jest --clearCache && pnpm jest",
-        "test:unit": "pnpm jest --watch --testMatch \"**/*.spec.ts\"",
-        "test:e2e": "pnpm jest --watch --testMatch \"**/*.e2e-spec.ts\"",
-        "test:watch": "pnpm jest --watch",
-        "test:cov": "pnpm jest --coverage",
-        "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+        "test": "pnpm jest --clearCache && pnpm test:unit",
+        "test:unit": "pnpm jest --config test/unit/jest.unit.config.ts",
+        "test:unit:cov": "pnpm jest --config test/unit/jest.unit.config.ts --coverage",
+        "test:unit:watch": "pnpm jest --config test/unit/jest.unit.config.ts --watch",
+        "test:unit:dashboard": "JEST_RESULTS_OUTPUT=test/unit/results.json pnpm jest --config test/unit/jest.unit.config.ts --reporters=default --reporters=./test/scripts/json-results.reporter.js; tsx test/scripts/generate-test-dashboard.ts test/unit/results.json test/unit/dashboard.html 'Unit suite'",
+        "test:integ": "pnpm env:test -- pnpm jest --config test/integration/jest.integration.config.ts",
+        "test:integ:cov": "pnpm env:test -- pnpm jest --config test/integration/jest.integration.config.ts --coverage",
+        "test:integ:dashboard": "JEST_RESULTS_OUTPUT=test/integration/results.json pnpm env:test -- pnpm jest --config test/integration/jest.integration.config.ts --reporters=default --reporters=./test/scripts/json-results.reporter.js; tsx test/scripts/generate-test-dashboard.ts test/integration/results.json test/integration/dashboard.html 'Integration suite'",
+        "test:integ:refresh": "pnpm --filter @intra/database db:test:refresh",
+        "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --config test/unit/jest.unit.config.ts"
     },
     "dependencies": {
         "@intra/database": "workspace:*",

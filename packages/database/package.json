@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "description": "Shared Prisma schema, migrations and seeders for Intra database",
     "private": true,
-    "license": "MIT",
     "author": "Inessa Repeshko",
     "main": "./dist/generated/index.js",
     "types": "./dist/generated/index.d.ts",

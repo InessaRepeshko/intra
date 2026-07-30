@@ -1,11 +1,13 @@
 packages:
   - apps/*
+  - apps/api/test/web-e2e
   - packages/*
 
 onlyBuiltDependencies:
   - '@nestjs/core'
   - '@prisma/engines'
   - '@scarf/scarf'
+  - cypress
   - esbuild
   - prisma
   - unrs-resolver

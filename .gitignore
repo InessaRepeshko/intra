@@ -110,3 +110,9 @@ src/generated
 tsconfig.tsbuildinfo
 
 .eslintcache
+.vscode
+.postman
+
+# --- k6 load test results ---
+apps/api/test/load/results/*
+!apps/api/test/load/results/.gitkeep

@@ -72,7 +72,7 @@ intra/
 ├── package.json              # Root scripts (Turbo entrypoints) + shared dev tooling
 ├── tsconfig.json             # Base TS config inherited by every package
 ├── eslint.config.mjs         # Shared ESLint base
-├── LICENSE                   # MIT
+├── LICENSE                   
 └── README.md                 # You are here
 ```
 
@@ -469,4 +469,4 @@ Each workspace has a focused README that goes deep on its own architecture and s
 
 ## License
 
-[MIT](LICENSE) © Inessa Repeshko, 2026
+[LICENSE](LICENSE) © Inessa Repeshko, 2026

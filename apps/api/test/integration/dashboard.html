@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Integration Tests Dashboard</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap"
+        rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --green: #10b981;
+            --red: #ef4444;
+            --amber: #f59e0b;
+        }
+        body {
+            margin: 0;
+            padding: 32px;
+            background: var(--bg);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            color: var(--text);
+            line-height: 1.5;
+        }
+        header {
+            max-width: 1200px;
+            margin: 0 auto 32px;
+        }
+        header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 6px;
+            letter-spacing: -0.5px;
+        }
+        header .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+        }
+        header .pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 12px;
+            vertical-align: middle;
+        }
+        .grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        }
+        .card .label {
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        .card .value {
+            margin-top: 6px;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .card .delta {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .card.pass .value { color: var(--green); }
+        .card.fail .value { color: var(--red); }
+        .charts {
+            max-width: 1200px;
+            margin: 24px auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+        }
+        .chart-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .chart-card h2 {
+            margin: 0 0 16px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .chart-card .chart-wrap {
+            height: 320px;
+            position: relative;
+        }
+        table {
+            max-width: 1200px;
+            margin: 24px auto;
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        thead { background: #f1f5f9; }
+        th, td {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+        tbody tr:last-child td { border-bottom: 0; }
+        td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+        .swatch {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .green { color: var(--green); font-weight: 600; }
+        .red { color: var(--red); font-weight: 600; }
+        footer {
+            max-width: 1200px;
+            margin: 32px auto 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+        }
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: repeat(2, 1fr); }
+            .charts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>
+            Integration Tests Dashboard
+            <span class="pill">PASS</span>
+        </h1>
+        <div class="subtitle">
+            Integration suite · згенеровано 19 травня 2026 р. о 00:52
+        </div>
+    </header>
+
+    <section class="grid">
+        <div class="card">
+            <div class="label">Test suites</div>
+            <div class="value">57</div>
+            <div class="delta">
+                <span class="green">57 passed</span>
+            </div>
+        </div>
+        <div class="card pass">
+            <div class="label">Tests</div>
+            <div class="value">536</div>
+            <div class="delta">
+                <span class="green">536 passed</span>
+            </div>
+        </div>
+        <div class="card">
+            <div class="label">Pass rate</div>
+            <div class="value">100.0%</div>
+            <div class="delta">536/536 tests</div>
+        </div>
+        <div class="card">
+            <div class="label">Duration</div>
+            <div class="value">15.32 s</div>
+            <div class="delta">cumulative across suites</div>
+        </div>
+    </section>
+
+    <section class="charts">
+        <div class="chart-card">
+            <h2>Tests per context</h2>
+            <div class="chart-wrap"><canvas id="testsBar"></canvas></div>
+        </div>
+        <div class="chart-card">
+            <h2>Distribution by context</h2>
+            <div class="chart-wrap"><canvas id="testsPie"></canvas></div>
+        </div>
+    </section>
+
+    <section class="charts">
+        <div class="chart-card">
+            <h2>Suites per context</h2>
+            <div class="chart-wrap"><canvas id="suitesBar"></canvas></div>
+        </div>
+        <div class="chart-card">
+            <h2>Duration per context</h2>
+            <div class="chart-wrap"><canvas id="durationBar"></canvas></div>
+        </div>
+    </section>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Context</th>
+                <th class="num">Suites</th>
+                <th class="num">Tests</th>
+                <th class="num">Passed</th>
+                <th class="num">Failed</th>
+                <th class="num">Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <span class="swatch" style="background:#6366f1"></span>identity
+                </td>
+                <td class="num">4</td>
+                <td class="num">50</td>
+                <td class="num green">50</td>
+                <td class="num ">0</td>
+                <td class="num">866 ms</td>
+            </tr>
+<tr>
+                <td>
+                    <span class="swatch" style="background:#06b6d4"></span>organisation
+                </td>
+                <td class="num">6</td>
+                <td class="num">72</td>
+                <td class="num green">72</td>
+                <td class="num ">0</td>
+                <td class="num">1.73 s</td>
+            </tr>
+<tr>
+                <td>
+                    <span class="swatch" style="background:#10b981"></span>library
+                </td>
+                <td class="num">9</td>
+                <td class="num">99</td>
+                <td class="num green">99</td>
+                <td class="num ">0</td>
+                <td class="num">2.41 s</td>
+            </tr>
+<tr>
+                <td>
+                    <span class="swatch" style="background:#f59e0b"></span>feedback360
+                </td>
+                <td class="num">18</td>
+                <td class="num">169</td>
+                <td class="num green">169</td>
+                <td class="num ">0</td>
+                <td class="num">5.43 s</td>
+            </tr>
+<tr>
+                <td>
+                    <span class="swatch" style="background:#8b5cf6"></span>reporting
+                </td>
+                <td class="num">17</td>
+                <td class="num">110</td>
+                <td class="num green">110</td>
+                <td class="num ">0</td>
+                <td class="num">3.96 s</td>
+            </tr>
+<tr>
+                <td>
+                    <span class="swatch" style="background:#ec4899"></span>notifications
+                </td>
+                <td class="num">3</td>
+                <td class="num">36</td>
+                <td class="num green">36</td>
+                <td class="num ">0</td>
+                <td class="num">921 ms</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <footer>
+        Згенеровано із Jest <code>AggregatedResult</code> ·
+        57 spec files
+    </footer>
+
+    <script>
+        const data = {"labels":["identity","organisation","library","feedback360","reporting","notifications"],"colors":["#6366f1","#06b6d4","#10b981","#f59e0b","#8b5cf6","#ec4899"],"suites":[4,6,9,18,17,3],"passed":[50,72,99,169,110,36],"failed":[0,0,0,0,0,0],"durations":[866,1733,2410,5428,3964,921]};
+
+        const baseOpts = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#0f172a',
+                    titleFont: { family: 'Inter', weight: '600' },
+                    bodyFont: { family: 'Inter' },
+                    padding: 10,
+                    cornerRadius: 6,
+                },
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { family: 'Inter', size: 12 } },
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#e2e8f0' },
+                    ticks: { font: { family: 'Inter', size: 12 } },
+                },
+            },
+        };
+
+        new Chart(document.getElementById('testsBar'), {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: 'Passed',
+                        data: data.passed,
+                        backgroundColor: '#10b981',
+                        borderRadius: 4,
+                        stack: 'tests',
+                    },
+                    {
+                        label: 'Failed',
+                        data: data.failed,
+                        backgroundColor: '#ef4444',
+                        borderRadius: 4,
+                        stack: 'tests',
+                    },
+                ],
+            },
+            options: {
+                ...baseOpts,
+                plugins: {
+                    ...baseOpts.plugins,
+                    legend: { display: true, position: 'bottom' },
+                },
+                scales: {
+                    x: { ...baseOpts.scales.x, stacked: true },
+                    y: { ...baseOpts.scales.y, stacked: true },
+                },
+            },
+        });
+
+        new Chart(document.getElementById('testsPie'), {
+            type: 'doughnut',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        data: data.passed.map((p, i) => p + data.failed[i]),
+                        backgroundColor: data.colors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff',
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            font: { family: 'Inter', size: 12 },
+                            padding: 12,
+                            usePointStyle: true,
+                        },
+                    },
+                    tooltip: baseOpts.plugins.tooltip,
+                },
+            },
+        });
+
+        new Chart(document.getElementById('suitesBar'), {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: 'Suites',
+                        data: data.suites,
+                        backgroundColor: data.colors,
+                        borderRadius: 4,
+                    },
+                ],
+            },
+            options: baseOpts,
+        });
+
+        new Chart(document.getElementById('durationBar'), {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: 'Duration (ms)',
+                        data: data.durations,
+                        backgroundColor: data.colors,
+                        borderRadius: 4,
+                    },
+                ],
+            },
+            options: baseOpts,
+        });
+    </script>
+</body>
+</html>

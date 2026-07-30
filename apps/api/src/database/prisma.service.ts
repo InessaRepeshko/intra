@@ -15,12 +15,9 @@ export class PrismaService
     implements OnModuleInit, OnModuleDestroy
 {
     private readonly logger = new Logger(PrismaService.name);
+    private readonly pool: Pool;
 
     constructor(private readonly configService: ConfigService) {
-        // const adapter = new PrismaPg({
-        //     connectionString: configService.get<string>('database.url'),
-        // });
-
         const isProduction =
             configService.get<string>('APP_NODE_ENV') === 'production';
         const poolConfig: PoolConfig = {
@@ -32,6 +29,7 @@ export class PrismaService
         const pool = new Pool(poolConfig);
         const adapter = new PrismaPg(pool);
         super({ adapter });
+        this.pool = pool;
     }
 
     async onModuleInit() {
@@ -53,6 +51,7 @@ export class PrismaService
     async onModuleDestroy() {
         this.logger.log('Disconnecting from database...');
         await this.$disconnect();
+        await this.pool.end();
         this.logger.log('Disconnected from database');
     }
 }

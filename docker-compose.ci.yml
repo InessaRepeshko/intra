@@ -1,0 +1,62 @@
+# Overlay for CI usability tests. Use together with the root docker-compose.yml:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.ci.yml --env-file .env.ci up -d --build
+#
+# It adds api + web services and replaces the Postgres `ports` mapping so the
+# test database uses 5432 inside docker (instead of the 5433 the dev workflow
+# uses). The host-side port 5432 is exposed so workflow steps can run prisma
+# commands directly against it without needing `docker compose exec`.
+
+services:
+    postgres:
+        # Keep the image and volume defined in docker-compose.yml; only adjust
+        # the port mapping and add a healthcheck for compose orchestration.
+        ports:
+            - '5432:5432'
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+            interval: 3s
+            timeout: 5s
+            retries: 20
+
+    api:
+        build:
+            context: .
+            dockerfile: Dockerfile.ci
+            target: api-runtime
+        container_name: intra-api-ci
+        env_file: .env.ci
+        depends_on:
+            postgres:
+                condition: service_healthy
+        ports:
+            - '8080:8080'
+        networks:
+            - mynetwork
+        healthcheck:
+            test: ['CMD', 'wget', '-qO-', 'http://localhost:8080/api/health']
+            interval: 5s
+            timeout: 3s
+            retries: 30
+            start_period: 15s
+
+    web:
+        build:
+            context: .
+            dockerfile: Dockerfile.ci
+            target: web-runtime
+        container_name: intra-web-ci
+        env_file: .env.ci
+        depends_on:
+            api:
+                condition: service_started
+        ports:
+            - '3000:3000'
+        networks:
+            - mynetwork
+        healthcheck:
+            test: ['CMD', 'wget', '-qO-', 'http://localhost:3000']
+            interval: 5s
+            timeout: 3s
+            retries: 30
+            start_period: 15s

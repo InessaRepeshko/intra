@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "description": "360° Feedback Service",
     "private": true,
-    "license": "MIT",
     "author": "Inessa Repeshko",
     "packageManager": "pnpm@10.28.0",
     "scripts": {
@@ -35,6 +34,10 @@
         "db:seed": "turbo run db:seed --filter=@intra/database",
         "db:reset": "turbo run db:reset --filter=@intra/database",
         "db:refresh": "turbo run db:refresh --filter=@intra/database",
+        "// --- Prisma Commands for TEST environment ---": "",
+        "db:test:reset": "pnpm --filter @intra/database db:test:reset",
+        "db:test:seed": "pnpm --filter @intra/database db:test:seed",
+        "db:test:refresh": "pnpm --filter @intra/database db:test:refresh",
         "// --- Prisma Commands for PROD environment ---": "",
         "db:deploy:prod": "turbo run db:deploy:prod --filter=@intra/database",
         "db:generate:prod": "turbo run db:generate:prod --filter=@intra/database",
@@ -48,22 +51,38 @@
         "// --- Running Commands ---": "",
         "start": "turbo run start",
         "start:dev": "turbo run start:dev",
-        "start:test": "turbo run start:test --filter=@intra/api",
         "start:debug": "turbo run start:debug --filter=@intra/api",
         "start:prod": "turbo run start:prod",
         "start:prod:api": "turbo run start:prod --filter=@intra/api",
         "start:prod:web": "turbo run start:prod --filter=@intra/web",
-        "start:web": "turbo run start:dev --filter=@intra/web",
         "start:api": "pnpm run docker:up && turbo run start:dev --filter=@intra/api",
+        "start:web": "turbo run start:dev --filter=@intra/web",
+        "start:test:api": "turbo run start:test --filter=@intra/api",
+        "start:test:web": "pnpm --filter @intra/web start:test",
+        "start:db": "dotenv -e .env.development.local -- sh -c 'prisma studio --url $RENDER_DATABASE_URL'",
         "refresh": "turbo run refresh --filter=@intra/api",
         "refresh:test": "turbo run refresh:test --filter=@intra/api",
         "// --- Testing Commands ---": "",
-        "test": "turbo run test",
-        "test:unit": "turbo run test:unit --filter=@intra/api",
-        "test:e2e": "turbo run test:e2e --filter=@intra/api",
-        "test:watch": "turbo run test:watch --filter=@intra/api",
-        "test:cov": "turbo run test:cov --filter=@intra/api",
-        "test:debug": "turbo run test:debug --filter=@intra/api"
+        "test": "pnpm --filter @intra/api test:unit",
+        "test:unit": "pnpm --filter @intra/api test:unit",
+        "test:unit:cov": "pnpm --filter @intra/api test:unit:cov && open apps/api/test/unit/coverage/lcov-report/index.html",
+        "test:unit:dashboard": "pnpm --filter @intra/api test:unit:dashboard && open apps/api/test/unit/dashboard.html",
+        "test:integ": "pnpm --filter @intra/api test:integ",
+        "test:integ:refresh": "pnpm docker:up && pnpm --filter @intra/api test:integ:refresh",
+        "test:integ:cov": "pnpm --filter @intra/api test:integ:cov && open apps/api/test/integration/coverage/lcov-report/index.html",
+        "test:integ:dashboard": "pnpm --filter @intra/api test:integ:dashboard && open apps/api/test/integration/dashboard.html",
+        "// --- E2E / Usability Commands ---": "",
+        "test:e2e": "pnpm --filter @intra/web-e2e run",
+        "test:e2e:open": "pnpm --filter @intra/web-e2e open",
+        "test:e2e:record": "pnpm --filter @intra/web-e2e run:record",
+        "test:e2e:refresh": "pnpm --filter @intra/database db:test:refresh && pnpm --filter @intra/web-e2e run",
+        "test:e2e:report": "pnpm --filter @intra/web-e2e report:metrics",
+        "// --- Load / Performance (k6 in Docker) ---": "",
+        "test:perf:smoke": "K6_REPORT_NAME=smoke docker compose -f apps/api/test/load/docker-compose.k6.yml run --rm k6 run /scripts/scenarios/smoke.js",
+        "test:perf:baseline": "K6_REPORT_NAME=baseline-p95 docker compose -f apps/api/test/load/docker-compose.k6.yml run --rm k6 run /scripts/scenarios/baseline-p95.js",
+        "test:perf:load": "K6_REPORT_NAME=load-500vu docker compose -f apps/api/test/load/docker-compose.k6.yml run --rm k6 run /scripts/scenarios/load-500vu.js",
+        "test:perf:stress": "K6_REPORT_NAME=stress-1000vu docker compose -f apps/api/test/load/docker-compose.k6.yml run --rm k6 run /scripts/scenarios/stress-1000vu.js",
+        "test:perf:pdf": "K6_REPORT_NAME=pdf-15s docker compose -f apps/api/test/load/docker-compose.k6.yml run --rm k6 run /scripts/scenarios/pdf-15s.js"
     },
     "dependencies": {
         "@nestjs/common": "^11.1.13",
@@ -120,26 +139,6 @@
         "turbo": "^2.8.9",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.55.0"
-    },
-    "jest": {
-        "moduleFileExtensions": [
-            "js",
-            "json",
-            "ts"
-        ],
-        "rootDir": "apps/api",
-        "moduleNameMapper": {
-            "^src/(.*)$": "<rootDir>/src/$1"
-        },
-        "testRegex": ".*\\.spec\\.ts$",
-        "transform": {
-            "^.+\\.(t|j)s$": "ts-jest"
-        },
-        "collectCoverageFrom": [
-            "**/*.(t|j)s"
-        ],
-        "coverageDirectory": "../../coverage",
-        "testEnvironment": "node"
     },
     "overrides": {
         "cross-spawn": "^7.0.5",

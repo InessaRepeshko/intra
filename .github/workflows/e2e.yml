@@ -1,0 +1,98 @@
+name: E2E Usability Tests
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+    workflow_dispatch: {}
+
+# Avoid stacked runs on the same branch.
+concurrency:
+    group: e2e-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    cypress:
+        name: Cypress (record to Cloud)
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+
+        env:
+            CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+            CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v4
+
+            - name: Setup Node 22
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - name: Install workspace dependencies
+              run: pnpm install --frozen-lockfile
+              env:
+                  # Cypress binary is downloaded by the e2e step below.
+                  CYPRESS_INSTALL_BINARY: 0
+
+            - name: Build docker images and start stack
+              run: |
+                  docker compose \
+                    -f docker-compose.yml \
+                    -f docker-compose.ci.yml \
+                    --env-file .env.ci \
+                    up -d --build
+
+            - name: Wait for stack readiness
+              run: |
+                  pnpm dlx wait-on \
+                    http://localhost:8080/api/health \
+                    http://localhost:3000 \
+                    --timeout 180000
+
+            - name: Seed test database
+              run: pnpm db:test:refresh
+
+            - name: Run Cypress (record to Cloud)
+              uses: cypress-io/github-action@v6
+              with:
+                  install: false
+                  working-directory: apps/api/test/web-e2e
+                  browser: chrome
+                  record: true
+                  config-file: cypress.config.ts
+              env:
+                  CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+                  CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+                  # Browser-visible URL (cypress run from the GH runner, not from docker).
+                  NEXT_PUBLIC_API_URL: http://localhost:8080
+
+            - name: Upload metrics artifact
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: usability-metrics
+                  path: apps/api/test/web-e2e/metrics.json
+                  if-no-files-found: ignore
+
+            - name: Upload Cypress screenshots (on failure)
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: cypress-screenshots
+                  path: apps/api/test/web-e2e/cypress/screenshots
+                  if-no-files-found: ignore
+
+            - name: Tear down docker stack
+              if: always()
+              run: |
+                  docker compose \
+                    -f docker-compose.yml \
+                    -f docker-compose.ci.yml \
+                    down -v --remove-orphans
