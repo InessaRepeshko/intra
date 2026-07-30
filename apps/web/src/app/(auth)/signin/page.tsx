@@ -206,8 +206,8 @@ export default function LoginPage() {
 
                         {/* Help Text */}
                         <p className="mt-6 text-center text-xs text-muted-foreground">
-                            Need help? Contact your{' '}
-                            <span>IT administrator</span>
+                            Need help? Contact us at {' '}
+                            <a href="mailto:intra.feedback360.service@gmail.com" className="underline underline-offset-2 hover:text-foreground">intra.feedback360.service@gmail.com</a>
                         </p>
                     </CardContent>
                 </Card>

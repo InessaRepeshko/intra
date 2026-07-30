@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "description": "360° Feedback Service",
     "private": true,
-    "license": "MIT",
     "author": "Inessa Repeshko",
     "packageManager": "pnpm@10.28.0",
     "scripts": {

@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Intra Web Application",
   "private": true,
-  "license": "MIT",
   "author": "Inessa Repeshko",
   "scripts": {
     "// Environment variables": "",

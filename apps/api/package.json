@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "description": "Intra REST API",
     "private": true,
-    "license": "MIT",
     "author": "Inessa Repeshko",
     "scripts": {
         "// Environment variables": "",

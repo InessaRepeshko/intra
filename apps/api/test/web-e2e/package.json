@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "description": "Cypress E2E usability tests for the Intra web application",
     "private": true,
-    "license": "MIT",
     "author": "Inessa Repeshko",
     "scripts": {
         "// Lifecycle": "",
