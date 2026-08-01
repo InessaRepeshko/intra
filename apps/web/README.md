@@ -2,6 +2,10 @@
 
 The web client for the **Intra 360° Feedback** platform — a Next.js 16 / React 19 application that lets HR, managers and employees run, monitor and analyse 360° feedback cycles. The package is part of a Turborepo monorepo and is published internally as `@intra/web`.
 
+Deployed on Vercel: **https://intra-feedback360-service.vercel.app**. It talks to the API at
+[intra-feedback360-service.onrender.com](https://intra-feedback360-service.onrender.com), which sleeps
+when idle on Render's free tier — the first load after a pause may sit empty until the backend wakes.
+
 ---
 
 ## 📑 Table of contents
@@ -17,6 +21,7 @@ The web client for the **Intra 360° Feedback** platform — a Next.js 16 / Reac
 - [🎨 UI system](#-ui-system)
 - [📝 Forms & validation](#-forms--validation)
 - [📊 Charts & analytics](#-charts--analytics)
+- [⚡ Performance](#-performance)
 - [⚙️ Configuration](#-configuration)
 - [📋 Prerequisites](#-prerequisites)
 - [📜 Available scripts](#-available-scripts)
@@ -303,6 +308,38 @@ Reporting and analytics views combine `recharts` with custom shells in `shared/u
 - `cycle-stats-card(s)`, `statistics-card`, `entity-insight-cards`, `competence-insight-card` — KPI cards used across dashboards and reports.
 
 Numerical aggregation helpers live in `shared/lib/utils/` (`calculate-average`, `get-valid-averages`, `format-number`); `decimal.js` is used wherever exact rounding matters. `react-to-print` powers printable report exports.
+
+---
+
+## ⚡ Performance
+
+Google Lighthouse audit of the **production deployment** on Vercel (desktop profile, Lighthouse 13,
+single page load) — not a development build, where an unminified bundle would score noticeably lower:
+
+| Page                                 | Performance | Accessibility | Best Practices | SEO |
+| ------------------------------------ | ----------- | ------------- | -------------- | --- |
+| `/dashboard`                         | 98          | 100           | 100            | 100 |
+| `/reporting/strategic-reports/[id]`  | 96          | 98            | 100            | 100 |
+| `/reporting/individual-reports/[id]` | 92          | 98            | 100            | 100 |
+
+Core Web Vitals, worst value across the three pages:
+
+| Metric                   | Worst value |
+| ------------------------ | ----------- |
+| First Contentful Paint   | 0.3 s       |
+| Largest Contentful Paint | 1.2 s       |
+| Total Blocking Time      | 30 ms       |
+| Cumulative Layout Shift  | 0           |
+| Speed Index              | 2.2 s       |
+
+The two report pages score lowest — they mount the heaviest `recharts` compositions (radar, radial
+groups, matrix heatmap) — and still stay in the green band. `CLS 0` across every page reflects the
+fixed-height chart shells in `shared/ui/`, which reserve their space before data arrives.
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/tests/performance-tests-lighthouse.png?raw=true" width="850" alt="Lighthouse audit — dashboard, strategic and individual reports">
+
+Backend performance is covered separately by the k6 load-test suite — see the root
+[README](../../README.md#-testing).
 
 ---
 

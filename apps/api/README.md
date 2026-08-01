@@ -2,6 +2,10 @@
 
 REST backend for the **Intra** 360° feedback platform. Built on top of [NestJS](https://nestjs.com/) and organised as a set of bounded contexts following Domain-Driven Design and the Hexagonal (Ports & Adapters) architecture. The package is part of a Turborepo monorepo and is published internally as `@intra/api`.
 
+Deployed on a Render Web Service: **https://intra-feedback360-service.onrender.com** —
+[Swagger UI](https://intra-feedback360-service.onrender.com/docs). On Render's free tier the instance
+spins down when idle, so the first request after a pause cold-starts it and may take up to a minute.
+
 ---
 
 ## 📑 Table of contents
@@ -167,6 +171,32 @@ The heart of the platform — 360° feedback cycles, reviews, respondents/review
 - **Listeners:** `CycleStageListener`, `ReviewStageListener`, `RespondentStatusListener`, `SelfAssessmentCompletedListener`.
 - **HTTP:** `CyclesController`, `ReviewController`, `QuestionsController`, `ClusterScoresController`, `ClusterScoreAnalyticsController`.
 
+A review is finished by two independent triggers: the daily cron in `ReviewSchedulerService` when the
+response deadline passes, and a reactive check after the last respondent answers. Both converge on the
+same `review.stage.processed` event that the `reporting` context listens to.
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/sequence-diagram-review-autocompletion.png?raw=true" width="850" alt="Sequence diagram — review auto-completion">
+
+<details>
+<summary><b>Class diagram</b> — the four layers of <code>feedback360</code></summary>
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/class-diagram-feedback360.png?raw=true" width="850" alt="Class diagram — feedback360 bounded context">
+
+</details>
+
+<details>
+<summary><b>More sequence diagrams</b> — review creation, survey answers</summary>
+
+Creating a review, from the HTTP request to the `review.stage.changed` event and the invitation email:
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/sequence-diagram-review-creation.png?raw=true" width="850" alt="Sequence diagram — review creation">
+
+Submitting answers, for both the self-assessment and the team/others paths:
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/sequence-diagram-survey-answers.png?raw=true" width="850" alt="Sequence diagram — survey answers">
+
+</details>
+
 ### 5. `reporting`
 Generates individual and strategic reports on top of completed reviews/cycles.
 
@@ -179,6 +209,13 @@ Generates individual and strategic reports on top of completed reviews/cycles.
   - `TextAnswerService` — handling of free-text answers.
 - **Listeners:** `CycleStageListener`, `ReviewStageListener` (react to feedback360 events to materialise reports).
 - **HTTP:** `ReportingController`, `StrategicReportingController`.
+
+<details>
+<summary><b>Class diagram</b> — the four layers of <code>reporting</code></summary>
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/class-diagram-reporting.png?raw=true" width="850" alt="Class diagram — reporting bounded context">
+
+</details>
 
 ### 6. `notifications`
 Sends transactional and stage-driven emails and persists a delivery log.
@@ -210,12 +247,40 @@ Authentication is handled by **Better Auth** wrapped in a NestJS module.
   - `GET /auth/google/callback` — OAuth2 callback; performs the code exchange and creates a session.
   - `GET /auth/me` — current authenticated user (`UserResponse`).
   - `POST /auth/logout` — invalidates the session and clears the cookie.
-  - `POST /auth/dev/login` — dev/test-only impersonation by email (disabled in `production`).
+  - `POST /auth/dev/login` — impersonation by email, intended for development and tests.
 - **Guards & decorators:**
   - `AuthSessionGuard` — applied globally on the controller; checks the Better Auth session.
   - `RolesGuard` + `@Roles(...)` — role-based access control.
   - `@Public()` — opts an endpoint out of `AuthSessionGuard`.
   - `@CurrentUser()` — injects the authenticated `UserDomain` into a handler.
+
+### Dev login & seeded accounts
+
+`POST /auth/dev/login` takes `{ "email": "..." }`, finds the user through `IdentityUserService`,
+creates a Better Auth user/session if none exists yet, and returns the session token while setting the
+session cookie. It bypasses Google OAuth2 entirely, which is what makes integration tests, Cypress
+specs and k6 scenarios able to authenticate without a browser.
+
+Accounts created by `pnpm db:seed`, one per role:
+
+| Email                       | Roles              | Position / team                    |
+| --------------------------- | ------------------ | ---------------------------------- |
+| `mariia.pavlenko@intra.com` | `HR`               | HR Manager · HR Team               |
+| `pavlo.lytvyn@intra.com`    | `MANAGER`, `ADMIN` | Tech Lead · SE Team                |
+| `taras.rudenko@intra.com`   | `EMPLOYEE`         | Senior Software Engineer · SE Team |
+
+```bash
+curl -X POST http://localhost:8080/auth/dev/login -H 'Content-Type: application/json' -d '{"email":"pavlo.lytvyn@intra.com"}'
+```
+
+The k6 scenarios authenticate the same way — `test/load/scripts/lib/auth.js` posts to this endpoint,
+with `DEV_LOGIN_EMAIL` defaulting to `oleksandr.bondarenko@intra.com`. The full seeded directory lives
+in `packages/database/src/prisma/seeds/identity/users.ts`.
+
+> ⚠️ `AuthService.devLogin` opens with a commented-out `isProd` check
+> ([`auth.service.ts`](src/auth/auth.service.ts)). As long as it stays commented out, anyone who knows
+> a seeded address can impersonate that user on the **deployed** API, including the `ADMIN` account.
+> Uncomment the guard before treating the deployment as anything other than a demo.
 
 ---
 
@@ -243,8 +308,20 @@ Reports are produced by the `reporting` context and split into two flavours:
 
 Both are materialised in response to `feedback360` events (`ReviewStageListener`, `CycleStageListener` in `reporting/application/listeners`) and exposed via `ReportingController` / `StrategicReportingController`. Numeric aggregations are computed with `decimal.js` to avoid floating-point drift.
 
-The full event-driven pipeline for strategic reports — stage listener, per-review aggregation,
-competence analytics, insight generation and publication:
+### Individual reports
+
+Generation is triggered by an event, never by an HTTP call. `ReviewStageListener` picks up
+`review.stage.processed`, moves the review to `PREPARING_REPORT`, and `ReportingService` assembles the
+report: it checks the anonymity threshold before reading any answer, aggregates analytics and
+insights, then emits `review.stage.changed` so the notifications context can tell HR the report is
+ready.
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/sequence-diagram-individual-report-generation.png?raw=true" width="850" alt="Sequence diagram — individual report generation">
+
+### Strategic reports
+
+The cycle-level pipeline — stage listener, per-review aggregation, competence analytics, insight
+generation and publication:
 
 <div align="center">
     <img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/activity-diagram-strategic-report-generation.png?raw=true" width="850" alt="Activity diagram — strategic report generation">
@@ -405,8 +482,22 @@ pnpm db:test:refresh -w @intra/database
 ```
 
 k6 SLO budgets (interactive p95 < 500 ms, error rate < 1 %) are defined once in
-`test/load/scripts/lib/config.js`; results land in `test/load/results/` (gitignored). Aggregated
-results and test dashboards are published in the root [README](../../README.md#-testing).
+`test/load/scripts/lib/config.js`; the endpoint mix and weights in `scripts/lib/endpoints.js`. Fresh
+runs land in `test/load/results/` (gitignored) — the captured reports are committed instead:
+
+| Scenario | Profile | Report |
+| --- | --- | --- |
+| `smoke` | 1 VU, sanity check before every load run | [↗](../docs/tests/load-tests-smoke.png) |
+| `baseline-p95` | ramp to 50 VUs, 5 min plateau — the SLO reference run | [↗](../docs/tests/load-tests-baseline-p95.png) |
+| `load-500vu` | staged ramp to 500 VUs, 10 min plateau | [↗](../docs/tests/load-tests-load-500vu.png) |
+| `stress-1000vu` | staged ramp to 1 500 VUs — the breaking-point run | [↗](../docs/tests/load-tests-stress-1500vu.png) |
+
+The `stress-1000vu` scenario ramps beyond its name: `options.scenarios[].stages` peak at 1 500 VUs,
+which is why the captured report is filed under `1500vu`.
+
+Measured results, the two failing thresholds and what the failure pattern actually indicates are
+written up in the root [README](../../README.md#-testing). Frontend performance is measured separately
+with Lighthouse — see [`apps/web/README.md`](../web/README.md#-performance).
 
 ---
 

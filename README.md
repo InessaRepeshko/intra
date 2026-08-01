@@ -10,10 +10,34 @@
     database and a shared TypeScript kernel.
 </p>
 
+<p align="center">
+    <a href="https://intra-feedback360-service.vercel.app"><img src="https://img.shields.io/badge/Live_app-Vercel-000000?logo=vercel&logoColor=white" alt="Live app" /></a>
+    <a href="https://intra-feedback360-service.onrender.com"><img src="https://img.shields.io/badge/API-Render-46E3B7?logo=render&logoColor=black" alt="API" /></a>
+    <a href="https://intra-feedback360-service.onrender.com/docs"><img src="https://img.shields.io/badge/API_docs-Swagger-85EA2D?logo=swagger&logoColor=black" alt="Swagger" /></a>
+</p>
+
+---
+
+## 🔗 Live deployment
+
+| Service | URL |
+| --- | --- |
+| Web app (Vercel) | https://intra-feedback360-service.vercel.app |
+| REST API (Render) | https://intra-feedback360-service.onrender.com |
+| Swagger UI | https://intra-feedback360-service.onrender.com/docs |
+
+> The API runs on Render's free tier and spins down after inactivity. The first request after an idle
+> period cold-starts the instance and can take up to a minute — the web app may show an empty state
+> until the backend answers. Reload once it wakes up.
+
+Sign-in is Google OAuth2 only — password login is intentionally disabled. Seeded demo accounts for
+each role are listed under [Test accounts](#test-accounts).
+
 ---
 
 ## 📑 Table of contents
 
+- [🔗 Live deployment](#-live-deployment)
 - [🎯 Overview](#-overview)
 - [📸 Screenshots](#-screenshots)
 - [🗂️ Monorepo layout](#-monorepo-layout)
@@ -245,20 +269,12 @@ shared dev dependencies; every concrete script delegates to a workspace via Turb
 The platform is structured around **Domain-Driven Design** with the same bounded contexts on both sides
 of the wire, glued together by a shared kernel:
 
-```
-@intra/web (Next.js)   app → widgets → features → entities → shared   (FSD layers)
-        │  uses DTOs / enums of
-        ▼
-@intra/shared-kernel   pure TS: DTOs, enums, constraints, rules — the single contract
-        ▲
-        │  implements the contract
-@intra/api (NestJS)    domain → application (ports/services/listeners)
-        │              → infrastructure (Prisma) → presentation (HTTP)
-        ▼  Prisma Client
-@intra/database        schema.prisma + migrations + seeders → generated client
-        ▼
-PostgreSQL
-```
+<div align="center">
+    <img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/package-diagram-monorepo.png?raw=true" width="850" alt="Package diagram — monorepo dependencies">
+</div>
+
+Both applications depend on `@intra/shared-kernel`; the shared kernel depends on nothing. That
+direction is what keeps the wire contract from drifting.
 
 Key cross-cutting decisions:
 
@@ -288,8 +304,11 @@ Each context exists in three places: the Prisma schema, the NestJS source tree
 
 ### Deployment
 
-Production runs the frontend on **Vercel**, the API on **Render Web Service** and the database on
-**Render Postgres**:
+Production runs the frontend on **Vercel**
+([intra-feedback360-service.vercel.app](https://intra-feedback360-service.vercel.app)), the API on a
+**Render Web Service**
+([intra-feedback360-service.onrender.com](https://intra-feedback360-service.onrender.com)) and the
+database on **Render Postgres**:
 
 <div align="center">
     <img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/deployment-diagram.png?raw=true" width="850" alt="Deployment diagram">
@@ -361,6 +380,29 @@ Docker helpers: `pnpm docker:up` / `docker:view` / `docker:stop` / `docker:down`
 removes volumes). The container is named `intra`, exposes `DATABASE_PORT` (default `5433`) and persists
 data in the `postgres_data` named volume.
 
+### Test accounts
+
+`pnpm db:seed` populates a demo organisation. Sign in as any of these without Google OAuth2 through
+the `POST /auth/dev/login` impersonation endpoint:
+
+| Email                        | Roles              | Position / team                     |
+| ---------------------------- | ------------------ | ----------------------------------- |
+| `mariia.pavlenko@intra.com`  | `HR`               | HR Manager · HR Team                |
+| `dmytro.kovalenko@intra.com` | `MANAGER`          | CTO · Head Office                   |
+| `taras.rudenko@intra.com`    | `EMPLOYEE`         | Senior Software Engineer · SE Team  |
+
+```bash
+curl -X POST http://localhost:8080/auth/dev/login -H 'Content-Type: application/json' -d '{"email":"mariia.pavlenko@intra.com"}'
+```
+
+The response carries the session token and sets the session cookie; the frontend also stores the token
+under `session_token` in `localStorage`. The full seeded directory is in
+`packages/database/src/prisma/seeds/identity/users.ts`.
+
+> ⚠️ The production guard inside `AuthService.devLogin` is currently commented out, so this endpoint
+> also answers on the deployed API. Until it is restored, treat these accounts as publicly usable and
+> keep nothing sensitive in the production database.
+
 ---
 
 ## ⚙️ Environment configuration
@@ -415,14 +457,15 @@ pnpm prisma:test -- studio       # browse the test DB
 
 ## 🧪 Testing
 
-Four independent test layers cover the backend and the UI:
+Five independent test layers cover the backend and the UI:
 
-| Layer       | Location                    | Tooling            | Command            |
-| ----------- | --------------------------- | ------------------ | ------------------ |
-| Unit        | `apps/api/test/unit`        | Jest (ports mocked)| `pnpm test:unit`   |
-| Integration | `apps/api/test/integration` | Jest + `.env.test` DB | `pnpm test:integ` |
-| E2E (UI)    | `apps/api/test/web-e2e`     | Cypress            | `pnpm test:e2e`    |
-| Load        | `apps/api/test/load`        | k6 in Docker       | `pnpm test:perf:*` |
+| Layer         | Location                    | Tooling            | Command            |
+| ------------- | --------------------------- | ------------------ | ------------------ |
+| Unit          | `apps/api/test/unit`        | Jest (ports mocked)| `pnpm test:unit`   |
+| Integration   | `apps/api/test/integration` | Jest + `.env.test` DB | `pnpm test:integ` |
+| E2E (UI)      | `apps/api/test/web-e2e`     | Cypress            | `pnpm test:e2e`    |
+| Load          | `apps/api/test/load`        | k6 in Docker       | `pnpm test:perf:*` |
+| Frontend perf | production deployment       | Google Lighthouse  | Chrome DevTools    |
 
 Integration and e2e runs expect a freshly migrated test DB: `pnpm db:test:refresh`.
 Coverage and HTML dashboards: `pnpm test:unit:cov` / `test:unit:dashboard` and the
@@ -443,16 +486,62 @@ Coverage and HTML dashboards: `pnpm test:unit:cov` / `test:unit:dashboard` and t
 Scenarios live in `apps/api/test/load/scripts/scenarios/`; SLO budgets (interactive p95 < 500 ms,
 error rate < 1 %) are defined once in `scripts/lib/config.js`. Measured against a locally running API:
 
-| Scenario       | Max VUs | Requests | Avg rate  | p95     | Error rate |
-| -------------- | ------- | -------- | --------- | ------- | ---------- |
-| `smoke`        | 1       | 31       | 1 req/s   | 21 ms   | 0 %        |
-| `baseline-p95` | 50      | 11 424   | 29 req/s  | 14.5 ms | 0 %        |
-| `load-500vu`   | 500     | 261 423  | 256 req/s | 7.1 ms  | 16.9 %*    |
-| `stress-1000vu`| 1 500   | 996 497  | 922 req/s | 579 ms  | 16.8 %*    |
+| Scenario       | Max VUs | Requests | Avg rate  | p95     | Error rate | Report |
+| -------------- | ------- | -------- | --------- | ------- | ---------- | ------ |
+| `smoke`        | 1       | 31       | 1 req/s   | 21 ms   | 0 %        | [↗](apps/docs/tests/load-tests-smoke.png) |
+| `baseline-p95` | 50      | 11 424   | 29 req/s  | 14.5 ms | 0 %        | [↗](apps/docs/tests/load-tests-baseline-p95.png) |
+| `load-500vu`   | 500     | 261 423  | 256 req/s | 7.1 ms  | 16.9 %*    | [↗](apps/docs/tests/load-tests-load-500vu.png) |
+| `stress-1000vu`| 1 500   | 996 497  | 922 req/s | 579 ms  | 16.8 %*    | [↗](apps/docs/tests/load-tests-stress-1500vu.png) |
 
-`smoke` and `baseline-p95` pass every SLO threshold with wide margins. \*The high-concurrency scenarios
-exceed the error-rate threshold — the failure pattern is systematic (a fixed share of one endpoint's
-responses) and is under investigation. All figures are local-machine numbers, not production ones.
+`smoke` and `baseline-p95` pass every SLO threshold with wide margins — the baseline p95 of 14.5 ms
+sits 35× below the 500 ms budget.
+
+\*The two high-concurrency scenarios **breach** the error-rate threshold. The share is nearly identical
+in both (16.9 % and 16.8 %) even though the load differs threefold, which is not the signature of
+saturation — a saturating system degrades progressively. It matches the traffic weight of a single
+endpoint in `scripts/lib/endpoints.js`, so one endpoint is failing systematically rather than the
+system running out of capacity. Under investigation; the limit in VUs is deliberately not stated until
+the cause is known.
+
+All figures come from a locally running API (`BASE_URL` defaults to `host.docker.internal:8080`), not
+from the production deployment.
+
+<details>
+<summary><b>k6 HTML reports</b> — the four scenarios</summary>
+
+Baseline — 50 VUs held for 5 minutes, flat latency, zero errors:
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/tests/load-tests-baseline-p95.png?raw=true" width="850" alt="k6 report — baseline-p95">
+
+Smoke — a single virtual user, used as a sanity check before every load run:
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/tests/load-tests-smoke.png?raw=true" width="850" alt="k6 report — smoke">
+
+Load — ramp to 500 VUs held for 10 minutes:
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/tests/load-tests-load-500vu.png?raw=true" width="850" alt="k6 report — load-500vu">
+
+Stress — staged ramp to 1 500 VUs, where response times finally leave the SLO budget:
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/tests/load-tests-stress-1500vu.png?raw=true" width="850" alt="k6 report — stress-1000vu at 1500 VUs">
+
+</details>
+
+### Frontend performance (Lighthouse)
+
+Google Lighthouse audit of the production deployment on Vercel, desktop profile:
+
+| Page                                | Performance | Accessibility | Best Practices | SEO |
+| ----------------------------------- | ----------- | ------------- | -------------- | --- |
+| `/dashboard`                        | 98          | 100           | 100            | 100 |
+| `/reporting/strategic-reports/[id]` | 96          | 98            | 100            | 100 |
+| `/reporting/individual-reports/[id]`| 92          | 98            | 100            | 100 |
+
+Core Web Vitals, worst value across the three pages: FCP 0.3 s, LCP 1.2 s, TBT 30 ms, CLS 0,
+Speed Index 2.2 s. The report pages score lowest — they render the heaviest charts — and are still
+inside the green band.
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/tests/performance-tests-lighthouse.png?raw=true" width="850" alt="Lighthouse audit — dashboard, strategic and individual reports">
 
 ---
 
@@ -480,6 +569,7 @@ and the generated Prisma client are produced before any consumer is built.
 
 | Resource                  | Location                                                        |
 | ------------------------- | --------------------------------------------------------------- |
+| Swagger UI (production)   | https://intra-feedback360-service.onrender.com/docs             |
 | Swagger UI (local)        | http://localhost:8080/docs                                      |
 | OpenAPI JSON              | `apps/docs/api/openapi.json` (regenerated on every API boot)    |
 | Postman collection        | `apps/docs/api/postman/collections/`                            |
