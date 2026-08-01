@@ -1,0 +1,42 @@
+---
+description: Shared kernel contract between API and web — what may and may not live here
+globs: packages/shared-kernel/**
+---
+
+# @intra/shared-kernel
+
+The contract shared by `@intra/api` and `@intra/web`. Organised by bounded context:
+`auth`, `common`, `identity`, `organisation`, `library`, `feedback360`, `reporting`.
+
+Each context folder holds the same four kinds of module:
+
+```
+constraints/   field limits, regexes, min/max values
+dto/           request/response shapes
+enums/         status and stage enums mirroring the Prisma schema
+rules/         framework-free business rules (anonymity, scoring, validation)
+```
+
+## Hard constraints
+
+- **Pure TypeScript only.** No NestJS, no Prisma, no React, no Next.js imports. The package is
+  consumed by both a Node server and a browser bundle — anything runtime-specific breaks one of them.
+- **No side effects at module scope.** Declarations and pure functions only.
+- Every public symbol is re-exported through `src/index.ts`.
+
+## When to put something here
+
+Put it in the shared kernel if the API and the web must agree on it: an enum the UI renders and the
+DB stores, a validation limit enforced on both sides, a scoring rule used by reporting and displayed
+in a chart.
+
+Keep it out if only one side needs it. A Prisma-specific mapper belongs in the API's
+`infrastructure/mappers/`; a component prop type belongs in the web slice's `model/`.
+
+## Keeping enums in sync
+
+Enums here mirror `packages/database/src/prisma/schema.prisma`. When a Prisma enum gains a value,
+update the shared-kernel copy in the same change — otherwise the API compiles against a stale union
+and the UI silently fails to render the new state.
+
+After editing, run `pnpm build:shared`; the API and web both consume the built output.

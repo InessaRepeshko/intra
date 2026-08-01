@@ -1,0 +1,44 @@
+---
+description: Test layers — unit, integration, Cypress e2e and k6 load — and which env each uses
+globs: apps/api/test/**,apps/web/**/*.cy.ts
+---
+
+# Testing
+
+Four layers, each with its own runner, config and environment. Do not mix them.
+
+| Layer | Location | Runner | Env | Command |
+| --- | --- | --- | --- | --- |
+| Unit | `apps/api/test/unit` | Jest | none | `pnpm test:unit` |
+| Integration | `apps/api/test/integration` | Jest | `.env.test` | `pnpm test:integ` |
+| E2E (UI) | `apps/api/test/web-e2e` | Cypress | `.env.test` | `pnpm test:e2e` |
+| Load | `apps/api/test/load` | k6 in Docker | `BASE_URL` | `pnpm test:perf:*` |
+
+## Unit
+
+No database, no network. Repository **ports** are mocked — that is what the ports exist for. A unit
+test that needs Prisma is an integration test in the wrong folder.
+
+## Integration
+
+Runs against the test database defined in `.env.test`, never the development one. Refresh the
+schema and seeds with `pnpm test:integ:refresh` before a run that depends on seed data.
+
+## Load (k6)
+
+Scenarios in `test/load/scripts/scenarios/`: `smoke`, `baseline-p95`, `load-500vu`,
+`stress-1000vu`, `pdf-15s`. Shared config in `scripts/lib/`:
+
+- SLO budgets live in `lib/config.js` (`INTERACTIVE_P95_MS`, `PDF_BUDGET_MS`, `ERROR_RATE`) and are
+  wired into each scenario's `thresholds`. Change the budget there, not per scenario.
+- The endpoint mix and weights live in `lib/endpoints.js`. Adding an endpoint shifts every past
+  result's baseline — note it when comparing runs.
+- `BASE_URL` defaults to `http://host.docker.internal:8080`, i.e. a **locally running API**.
+  Results are local-machine numbers; never present them as production figures without saying so.
+- Reports land in `test/load/results/` and are gitignored. Quote numbers in prose rather than
+  linking to those files from committed docs.
+
+## Reporting artefacts
+
+`pnpm test:unit:dashboard` and `pnpm test:integ:dashboard` regenerate the HTML dashboards;
+`test:unit:cov` / `test:integ:cov` produce coverage. These are generated — do not hand-edit them.

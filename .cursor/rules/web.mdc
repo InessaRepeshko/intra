@@ -1,0 +1,53 @@
+---
+description: Next.js frontend structure, Feature-Sliced Design layers and slice anatomy
+globs: apps/web/src/**
+---
+
+# @intra/web — Feature-Sliced Design
+
+Next.js 16 App Router. Layers depend **strictly downward**:
+
+```
+app → widgets → features → entities → shared
+```
+
+An import that points upward (an `entity` importing a `feature`, a `feature` importing a `widget`)
+is an architecture violation — lift the shared part down into `entities/` or `shared/` instead.
+
+| Layer | Holds |
+| --- | --- |
+| `app/` | App Router routes, root layout, providers, error/auth boundaries |
+| `widgets/` | Page-level compositions (dashboard, sidebar, report pages, comment threads) |
+| `features/` | One user flow each (create cycle, archive cycle, post comment) |
+| `entities/` | Domain primitives per bounded context (cards, tables, badges, types) |
+| `shared/` | HTTP client, hooks, utils, shadcn primitives, app-wide UI |
+
+## Slice anatomy
+
+Every `entities/<context>/<entity>/` and `features/<context>/<entity>/<flow>/` slice repeats the
+same triple. Keep it — do not flatten a slice into a single file:
+
+```
+api/      axios call sites + react-query hooks
+model/    TS types, zod schemas, mappers, contexts
+ui/       presentational components for this slice only
+```
+
+Context folders mirror the API bounded contexts exactly: `feedback360`, `identity`, `library`,
+`organisation`, `reporting`.
+
+## Conventions
+
+- Server Components by default; add `'use client'` only where interactivity or hooks demand it.
+- Data fetching goes through the shared axios client and react-query hooks in the slice's `api/`.
+  No `fetch` calls scattered in components.
+- Forms use react-hook-form + zod; the schema belongs in the slice's `model/`.
+- UI primitives come from `shared/ui` (shadcn, new-york style, Lucide icons). Do not add a second
+  component library or hand-roll a primitive that already exists there.
+- Types shared with the backend come from `@intra/shared-kernel` (transpiled by `next.config.ts`),
+  never redeclared locally.
+
+## Path aliases
+
+`@/*` and `@src/*` → `src/*`, plus `@entities/*`, `@features/*`, `@widgets/*`, `@shared/*`,
+`@lib/*`, `@public/*`. Use them instead of deep relative paths.

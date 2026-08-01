@@ -111,8 +111,13 @@ tsconfig.tsbuildinfo
 
 .eslintcache
 .vscode
-.postman
 
 # --- k6 load test results ---
 apps/api/test/load/results/*
 !apps/api/test/load/results/.gitkeep
+
+# --- AI assistants ---
+# Project rules (.cursor/rules/*.mdc) and CLAUDE.md are committed on purpose;
+# only local state is ignored.
+.claude/settings.local.json
+.cursor/*.log

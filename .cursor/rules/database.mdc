@@ -1,0 +1,56 @@
+---
+description: Prisma schema, migrations, seeders and safe database commands
+globs: packages/database/**
+---
+
+# @intra/database
+
+Prisma 7 with the `@prisma/adapter-pg` driver adapter. Single schema for the whole system.
+
+```
+packages/database/src/prisma/
+├── schema.prisma        single source of truth for the data model
+├── prisma.config.ts     reads DATABASE_URL / SHADOW_DATABASE_URL from process.env
+├── migrations/
+├── seeds/               entry point: seeds/seeds.ts
+└── dbml/schema.dbml     generated ERD source (dbdiagram.io)
+```
+
+## Never call the `prisma` CLI directly
+
+The schema is not in the default location and the datasource URL is injected from the environment.
+A bare `prisma migrate dev` will not find either. Always go through the package scripts, which wrap
+`prisma --config ./src/prisma/prisma.config.ts` and load the right env file via `dotenv-cli`:
+
+| Environment | Script prefix | Env file |
+| --- | --- | --- |
+| development | `pnpm prisma:dev -- <cmd>` | `.env.development.local` |
+| test | `pnpm prisma:test -- <cmd>` | `.env.test` |
+| production | `pnpm prisma:config -- <cmd>` | ambient env |
+
+## Safe vs destructive
+
+Safe: `db:generate`, `db:deploy`, `db:schema`, `db:create` (new migration), all `db:test:*`.
+
+Destructive — confirm before running or suggesting: `db:reset`, `db:refresh`, `db:seed`, and every
+`*:prod` variant. `.env.development.local` points at a **remote Render database**, so `db:reset`
+destroys shared data, not a throwaway container.
+
+## Schema conventions
+
+- Models are PascalCase in Prisma, tables are snake_case with a context prefix via `@@map`
+  (`feedback360_cycles`, `reporting_individual_reports`, `identity_users`, `org_teams`,
+  `library_competences`). Keep the prefix consistent with the owning bounded context.
+- Fields are camelCase with `@map("snake_case")`.
+- Enums are also `@@map`-ed (`feedback360_cycle_stage`). When adding an enum value, mirror it in
+  `packages/shared-kernel/src/<context>/enums/` — the API and web read the shared-kernel copy.
+- Scores and analytics use `Decimal`, never `Float`. Precision is part of the reporting contract.
+- Stage changes are auditable: `CycleStageHistory` and `ReviewStageHistory` record `fromStage`,
+  `toStage`, `changedById`, `reason`. Write a history row whenever a stage moves.
+
+## After changing the schema
+
+1. `pnpm db:schema` — validate and format.
+2. `pnpm db:create` — generate the migration.
+3. `pnpm db:generate` — regenerate the client.
+4. Update the matching enum/DTO in `@intra/shared-kernel` if the change is part of a public contract.

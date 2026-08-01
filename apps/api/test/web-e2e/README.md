@@ -3,7 +3,7 @@
 End-to-end usability tests for the Intra 360° Feedback web application,
 designed to feed the **usability metrics table** in the thesis.
 
-## Rationale — why these scenarios
+## 💡 Rationale — why these scenarios
 
 In line with ISO 9241-11, three measurable usability metrics are captured:
 
@@ -27,7 +27,7 @@ usability research.
 | 5 | Individual report + comment                        | Employee   | Readability of analytical visualisations.        |
 | 6 | Strategic report + cluster-score analytics filter  | HR         | Reaction of charts to filter changes.            |
 
-## Prerequisites
+## 📋 Prerequisites
 
 1. The test PostgreSQL container is up (`pnpm docker:up` from the repo root).
 2. The API runs against `.env.test`: `pnpm start:test` (port `8080`).
@@ -37,7 +37,7 @@ usability research.
 > If you forget step 4, the `apiLogin` command fails on the very first
 > spec — none of the seeded users will exist.
 
-## Running
+## 🚀 Running
 
 From the repository root:
 
@@ -79,7 +79,7 @@ Avg time  : 5.20 s
 The raw rows live in `apps/api/test/web-e2e/metrics.json` (gitignored) — copy into
 the thesis as a CSV / LaTeX table.
 
-## Configuration
+## ⚙️ Configuration
 
 `cypress.config.ts` reads from `.env.test`:
 
@@ -93,7 +93,7 @@ Seeded test users (in `Cypress.env('users')`):
 - `manager`  — `pavlo.lytvyn@intra.com`
 - `employee` — `yulia.kravchenko@intra.com`
 
-## Custom commands
+## 🧰 Custom commands
 
 | Command                                  | Purpose                                       |
 | ---------------------------------------- | --------------------------------------------- |
@@ -106,7 +106,7 @@ Seeded test users (in `Cypress.env('users')`):
 | `cy.step(label?)`                        | Increment the step counter.                   |
 | `cy.endScenario({ success, notes? })`    | Flush the metric row to `metrics.json`.       |
 
-## Continuous integration
+## 🔁 Continuous integration
 
 The repository ships a GitHub Actions workflow at
 [`.github/workflows/e2e.yml`](../../.github/workflows/e2e.yml) that, on every
@@ -162,7 +162,7 @@ it mirrors `.env.test` but rewrites `DATABASE_HOST=postgres`, `APP_HOST=api`,
 docker), so for it `NEXT_PUBLIC_API_URL=http://localhost:8080` — the host-side
 port published by the `api` container.
 
-## Seed-state assumption (important for results interpretation)
+## 🌱 Seed-state assumption (important for results interpretation)
 
 The development seed (`pnpm db:test:refresh`) leaves the system **mid-cycle**:
 all cycles are `ACTIVE` and reviews are `IN_PROGRESS`. No `FINISHED` cycle is
@@ -189,7 +189,7 @@ To exercise the full data path, you have two options:
    that creates one `FINISHED` cycle with answers, individual reports and
    aggregates. Then chain it in `test:e2e:refresh`.
 
-## Notes for the thesis chapter
+## 📝 Notes for the thesis chapter
 
 - Selectors are **semantic** (label text, accessible role, visible button
   text). If a future redesign re-skins the UI but keeps wording, the suite

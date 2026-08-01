@@ -1,0 +1,66 @@
+---
+description: NestJS API structure, DDD layering and bounded-context boundaries
+globs: apps/api/src/**
+---
+
+# @intra/api — DDD bounded contexts
+
+Six bounded contexts live under `src/contexts/`: `identity`, `organisation`, `library`,
+`feedback360`, `reporting`, `notifications`. Each is a self-contained NestJS module.
+
+## Layering — put new code in the right layer
+
+```
+contexts/<context>/
+├── domain/                        *.domain.ts — plain classes, NO Nest/Prisma imports
+├── application/
+│   ├── ports/                     *.repository.port.ts — interfaces + injection tokens
+│   ├── services/                  *.service.ts — use cases
+│   ├── events/                    *.event.ts — domain event payloads
+│   ├── listeners/                 *.listener.ts — in-process handlers
+│   └── constants/
+├── infrastructure/
+│   ├── prisma-repositories/       concrete adapters implementing the ports
+│   └── mappers/                   domain ↔ persistence
+└── presentation/http/
+    ├── controllers/               *.controller.ts — routes only, no business logic
+    ├── dto/                       request DTOs with class-validator
+    ├── models/                    response models
+    └── mappers/                   domain ↔ HTTP
+```
+
+## Rules that are easy to break
+
+- **Domain stays pure.** No `@nestjs/*`, no `@prisma/client`, no DTOs inside `domain/*.domain.ts`.
+- **Services depend on ports, never on Prisma repositories.** Inject the token
+  (`CYCLE_REPOSITORY`, `REPORT_REPOSITORY`, …); wire the concrete class in the module with
+  `{ provide: TOKEN, useExisting: ConcreteRepo }`.
+- **Controllers are thin.** Validate via DTO, call one service, map to a response model. Any branching
+  on domain state belongs in the service.
+- **Cross-context calls go through events, not direct imports.** Contexts communicate by
+  choreography over `EventEmitter2`: emit an event, let the other context's listener react.
+  `reporting` and `notifications` both listen to `cycle.stage.processed` and never import
+  `feedback360` services. Do not introduce a direct service-to-service dependency across contexts.
+- **Shared types live in `@intra/shared-kernel`**, not duplicated per context.
+
+## Persistence
+
+A single global `DatabaseModule` exposes one `PrismaService` (pg `Pool`, SSL in production).
+Do not instantiate `PrismaClient` anywhere else.
+
+## Path aliases
+
+| Alias | Resolves to |
+| --- | --- |
+| `src/*` | `src/*` |
+| `@intra/api` | `src/contexts` |
+| `@intra/api/*` | `src/contexts/*` |
+
+## Conventions
+
+- Files are kebab-case with a role suffix: `cycle.service.ts`, `cycle.repository.port.ts`,
+  `cycles.controller.ts`, `cycle-stage.listener.ts`, `cycle.domain.ts`.
+- Controllers are plural (`CyclesController`), services singular (`CycleService`).
+- Every endpoint carries the reusable Swagger decorators from `src/common/documentation/`.
+  `apps/docs/api/openapi.json` is rewritten on each boot — do not hand-edit it.
+- Read env only through the typed loaders in `src/config/`, never `process.env` inline.

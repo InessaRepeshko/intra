@@ -1,0 +1,48 @@
+{
+    "permissions": {
+        "deny": [
+            "Bash(pnpm db:reset:*)",
+            "Bash(pnpm db:refresh:*)",
+            "Bash(pnpm db:seed:*)",
+            "Bash(pnpm refresh:*)",
+            "Bash(pnpm docker:down:*)",
+            "Bash(pnpm clean:*)",
+            "Bash(prisma migrate reset:*)",
+            "Bash(npx prisma migrate reset:*)",
+            "Bash(pnpm prisma:dev -- migrate reset:*)",
+            "Bash(pnpm prisma:config -- migrate reset:*)"
+        ],
+        "allow": [
+            "Bash(pnpm install:*)",
+            "Bash(pnpm lint:*)",
+            "Bash(pnpm format:*)",
+            "Bash(pnpm build:*)",
+            "Bash(pnpm db:generate:*)",
+            "Bash(pnpm db:schema:*)",
+            "Bash(pnpm db:deploy:*)",
+            "Bash(pnpm db:test:*)",
+            "Bash(pnpm test:unit:*)",
+            "Bash(pnpm test:integ:*)",
+            "Bash(pnpm test:e2e:*)",
+            "Bash(pnpm test:perf:*)",
+            "Bash(pnpm --filter @intra/api test:unit:*)",
+            "Bash(pnpm --filter @intra/api test:integ:*)",
+            "Bash(pnpm --filter @intra/api lint:*)",
+            "Bash(pnpm --filter @intra/web lint:*)",
+            "Bash(pnpm exec tsc:*)",
+            "Bash(pnpm exec eslint:*)",
+            "Bash(pnpm exec prettier:*)",
+            "Bash(git status:*)",
+            "Bash(git diff:*)",
+            "Bash(git log:*)",
+            "Bash(git branch:*)",
+            "Bash(git show:*)",
+            "Bash(git check-ignore:*)",
+            "Bash(ls:*)",
+            "Bash(find:*)",
+            "Bash(grep:*)",
+            "Bash(rg:*)",
+            "Bash(wc:*)"
+        ]
+    }
+}

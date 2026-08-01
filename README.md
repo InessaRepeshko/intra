@@ -1,45 +1,41 @@
-<h1 align="center">"Intra" — 360° Feedback Service</h1>
+<h1 align="center">"Intra" 360° Feedback Service</h1>
 
 <div align="center">
-    <img src="apps/docs/public/1.png" width="700" alt="Intra 360° Feedback Service">
+    <img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/public/1.png?raw=true" width="600" alt="Intra 360° Feedback Service">
 </div>
 
 <p align="center">
     A full-stack platform for running, monitoring and analysing 360° feedback cycles in an organisation —
-    structured as a Turborepo + pnpm workspaces monorepo with a NestJS backend, a Next.js frontend, a
-    Prisma-managed PostgreSQL database and a shared TypeScript kernel.
+    a Turborepo + pnpm monorepo with a NestJS backend, a Next.js frontend, a Prisma-managed PostgreSQL
+    database and a shared TypeScript kernel.
 </p>
 
 ---
 
-## Table of contents
+## 📑 Table of contents
 
-- [Overview](#overview)
-- [Monorepo layout](#monorepo-layout)
-- [Tech stack](#tech-stack)
-- [Architecture](#architecture)
-- [Bounded contexts](#bounded-contexts)
-- [Quick start](#quick-start)
-- [Environment configuration](#environment-configuration)
-- [Docker infrastructure](#docker-infrastructure)
-- [Working with the database](#working-with-the-database)
-- [Development workflows](#development-workflows)
-- [Testing](#testing)
-- [Linting & formatting](#linting--formatting)
-- [Build & production](#build--production)
-- [Useful URLs](#useful-urls)
-- [Per-package READMEs](#per-package-readmes)
-- [Repository scripts cheatsheet](#repository-scripts-cheatsheet)
-- [Requirements](#requirements)
-- [License](#license)
+- [🎯 Overview](#-overview)
+- [📸 Screenshots](#-screenshots)
+- [🗂️ Monorepo layout](#-monorepo-layout)
+- [🛠️ Tech stack](#-tech-stack)
+- [🏛️ Architecture](#-architecture)
+- [🗃️ Data model](#-data-model)
+- [🚀 Quick start](#-quick-start)
+- [⚙️ Environment configuration](#-environment-configuration)
+- [🐘 Working with the database](#-working-with-the-database)
+- [🧪 Testing](#-testing)
+- [📜 Scripts cheatsheet](#-scripts-cheatsheet)
+- [📚 Documentation](#-documentation)
+- [✅ Requirements](#-requirements)
+- [📄 License](#-license)
 
 ---
 
-## Overview
+## 🎯 Overview
 
 **Intra** is a 360° feedback service that lets HR, managers and employees plan assessment cycles, collect
 multi-source feedback (self, manager, peers, subordinates), review answers anonymously and consume results
-as both individual and strategic reports with rich analytics. The system supports the full lifecycle:
+as individual and strategic reports with rich analytics.
 
 - **HR / Admin** — define organisational structure (teams, positions, hierarchy), maintain a library of
   competences and question templates, plan and run feedback cycles.
@@ -49,103 +45,233 @@ as both individual and strategic reports with rich analytics. The system support
 
 The platform handles authentication (Google OAuth2 via Better Auth), email notifications (Gmail OAuth2 +
 Handlebars templates), automatic stage transitions on a schedule, anonymity rules, decimal-precise
-analytics, and printable reports.
+analytics, and printable PDF reports.
+
+The full set of user scenarios per role:
+
+<div align="center">
+    <img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/use-case-diagram.png?raw=true" width="850" alt="Use case diagram">
+</div>
 
 ---
 
-## Monorepo layout
+## 📸 Screenshots
+
+### Dashboard
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/dashboard.png?raw=true" width="850" alt="Dashboard">
+
+### Feedback cycles
+
+Planning and lifecycle management of 360° cycles: stages, deadlines, anonymity threshold, participants.
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/360-feedback-cycles-list.png?raw=true" width="850" alt="Feedback cycles list">
+
+### Survey form
+
+The core answering experience — competence-grouped questions on a 1–5 scale with N/A, plus qualitative
+free-text feedback.
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/360-feedback-survey-form.png?raw=true" width="850" alt="Survey form">
+
+### Individual report
+
+Per-ratee analytics: radar and radial charts, self-vs-others deltas ("hidden strengths" and "blind
+spots"), per-question breakdowns and depersonalised comments grouped by mention frequency.
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/reporting-individual-report.png?raw=true" width="850" alt="Individual report">
+
+### Strategic report
+
+Cycle-level rollup for leadership: engagement and turnout, organisational talent profile, team
+performance ratings, competence matrix heatmap.
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/reporting-strategic-report.png?raw=true" width="850" alt="Strategic report">
+
+### Cluster score analytics
+
+Cross-cycle competence analytics grouped by proficiency clusters.
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/reporting-cluster-score-analytics.png?raw=true" width="850" alt="Cluster score analytics">
+
+<details>
+<summary><b>More screens</b> — cycle form, reviews, surveys, library, organisation, profile</summary>
+
+### Cycle form
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/360-feedback-cycle-form.png?raw=true" width="850" alt="Cycle form">
+
+### Reviews list
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/360-feedback-reviews-list.png?raw=true" width="850" alt="Reviews list">
+
+### Review form
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/360-feedback-review-form-1.png?raw=true" width="850" alt="Review form — participants">
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/360-feedback-review-form-2.png?raw=true" width="850" alt="Review form — questions">
+
+### Surveys list
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/360-feedback-surveys-list.png?raw=true" width="850" alt="Surveys list">
+
+### Library — clusters, competences, question templates
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/library-clusters.png?raw=true" width="850" alt="Library — clusters">
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/library-competences.png?raw=true" width="850" alt="Library — competences">
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/library-question-templates.png?raw=true" width="850" alt="Library — question templates">
+
+### Organisation — teams, positions, users
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/organisation-teams.png?raw=true" width="850" alt="Organisation — teams">
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/organisation-positions.png?raw=true" width="850" alt="Organisation — positions">
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/organisation-users.png?raw=true" width="850" alt="Organisation — users">
+
+### Profile
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/profile.png?raw=true" width="850" alt="Profile">
+
+</details>
+
+---
+
+## 🗂️ Monorepo layout
 
 ```
 intra/
 ├── apps/
 │   ├── api/                  # NestJS REST API (@intra/api)
 │   ├── web/                  # Next.js 16 frontend (@intra/web)
-│   └── docs/                 # Static assets (logo/favicon) + generated openapi.json
-│       ├── api/openapi.json  # Written on every API boot
-│       └── public/           # Served by the API at /public
+│   └── docs/                 # Documentation assets
+│       ├── api/              # Generated openapi.json + Postman collection
+│       ├── diagrams/         # Architecture, use-case and ERD diagrams
+│       ├── screens/          # UI screenshots
+│       ├── tests/            # Test dashboard screenshots
+│       └── public/           # Runtime static assets served by the API at /public
 ├── packages/
 │   ├── database/             # Prisma schema, migrations, seeders (@intra/database)
 │   └── shared-kernel/        # Pure TS DTOs, enums, constraints, rules (@intra/shared-kernel)
 ├── docker-compose.yml        # Postgres 18 service used in local dev
+├── docker-compose.ci.yml     # CI database service
 ├── turbo.json                # Turborepo task graph and caching rules
 ├── pnpm-workspace.yaml       # Workspace declaration
 ├── package.json              # Root scripts (Turbo entrypoints) + shared dev tooling
-├── tsconfig.json             # Base TS config inherited by every package
-├── eslint.config.mjs         # Shared ESLint base
-├── LICENSE                   
 └── README.md                 # You are here
 ```
 
 The root `package.json` is intentionally a **thin orchestrator**: it owns the pnpm/Turbo plumbing and
-shared dev dependencies; every concrete script delegates to a workspace via Turbo (`turbo run <task>
---filter=@intra/<pkg>`).
+shared dev dependencies; every concrete script delegates to a workspace via Turbo
+(`turbo run <task> --filter=@intra/<pkg>`).
 
 ---
 
-## Tech stack
+## 🛠️ Tech stack
 
-| Layer            | Technologies                                                                              |
-| ---------------- | ----------------------------------------------------------------------------------------- |
-| Monorepo tooling | Turborepo, pnpm workspaces, dotenv-cli                                                    |
-| Backend          | NestJS 11, Better Auth, `@nestjs-modules/mailer` (Gmail OAuth2 + Handlebars), `@nestjs/event-emitter`, `@nestjs/schedule`, `class-validator` + `class-transformer`, Swagger / OpenAPI |
-| Frontend         | Next.js 16 (App Router, RSC), React 19, Tailwind CSS 4, shadcn/ui (Radix + Base UI), TanStack Query 5, axios, react-hook-form + zod, recharts, sonner, nuqs, next-themes |
-| Database         | PostgreSQL 18 (Docker), Prisma 7 + `@prisma/adapter-pg` over `pg` Pool, `prisma-dbml-generator` |
-| Shared kernel    | TypeScript-only DTOs / enums / constraints / rules; `decimal.js` for analytics primitives |
-| Testing          | Jest, ts-jest, supertest                                                                  |
-| Tooling          | ESLint 9, Prettier (with `prettier-plugin-tailwindcss` and `prettier-plugin-organize-imports`), TypeScript 5.9 |
+<table>
+  <tbody>
+    <tr>
+      <td><b>Monorepo & runtime</b></td>
+      <td>
+        <img src="https://img.shields.io/badge/Turborepo-EF4444?logo=turborepo&logoColor=white" alt="Turborepo" />
+        <img src="https://img.shields.io/badge/pnpm-F69220?logo=pnpm&logoColor=white" alt="pnpm" />
+        <img src="https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white" alt="Node.js" />
+        <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+        <img src="https://img.shields.io/badge/dotenv-ECD53F?logo=dotenv&logoColor=black" alt="dotenv" />
+      </td>
+    </tr>
+    <tr>
+      <td><b>Backend — NestJS 11</b></td>
+      <td>
+        <img src="https://img.shields.io/badge/NestJS-E0234E?logo=nestjs&logoColor=white" alt="NestJS" />
+        <img src="https://img.shields.io/badge/Better_Auth-000000?logo=betterauth&logoColor=white" alt="Better Auth" />
+        <img src="https://img.shields.io/badge/Google_OAuth2-4285F4?logo=google&logoColor=white" alt="Google OAuth2" />
+        <img src="https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=black" alt="Swagger" />
+        <img src="https://img.shields.io/badge/Nodemailer-0095FF?logo=nodemailer&logoColor=white" alt="Nodemailer" />
+        <img src="https://img.shields.io/badge/Gmail_API-EA4335?logo=gmail&logoColor=white" alt="Gmail API" />
+        <img src="https://img.shields.io/badge/Handlebars-F0772B?logo=handlebarsdotjs&logoColor=white" alt="Handlebars" />
+      </td>
+    </tr>
+    <tr>
+      <td><b>Frontend — Next.js 16</b></td>
+      <td>
+        <img src="https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white" alt="Next.js" />
+        <img src="https://img.shields.io/badge/React_19-61DAFB?logo=react&logoColor=black" alt="React 19" />
+        <img src="https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4" />
+        <img src="https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&logoColor=white" alt="shadcn/ui" />
+        <img src="https://img.shields.io/badge/Radix_UI-161618?logo=radixui&logoColor=white" alt="Radix UI" />
+        <img src="https://img.shields.io/badge/TanStack_Query-FF4154?logo=reactquery&logoColor=white" alt="TanStack Query" />
+        <img src="https://img.shields.io/badge/Axios-5A29E4?logo=axios&logoColor=white" alt="Axios" />
+        <img src="https://img.shields.io/badge/React_Hook_Form-EC5990?logo=reacthookform&logoColor=white" alt="React Hook Form" />
+        <img src="https://img.shields.io/badge/Zod-3E67B1?logo=zod&logoColor=white" alt="Zod" />
+        <img src="https://img.shields.io/badge/Recharts-8884D8?logo=recharts&logoColor=white" alt="Recharts" />
+      </td>
+    </tr>
+    <tr>
+      <td><b>Database</b></td>
+      <td>
+        <img src="https://img.shields.io/badge/PostgreSQL_18-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL 18" />
+        <img src="https://img.shields.io/badge/Prisma_7-2D3748?logo=prisma&logoColor=white" alt="Prisma 7" />
+        <img src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white" alt="Docker" />
+        <img src="https://img.shields.io/badge/decimal.js-4B5562?logo=decimal-js&logoColor=white" alt="decimal.js" />
+      </td>
+    </tr>
+    <tr>
+      <td><b>Testing</b></td>
+      <td>
+        <img src="https://img.shields.io/badge/Jest-C21325?logo=jest&logoColor=white" alt="Jest" />
+        <img src="https://img.shields.io/badge/Cypress-69D3A7?logo=cypress&logoColor=black" alt="Cypress" />
+        <img src="https://img.shields.io/badge/k6-7D64FF?logo=k6&logoColor=white" alt="k6" />
+        <img src="https://img.shields.io/badge/Supertest-000000?logo=supertest&logoColor=white" alt="Supertest" />
+      </td>
+    </tr>
+    <tr>
+      <td><b>Code quality</b></td>
+      <td>
+        <img src="https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=white" alt="ESLint" />
+        <img src="https://img.shields.io/badge/Prettier-F7B93E?logo=prettier&logoColor=black" alt="Prettier" />
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
-## Architecture
+## 🏛️ Architecture
 
 The platform is structured around **Domain-Driven Design** with the same bounded contexts on both sides
 of the wire, glued together by a shared kernel:
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                              @intra/web (Next.js)                            │
-│   App Router pages → widgets → features → entities → shared (FSD layers)     │
-│                              uses ↓ DTOs / enums                             │
-└──────────────────────────────────────────────────────────────────────────────┘
-                                       │
-                                       ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                            @intra/shared-kernel                              │
-│   Pure TS: DTOs, enums, constraints, rules — single source of contract       │
-└──────────────────────────────────────────────────────────────────────────────┘
-                                       ▲
-                                       │
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                              @intra/api (NestJS)                             │
-│   Bounded contexts (DDD + Hexagonal):                                        │
-│     domain → application (ports/services/listeners) → infrastructure (Prisma)│
-│                            → presentation (HTTP)                             │
-└──────────────────────────────────────────────────────────────────────────────┘
-                                       │ Prisma Client
-                                       ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                            @intra/database (Prisma)                          │
-│   schema.prisma + migrations + seeders → generated client (dist/generated)   │
-└──────────────────────────────────────────────────────────────────────────────┘
-                                       │
-                                       ▼
-                             PostgreSQL 18 (Docker)
+@intra/web (Next.js)   app → widgets → features → entities → shared   (FSD layers)
+        │  uses DTOs / enums of
+        ▼
+@intra/shared-kernel   pure TS: DTOs, enums, constraints, rules — the single contract
+        ▲
+        │  implements the contract
+@intra/api (NestJS)    domain → application (ports/services/listeners)
+        │              → infrastructure (Prisma) → presentation (HTTP)
+        ▼  Prisma Client
+@intra/database        schema.prisma + migrations + seeders → generated client
+        ▼
+PostgreSQL
 ```
 
 Key cross-cutting decisions:
 
-- **Hexagonal backend.** Application services depend on repository **ports** (DI tokens). Concrete Prisma
-  repositories are wired in each NestJS feature module via `{ provide: TOKEN, useExisting: ... }`.
+- **Hexagonal backend.** Application services depend on repository **ports** (DI tokens); concrete Prisma
+  repositories are wired per NestJS module via `{ provide: TOKEN, useExisting: ... }`.
 - **Choreography over orchestration.** Cross-context interactions go through `EventEmitter2`. Stage
   changes in `feedback360` trigger listeners in `notifications` and `reporting` independently.
-- **Feature-Sliced frontend.** `app → widgets → features → entities → shared` strict downward dependency
+- **Feature-Sliced frontend.** Strict downward dependency `app → widgets → features → entities → shared`
   with the per-slice `api / model / ui` triple.
-- **Single contract.** The shared kernel re-exports DTOs as `XBaseDto<TDate>` plus `XDto = XBaseDto<Date>`
+- **Single contract.** The shared kernel exports DTOs as `XBaseDto<TDate>` with `XDto = XBaseDto<Date>`
   for the server and `XResponseDto = XBaseDto<string>` for the client — same shape, different temporal type.
 
----
-
-## Bounded contexts
+### Bounded contexts
 
 | Context        | Responsibility                                                                       |
 | -------------- | ------------------------------------------------------------------------------------ |
@@ -156,12 +282,49 @@ Key cross-cutting decisions:
 | `reporting`    | Materialised individual and strategic reports, analytics, comments, insights.        |
 | `notifications`| Stage-driven email notifications + delivery log (Gmail + Handlebars).                |
 
-Each context exists in three places: the Prisma schema (`schema.prisma`), the NestJS source tree
-(`apps/api/src/contexts/<context>`) and the frontend slices (`apps/web/src/{entities,features,widgets}/<context>`).
+Each context exists in three places: the Prisma schema, the NestJS source tree
+(`apps/api/src/contexts/<context>`) and the frontend slices
+(`apps/web/src/{entities,features,widgets}/<context>`).
+
+### Deployment
+
+Production runs the frontend on **Vercel**, the API on **Render Web Service** and the database on
+**Render Postgres**:
+
+<div align="center">
+    <img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/deployment-diagram.png?raw=true" width="850" alt="Deployment diagram">
+</div>
+
+The event-driven generation of strategic reports (cycle stage listener → aggregation → analytics →
+insights → publication) is documented in the
+[activity diagram](https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/activity-diagram-strategic-report-generation.png)
+and described in [`apps/api/README.md`](apps/api/README.md).
 
 ---
 
-## Quick start
+## 🗃️ Data model
+
+The logical data model is split by bounded context. Full ERD sources live in
+`packages/database/src/prisma/dbml/schema.dbml` (auto-generated, viewable on dbdiagram.io).
+
+### 360° feedback cycle & answer collection
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/ERD-feedback.png?raw=true" width="850" alt="ERD — feedback360 context">
+
+### Reporting & analytics
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/ERD-reporting.png?raw=true" width="850" alt="ERD — reporting context">
+
+<details>
+<summary><b>Full schema</b> — all tables across every context</summary>
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/ERD-all-tables.png?raw=true" width="850" alt="ERD — all tables">
+
+</details>
+
+---
+
+## 🚀 Quick start
 
 ```bash
 # 1. Clone and install
@@ -192,281 +355,155 @@ Need only one app at a time?
 pnpm dev:api      # NestJS only
 pnpm dev:web      # Next.js only
 pnpm start:api    # docker:up + start the API in dev mode
-pnpm start:web    # Next.js only (alias of dev:web)
 ```
+
+Docker helpers: `pnpm docker:up` / `docker:view` / `docker:stop` / `docker:down` (the last one also
+removes volumes). The container is named `intra`, exposes `DATABASE_PORT` (default `5433`) and persists
+data in the `postgres_data` named volume.
 
 ---
 
-## Environment configuration
+## ⚙️ Environment configuration
 
-Two example files live at the repo root:
+Copy the examples at the repo root; environment files are loaded through `dotenv-cli`
+(`pnpm env:dev` / `env:test` / `env:prod`).
 
-- `.env.development.example` → copy to `.env.development.local` for local dev.
-- `.env.test.example`        → copy to `.env.test` for the test database.
-- `.env.production`          → injected through your deploy environment.
-
-Required variables (see `.env.development.example` for the full template):
-
-| Variable                                                              | Purpose                                                  |
+| Variable group                                                        | Purpose                                                  |
 | --------------------------------------------------------------------- | -------------------------------------------------------- |
 | `APP_NAME`, `APP_DOMAIN`, `APP_SUPPORT_EMAIL`                         | Display name, public domain, support address.            |
 | `APP_PROTOCOL` / `APP_HOST` / `APP_PORT`                              | Backend URL components (dev). `PORT` overrides in prod.  |
 | `APP_FRONTEND_PROTOCOL` / `APP_FRONTEND_HOST` / `APP_FRONTEND_PORT`   | Used to build links inside emails.                       |
 | `APP_NODE_ENV`                                                        | `development` / `test` / `production` — toggles SSL etc. |
-| `DATABASE_HOST` / `PORT` / `USER` / `PASSWORD` / `NAME`               | Postgres connection components (also used by Docker).    |
-| `DATABASE_URL`                                                        | Composed connection string used by Prisma + `pg` Pool.   |
+| `DATABASE_*`, `DATABASE_URL`                                          | Postgres connection (Docker + Prisma + `pg` Pool).       |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`                           | OAuth2 credentials for sign-in and Gmail API.            |
 | `GOOGLE_GMAIL_USER` / `GOOGLE_GMAIL_API_REFRESH_TOKEN`                | Sender mailbox + long-lived refresh token.               |
-| `MAIL_FROM` (optional)                                                | Override the `From` header.                              |
 | `BETTER_AUTH_URL` / `BETTER_AUTH_SECRET`                              | Better Auth base URL and signing secret.                 |
 
-The frontend additionally reads `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:8080` if unset).
-
-Environment files are loaded with `dotenv-cli`:
-
-| Helper        | Loads file                              |
-| ------------- | --------------------------------------- |
-| `pnpm env:dev`  | `.env.development.local` + `NODE_ENV=development` |
-| `pnpm env:test` | `.env.test` + `NODE_ENV=test`           |
-| `pnpm env:prod` | `.env.production` + `NODE_ENV=production` |
+The frontend additionally reads `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:8080`).
 
 > ⚠️ This repo uses **Prisma 7 with a centralised `prisma.config.ts`**. Always run database tasks through
 > the `pnpm db:*` scripts so the right config and `.env` file are loaded.
 
 ---
 
-## Docker infrastructure
+## 🐘 Working with the database
 
-`docker-compose.yml` declares a single `postgres:18` service. Environment substitution comes from
-`.env.development.local` (loaded via `dotenv-cli`).
-
-```bash
-pnpm docker:up      # start Postgres in the background
-pnpm docker:view    # docker ps -a
-pnpm docker:stop    # stop containers
-pnpm docker:down    # stop + remove volumes + remove orphan containers
-```
-
-The container is named `intra`, exposes the configured `DATABASE_PORT` (default `5433`) and persists data
-in the `postgres_data` named volume.
-
----
-
-## Working with the database
-
-All `db:*` commands at the repo root delegate to `@intra/database` via Turbo and load the right `.env` file.
-Full details (schema sections, migration list, seeder order) live in
+All `db:*` commands at the repo root delegate to `@intra/database` via Turbo and load the right `.env`
+file. Full details (schema sections, migration list, seeder order) live in
 [`packages/database/README.md`](packages/database/README.md).
 
-### Development DB (`.env.development.local`)
 ```bash
-pnpm db:generate                 # prisma generate (writes dist/generated)
-pnpm db:create -- --name <name>  # prisma migrate dev (creates a new migration)
-pnpm db:deploy                   # prisma migrate deploy
-pnpm db:seed                     # prisma db seed (orchestrated tsx script)
-pnpm db:reset                    # prisma migrate reset --force
+# Development DB (.env.development.local)
+pnpm db:generate                 # prisma generate
+pnpm db:create -- --name <name>  # new migration
+pnpm db:deploy                   # apply migrations
+pnpm db:seed                     # run seeders
 pnpm db:refresh                  # reset + generate + seed
-```
 
-### Test DB (`.env.test`)
-```bash
-pnpm db:test:generate
-pnpm db:test:deploy
-pnpm db:test:seed
-pnpm db:test:reset
+# Test DB (.env.test) — same commands with the db:test: prefix
 pnpm db:test:refresh
-```
 
-### Production DB
-```bash
+# Production DB — same commands with the :prod suffix
 pnpm db:deploy:prod
-pnpm db:generate:prod
-pnpm db:reset:prod
-pnpm db:seed:prod
-pnpm db:refresh:prod
-```
 
-### Convenience combos
-```bash
-pnpm refresh        # @intra/api: db:refresh + start:dev
-pnpm refresh:test   # @intra/api: db:test:refresh + start:test
-```
-
-### Prisma Studio
-```bash
+# Prisma Studio
 pnpm prisma:dev -- studio        # browse the dev DB
 pnpm prisma:test -- studio       # browse the test DB
 ```
 
 ---
 
-## Development workflows
+## 🧪 Testing
 
-### Run the full stack (parallel)
-```bash
-pnpm dev
-```
-Turbo runs every workspace's `dev` task in parallel (`--parallel`), with each task marked `persistent` in
-`turbo.json`.
+Four independent test layers cover the backend and the UI:
 
-### Run a single app
-```bash
-pnpm dev:api          # NestJS in watch mode (.env.development.local)
-pnpm dev:web          # Next.js dev server
-pnpm start:api        # docker:up && API dev
-pnpm start:web        # alias of dev:web
-```
+| Layer       | Location                    | Tooling            | Command            |
+| ----------- | --------------------------- | ------------------ | ------------------ |
+| Unit        | `apps/api/test/unit`        | Jest (ports mocked)| `pnpm test:unit`   |
+| Integration | `apps/api/test/integration` | Jest + `.env.test` DB | `pnpm test:integ` |
+| E2E (UI)    | `apps/api/test/web-e2e`     | Cypress            | `pnpm test:e2e`    |
+| Load        | `apps/api/test/load`        | k6 in Docker       | `pnpm test:perf:*` |
 
-### Other common tasks
-```bash
-pnpm start:dev        # alias for `pnpm dev`
-pnpm start:test       # API against .env.test
-pnpm start:debug      # API in --debug --watch mode
-pnpm start:prod       # production start (API + Web)
-pnpm start:prod:api   # production start (API only)
-pnpm start:prod:web   # production start (Web only)
-```
+Integration and e2e runs expect a freshly migrated test DB: `pnpm db:test:refresh`.
+Coverage and HTML dashboards: `pnpm test:unit:cov` / `test:unit:dashboard` and the
+`test:integ:*` equivalents.
 
-### Bypassing Turbo
-You can always go straight into a workspace with pnpm's `-w` flag:
-```bash
-pnpm start:dev -w @intra/api
-pnpm dev      -w @intra/web
-pnpm db:refresh -w @intra/database
-pnpm build    -w @intra/shared-kernel
-```
+### Unit & integration dashboards
 
----
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/tests/unit-tests-dashboard.png?raw=true" width="850" alt="Unit tests dashboard">
 
-## Testing
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/tests/integration-tests-dashboard.png?raw=true" width="850" alt="Integration tests dashboard">
 
-Jest is configured at the repo root and rooted in `apps/api`:
+### End-to-end UI tests (Cypress)
 
-```jsonc
-"jest": {
-    "rootDir": "apps/api",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": { "^.+\\.(t|j)s$": "ts-jest" },
-    "testEnvironment": "node"
-}
-```
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/tests/end-to-end-tests-cypress.png?raw=true" width="850" alt="Cypress e2e run">
 
-Common test commands (delegate to `@intra/api`):
+### Load testing (k6)
 
-```bash
-pnpm test          # jest --clearCache + full run
-pnpm test:unit     # jest --watch over *.spec.ts
-pnpm test:e2e      # jest --watch over *.e2e-spec.ts
-pnpm test:watch    # generic watch mode
-pnpm test:cov      # coverage report
-pnpm test:debug    # node --inspect-brk + jest --runInBand
-```
+Scenarios live in `apps/api/test/load/scripts/scenarios/`; SLO budgets (interactive p95 < 500 ms,
+error rate < 1 %) are defined once in `scripts/lib/config.js`. Measured against a locally running API:
 
-Tests that hit the database expect a freshly migrated test DB:
+| Scenario       | Max VUs | Requests | Avg rate  | p95     | Error rate |
+| -------------- | ------- | -------- | --------- | ------- | ---------- |
+| `smoke`        | 1       | 31       | 1 req/s   | 21 ms   | 0 %        |
+| `baseline-p95` | 50      | 11 424   | 29 req/s  | 14.5 ms | 0 %        |
+| `load-500vu`   | 500     | 261 423  | 256 req/s | 7.1 ms  | 16.9 %*    |
+| `stress-1000vu`| 1 500   | 996 497  | 922 req/s | 579 ms  | 16.8 %*    |
 
-```bash
-pnpm db:test:refresh
-```
+`smoke` and `baseline-p95` pass every SLO threshold with wide margins. \*The high-concurrency scenarios
+exceed the error-rate threshold — the failure pattern is systematic (a fixed share of one endpoint's
+responses) and is under investigation. All figures are local-machine numbers, not production ones.
 
 ---
 
-## Linting & formatting
+## 📜 Scripts cheatsheet
 
-```bash
-pnpm lint          # turbo run lint   (ESLint per workspace)
-pnpm format        # turbo run format (Prettier per workspace)
-```
+| Category   | Command                                                         | Description                                       |
+| ---------- | --------------------------------------------------------------- | ------------------------------------------------- |
+| Dev        | `pnpm dev` / `pnpm dev:api` / `pnpm dev:web`                    | Run everything or a single app in watch mode.     |
+| Build      | `pnpm build` / `pnpm build:{shared,database,api,web}`           | Whole monorepo / single workspace.                |
+| Lint/Fmt   | `pnpm lint` / `pnpm format`                                     | ESLint / Prettier across every workspace.         |
+| Docker     | `pnpm docker:{up,view,stop,down}`                               | Manage local Postgres.                            |
+| Database   | `pnpm db:{generate,create,deploy,seed,reset,refresh}`           | Dev DB (add `test:` or `:prod` for other envs).   |
+| Tests      | `pnpm test:unit` / `test:integ` / `test:e2e`                    | Unit / integration / Cypress.                     |
+| Tests      | `pnpm test:{unit,integ}:{cov,dashboard}`                        | Coverage reports and HTML dashboards.             |
+| Load       | `pnpm test:perf:{smoke,baseline,load,stress,pdf}`               | k6 scenarios in Docker.                           |
+| Production | `pnpm start:prod` / `start:prod:api` / `start:prod:web`         | Start built artifacts.                            |
+| Cleanup    | `pnpm clean`                                                    | Wipe `node_modules`, `dist`, `.turbo`, `.next`.   |
 
-ESLint and Prettier baselines are at the repo root (`eslint.config.mjs`, `.prettierrc*`,
-`.prettierignore`). Each workspace adds the configuration it needs (Next.js rules in `apps/web`, NestJS-
-friendly rules in `apps/api`).
-
----
-
-## Build & production
-
-```bash
-pnpm build              # Turbo: builds every workspace in dependency order
-pnpm build:shared       # @intra/shared-kernel
-pnpm build:database     # @intra/database (also runs prisma generate)
-pnpm build:api          # @intra/api      (NestJS → dist/)
-pnpm build:web          # @intra/web      (Next.js → .next/)
-```
-
-Turbo's `build` task is wired with `dependsOn: ["^build", "^db:generate", "^format", "format"]`, so the
-shared kernel and the generated Prisma client are produced before any consumer is built.
-
-Production start commands:
-
-```bash
-pnpm start:prod         # API + Web
-pnpm start:prod:api     # API only (node dist/src/main.js)
-pnpm start:prod:web     # Web only (next start)
-```
-
-Cleanup:
-
-```bash
-pnpm clean              # rm -rf node_modules / dist / .turbo / .next across the monorepo
-```
+Turbo's `build` task is wired with `dependsOn: ["^build", "^db:generate", ...]`, so the shared kernel
+and the generated Prisma client are produced before any consumer is built.
 
 ---
 
-## Useful URLs
+## 📚 Documentation
 
-| Resource                  | URL                                                |
-| ------------------------- | -------------------------------------------------- |
-| Web (Next.js)             | http://localhost:3000                              |
-| API (NestJS)              | http://localhost:8080                              |
-| Swagger UI / OpenAPI docs | http://localhost:8080/docs                         |
-| OpenAPI JSON              | `apps/docs/api/openapi.json` (regenerated on boot) |
-| Static assets (logo etc.) | http://localhost:8080/public                       |
-| Postman collection        | `apps/docs/public/api/postman/`                    |
+| Resource                  | Location                                                        |
+| ------------------------- | --------------------------------------------------------------- |
+| Swagger UI (local)        | http://localhost:8080/docs                                      |
+| OpenAPI JSON              | `apps/docs/api/openapi.json` (regenerated on every API boot)    |
+| Postman collection        | `apps/docs/api/postman/collections/`                            |
+| Diagrams & screenshots    | [`apps/docs/README.md`](apps/docs/README.md)                    |
 
----
+Per-package READMEs go deep on each workspace:
 
-## Per-package READMEs
-
-Each workspace has a focused README that goes deep on its own architecture and scripts:
-
-- [`apps/api/README.md`](apps/api/README.md) — backend (NestJS, DDD + Hexagonal, all six bounded contexts).
+- [`apps/api/README.md`](apps/api/README.md) — backend (NestJS, DDD + Hexagonal, six bounded contexts).
 - [`apps/web/README.md`](apps/web/README.md) — frontend (Next.js 16, FSD, shadcn/ui, charts).
+- [`apps/api/test/web-e2e/README.md`](apps/api/test/web-e2e/README.md) — Cypress e2e suite.
 - [`packages/database/README.md`](packages/database/README.md) — Prisma schema, migrations, seeders.
 - [`packages/shared-kernel/README.md`](packages/shared-kernel/README.md) — DTOs, enums, constraints, rules.
 
 ---
 
-## Repository scripts cheatsheet
-
-| Category   | Command                                                         | Description                                       |
-| ---------- | --------------------------------------------------------------- | ------------------------------------------------- |
-| Dev        | `pnpm dev` / `pnpm start:dev`                                   | Run every workspace's `dev` task in parallel.     |
-| Dev        | `pnpm dev:api` / `pnpm dev:web`                                 | Run a single app.                                 |
-| Dev        | `pnpm start:api`                                                | `docker:up` + API dev.                            |
-| Build      | `pnpm build` / `pnpm build:{shared,database,api,web}`           | Whole monorepo / single workspace.                |
-| Clean      | `pnpm clean`                                                    | Wipe `node_modules`, `dist`, `.turbo`, `.next`.   |
-| Lint/Fmt   | `pnpm lint` / `pnpm format`                                     | Across every workspace.                           |
-| Docker     | `pnpm docker:{up,view,stop,down}`                               | Manage local Postgres.                            |
-| Database   | `pnpm db:{generate,create,deploy,seed,reset,refresh}`           | Dev DB.                                           |
-| Database   | `pnpm db:test:{generate,deploy,seed,reset,refresh}`             | Test DB.                                          |
-| Database   | `pnpm db:{deploy,generate,reset,seed,refresh}:prod`             | Production DB.                                    |
-| Combo      | `pnpm refresh` / `pnpm refresh:test`                            | DB refresh + start API.                           |
-| Tests      | `pnpm test` / `:unit` / `:e2e` / `:watch` / `:cov` / `:debug`   | Jest in `apps/api`.                               |
-| Production | `pnpm start:prod` / `start:prod:api` / `start:prod:web`         | Start built artifacts.                            |
-| Env        | `pnpm env:dev` / `env:test` / `env:prod`                        | Inject the right `.env` via dotenv-cli.           |
-
----
-
-## Requirements
+## ✅ Requirements
 
 - Node.js **v18.x or higher** (LTS recommended).
 - pnpm **10.x** (the repo pins `packageManager: pnpm@10.28.0`).
-- Docker & Docker Compose (for the local PostgreSQL service).
-- Git.
+- Docker & Docker Compose (local PostgreSQL and k6 load tests).
 - A Google Cloud project with OAuth2 credentials and Gmail API enabled (for sign-in + outbound email).
 
 ---
 
-## License
+## 📄 License
 
 [LICENSE](LICENSE) © Inessa Repeshko, 2026

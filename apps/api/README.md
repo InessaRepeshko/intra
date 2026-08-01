@@ -4,50 +4,61 @@ REST backend for the **Intra** 360° feedback platform. Built on top of [NestJS]
 
 ---
 
-## Table of contents
+## 📑 Table of contents
 
-- [Tech stack](#tech-stack)
-- [Architecture overview](#architecture-overview)
-- [Project structure](#project-structure)
-- [Bounded contexts](#bounded-contexts)
-- [Authentication & authorisation](#authentication--authorisation)
-- [Notifications & mailing](#notifications--mailing)
-- [Reporting & exports](#reporting--exports)
-- [Configuration](#configuration)
-- [Prerequisites](#prerequisites)
-- [Available scripts](#available-scripts)
-- [Running locally](#running-locally)
-- [Database workflow](#database-workflow)
-- [Testing](#testing)
-- [Linting & formatting](#linting--formatting)
-- [Build & production](#build--production)
-- [API documentation (Swagger)](#api-documentation-swagger)
-- [Path aliases](#path-aliases)
-
----
-
-## Tech stack
-
-| Area              | Technology                                                                  |
-| ----------------- | --------------------------------------------------------------------------- |
-| Runtime           | Node.js (TypeScript, CommonJS build target)                                 |
-| Framework         | NestJS 11 (modular, DI-based, decorator-driven)                             |
-| ORM / DB driver   | Prisma + `@prisma/adapter-pg` over `pg` (PostgreSQL)                        |
-| Auth              | [Better Auth](https://better-auth.com/) with Google OAuth2                  |
-| Mailing           | `@nestjs-modules/mailer` + Nodemailer (Gmail API via OAuth2) + Handlebars   |
-| Events            | `@nestjs/event-emitter` (in-process domain events)                          |
-| Scheduling        | `@nestjs/schedule` (cron-style review/cycle scheduler)                      |
-| Validation        | `class-validator` + `class-transformer` via global `ValidationPipe`         |
-| API docs          | `@nestjs/swagger` with a dark-themed Swagger UI                             |
-| Static assets     | `@nestjs/serve-static` (logo / favicon for Swagger and emails)              |
-| Numeric precision | `decimal.js` for analytics calculations                                     |
-| Google APIs       | `googleapis` (OAuth2, Gmail)                                                |
-| Tests             | Jest (unit + e2e)                                                           |
-| Tooling           | Turborepo, pnpm workspaces, ESLint, Prettier, dotenv-cli                    |
+- [🛠️ Tech stack](#-tech-stack)
+- [🏛️ Architecture overview](#-architecture-overview)
+- [🗂️ Project structure](#-project-structure)
+- [🧩 Bounded contexts](#-bounded-contexts)
+- [🔐 Authentication & authorisation](#-authentication--authorisation)
+- [✉️ Notifications & mailing](#-notifications--mailing)
+- [📊 Reporting & exports](#-reporting--exports)
+- [⚙️ Configuration](#-configuration)
+- [📋 Prerequisites](#-prerequisites)
+- [📜 Available scripts](#-available-scripts)
+- [🚀 Running locally](#-running-locally)
+- [🐘 Database workflow](#-database-workflow)
+- [🧪 Testing](#-testing)
+- [🧹 Linting & formatting](#-linting--formatting)
+- [📦 Build & production](#-build--production)
+- [📚 API documentation (Swagger)](#-api-documentation-swagger)
+- [🧭 Path aliases](#-path-aliases)
 
 ---
 
-## Architecture overview
+## 🛠️ Tech stack
+
+<p>
+    <img src="https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white" alt="Node.js" />
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/NestJS-E0234E?logo=nestjs&logoColor=white" alt="NestJS" />
+    <img src="https://img.shields.io/badge/Prisma-2D3748?logo=prisma&logoColor=white" alt="Prisma" />
+    <img src="https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL" />
+    <img src="https://img.shields.io/badge/Better_Auth-000000?logo=betterauth&logoColor=white" alt="Better Auth" />
+    <img src="https://img.shields.io/badge/Google_OAuth2-4285F4?logo=google&logoColor=white" alt="Google OAuth2" />
+    <img src="https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=black" alt="Swagger" />
+    <img src="https://img.shields.io/badge/Nodemailer-0095FF?logo=nodemailer&logoColor=white" alt="Nodemailer" />
+    <img src="https://img.shields.io/badge/Gmail_API-EA4335?logo=gmail&logoColor=white" alt="Gmail API" />
+    <img src="https://img.shields.io/badge/Handlebars-F0772B?logo=handlebarsdotjs&logoColor=white" alt="Handlebars" />
+    <img src="https://img.shields.io/badge/class_validator-FF6F61?logo=class-validator&logoColor=white" alt="class-validator" />
+    <img src="https://img.shields.io/badge/class_transformer-FF6F61?logo=class-transformer&logoColor=white" alt="class-transformer" />
+    <img src="https://img.shields.io/badge/decimal.js-4B5562?logo=decimal-js&logoColor=white" alt="decimal.js" />
+    <img src="https://img.shields.io/badge/Jest-C21325?logo=jest&logoColor=white" alt="Jest" />
+    <img src="https://img.shields.io/badge/Cypress-69D3A7?logo=cypress&logoColor=black" alt="Cypress" />
+    <img src="https://img.shields.io/badge/k6-7D64FF?logo=k6&logoColor=white" alt="k6" />
+    <img src="https://img.shields.io/badge/Turborepo-EF4444?logo=turborepo&logoColor=white" alt="Turborepo" />
+    <img src="https://img.shields.io/badge/pnpm-F69220?logo=pnpm&logoColor=white" alt="pnpm" />
+    <img src="https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=white" alt="ESLint" />
+    <img src="https://img.shields.io/badge/Prettier-F7B93E?logo=prettier&logoColor=black" alt="Prettier" />
+</p>
+
+Key libraries beyond the badges: `@nestjs/event-emitter` (in-process domain events),
+`@nestjs/schedule` (cron-style review/cycle scheduler), `@nestjs/serve-static` (Swagger logo /
+favicon), `googleapis` (OAuth2 + Gmail) and `supertest` (HTTP assertions in integration tests).
+
+---
+
+## 🏛️ Architecture overview
 
 The codebase follows a **Domain-Driven Design (DDD)** layering inside each bounded context:
 
@@ -79,7 +90,7 @@ Key principles:
 
 ---
 
-## Project structure
+## 🗂️ Project structure
 
 ```
 apps/api/
@@ -87,7 +98,7 @@ apps/api/
 ├── package.json             # Scripts and dependencies
 ├── tsconfig.json            # TS config with `src/*` and `@intra/api/*` aliases
 ├── tsconfig.build.json      # Build-only TS config
-├── test/                    # Jest specs (app, users, teams, feedback360, …)
+├── test/                    # Test layers: unit/, integration/, web-e2e/ (Cypress), load/ (k6)
 ├── dist/                    # Compiled output (generated)
 └── src/
     ├── main.ts              # App bootstrap (CORS, global pipes, Swagger, server)
@@ -118,7 +129,7 @@ apps/api/
 
 ---
 
-## Bounded contexts
+## 🧩 Bounded contexts
 
 The application is split into six bounded contexts. Each is a self-contained NestJS feature module with its own domain model, application services, ports, Prisma adapters, and HTTP layer.
 
@@ -186,7 +197,7 @@ Sends transactional and stage-driven emails and persists a delivery log.
 
 ---
 
-## Authentication & authorisation
+## 🔐 Authentication & authorisation
 
 Authentication is handled by **Better Auth** wrapped in a NestJS module.
 
@@ -208,7 +219,7 @@ Authentication is handled by **Better Auth** wrapped in a NestJS module.
 
 ---
 
-## Notifications & mailing
+## ✉️ Notifications & mailing
 
 The notifications context is fully event-driven:
 
@@ -223,7 +234,7 @@ The Nest CLI is configured (`nest-cli.json`) to copy `*.hbs` templates into `dis
 
 ---
 
-## Reporting & exports
+## 📊 Reporting & exports
 
 Reports are produced by the `reporting` context and split into two flavours:
 
@@ -231,6 +242,13 @@ Reports are produced by the `reporting` context and split into two flavours:
 - **Strategic reports** — cycle-level rollups consumed by HR/leadership.
 
 Both are materialised in response to `feedback360` events (`ReviewStageListener`, `CycleStageListener` in `reporting/application/listeners`) and exposed via `ReportingController` / `StrategicReportingController`. Numeric aggregations are computed with `decimal.js` to avoid floating-point drift.
+
+The full event-driven pipeline for strategic reports — stage listener, per-review aggregation,
+competence analytics, insight generation and publication:
+
+<div align="center">
+    <img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/activity-diagram-strategic-report-generation.png?raw=true" width="850" alt="Activity diagram — strategic report generation">
+</div>
 
 Two dedicated seed scripts populate sample data for local exploration:
 
@@ -241,7 +259,7 @@ pnpm seed:strategic-reports
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 Configuration is loaded by `ConfigModule.forRoot({ load: [appConfig, databaseConfig, mailConfig] })` and accessed through `ConfigService`. Helpers in `src/config/env-utils.ts` throw on missing/invalid values, so misconfigured environments fail fast at boot.
 
@@ -271,7 +289,7 @@ Environment files are loaded with `dotenv-cli`:
 
 ---
 
-## Prerequisites
+## 📋 Prerequisites
 
 - Node.js (LTS recommended)
 - pnpm
@@ -280,7 +298,7 @@ Environment files are loaded with `dotenv-cli`:
 
 ---
 
-## Available scripts
+## 📜 Available scripts
 
 All scripts live in `package.json` and can be invoked from the workspace (`pnpm <script> -w @intra/api`) or via Turbo from the repo root.
 
@@ -309,18 +327,22 @@ All scripts live in `package.json` and can be invoked from the workspace (`pnpm 
 | `format`  | Prettier over `src/` and `test/`.                        |
 
 ### Tests
-| Script        | Description                                          |
-| ------------- | ---------------------------------------------------- |
-| `test`        | Clear Jest cache and run the full suite.             |
-| `test:unit`   | Jest watch over `*.spec.ts` only.                    |
-| `test:e2e`    | Jest watch over `*.e2e-spec.ts` only.                |
-| `test:watch`  | Generic watch mode.                                  |
-| `test:cov`    | Coverage report.                                     |
-| `test:debug`  | `--inspect-brk` for step-through debugging.          |
+| Script                 | Description                                              |
+| ---------------------- | -------------------------------------------------------- |
+| `test`                 | Clear Jest cache and run the unit suite.                 |
+| `test:unit`            | Unit suite (`test/unit/jest.unit.config.ts`).            |
+| `test:unit:cov`        | Unit suite with coverage.                                |
+| `test:unit:watch`      | Unit suite in watch mode.                                |
+| `test:unit:dashboard`  | Unit suite + HTML dashboard (`test/unit/dashboard.html`).|
+| `test:integ`           | Integration suite against the `.env.test` database.      |
+| `test:integ:cov`       | Integration suite with coverage.                         |
+| `test:integ:dashboard` | Integration suite + HTML dashboard.                      |
+| `test:integ:refresh`   | Reset + migrate + seed the test database.                |
+| `test:debug`           | `--inspect-brk` for step-through debugging.              |
 
 ---
 
-## Running locally
+## 🚀 Running locally
 
 1. Create `.env.development.local` (and `.env.test` if you plan to run the test suite) at the repo root.
 2. Start the database container from the repo root:
@@ -343,7 +365,7 @@ On boot the console prints both the application URL and the Swagger URL.
 
 ---
 
-## Database workflow
+## 🐘 Database workflow
 
 The Prisma schema and migration tooling live in `@intra/database`. The API depends on it as a workspace package and consumes the generated `PrismaClient`. Common commands (run from the API package or the repo root):
 
@@ -357,26 +379,38 @@ pnpm db:test:refresh  -w @intra/database   # same, for the test DB
 
 ---
 
-## Testing
+## 🧪 Testing
 
-Specs live under `apps/api/test/` and cover application services and controllers (`app/`, `users/`, `teams/`, `feedback360/`). Run them with:
+Four independent layers live under `apps/api/test/`:
+
+| Layer       | Location            | Tooling                 | What it covers                                        |
+| ----------- | ------------------- | ----------------------- | ----------------------------------------------------- |
+| Unit        | `test/unit`         | Jest, ports mocked      | Domain logic and application services, no DB.         |
+| Integration | `test/integration`  | Jest + `.env.test` DB   | Every bounded context against a real Postgres.        |
+| E2E (UI)    | `test/web-e2e`      | Cypress (`@intra/web-e2e`) | User flows through the web app — see its [README](test/web-e2e/README.md). |
+| Load        | `test/load`         | k6 in Docker            | SLO scenarios: `smoke`, `baseline-p95`, `load-500vu`, `stress-1000vu`, `pdf-15s`. |
 
 ```bash
-pnpm test -w @intra/api          # full suite
-pnpm test:unit -w @intra/api     # unit specs in watch mode
-pnpm test:e2e -w @intra/api      # e2e specs in watch mode
-pnpm test:cov -w @intra/api      # with coverage
+pnpm test:unit -w @intra/api        # unit suite
+pnpm test:integ -w @intra/api       # integration suite (needs the test DB)
+pnpm test:e2e                       # Cypress, from the repo root
+pnpm test:perf:baseline             # k6 baseline scenario, from the repo root
 ```
 
-Tests that touch the database expect a freshly migrated test DB:
+A unit test that needs Prisma belongs in `integration/` — the repository ports exist precisely so
+they can be mocked. Integration and e2e runs expect a freshly migrated test DB:
 
 ```bash
 pnpm db:test:refresh -w @intra/database
 ```
 
+k6 SLO budgets (interactive p95 < 500 ms, error rate < 1 %) are defined once in
+`test/load/scripts/lib/config.js`; results land in `test/load/results/` (gitignored). Aggregated
+results and test dashboards are published in the root [README](../../README.md#-testing).
+
 ---
 
-## Linting & formatting
+## 🧹 Linting & formatting
 
 ```bash
 pnpm lint -w @intra/api      # ESLint --fix over src/ and test/
@@ -387,7 +421,7 @@ ESLint and Prettier configurations are inherited from the monorepo root.
 
 ---
 
-## Build & production
+## 📦 Build & production
 
 ```bash
 pnpm build -w @intra/api
@@ -398,7 +432,7 @@ pnpm start:prod -w @intra/api
 
 ---
 
-## API documentation (Swagger)
+## 📚 API documentation (Swagger)
 
 Swagger UI is mounted at the path defined by `DOCUMENTATION_PREFIX` (`/docs`). The generated OpenAPI document is also serialised to disk at `../docs/api/openapi.json` on every boot, so it can be consumed by the docs site or by client generators.
 
@@ -411,9 +445,9 @@ Local URLs (printed at startup):
 
 ---
 
-## Path aliases
+## 🧭 Path aliases
 
-The TypeScript config defines two convenience aliases (see `tsconfig.json`):
+The TypeScript config defines convenience aliases (see `tsconfig.json`):
 
 | Alias              | Resolves to        |
 | ------------------ | ------------------ |

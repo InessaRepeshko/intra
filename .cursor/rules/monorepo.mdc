@@ -1,0 +1,63 @@
+---
+description: Monorepo conventions, package manager, task runner and destructive-command safety
+alwaysApply: true
+---
+
+# Intra monorepo
+
+Turborepo + pnpm workspaces. NestJS API, Next.js web, Prisma database package, pure-TS shared kernel.
+
+```
+apps/api        @intra/api            NestJS REST API (DDD bounded contexts)
+apps/web        @intra/web            Next.js 16 frontend (Feature-Sliced Design)
+apps/docs       —                     Static assets, generated openapi.json, diagrams, screenshots
+packages/database        @intra/database       Prisma schema, migrations, seeders
+packages/shared-kernel   @intra/shared-kernel  Framework-free DTOs, enums, constraints, rules
+```
+
+## Package manager
+
+- **pnpm only** (`packageManager: pnpm@10.28.0`). Never suggest `npm` or `yarn` commands.
+- Node.js >= 18.
+- Add dependencies to the workspace that owns them, not to the root. The root `package.json` is a thin
+  orchestrator: it holds pnpm/Turbo plumbing and shared dev tooling only.
+- Cross-package imports use the workspace protocol (`"@intra/shared-kernel": "workspace:*"`).
+
+## Running tasks
+
+Prefer the root scripts — they delegate through Turbo with the right `--filter`:
+
+```
+pnpm dev:api / dev:web        start in watch mode
+pnpm build:api / build:web    build one package
+pnpm lint / pnpm format       across the workspace
+```
+
+Run a package script directly only when no root script exists: `pnpm --filter @intra/api <script>`.
+
+## Destructive commands — always confirm first
+
+`DATABASE_URL` in `.env.development.local` points at a **remote Render database**, not a local
+container. The local Docker URL on the line above it is commented out. Treat the "development"
+environment as shared and destructible.
+
+Never run or propose these without explicit confirmation in the current conversation:
+
+- `pnpm db:reset`, `pnpm db:refresh`, `pnpm db:seed`
+- any `*:prod` database script (`db:reset:prod`, `db:refresh:prod`, `db:deploy:prod`)
+- `pnpm docker:down` (carries `-v`, drops volumes)
+- `pnpm clean` (removes every `node_modules` and `dist` in the tree)
+
+The `:test` variants (`db:test:reset`, `db:test:refresh`) target `.env.test` and are safe.
+
+## Environment files
+
+| File | Purpose |
+| --- | --- |
+| `.env.development.local` | local dev — **remote** Render DB |
+| `.env.test` | integration/e2e test DB |
+| `.env.production` | production (Render + Vercel) |
+| `.env.ci` | CI pipeline |
+
+All are gitignored except `*.example`. Never inline real credentials into code, docs, or commit
+messages — read them through `dotenv -e <file>`, the way the package scripts do.

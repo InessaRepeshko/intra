@@ -4,56 +4,78 @@ The web client for the **Intra 360° Feedback** platform — a Next.js 16 / Reac
 
 ---
 
-## Table of contents
+## 📑 Table of contents
 
-- [Tech stack](#tech-stack)
-- [Architecture overview (Feature-Sliced Design)](#architecture-overview-feature-sliced-design)
-- [Project structure](#project-structure)
-- [Routing & pages](#routing--pages)
-- [Domain modules](#domain-modules)
-- [State management & data fetching](#state-management--data-fetching)
-- [Authentication](#authentication)
-- [UI system](#ui-system)
-- [Forms & validation](#forms--validation)
-- [Charts & analytics](#charts--analytics)
-- [Configuration](#configuration)
-- [Prerequisites](#prerequisites)
-- [Available scripts](#available-scripts)
-- [Running locally](#running-locally)
-- [Linting & formatting](#linting--formatting)
-- [Build & production](#build--production)
-- [Path aliases](#path-aliases)
-
----
-
-## Tech stack
-
-| Area              | Technology                                                                            |
-| ----------------- | ------------------------------------------------------------------------------------- |
-| Framework         | [Next.js 16](https://nextjs.org/) (App Router, RSC, `experimental.authInterrupts`)    |
-| UI runtime        | React 19, React DOM 19                                                                |
-| Language          | TypeScript 5 (strict)                                                                 |
-| Styling           | Tailwind CSS 4 (PostCSS), `tailwind-merge`, `class-variance-authority`, `clsx`        |
-| Animations        | `tailwindcss-animate`, `tw-animate-css`                                               |
-| UI primitives     | [shadcn/ui](https://ui.shadcn.com/) (`new-york` style) on top of Radix UI + Base UI   |
-| Icons             | `lucide-react`                                                                        |
-| Theming           | `next-themes` (dark/light)                                                            |
-| Data fetching     | `@tanstack/react-query` v5 + `axios` HTTP client                                      |
-| URL state         | `nuqs` (typed query-string state)                                                     |
-| Forms             | `react-hook-form` + `@hookform/resolvers` + `zod` schemas                             |
-| Date utilities    | `date-fns`, `react-day-picker`                                                        |
-| Charts            | `recharts` (radar, radial, bar, heatmap-style breakdowns)                             |
-| Carousel          | `embla-carousel-react`                                                                |
-| Drawer / sheet    | `vaul`                                                                                |
-| Resizable layout  | `react-resizable-panels`                                                              |
-| Toasts            | `sonner` (`<Toaster richColors position="top-right" />` mounted in the root layout)   |
-| Numeric precision | `decimal.js` (analytics rounding)                                                     |
-| Print/export      | `react-to-print`                                                                      |
-| Tooling           | Turborepo, pnpm workspaces, ESLint 9 (Next + TS configs), Prettier + Tailwind plugin  |
+- [📸 Screenshots](#-screenshots)
+- [🛠️ Tech stack](#-tech-stack)
+- [🏛️ Architecture overview (Feature-Sliced Design)](#-architecture-overview-feature-sliced-design)
+- [🗂️ Project structure](#-project-structure)
+- [🗺️ Routing & pages](#-routing--pages)
+- [🧩 Domain modules](#-domain-modules)
+- [🔄 State management & data fetching](#-state-management--data-fetching)
+- [🔐 Authentication](#-authentication)
+- [🎨 UI system](#-ui-system)
+- [📝 Forms & validation](#-forms--validation)
+- [📊 Charts & analytics](#-charts--analytics)
+- [⚙️ Configuration](#-configuration)
+- [📋 Prerequisites](#-prerequisites)
+- [📜 Available scripts](#-available-scripts)
+- [🚀 Running locally](#-running-locally)
+- [🧹 Linting & formatting](#-linting--formatting)
+- [📦 Build & production](#-build--production)
+- [🧭 Path aliases](#-path-aliases)
 
 ---
 
-## Architecture overview (Feature-Sliced Design)
+## 📸 Screenshots
+
+The dashboard, the survey answering experience and an individual report:
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/dashboard.png?raw=true" width="850" alt="Dashboard">
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/360-feedback-survey-form.png?raw=true" width="850" alt="Survey form">
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/screens/reporting-individual-report.png?raw=true" width="850" alt="Individual report">
+
+The full gallery — cycles, reviews, library, organisation, strategic reports and analytics — lives in
+the root [README](../../README.md#-screenshots).
+
+---
+
+## 🛠️ Tech stack
+
+<p>
+    <img src="https://img.shields.io/badge/Next.js_16-000000?logo=nextdotjs&logoColor=white" alt="Next.js 16" />
+    <img src="https://img.shields.io/badge/React_19-61DAFB?logo=react&logoColor=black" alt="React 19" />
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4" />
+    <img src="https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&logoColor=white" alt="shadcn/ui" />
+    <img src="https://img.shields.io/badge/Radix_UI-161618?logo=radixui&logoColor=white" alt="Radix UI" />
+    <img src="https://img.shields.io/badge/Lucide-F56565?logo=lucide&logoColor=white" alt="Lucide" />
+    <img src="https://img.shields.io/badge/TanStack_Query-FF4154?logo=reactquery&logoColor=white" alt="TanStack Query" />
+    <img src="https://img.shields.io/badge/Axios-5A29E4?logo=axios&logoColor=white" alt="Axios" />
+    <img src="https://img.shields.io/badge/nuqs-000000?logo=nuqs&logoColor=white" alt="nuqs" />
+    <img src="https://img.shields.io/badge/React_Hook_Form-EC5990?logo=reacthookform&logoColor=white" alt="React Hook Form" />
+    <img src="https://img.shields.io/badge/Zod-3E67B1?logo=zod&logoColor=white" alt="Zod" />
+    <img src="https://img.shields.io/badge/date_fns-770C56?logo=datefns&logoColor=white" alt="date-fns" />
+    <img src="https://img.shields.io/badge/Recharts-8884D8?logo=recharts&logoColor=white" alt="Recharts" />
+    <img src="https://img.shields.io/badge/sonner-000000?logo=sonner&logoColor=white" alt="sonner" />
+    <img src="https://img.shields.io/badge/decimal.js-4B5562?logo=decimal-js&logoColor=white" alt="decimal.js" />
+    <img src="https://img.shields.io/badge/Turborepo-EF4444?logo=turborepo&logoColor=white" alt="Turborepo" />
+    <img src="https://img.shields.io/badge/pnpm-F69220?logo=pnpm&logoColor=white" alt="pnpm" />
+    <img src="https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=white" alt="ESLint" />
+    <img src="https://img.shields.io/badge/Prettier-F7B93E?logo=prettier&logoColor=black" alt="Prettier" />
+</p>
+
+Notable details behind the badges: App Router with RSC and `experimental.authInterrupts`; shadcn/ui
+in the `new-york` style on top of Radix UI + Base UI; `next-themes` for dark/light theming;
+`tailwind-merge` + `class-variance-authority` + `clsx` for class composition; `react-day-picker`,
+`embla-carousel-react`, `vaul`, `react-resizable-panels` for interaction primitives; and
+`react-to-print` for printable report exports.
+
+---
+
+## 🏛️ Architecture overview (Feature-Sliced Design)
 
 The codebase follows a **Feature-Sliced Design (FSD)**-inspired layering. Layers depend strictly downward (`app → widgets → features → entities → shared`), which keeps domain features isolated and the UI tree composable.
 
@@ -64,7 +86,6 @@ The codebase follows a **Feature-Sliced Design (FSD)**-inspired layering. Layers
 | `features/`  | Single user-flow units (create cycle, archive cycle, post comment). Each owns its own `api/model/ui/`.  |
 | `entities/`  | Domain primitives by bounded context. Each entity owns its `api/`, `model/` (types, mappers, ctx) and `ui/` (cards, tables, badges). |
 | `shared/`    | Cross-cutting code: HTTP client, hooks, utils, the shadcn primitive library, app-wide UI compositions.  |
-| `lib/`       | App-wide TypeScript types and mock data used during development.                                        |
 
 Inside every `entities/<context>/<entity>/` and `features/<context>/<entity>/<flow>/` slice the same triple appears:
 
@@ -76,7 +97,7 @@ ui/         # presentational components specific to the slice
 
 ---
 
-## Project structure
+## 🗂️ Project structure
 
 ```
 apps/web/
@@ -163,15 +184,11 @@ apps/web/
     │                   compare-arrays, get-valid-averages,
     │                   get-user-initials-from-full-name,
     │                   parse-param-to-positive-number, mappers, utils}
-    │
-    └── lib/                 # App-wide enums/types and dev mock data
-        ├── types.ts
-        └── mock-data.ts
 ```
 
 ---
 
-## Routing & pages
+## 🗺️ Routing & pages
 
 The App Router is organised by feature with two unauthenticated route groups.
 
@@ -212,7 +229,7 @@ The chrome (sidebar + main area) is added by `MainLayout`. `ConditionalMainLayou
 
 ---
 
-## Domain modules
+## 🧩 Domain modules
 
 The frontend mirrors the backend's bounded contexts. Each context has matching slices in `entities/`, `features/` and `widgets/`.
 
@@ -233,7 +250,7 @@ The largest context: `cycle`, `review`, `respondent`, `reviewer`, `question`, `a
 
 ---
 
-## State management & data fetching
+## 🔄 State management & data fetching
 
 - **Server state.** All backend data flows through `@tanstack/react-query`. A single `QueryClient` is created per browser session (`src/app/providers/query-provider.tsx`); queries default to `staleTime: 30s` and `retry: 1`. The factory is SSR-safe and creates a fresh client for each server render.
 - **HTTP client.** `shared/api/api-client.ts` exports a configured `axios` instance with `withCredentials: true`. In the browser, a request interceptor attaches `Authorization: Bearer <session_token>` from `localStorage` — this is required in cross-origin dev environments where `SameSite=Lax` cookies are not forwarded by the browser on XHR/fetch.
@@ -243,7 +260,7 @@ The largest context: `cycle`, `review`, `respondent`, `reviewer`, `question`, `a
 
 ---
 
-## Authentication
+## 🔐 Authentication
 
 - The authenticated shell is opted in by `MainLayout`, which wraps the page in `<AuthProvider>` (from `entities/identity/user/model/auth-context.tsx`).
 - Sign-in flow: `/(auth)/signin` → backend `GET /auth/google` → Google OAuth2 → backend `GET /auth/google/callback` → frontend `/(auth)/google/callback` → token persisted to `localStorage` (`session_token`) and used as Bearer by `apiClient`.
@@ -251,7 +268,7 @@ The largest context: `cycle`, `review`, `respondent`, `reviewer`, `question`, `a
 
 ---
 
-## UI system
+## 🎨 UI system
 
 - **Primitives:** shadcn/ui (`new-york` style) is installed under `src/shared/components/ui/` — ~56 ready-to-use components (Button, Dialog, Drawer, Sheet, Sidebar, Form, Table, Tabs, Calendar, Combobox, Sonner, Chart wrappers, etc.) on top of Radix UI primitives and `@base-ui/react`.
 - **App compositions:** `src/shared/ui/` contains larger, opinionated compositions reused across pages — `app-sidebar`, `data-table`, `table-pagination`, `sortable-table-column-header`, `multi-select`, `date-range-picker`, `status-badge`, `user-badge-with-position`, `error-page-layout`, plus all the analytics charts (`competence-radar-chart`, `competencies-radial-chart(-s-group)`, `competence-bar-chart`, `competence-deltas-bar-chart`, `competence-matrix-heatmap`, `competence-insight-card`, `cluster-distribution-chart`, `corridor-vs-real-rating-chart`, `team-performance-chart`, `cycle-stats-card(s)`, `entity-insight-cards`, `analytics-table-entity-insights`, `statistics-card`, `ratee-horisontal-card`, `avatar-group-list`, `avatar-group-with-count`).
@@ -263,7 +280,7 @@ The largest context: `cycle`, `review`, `respondent`, `reviewer`, `question`, `a
 
 ---
 
-## Forms & validation
+## 📝 Forms & validation
 
 Every editable feature uses a `react-hook-form` + `zod` pattern:
 
@@ -273,7 +290,7 @@ Every editable feature uses a `react-hook-form` + `zod` pattern:
 
 ---
 
-## Charts & analytics
+## 📊 Charts & analytics
 
 Reporting and analytics views combine `recharts` with custom shells in `shared/ui/`:
 
@@ -289,7 +306,7 @@ Numerical aggregation helpers live in `shared/lib/utils/` (`calculate-average`, 
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 | Variable                | Purpose                                                       |
 | ----------------------- | ------------------------------------------------------------- |
@@ -305,7 +322,7 @@ Environment files are loaded with `dotenv-cli`:
 
 ---
 
-## Prerequisites
+## 📋 Prerequisites
 
 - Node.js (LTS recommended)
 - pnpm
@@ -313,7 +330,7 @@ Environment files are loaded with `dotenv-cli`:
 
 ---
 
-## Available scripts
+## 📜 Available scripts
 
 All scripts live in `package.json` and can be invoked from the workspace (`pnpm <script> -w @intra/web`) or via Turbo from the repo root.
 
@@ -329,7 +346,7 @@ All scripts live in `package.json` and can be invoked from the workspace (`pnpm 
 
 ---
 
-## Running locally
+## 🚀 Running locally
 
 1. Make sure the backend is running and reachable at `NEXT_PUBLIC_API_URL`. From the repo root:
    ```bash
@@ -345,7 +362,7 @@ All scripts live in `package.json` and can be invoked from the workspace (`pnpm 
 
 ---
 
-## Linting & formatting
+## 🧹 Linting & formatting
 
 ```bash
 pnpm lint -w @intra/web      # eslint . --cache
@@ -356,7 +373,7 @@ ESLint uses `eslint-config-next` (`core-web-vitals` + `typescript`) with `typesc
 
 ---
 
-## Build & production
+## 📦 Build & production
 
 ```bash
 pnpm build -w @intra/web
@@ -369,7 +386,7 @@ For containerised deployments, build with `NEXT_PUBLIC_API_URL` set to the publi
 
 ---
 
-## Path aliases
+## 🧭 Path aliases
 
 Defined in `tsconfig.json` and respected by ESLint, Tailwind, and shadcn:
 

@@ -4,41 +4,44 @@ Shared persistence layer for the **Intra 360° Feedback** platform. The package 
 
 ---
 
-## Table of contents
+## 📑 Table of contents
 
-- [Tech stack](#tech-stack)
-- [Package responsibilities](#package-responsibilities)
-- [Project structure](#project-structure)
-- [Schema overview](#schema-overview)
-- [Generated client & adapter](#generated-client--adapter)
-- [Migrations](#migrations)
-- [Seeders](#seeders)
-- [Configuration](#configuration)
-- [Prerequisites](#prerequisites)
-- [Available scripts](#available-scripts)
-- [Usage from other packages](#usage-from-other-packages)
-- [Common workflows](#common-workflows)
-- [Path aliases](#path-aliases)
-
----
-
-## Tech stack
-
-| Area              | Technology                                                          |
-| ----------------- | ------------------------------------------------------------------- |
-| ORM               | [Prisma 7](https://www.prisma.io/)                                  |
-| Database          | PostgreSQL                                                          |
-| DB driver         | `pg` (node-postgres) used through `@prisma/adapter-pg`              |
-| Generated client  | `@prisma/client` (output: `dist/generated`)                         |
-| Schema visualisation | `prisma-dbml-generator` (writes to `src/prisma/dbml/`)            |
-| Numeric precision | `decimal.js` (used by seeders for analytics-grade numbers)          |
-| Seed runner       | `tsx`                                                               |
-| Env loading       | `dotenv-cli` (`.env.development.local` / `.env.test`)               |
-| Build             | `tsc` + `prisma generate`                                           |
+- [🛠️ Tech stack](#-tech-stack)
+- [🎯 Package responsibilities](#-package-responsibilities)
+- [🗂️ Project structure](#-project-structure)
+- [🗃️ Schema overview](#-schema-overview)
+- [🔌 Generated client & adapter](#-generated-client--adapter)
+- [🧱 Migrations](#-migrations)
+- [🌱 Seeders](#-seeders)
+- [⚙️ Configuration](#-configuration)
+- [📋 Prerequisites](#-prerequisites)
+- [📜 Available scripts](#-available-scripts)
+- [📦 Usage from other packages](#-usage-from-other-packages)
+- [🔁 Common workflows](#-common-workflows)
+- [🧭 Path aliases](#-path-aliases)
 
 ---
 
-## Package responsibilities
+## 🛠️ Tech stack
+
+<p>
+    <img src="https://img.shields.io/badge/Prisma_7-2D3748?logo=prisma&logoColor=white" alt="Prisma 7" />
+    <img src="https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL" />
+    <img src="https://img.shields.io/badge/node_postgres-336791?logo=postgresql&logoColor=white" alt="node-postgres (pg)" />
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/decimal.js-4B5562?logo=decimal-js&logoColor=white" alt="decimal.js" />
+    <img src="https://img.shields.io/badge/tsx-000000?logo=tsnode&logoColor=white" alt="tsx" />
+    <img src="https://img.shields.io/badge/dotenv-ECD53F?logo=dotenv&logoColor=black" alt="dotenv" />
+</p>
+
+The Prisma Client is generated into `dist/generated` via `tsc` + `prisma generate`; the `pg`
+(node-postgres) driver is wired through `@prisma/adapter-pg`; `prisma-dbml-generator` writes the DBML
+mirror to `src/prisma/dbml/`; seeders run with `tsx` and use `decimal.js` for analytics-grade numbers;
+env files are loaded with `dotenv-cli`.
+
+---
+
+## 🎯 Package responsibilities
 
 This package is the **single source of truth** for the database. It exposes:
 
@@ -52,7 +55,7 @@ Everything else in the monorepo treats this package as opaque: only the publishe
 
 ---
 
-## Project structure
+## 🗂️ Project structure
 
 ```
 packages/database/
@@ -105,9 +108,26 @@ packages/database/
 
 ---
 
-## Schema overview
+## 🗃️ Schema overview
 
 The schema is divided into six commented sections that match the application's bounded contexts.
+The logical model of the two central contexts (exported from `src/prisma/dbml/schema.dbml` via
+dbdiagram.io):
+
+**360° feedback cycle & answer collection**
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/ERD-feedback.png?raw=true" width="850" alt="ERD — feedback360 context">
+
+**Reporting & analytics**
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/ERD-reporting.png?raw=true" width="850" alt="ERD — reporting context">
+
+<details>
+<summary><b>Full schema</b> — all tables across every context</summary>
+
+<img src="https://github.com/InessaRepeshko/intra/blob/main/apps/docs/diagrams/ERD-all-tables.png?raw=true" width="850" alt="ERD — all tables">
+
+</details>
 
 ### 1. Identity
 Users, roles and the user↔role join.
@@ -157,7 +177,7 @@ All tables and enums are explicitly mapped to snake_case via `@@map` / `@map`, w
 
 ---
 
-## Generated client & adapter
+## 🔌 Generated client & adapter
 
 - The Prisma Client is generated into `dist/generated` and re-exported as the package entrypoint:
 
@@ -192,7 +212,7 @@ All tables and enums are explicitly mapped to snake_case via `@@map` / `@map`, w
 
 ---
 
-## Migrations
+## 🧱 Migrations
 
 The full migration history lives under `src/prisma/migrations/` and is applied chronologically. As of writing there are **38 migrations** (`migration_lock.toml` pins the provider to `postgresql`). Highlights:
 
@@ -208,7 +228,7 @@ Apply them with `pnpm db:create` (interactive `migrate dev`) for new local chang
 
 ---
 
-## Seeders
+## 🌱 Seeders
 
 Seeders live in `src/prisma/seeds/` and are orchestrated by `seeds.ts`. Prisma's `db seed` is wired to invoke them via `pnpm tsx ./src/prisma/seeds/seeds.ts` (see `prisma.config.ts`).
 
@@ -225,7 +245,7 @@ The orchestrator runs in a strict order so foreign keys always resolve:
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 `src/prisma/prisma.config.ts` is the Prisma 7 config that the CLI loads via `prisma --config ...`. It is environment-agnostic — datasource URLs come from environment variables:
 
@@ -245,7 +265,7 @@ Environment files (located at the repo root):
 
 ---
 
-## Prerequisites
+## 📋 Prerequisites
 
 - Node.js (LTS recommended)
 - pnpm
@@ -254,7 +274,7 @@ Environment files (located at the repo root):
 
 ---
 
-## Available scripts
+## 📜 Available scripts
 
 All scripts live in `package.json` and can be invoked from this workspace (`pnpm <script> -w @intra/database`) or via Turbo from the repo root.
 
@@ -303,7 +323,7 @@ All scripts live in `package.json` and can be invoked from this workspace (`pnpm
 
 ---
 
-## Usage from other packages
+## 📦 Usage from other packages
 
 Add a workspace dependency and import the generated client directly:
 
@@ -333,7 +353,7 @@ Because the package's `main`/`types` point at `dist/generated/index.{js,d.ts}`, 
 
 ---
 
-## Common workflows
+## 🔁 Common workflows
 
 ### First-time local setup
 ```bash
@@ -378,7 +398,7 @@ pnpm prisma:dev -w @intra/database -- studio       # Prisma Studio against dev D
 
 ---
 
-## Path aliases
+## 🧭 Path aliases
 
 `tsconfig.json` defines:
 

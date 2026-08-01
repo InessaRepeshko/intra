@@ -6,13 +6,13 @@ It is intentionally **dependency-free at runtime** (the only production dependen
 
 ---
 
-## Table of contents
+## 📑 Table of contents
 
-- [Tech stack](#tech-stack)
-- [Why a shared kernel?](#why-a-shared-kernel)
-- [Project structure](#project-structure)
-- [Naming & conventions](#naming--conventions)
-- [Module overview](#module-overview)
+- [🛠️ Tech stack](#-tech-stack)
+- [💡 Why a shared kernel?](#-why-a-shared-kernel)
+- [🗂️ Project structure](#-project-structure)
+- [🏷️ Naming & conventions](#-naming--conventions)
+- [🧩 Module overview](#-module-overview)
   - [Common](#common)
   - [Identity](#identity)
   - [Organisation](#organisation)
@@ -20,25 +20,28 @@ It is intentionally **dependency-free at runtime** (the only production dependen
   - [Feedback360](#feedback360)
   - [Reporting](#reporting)
   - [Auth](#auth)
-- [Public API](#public-api)
-- [Available scripts](#available-scripts)
-- [Usage from other packages](#usage-from-other-packages)
-- [Path aliases](#path-aliases)
+- [📤 Public API](#-public-api)
+- [📜 Available scripts](#-available-scripts)
+- [📦 Usage from other packages](#-usage-from-other-packages)
+- [🧭 Path aliases](#-path-aliases)
 
 ---
 
-## Tech stack
+## 🛠️ Tech stack
 
-| Area              | Technology                                                          |
-| ----------------- | ------------------------------------------------------------------- |
-| Language          | TypeScript 5 (strict)                                               |
-| Build             | `tsc` → `dist/` (ESM/CJS-safe single entrypoint)                    |
-| Numeric precision | `decimal.js` (used in reporting accumulator types)                  |
-| Lint / format     | ESLint + Prettier (configured at the monorepo root)                 |
+<p>
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/decimal.js-4B5562?logo=decimal-js&logoColor=white" alt="decimal.js" />
+    <img src="https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=white" alt="ESLint" />
+    <img src="https://img.shields.io/badge/Prettier-F7B93E?logo=prettier&logoColor=black" alt="Prettier" />
+</p>
+
+TypeScript 5 (strict), built with `tsc` to a single `dist/` entrypoint; `decimal.js` backs the
+reporting accumulator types; ESLint and Prettier come from the monorepo root.
 
 ---
 
-## Why a shared kernel?
+## 💡 Why a shared kernel?
 
 In a Domain-Driven Design sense, the **shared kernel** is the small, carefully curated set of types and rules that two bounded contexts agree to share verbatim. In this monorepo it solves three concrete problems:
 
@@ -50,7 +53,7 @@ Anything domain-specific that is **not** shared between the two apps belongs in 
 
 ---
 
-## Project structure
+## 🗂️ Project structure
 
 ```
 packages/shared-kernel/
@@ -130,7 +133,7 @@ packages/shared-kernel/
 
 ---
 
-## Naming & conventions
+## 🏷️ Naming & conventions
 
 Every domain area follows the same conventions, which makes the package predictable to navigate.
 
@@ -161,7 +164,7 @@ The backend works with `Date`, the frontend with serialised ISO strings — same
 
 ---
 
-## Module overview
+## 🧩 Module overview
 
 ### Common
 
@@ -218,7 +221,7 @@ Auth surface mirrored from Better Auth, kept here so the frontend can type the s
 
 ---
 
-## Public API
+## 📤 Public API
 
 Everything the package exposes is re-exported from `src/index.ts`, in this order: `common` → `organisation` → `identity` → `library` → `feedback360` → `reporting` → `auth`. Some highlights:
 
@@ -261,7 +264,7 @@ import { CycleStage, USER_CONSTRAINTS, isAnonymityThresholdMet, type UserDto } f
 
 ---
 
-## Available scripts
+## 📜 Available scripts
 
 | Script      | Description                                                  |
 | ----------- | ------------------------------------------------------------ |
@@ -274,7 +277,7 @@ Run from the workspace (`pnpm <script> -w @intra/shared-kernel`) or via Turbo fr
 
 ---
 
-## Usage from other packages
+## 📦 Usage from other packages
 
 Add a workspace dependency and import directly from the package root:
 
@@ -309,7 +312,7 @@ The Next.js frontend transpiles this package on-the-fly (`transpilePackages: ['@
 
 ---
 
-## Path aliases
+## 🧭 Path aliases
 
 `tsconfig.json` defines:
 
